@@ -39,7 +39,7 @@ export const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const { isAuthenticated, user } = useAuth()
   
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
+  if (!isAuthenticated.value && to.name !== 'Login') {
     next({ name: 'Login' })
   } else if (to.meta.requiresGuest && isAuthenticated.value) {
     next({ name: 'Dashboard' })

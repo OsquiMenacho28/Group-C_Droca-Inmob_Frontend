@@ -30,7 +30,9 @@
                 <span class="block text-sm text-gray-900 dark:text-white">{{ user?.userType || 'User' }}</span>
                 <span class="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">{{ user?.sub }}</span>
               </div>
-              <fwb-list-group-item @click="handleLogout" class="text-red-600 hover:bg-red-50 cursor-pointer">{{ t.nav.logout }}</fwb-list-group-item>
+              <a href="#" @mousedown.prevent="handleLogout" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-600 dark:text-red-500 dark:hover:text-white cursor-pointer border-t border-gray-100 dark:border-gray-700">
+                {{ t.nav.logout }}
+              </a>
             </fwb-list-group>
           </fwb-dropdown>
         </div>
@@ -49,19 +51,21 @@ import {
   FwbNavbarCollapse, 
   FwbNavbarLink, 
   FwbDropdown, 
-  FwbListGroup, 
-  FwbListGroupItem 
+  FwbListGroup
 } from 'flowbite-vue'
-import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { t } from '../locales/i18n'
 import ThemeToggle from '../components/ThemeToggle.vue'
 
-const router = useRouter()
 const { user, logout } = useAuth()
 
 const handleLogout = async () => {
-  await logout()
-  router.push({ name: 'Login' })
+  try {
+    await logout()
+  } catch (e) {
+    console.error('Logout error:', e)
+  } finally {
+    window.location.href = '/login'
+  }
 }
 </script>

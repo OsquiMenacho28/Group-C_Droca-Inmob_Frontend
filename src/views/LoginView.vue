@@ -1,6 +1,9 @@
 
 <template>
-  <div class="h-screen flex items-center justify-center p-4">
+  <div class="h-screen flex items-center justify-center p-4 relative">
+    <div class="absolute top-4 right-4">
+      <theme-toggle />
+    </div>
     <login-form @submit="handleLogin"/>
   </div>
 </template>
@@ -9,6 +12,7 @@
 import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import LoginForm from '../components/auth/LoginForm.vue'
+import ThemeToggle from '../components/ThemeToggle.vue'
 
 const router = useRouter()
 const { login } = useAuth()
