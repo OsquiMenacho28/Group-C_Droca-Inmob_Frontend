@@ -36,6 +36,11 @@
             {{ t.nav.favorites }}
           </router-link>
 
+          <router-link v-if="isAdmin" to="/dashboard/admin/properties"
+            class="..." :class="{ 'text-blue-700...': $route.path.includes('properties') }">
+            Gestión Inmuebles
+          </router-link>
+
           <fwb-navbar-link href="#">{{ t.nav.properties }}</fwb-navbar-link>
           <fwb-navbar-link href="#">{{ t.nav.reports }}</fwb-navbar-link>
         </fwb-navbar-collapse>

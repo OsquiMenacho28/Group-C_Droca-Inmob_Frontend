@@ -4,6 +4,7 @@ import LoginView from '../views/LoginView.vue'
 import UsersView from '../views/UsersView.vue'
 import DashboardView from '../views/DashboardView.vue'
 import MainLayout from '../layouts/MainLayout.vue'
+import PropertyView from '../views/AgentDashboard.vue'
 
 const routes = [
   {
@@ -48,6 +49,12 @@ const routes = [
         path: 'admin/users',
         name: 'Users',
         component: UsersView,
+        meta: { requiresAuth: true, role: 'ADMIN' }
+      },
+      {
+        path: 'admin/properties',
+        name: 'AdminProperties',
+        component: () => import('../views/AgentDashboard.vue'), // Debes crear este archivo
         meta: { requiresAuth: true, role: 'ADMIN' }
       }
     ]
