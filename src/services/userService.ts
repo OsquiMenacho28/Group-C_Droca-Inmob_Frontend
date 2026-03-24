@@ -40,7 +40,7 @@ export const userService = {
 
   async updateUser(userId: string, payload: any) {
     // En edición, el payload ya viene con los campos a actualizar
-    const response = await api.patch(`/users/${userId}`, payload)
+    const response = await api.put(`/users/${userId}`, payload)
     return response.data
   },
 
@@ -50,12 +50,12 @@ export const userService = {
   },
 
   async deactivateUser(id: string) {
-    const res = await api.patch(`/users/${id}/deactivate`)
+    const res = await api.put(`/users/${id}/deactivate`)
     return res.data
   },
 
   async reactivateUser(id: string) {
-    const res = await api.patch(`/users/${id}/reactivate`)
+    const res = await api.put(`/users/${id}/reactivate`)
     return res.data
   },
 

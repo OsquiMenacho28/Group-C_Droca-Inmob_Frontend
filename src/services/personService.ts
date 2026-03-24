@@ -25,7 +25,7 @@ export const personService = {
 
   async updatePersonByAuthUserId(authUserId: string, payload: any) {
     try {
-      const response = await api.patch(`/persons/by-auth/${authUserId}`, payload)
+      const response = await api.put(`/persons/by-auth/${authUserId}`, payload)
       return response.data
     } catch (error) {
       console.error('Error updating person by authUserId:', error)
