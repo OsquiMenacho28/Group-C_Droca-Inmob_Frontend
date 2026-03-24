@@ -12,14 +12,29 @@ export const propertyService = {
     return response.data;
   },
 
+  async getPropertyById(id: string): Promise<Property> {
+    const response = await api.get<Property>(`/properties/${id}`);
+    return response.data;
+  },
+
   async createProperty(payload: PropertyFormPayload) {
-    // El backend usa @RequestHeader("X-Auth-User-Id"), que ya manejas en el Gateway/Interceptor
     const response = await api.post<Property>('/properties', payload);
     return response.data;
   },
 
   async getUploadUrl(propertyId: string): Promise<PresignedUrlResponse> {
+    // Retorna { uploadUrl: string, publicUrl: string }
     const response = await api.post<PresignedUrlResponse>(`/properties/${propertyId}/images/upload`);
+    return response.data;
+  },
+
+  async confirmImages(propertyId: string, urls: string[]) {
+    const response = await api.post<Property>(`/properties/${propertyId}/images/confirm`, urls);
+    return response.data;
+  },
+
+  async updatePrice(propertyId: string, newPrice: number) {
+    const response = await api.patch<Property>(`/properties/${propertyId}/price`, { newPrice });
     return response.data;
   },
 

@@ -1,96 +1,74 @@
 <template>
-  <div class="space-y-6 p-4 md:p-8">
-    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Mis Inmuebles</h1>
-        <p class="text-gray-500 dark:text-gray-400 mt-1">Gestiona tus captaciones y asignaciones activas.</p>
-      </div>
-
-      <fwb-button @click="showModal = true" gradient="blue" class="flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-        </svg>
-        Registrar Inmueble
-      </fwb-button>
-    </header>
-
-    <div v-if="loading" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  <div class="p-6 space-y-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-3xl font-bold dark:text-white">Mis Inmuebles</h1>
+      <fwb-button @click="showCreateModal = true" gradient="blue">Registrar Nuevo</fwb-button>
     </div>
 
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <fwb-card v-for="property in myProperties" :key="property.id" class="hover:shadow-lg transition-shadow">
-        <div class="p-5">
-          <div class="flex justify-between items-start mb-2">
-            <span class="text-xs font-bold text-blue-600 uppercase">{{ property.type }}</span>
-              <fwb-badge :type="property.status === 'DISPONIBLE' ? 'green' : 'indigo'">
-                {{ property.status }}
-              </fwb-badge>
-          </div>
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ property.title }}</h5>
-          <p class="text-gray-500 text-sm mb-4">{{ property.address }}</p>
-          
-          <div class="flex items-center space-x-4 mb-4 text-sm text-gray-600 dark:text-gray-400">
-            <span>📏 {{ property.m2 }} m²</span>
-            <span>🛏️ {{ property.rooms }} Hab.</span>
-          </div>
+    <div v-if="loading" class="text-center py-10 dark:text-white">Cargando inventario...</div>
 
-          <div class="flex items-center justify-between">
-            <span class="text-2xl font-bold text-gray-900 dark:text-white">
-              ${{ property.price.toLocaleString() }}
-            </span>
-            <fwb-button color="alternative" size="sm">Ver Detalles</fwb-button>
-          </div>
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <fwb-card v-for="p in myProperties" :key="p.id" class="overflow-hidden">
+        <div class="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+          <span v-if="!p.imageUrls || p.imageUrls.length === 0">Sin imágenes</span>
+          <img v-else :src="p.imageUrls[0]" class="h-full w-full object-cover">
+        </div>
+        <div class="p-5">
+          <h5 class="text-xl font-bold dark:text-white">{{ p.title }}</h5>
+          <p class="text-blue-600 font-bold mb-2">${{ p.price.toLocaleString() }}</p>
+          <span class="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">{{ p.status }}</span>
         </div>
       </fwb-card>
     </div>
 
-    <fwb-modal v-if="showModal" @close="showModal = false">
-      <template #header>
-        <div class="text-lg font-bold">Registrar Nueva Propiedad</div>
-      </template>
+    <fwb-modal v-if="showCreateModal" @close="showCreateModal = false">
+      <template #header><div class="text-lg font-bold">Nuevo Inmueble</div></template>
       <template #body>
-        <property-form @submit="handleCreate" @cancel="showModal = false" />
+        <property-form @submit="handleCreate" @cancel="showCreateModal = false" />
       </template>
     </fwb-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { FwbCard, FwbButton, FwbBadge, FwbModal } from 'flowbite-vue'
+import { ref, onMounted } from 'vue'
+import { FwbCard, FwbButton, FwbModal } from 'flowbite-vue'
 import { propertyService } from '../services/propertyService'
 import { useAuth } from '../composables/useAuth'
+import type { Property } from '../types/property'
 import PropertyForm from '../components/properties/PropertyForm.vue'
 
 const { user } = useAuth()
-const myProperties = ref<any[]>([])
-const loading = ref(true)
-const showModal = ref(false)
+// CORRECCIÓN: Tipo explícito Property[]
+const myProperties = ref<Property[]>([])
+const loading = ref(false)
+const showCreateModal = ref(false)
 
-const loadData = async () => {
+const load = async () => {
   loading.value = true
-  try {
-    const agentId = user.value?.userId || user.value?.sub
-    if (agentId) {
-      myProperties.value = await propertyService.getPropertiesByAgent(agentId)
-    }
-  } catch (error) {
-    console.error('Error:', error)
-  } finally {
-    loading.value = false
+  const agentId = user.value?.userId || user.value?.sub
+  if (agentId) {
+    myProperties.value = await propertyService.getPropertiesByAgent(agentId)
   }
+  loading.value = false
 }
 
-const handleCreate = async (payload: any) => {
+const handleCreate = async (data: any) => {
   try {
+    // Como el servicio de buckets no está listo, ignoramos los archivos por ahora
+    const { files, ...payload } = data 
+    
+    // 1. Crear el inmueble
     await propertyService.createProperty(payload)
-    showModal.value = false
-    await loadData()
-  } catch (error: any) {
-    alert(error.response?.data?.message || 'Error al registrar')
+    
+    // 2. Limpieza y recarga
+    showCreateModal.value = false
+    await load()
+    alert('Inmueble registrado con éxito')
+  } catch (e: any) {
+    alert('Error al registrar: ' + (e.response?.data?.detail || 'Error de conexión'))
   }
 }
 
-onMounted(loadData)
+onMounted(load)
 </script>
