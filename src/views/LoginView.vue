@@ -3,9 +3,7 @@
     <div class="absolute top-4 right-4">
       <theme-toggle />
     </div>
-    
-    <DebugJwt />
-    
+     
     <!-- Normal Login Form -->
     <login-form v-if="!showChangePassword" @submit="handleLogin"/>
     

@@ -8,9 +8,9 @@ const getRoleIdByUserType = (userType: UserType): string => {
     'ADMIN': 'rol_admin',
     'EMPLOYEE': 'rol_agent',
     'OWNER': 'rol_owner',
-    'INTERESTED_CLIENT': 'rol_client'
+    'INTERESTED_CLIENT': 'rol_interested_client'
   }
-  return roles[userType] || 'rol_client'
+  return roles[userType] || 'rol_interested_client'
 }
 
 export const userService = {

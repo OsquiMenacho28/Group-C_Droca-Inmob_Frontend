@@ -15,7 +15,8 @@ export function useUsers() {
         baseUsers.map(async (user: any) => {
           try {
             const profile = await personService.getPersonByAuthUserId(user.id)
-            return { ...user, ...profile }
+            const { id: profileId, ...profileData } = profile
+            return { ...user, ...profileData, profileInternalId: profileId }
           } catch {
             return user
           }
