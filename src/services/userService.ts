@@ -1,43 +1,75 @@
+// FILE: Frontend/Frontend/src/services/userService.ts
+
 import { api } from './api'
-import type { UserFormPayload } from '../types/user'
+import type { UserFormPayload, UserType } from '../types/user'
+
+const getRoleIdByUserType = (userType: UserType): string => {
+  const roles: Record<UserType, string> = {
+    'ADMIN': 'rol_admin',
+    'EMPLOYEE': 'rol_agent',
+    'OWNER': 'rol_owner',
+    'INTERESTED_CLIENT': 'rol_client'
+  }
+  return roles[userType] || 'rol_client'
+}
 
 export const userService = {
-  async getRoles() {
-    const response = await api.get('/roles');
-    return response.data;
-  },
-  
-  async getUsers() {
-    const response = await api.get('/users');
-    return response.data;
-  },
-
-  async createUser(payload: UserFormPayload) {
-    const nameParts = payload.name.trim().split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '.';
-
+  async createUser(payload: any) {
+    // El payload ya viene con firstName y lastName desde UserForm
     const apiPayload = {
-      firstName: firstName,
-      lastName: lastName,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
       email: payload.email,
       userType: payload.userType,
-      roleIds: payload.roleId ? [payload.roleId] : [],
+      roleIds: payload.roleIds || [getRoleIdByUserType(payload.userType)],
       birthDate: payload.birthDate,
       phone: payload.phone,
-      sendTemporaryCredentials: true
-    };
+      sendTemporaryCredentials: payload.sendTemporaryCredentials !== undefined ? payload.sendTemporaryCredentials : true,
+      // Campos específicos
+      department: payload.department,
+      position: payload.position,
+      hireDate: payload.hireDate,
+      taxId: payload.taxId,
+      preferredContactMethod: payload.preferredContactMethod,
+      budget: payload.budget
+    }
 
-    const response = await api.post('/users', apiPayload);
-    return response.data;
+    const response = await api.post('/users', apiPayload)
+    return response.data
   },
 
-  async updateUser(userId: string | number, payload: any) {
-    const response = await api.patch(`/users/${userId}`, payload);
-    return response.data;
+  async updateUser(userId: string, payload: any) {
+    // En edición, el payload ya viene con los campos a actualizar
+    const response = await api.patch(`/users/${userId}`, payload)
+    return response.data
   },
 
-  async deleteUser(userId: string | number) {
-    await api.delete(`/users/${userId}`);
+  async getUsers() {
+    const res = await api.get('/users')
+    return res.data
+  },
+
+  async deactivateUser(id: string) {
+    const res = await api.patch(`/users/${id}/deactivate`)
+    return res.data
+  },
+
+  async reactivateUser(id: string) {
+    const res = await api.patch(`/users/${id}/reactivate`)
+    return res.data
+  },
+
+  async deleteUser(id: string) {
+    await api.delete(`/users/${id}`)
+  },
+
+  async getRoles() {
+    const res = await api.get('/roles')
+    return res.data
+  },
+
+  async resendTemporaryPassword(email: string) {
+    const res = await api.post('/auth/resend-temp-password', { email })
+    return res.data
   }
 }

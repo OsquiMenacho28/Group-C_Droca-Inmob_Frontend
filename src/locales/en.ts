@@ -39,6 +39,8 @@ export const en = {
     },
     
     form: {
+      firstName: 'First Name',
+      lastName: 'Last Name',
       fullName: 'Full Name',
       fullNamePlaceholder: 'John Doe',
       email: 'Email Address',

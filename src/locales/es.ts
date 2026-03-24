@@ -41,7 +41,9 @@ export const es = {
         },
 
         form: {
-            fullName: 'Nombre completo',
+            firstName: 'Nombre',
+            lastName: 'Apellido',
+            fullName: 'Nombre Completo',
             fullNamePlaceholder: 'Juan Pérez',
             email: 'Correo electrónico',
             emailPlaceholder: 'juan@ejemplo.com',

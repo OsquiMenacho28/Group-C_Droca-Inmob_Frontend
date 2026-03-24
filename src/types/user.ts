@@ -1,8 +1,6 @@
-export type Role = { 
-  id: string;
-  name: string;
-  code: string; 
-}
+// FILE: Frontend/Frontend/src/types/user.ts
+
+export type UserType = 'ADMIN' | 'EMPLOYEE' | 'OWNER' | 'INTERESTED_CLIENT'
 
 export type User = {
   id: string
@@ -10,22 +8,37 @@ export type User = {
   lastName: string
   fullName: string
   email: string
-  phone: string
-  userType: 'ADMIN' | 'EMPLOYEE' | 'OWNER' | 'INTERESTED_CLIENT'
+  phone?: string
+  userType: UserType
   status: string
   primaryRoleIds: string[]
+  birthDate?: string
+  // Campos específicos
+  department?: string
+  position?: string
+  hireDate?: string
+  taxId?: string
+  preferredContactMethod?: string
+  budget?: string
+}
+
+export type UserFormPayload = {
+  firstName: string      // Cambiado de 'name' a 'firstName'
+  lastName: string       // Nuevo campo
+  email: string
+  phone: string
+  userType: UserType
+  birthDate: string
+  // Campos específicos
+  department?: string
+  position?: string
+  hireDate?: string
+  taxId?: string
+  preferredContactMethod?: string
+  budget?: string
 }
 
 export type LoginPayload = {
   email: string
   password: string
-}
-
-export type UserFormPayload = {
-  name: string
-  email: string
-  phone: string
-  roleId: string | null
-  userType: 'ADMIN' | 'EMPLOYEE' | 'OWNER' | 'INTERESTED_CLIENT'
-  birthDate: string
 }

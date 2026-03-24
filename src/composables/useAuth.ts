@@ -10,7 +10,9 @@ function parseJwt (t: string) {
     try {
       const base64Url = t.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(window.atob(base64));
+      const decoded = JSON.parse(window.atob(base64));
+      console.log('Decoded JWT:', decoded); // Debug log to see what's in the token
+      return decoded;
     } catch (e) {
       return null;
     }
@@ -32,7 +34,7 @@ export function useAuth(){
       localStorage.setItem('refresh_token', res.refreshToken)
       token.value = res.accessToken
       user.value = parseJwt(res.accessToken)
-      
+
       if (res.mustChangePassword) {
         localStorage.setItem('must_change_password', 'true')
       } else {

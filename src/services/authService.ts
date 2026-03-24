@@ -12,6 +12,16 @@ export const authService = {
     return response.data;
   },
 
+  async refreshToken(refreshToken: string) {
+    const response = await api.post('/auth/refresh', { refreshToken });
+    return response.data;
+  },
+
+  async resendTemporaryPassword(email: string) {
+    const response = await api.post('/auth/resend-temp-password', { email });
+    return response.data;
+  },
+
   async logout() {
     const refreshToken = localStorage.getItem('refresh_token');
     if (refreshToken) {
