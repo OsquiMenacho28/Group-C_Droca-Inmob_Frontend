@@ -100,7 +100,33 @@ const handleSubmit = async (formData: any) => {
     }
     closeModal()
   } catch (e: any) {
-    showToast(e.response?.data?.detail || 'Error al guardar el usuario', 'error')
+    // Extraer mensaje de error del backend
+    let errorMessage = 'Error al guardar el usuario'
+    
+    if (e.response?.data) {
+      const errorData = e.response.data
+      
+      // Manejar error de CI/NIT duplicado
+      if (errorData.detail?.includes('An owner with CI') || 
+          errorData.detail?.includes('taxId already exists') ||
+          errorData.detail?.includes('already exists')) {
+        errorMessage = '⚠️ El número de CI/NIT ya está registrado en el sistema. Un propietario no puede tener el mismo CI que otro.'
+      }
+      // Manejar error de email duplicado
+      else if (errorData.detail?.includes('Email already exists') || 
+               errorData.detail?.includes('email already exists')) {
+        errorMessage = '⚠️ El correo electrónico ya está registrado. Por favor, use otro email.'
+      }
+      // Usar el mensaje del backend si está disponible
+      else if (errorData.detail) {
+        errorMessage = errorData.detail
+      } else if (errorData.message) {
+        errorMessage = errorData.message
+      }
+    }
+    
+    showToast(errorMessage, 'error')
+    console.error('Error submitting user:', e)
   }
 }
 

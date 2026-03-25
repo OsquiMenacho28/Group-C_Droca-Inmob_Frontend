@@ -117,12 +117,17 @@
 
     <div v-if="form.userType === 'OWNER'" class="space-y-4 border-t pt-4">
       <h3 class="text-md font-semibold">Información Fiscal</h3>
-      <fwb-input
-        v-model="form.taxId"
-        label="RFC / NIT"
-        :class="{ 'border-blue-500 ring-2': isFieldModified('taxId') }"
-      />
-      <p v-if="isFieldModified('taxId')" class="text-xs text-blue-600">✏️ Modificando NIT</p>
+      <div>
+        <fwb-input
+          v-model="form.taxId"
+          label="CI / NIT"
+          placeholder="1234567"
+          :validation-status="errors.taxId ? 'error' : undefined"
+          :validation-message="errors.taxId"
+          :class="{ 'border-blue-500 ring-2': isFieldModified('taxId') }"
+        />
+        <p v-if="isFieldModified('taxId')" class="text-xs text-blue-600">✏️ Modificando CI/NIT</p>
+      </div>
     </div>
 
     <div v-if="form.userType === 'INTERESTED_CLIENT'" class="space-y-4 border-t pt-4">
@@ -232,11 +237,31 @@ watch(
 
 const validateForm = (): boolean => {
   const newErrors: Record<string, string> = {}
-  if (!form.firstName || form.firstName.trim().length < 2) newErrors.firstName = 'Mínimo 2 caracteres'
-  if (!form.lastName || form.lastName.trim().length < 2) newErrors.lastName = 'Mínimo 2 caracteres'
-  if (!form.email || !form.email.includes('@')) newErrors.email = 'Email inválido'
-  if (!form.birthDate) newErrors.birthDate = 'Requerido'
-  if (!form.phone) newErrors.phone = 'Teléfono requerido'
+  
+  if (!form.firstName || form.firstName.trim().length < 2) 
+    newErrors.firstName = 'Mínimo 2 caracteres'
+  
+  if (!form.lastName || form.lastName.trim().length < 2) 
+    newErrors.lastName = 'Mínimo 2 caracteres'
+  
+  if (!form.email || !form.email.includes('@')) 
+    newErrors.email = 'Email inválido'
+  
+  if (!form.birthDate) 
+    newErrors.birthDate = 'Requerido'
+  
+  if (!form.phone) 
+    newErrors.phone = 'Teléfono requerido'
+  
+  // Validación específica para OWNER
+  if (form.userType === 'OWNER') {
+    if (!form.taxId || form.taxId.trim().length < 7) {
+      newErrors.taxId = 'CI/NIT debe tener al menos 7 dígitos'
+    } else if (!/^\d{7,10}$/.test(form.taxId.trim())) {
+      newErrors.taxId = 'CI/NIT debe contener solo números (7-10 dígitos)'
+    }
+  }
+  
   errors.value = newErrors
   return Object.keys(newErrors).length === 0
 }

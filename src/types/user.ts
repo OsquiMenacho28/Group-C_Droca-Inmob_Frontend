@@ -23,8 +23,8 @@ export type User = {
 }
 
 export type UserFormPayload = {
-  firstName: string      // Cambiado de 'name' a 'firstName'
-  lastName: string       // Nuevo campo
+  firstName: string
+  lastName: string
   email: string
   phone: string
   userType: UserType
