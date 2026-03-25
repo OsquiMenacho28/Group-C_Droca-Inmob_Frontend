@@ -37,9 +37,12 @@
           placeholder="juan@gmail.com"
           :disabled="isEditing"
           required
-          :validation-status="errors.email ? 'error' : undefined"
-          :validation-message="errors.email"
+          :validation-status="emailError ? 'error' : undefined"
+          :validation-message="emailError"
+          @input="validateEmailUniqueness"
         />
+        <p v-if="isFieldModified('email') && !isEditing" class="text-xs text-blue-600 mt-1">✏️ Modificando email</p>
+        <p v-if="emailChecking" class="text-xs text-gray-500 mt-1">Verificando disponibilidad...</p>
       </div>
 
       <div>
@@ -150,7 +153,11 @@
 
     <div class="flex justify-end space-x-3 pt-4 border-t">
       <fwb-button color="alternative" @click="$emit('cancel')">{{ t.users.form.cancel }}</fwb-button>
-      <fwb-button type="submit" gradient="blue">
+      <fwb-button 
+        type="submit" 
+        gradient="blue"
+        :disabled="!isFormValid || emailChecking"
+      >
         {{ isEditing ? t.users.form.update : t.users.form.create }}
       </fwb-button>
     </div>
@@ -158,10 +165,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { FwbInput, FwbButton } from 'flowbite-vue'
 import { t } from '../../locales/i18n'
 import type { UserFormPayload } from '../../types/user'
+import { userService } from '../../services/userService'
 
 const props = defineProps<{
   initialData?: any
@@ -171,6 +179,9 @@ const props = defineProps<{
 const emit = defineEmits(['submit', 'cancel'])
 const errors = ref<Record<string, string>>({})
 const modifiedFields = ref<Set<string>>(new Set())
+const emailError = ref('')
+const emailChecking = ref(false)
+let emailDebounceTimer: ReturnType<typeof setTimeout>
 
 const toDateString = (val: any): string => {
   if (!val) return ''
@@ -206,6 +217,70 @@ const initialValues = mapData(props.initialData)
 const form = reactive<UserFormPayload>({ ...initialValues })
 const originalValues = reactive<UserFormPayload>({ ...initialValues })
 
+// Validar unicidad del email
+const validateEmailUniqueness = async () => {
+  const email = form.email?.trim().toLowerCase()
+  
+  // Limpiar error previo
+  emailError.value = ''
+  
+  // Validaciones básicas
+  if (!email) {
+    emailError.value = 'Email requerido'
+    return false
+  }
+  
+  if (!email.includes('@')) {
+    emailError.value = 'Email inválido'
+    return false
+  }
+  
+  // En modo edición, no valida duplicados del mismo usuario
+  if (props.isEditing && props.initialData?.email?.toLowerCase() === email) {
+    return true
+  }
+  
+  emailChecking.value = true
+  
+  try {
+    // Obtener todos los usuarios y verificar si el email ya existe
+    const users = await userService.getUsers()
+    const emailExists = users.some((user: any) => 
+      user.email?.toLowerCase() === email && 
+      (!props.isEditing || user.id !== props.initialData?.id)
+    )
+    
+    if (emailExists) {
+      emailError.value = 'Este correo electrónico ya está registrado. Por favor, use otro email.'
+      return false
+    }
+    
+    return true
+  } catch (error) {
+    console.error('Error verificando email:', error)
+    // Si hay error en la validación, no bloqueamos el envío
+    return true
+  } finally {
+    emailChecking.value = false
+  }
+}
+
+// Debounce para validación en tiempo real
+const debouncedEmailValidation = () => {
+  clearTimeout(emailDebounceTimer)
+  emailDebounceTimer = setTimeout(() => {
+    if (form.email && form.email !== originalValues.email) {
+      validateEmailUniqueness()
+    }
+  }, 500)
+}
+
+watch(() => form.email, () => {
+  if (!props.isEditing) {
+    debouncedEmailValidation()
+  }
+})
+
 watch(
   () => props.initialData,
   (newData) => {
@@ -215,6 +290,7 @@ watch(
     Object.assign(originalValues, mapped)
     modifiedFields.value.clear()
     errors.value = {}
+    emailError.value = ''
   }
 )
 
@@ -234,6 +310,26 @@ watch(
   },
   { deep: true }
 )
+
+const isFormValid = computed(() => {
+  // Validaciones básicas
+  const hasRequiredFields = form.firstName?.trim() && 
+                           form.lastName?.trim() && 
+                           form.email?.trim() && 
+                           form.birthDate && 
+                           form.phone?.trim()
+  
+  // Validación de email
+  const isEmailValid = !emailError.value && form.email?.includes('@')
+  
+  // Validación específica para OWNER
+  let isOwnerValid = true
+  if (form.userType === 'OWNER') {
+    isOwnerValid = form.taxId?.trim() && /^\d{7,10}$/.test(form.taxId.trim())
+  }
+  
+  return hasRequiredFields && isEmailValid && isOwnerValid && !emailChecking.value
+})
 
 const validateForm = (): boolean => {
   const newErrors: Record<string, string> = {}
@@ -263,6 +359,12 @@ const validateForm = (): boolean => {
   }
   
   errors.value = newErrors
+  
+  // Validación de email duplicado
+  if (emailError.value) {
+    return false
+  }
+  
   return Object.keys(newErrors).length === 0
 }
 
@@ -276,7 +378,13 @@ const getRoleIdByUserType = (userType: string): string => {
   return roles[userType] || 'rol_interested_client'
 }
 
-const submit = () => {
+const submit = async () => {
+  // Validación final de email antes de enviar
+  const isEmailUnique = await validateEmailUniqueness()
+  if (!isEmailUnique) {
+    return
+  }
+  
   if (!validateForm()) return
 
   let payload: any = {}

@@ -114,7 +114,8 @@ const handleSubmit = async (formData: any) => {
       }
       // Manejar error de email duplicado
       else if (errorData.detail?.includes('Email already exists') || 
-               errorData.detail?.includes('email already exists')) {
+               errorData.detail?.includes('email already exists') ||
+               errorData.message?.includes('Email already exists')) {
         errorMessage = '⚠️ El correo electrónico ya está registrado. Por favor, use otro email.'
       }
       // Usar el mensaje del backend si está disponible
@@ -129,7 +130,6 @@ const handleSubmit = async (formData: any) => {
     console.error('Error submitting user:', e)
   }
 }
-
 // ✅ FIX 3: Logical delete (INACTIVE)
 const handleDeactivate = async (user: any) => {
   if (!confirm(`¿Desactivar al usuario "${user.fullName || user.email}"? El usuario no podrá iniciar sesión.`)) return
