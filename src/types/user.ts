@@ -36,6 +36,9 @@ export type UserFormPayload = {
   taxId?: string
   preferredContactMethod?: string
   budget?: string
+  preferredZone?: string
+  preferredPropertyType?: string
+  preferredRooms?: number | string
 }
 
 export type LoginPayload = {

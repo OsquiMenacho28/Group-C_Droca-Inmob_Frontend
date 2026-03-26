@@ -152,21 +152,38 @@
     </div>
 
     <!-- Campos de cliente interesado - Siempre visibles en modo clientOnly -->
-    <div v-if="(!clientOnly && form.userType === 'INTERESTED_CLIENT') || clientOnly" class="space-y-4 border-t pt-4">
+    <div v-if="(!clientOnly && form.userType === 'INTERESTED_CLIENT') || clientOnly"
+        class="space-y-4 border-t pt-4">
       <h3 class="text-md font-semibold">Preferencias del Cliente</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Método de Contacto</label>
-          <select
-            v-model="form.preferredContactMethod"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Método de Contacto
+          </label>
+          <select v-model="form.preferredContactMethod"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <option value="EMAIL">Email</option>
             <option value="PHONE">Teléfono</option>
             <option value="WHATSAPP">WhatsApp</option>
           </select>
         </div>
         <fwb-input v-model="form.budget" type="number" label="Presupuesto ($)" />
+        <fwb-input v-model="form.preferredZone" label="Zona Preferida"
+                  placeholder="Ej: Zona Sur, Centro..." />
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Tipo de Inmueble
+          </label>
+          <select v-model="form.preferredPropertyType"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            <option value="">Sin preferencia</option>
+            <option value="APARTAMENTO">Apartamento</option>
+            <option value="CASA">Casa</option>
+            <option value="COMERCIAL">Local Comercial</option>
+          </select>
+        </div>
+        <fwb-input v-model.number="form.preferredRooms" type="number"
+                  label="Número de Habitaciones" placeholder="Ej: 2" />
       </div>
     </div>
 
@@ -233,7 +250,10 @@ const mapData = (d: any): UserFormPayload => {
     hireDate: toDateString(d.hireDate),
     taxId: d.taxId || '',
     preferredContactMethod: d.preferredContactMethod || '',
-    budget: d.budget || ''
+    budget: d.budget || '',
+    preferredZone: d.preferredZone || '',
+    preferredPropertyType: d.preferredPropertyType || '',
+    preferredRooms: d.preferredRooms || ''
   }
 }
 
@@ -375,7 +395,7 @@ const validateField = (field: keyof UserFormPayload) => {
 
   switch (field) {
     case 'firstName':
-      if (!value || value.trim().length < 2) {
+      if (!value || String(value).trim().length < 2) {
         errors.value.firstName = 'Mínimo 2 caracteres'
       } else {
         delete errors.value.firstName
@@ -383,7 +403,7 @@ const validateField = (field: keyof UserFormPayload) => {
       break
 
     case 'lastName':
-      if (!value || value.trim().length < 2) {
+      if (!value || String(value).trim().length < 2) {
         errors.value.lastName = 'Mínimo 2 caracteres'
       } else {
         delete errors.value.lastName
@@ -391,7 +411,7 @@ const validateField = (field: keyof UserFormPayload) => {
       break
 
     case 'phone':
-      if (!value || value.trim().length === 0) {
+      if (!value || String(value).trim().length === 0) {
         errors.value.phone = 'Teléfono requerido'
       } else {
         delete errors.value.phone
@@ -408,7 +428,7 @@ const validateField = (field: keyof UserFormPayload) => {
 
     case 'department':
       if (!props.clientOnly && form.userType === 'EMPLOYEE') {
-        if (!value || value.trim().length < 2) {
+        if (!value || String(value).trim().length < 2) {
           errors.value.department = 'Departamento requerido (mínimo 2 caracteres)'
         } else {
           delete errors.value.department
@@ -418,7 +438,7 @@ const validateField = (field: keyof UserFormPayload) => {
 
     case 'position':
       if (!props.clientOnly && form.userType === 'EMPLOYEE') {
-        if (!value || value.trim().length < 2) {
+        if (!value || String(value).trim().length < 2) {
           errors.value.position = 'Cargo requerido (mínimo 2 caracteres)'
         } else {
           delete errors.value.position
@@ -440,15 +460,26 @@ const validateField = (field: keyof UserFormPayload) => {
 
     case 'taxId':
       if (!props.clientOnly && form.userType === 'OWNER') {
-        if (!value || value.trim().length < 7) {
+        if (!value || String(value).trim().length < 7) {
           errors.value.taxId = 'CI/NIT debe tener al menos 7 dígitos'
-        } else if (!/^\d{7,10}$/.test(value.trim())) {
+        } else if (!/^\d{7,10}$/.test(String(value).trim())) {
           errors.value.taxId = 'CI/NIT debe contener solo números (7-10 dígitos)'
         } else {
           delete errors.value.taxId
         }
       } else {
         delete errors.value.taxId
+      }
+      break
+
+    case 'preferredRooms':
+      if (value !== null && value !== '' && value !== undefined) {
+        const rooms = Number(value)
+        if (isNaN(rooms) || rooms < 0) {
+          errors.value.preferredRooms = 'Número de habitaciones inválido'
+        } else {
+          delete errors.value.preferredRooms
+        }
       }
       break
   }
@@ -607,23 +638,15 @@ const getRoleIdByUserType = (userType: string): string => {
 // Validación final antes de enviar
 const submit = async () => {
   const isEmailValid = await validateEmail(form.email, false)
-  if (!isEmailValid) {
-    return
-  }
+  if (!isEmailValid) return
 
   const allFieldsValid = validateAllRequiredFields()
-  if (!allFieldsValid) {
-    return
-  }
+  if (!allFieldsValid) return
 
   const isEmployeeValid = validateEmployeeFields()
-  if (!isEmployeeValid) {
-    return
-  }
+  if (!isEmployeeValid) return
 
-  if (emailFormatError.value || emailDuplicateError.value) {
-    return
-  }
+  if (emailFormatError.value || emailDuplicateError.value) return
 
   let payload: any = {}
 
@@ -711,9 +734,20 @@ const submit = async () => {
       payload.taxId = form.taxId?.trim()
     }
 
-    if (modifiedFields.value.has('preferredContactMethod')) payload.preferredContactMethod = form.preferredContactMethod
-    if (modifiedFields.value.has('budget')) payload.budget = form.budget
+    // Preferencias de cliente interesado
+    if (modifiedFields.value.has('preferredContactMethod'))
+      payload.preferredContactMethod = form.preferredContactMethod
+    if (modifiedFields.value.has('budget'))
+      payload.budget = form.budget
+    if (modifiedFields.value.has('preferredZone'))
+      payload.preferredZone = form.preferredZone
+    if (modifiedFields.value.has('preferredPropertyType'))
+      payload.preferredPropertyType = form.preferredPropertyType
+    if (modifiedFields.value.has('preferredRooms'))
+      payload.preferredRooms = form.preferredRooms ? Number(form.preferredRooms) : null
+
   } else {
+    // Crear nuevo usuario
     payload = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
@@ -726,18 +760,25 @@ const submit = async () => {
     }
 
     if (props.clientOnly) {
+      // Modo agente creando cliente
       if (form.preferredContactMethod) payload.preferredContactMethod = form.preferredContactMethod
-      if (form.budget) payload.budget = form.budget
+      if (form.budget)                  payload.budget = form.budget
+      if (form.preferredZone)           payload.preferredZone = form.preferredZone
+      if (form.preferredPropertyType)   payload.preferredPropertyType = form.preferredPropertyType
+      if (form.preferredRooms)          payload.preferredRooms = Number(form.preferredRooms)
     } else {
       if (form.userType === 'EMPLOYEE') {
         payload.department = form.department?.trim()
-        payload.position = form.position?.trim()
+        payload.position   = form.position?.trim()
         if (form.hireDate) payload.hireDate = form.hireDate
       } else if (form.userType === 'OWNER') {
         payload.taxId = form.taxId?.trim()
       } else if (form.userType === 'INTERESTED_CLIENT') {
         if (form.preferredContactMethod) payload.preferredContactMethod = form.preferredContactMethod
-        if (form.budget) payload.budget = form.budget
+        if (form.budget)                 payload.budget = form.budget
+        if (form.preferredZone)          payload.preferredZone = form.preferredZone
+        if (form.preferredPropertyType)  payload.preferredPropertyType = form.preferredPropertyType
+        if (form.preferredRooms)         payload.preferredRooms = Number(form.preferredRooms)
       }
     }
   }
