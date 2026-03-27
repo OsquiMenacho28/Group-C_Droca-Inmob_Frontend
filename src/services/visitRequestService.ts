@@ -52,7 +52,7 @@ export async function getAvailableProperties(filters?: {
   if (filters?.maxPrice !== undefined) params.append('maxPrice', String(filters.maxPrice))
   if (filters?.type) params.append('type', filters.type)
 
-  const res = await fetch(`${BASE_URL}/api/properties?${params}`, {
+  const res = await fetch(`${BASE_URL}/properties?${params}`, {
     headers: getHeaders(),
   })
   return handleResponse<Property[]>(res)
