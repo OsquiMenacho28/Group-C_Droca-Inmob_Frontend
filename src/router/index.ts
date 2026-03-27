@@ -51,6 +51,12 @@ const routes = [
         name: 'AdminProperties',
         component: AdminProperties, // Vista de gestión global
         meta: { requiresAuth: true, role: 'ADMIN' }
+      },
+      {
+        path: 'admin/audit',
+        name: 'AuditLogs',
+        component: () => import('../views/AuditLogsView.vue'),
+        meta: { requiresAuth: true, role: 'ADMIN' }
       }
     ]
   }
