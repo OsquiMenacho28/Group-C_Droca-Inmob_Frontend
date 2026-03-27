@@ -48,6 +48,18 @@
               {{ t.nav.myClients }}
           </router-link>
 
+          <router-link v-if="isAgent || isAdmin" to="/calendar"
+              class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              :class="{ 'text-blue-700 dark:text-white font-bold': $route.name === 'Calendar' }">
+              Calendario
+          </router-link>
+
+          <router-link v-if="isClient" to="/properties"
+              class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+              :class="{ 'text-blue-700 dark:text-white font-bold': $route.name === 'Properties' }">
+              Propiedades disponibles
+          </router-link>
+
           <fwb-navbar-link href="#">{{ t.nav.properties }}</fwb-navbar-link>
           <fwb-navbar-link href="#">{{ t.nav.reports }}</fwb-navbar-link>
         </fwb-navbar-collapse>
