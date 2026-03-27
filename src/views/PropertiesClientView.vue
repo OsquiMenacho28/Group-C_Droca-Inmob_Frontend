@@ -8,21 +8,21 @@
     PA2: Al solicitar una cita, el agente responsable es notificado.
     PA3: Filtros por zona y rango de precio actualizan los resultados.
   -->
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
 
     <!-- HEADER -->
-    <div class="bg-white border-b border-gray-200 px-6 py-4">
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors">
       <div class="max-w-7xl mx-auto">
         <div class="flex items-center gap-3">
           <router-link to="/dashboard"
-            class="text-gray-400 hover:text-gray-600 transition-colors">
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
           </router-link>
-          <h1 class="text-2xl font-bold text-gray-900">Propiedades disponibles</h1>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Propiedades disponibles</h1>
         </div>
-        <p class="text-sm text-gray-500 mt-0.5">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
           Encuentra tu próximo hogar y agenda una visita con un agente
         </p>
       </div>
@@ -31,49 +31,49 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
       <!-- ===== FILTROS PA3 ===== -->
-      <div class="bg-white rounded-xl border border-gray-200 p-4">
+      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors">
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
 
           <!-- Zona -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Zona</label>
+            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Zona</label>
             <input
               v-model="filters.zone"
               placeholder="Zona Sur, Miraflores..."
-              class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             />
           </div>
 
           <!-- Precio mínimo -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Precio mínimo ($)</label>
+            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Precio mínimo ($)</label>
             <input
               v-model.number="filters.minPrice"
               type="number"
               min="0"
               placeholder="0"
-              class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             />
           </div>
 
           <!-- Precio máximo -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Precio máximo ($)</label>
+            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Precio máximo ($)</label>
             <input
               v-model.number="filters.maxPrice"
               type="number"
               min="0"
               placeholder="Sin límite"
-              class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             />
           </div>
 
           <!-- Tipo -->
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Tipo</label>
+            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Tipo</label>
             <select
               v-model="filters.type"
-              class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
               <option value="">Todos</option>
               <option value="CASA">Casa</option>
@@ -87,20 +87,20 @@
         <div class="flex gap-3 mt-3">
           <button
             @click="applyFilters"
-            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
           >
             Aplicar filtros
           </button>
           <button
             @click="clearFilters"
-            class="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Limpiar
           </button>
         </div>
 
         <!-- PA1: Indicador de que solo se muestran disponibles -->
-        <p class="text-xs text-green-700 mt-2 flex items-center gap-1">
+        <p class="text-xs text-green-700 dark:text-green-400 mt-2 flex items-center gap-1">
           <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
           </svg>
@@ -109,32 +109,32 @@
       </div>
 
       <!-- RESUMEN -->
-      <p class="text-sm text-gray-600">
-        <span class="font-semibold text-gray-900">{{ properties.length }}</span>
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        <span class="font-semibold text-gray-900 dark:text-white">{{ properties.length }}</span>
         propiedad{{ properties.length !== 1 ? 'es' : '' }} encontrada{{ properties.length !== 1 ? 's' : '' }}
       </p>
 
       <!-- ESTADO cargando / error -->
       <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="i in 6" :key="i" class="bg-white rounded-xl border border-gray-200 h-64 animate-pulse">
-          <div class="h-36 bg-gray-200 rounded-t-xl"></div>
+        <div v-for="i in 6" :key="i" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 h-64 animate-pulse transition-colors">
+          <div class="h-36 bg-gray-200 dark:bg-gray-700 rounded-t-xl"></div>
           <div class="p-4 space-y-2">
-            <div class="h-3 bg-gray-200 rounded w-3/4"></div>
-            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
           </div>
         </div>
       </div>
 
-      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
-        {{ error }} <button @click="loadProperties" class="ml-2 underline">Reintentar</button>
+      <div v-else-if="error" class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400 text-sm transition-colors">
+        {{ error }} <button @click="loadProperties" class="ml-2 underline hover:text-red-800 dark:hover:text-red-300">Reintentar</button>
       </div>
 
-      <div v-else-if="properties.length === 0" class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-        <svg class="h-12 w-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-else-if="properties.length === 0" class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center transition-colors">
+        <svg class="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
         </svg>
-        <p class="text-gray-500 font-medium">No hay propiedades disponibles con esos filtros.</p>
-        <button @click="clearFilters" class="mt-2 text-sm text-blue-600 underline">Ver todas</button>
+        <p class="text-gray-500 dark:text-gray-400 font-medium">No hay propiedades disponibles con esos filtros.</p>
+        <button @click="clearFilters" class="mt-2 text-sm text-blue-600 dark:text-blue-400 underline">Ver todas</button>
       </div>
 
       <!-- GRID DE PROPIEDADES -->
@@ -142,44 +142,44 @@
         <div
           v-for="prop in properties"
           :key="prop.id"
-          class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+          class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
           @click="openPropertyModal(prop)"
         >
           <!-- Imagen / placeholder -->
-          <div class="relative h-44 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+          <div class="relative h-44 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center transition-colors">
             <img v-if="prop.imageUrl" :src="prop.imageUrl" :alt="prop.name" class="w-full h-full object-cover" />
-            <svg v-else class="h-16 w-16 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-else class="h-16 w-16 text-blue-300 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
             <!-- Badge Disponible -->
-            <span class="absolute top-3 left-3 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+            <span class="absolute top-3 left-3 bg-green-500 dark:bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
               Disponible
             </span>
             <!-- Tipo -->
-            <span class="absolute top-3 right-3 bg-white/90 text-gray-700 text-xs font-medium px-2 py-1 rounded-full">
+            <span class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm">
               {{ prop.type }}
             </span>
           </div>
 
           <!-- Info -->
           <div class="p-4">
-            <h3 class="font-semibold text-gray-900 truncate">{{ prop.name }}</h3>
-            <p class="text-xs text-gray-500 mt-0.5 truncate">📍 {{ prop.address }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">Zona: {{ prop.zone }}</p>
+            <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ prop.name }}</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">📍 {{ prop.address }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Zona: {{ prop.zone }}</p>
 
             <div class="flex items-center justify-between mt-3">
-              <span class="text-lg font-bold text-blue-700">
+              <span class="text-lg font-bold text-blue-700 dark:text-blue-400">
                 ${{ prop.price.toLocaleString('es-BO') }}
               </span>
               <button
                 @click.stop="openRequestModal(prop)"
-                class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
               >
                 Agendar visita
               </button>
             </div>
 
-            <p class="text-xs text-gray-400 mt-2">Agente: {{ prop.agentName }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Agente: {{ prop.agentName }}</p>
           </div>
         </div>
       </div>
@@ -189,59 +189,59 @@
     <!-- ===== MODAL DETALLE PROPIEDAD ===== -->
     <Transition name="fade">
       <div v-if="selectedProperty && !showRequestModal"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60"
         @click.self="selectedProperty = null"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-          <div class="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transition-colors">
+          <div class="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center transition-colors">
             <img v-if="selectedProperty.imageUrl" :src="selectedProperty.imageUrl" class="w-full h-full object-cover" />
-            <svg v-else class="h-20 w-20 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-else class="h-20 w-20 text-blue-300 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
           </div>
           <div class="p-6">
             <div class="flex items-start justify-between">
               <div>
-                <h2 class="text-xl font-bold text-gray-900">{{ selectedProperty.name }}</h2>
-                <p class="text-sm text-gray-500 mt-0.5">{{ selectedProperty.address }}</p>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ selectedProperty.name }}</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ selectedProperty.address }}</p>
               </div>
-              <button @click="selectedProperty = null" class="text-gray-400 hover:text-gray-600">
+              <button @click="selectedProperty = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
             </div>
             <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-              <div class="bg-gray-50 rounded-lg p-3">
-                <p class="text-xs text-gray-500">Precio</p>
-                <p class="font-bold text-blue-700 text-base">${{ selectedProperty.price.toLocaleString() }}</p>
+              <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 transition-colors">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Precio</p>
+                <p class="font-bold text-blue-700 dark:text-blue-400 text-base">${{ selectedProperty.price.toLocaleString() }}</p>
               </div>
-              <div class="bg-gray-50 rounded-lg p-3">
-                <p class="text-xs text-gray-500">Tipo</p>
-                <p class="font-medium text-gray-900">{{ selectedProperty.type }}</p>
+              <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3 transition-colors">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Tipo</p>
+                <p class="font-medium text-gray-900 dark:text-white">{{ selectedProperty.type }}</p>
               </div>
-              <div class="bg-gray-50 rounded-lg p-3" v-if="selectedProperty.bedrooms">
-                <p class="text-xs text-gray-500">Habitaciones</p>
-                <p class="font-medium text-gray-900">{{ selectedProperty.bedrooms }}</p>
+              <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3" v-if="selectedProperty.bedrooms">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Habitaciones</p>
+                <p class="font-medium text-gray-900 dark:text-white">{{ selectedProperty.bedrooms }}</p>
               </div>
-              <div class="bg-gray-50 rounded-lg p-3" v-if="selectedProperty.area">
-                <p class="text-xs text-gray-500">Área (m²)</p>
-                <p class="font-medium text-gray-900">{{ selectedProperty.area }}</p>
+              <div class="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3" v-if="selectedProperty.area">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Área (m²)</p>
+                <p class="font-medium text-gray-900 dark:text-white">{{ selectedProperty.area }}</p>
               </div>
             </div>
-            <p v-if="selectedProperty.description" class="text-sm text-gray-600 mt-3">
+            <p v-if="selectedProperty.description" class="text-sm text-gray-600 dark:text-gray-300 mt-3">
               {{ selectedProperty.description }}
             </p>
             <div class="mt-5 flex gap-3">
               <button
                 @click="selectedProperty = null"
-                class="flex-1 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50"
+                class="flex-1 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cerrar
               </button>
               <button
                 @click="openRequestModal(selectedProperty)"
-                class="flex-1 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                class="flex-1 py-2.5 text-sm font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
               >
                 Agendar visita
               </button>
@@ -254,17 +254,17 @@
     <!-- ===== MODAL SOLICITUD DE CITA ===== -->
     <Transition name="fade">
       <div v-if="showRequestModal && requestTarget"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60"
         @click.self="closeRequestModal"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 overflow-y-auto max-h-[90vh]">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6 overflow-y-auto max-h-[90vh] transition-colors">
 
           <div class="flex items-start justify-between mb-4">
             <div>
-              <h2 class="text-lg font-bold text-gray-900">Solicitar visita</h2>
-              <p class="text-sm text-gray-500">{{ requestTarget.name }}</p>
+              <h2 class="text-lg font-bold text-gray-900 dark:text-white">Solicitar visita</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ requestTarget.name }}</p>
             </div>
-            <button @click="closeRequestModal" class="text-gray-400 hover:text-gray-600">
+            <button @click="closeRequestModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -276,24 +276,24 @@
 
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Tu nombre *</label>
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Tu nombre *</label>
                 <input
                   v-model="requestForm.clientName"
                   placeholder="Nombre completo"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :class="{ 'border-red-400': reqErrors.clientName }"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  :class="{ 'border-red-400 dark:border-red-500': reqErrors.clientName }"
                   required
                 />
                 <p v-if="reqErrors.clientName" class="text-xs text-red-500 mt-0.5">{{ reqErrors.clientName }}</p>
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Email *</label>
                 <input
                   v-model="requestForm.clientEmail"
                   type="email"
                   placeholder="tu@email.com"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  :class="{ 'border-red-400': reqErrors.clientEmail }"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  :class="{ 'border-red-400 dark:border-red-500': reqErrors.clientEmail }"
                   required
                 />
                 <p v-if="reqErrors.clientEmail" class="text-xs text-red-500 mt-0.5">{{ reqErrors.clientEmail }}</p>
@@ -301,21 +301,21 @@
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono (opcional)</label>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Teléfono (opcional)</label>
               <input
                 v-model="requestForm.clientPhone"
                 placeholder="+591 7XXXXXXX"
-                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">Horario preferido *</label>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Horario preferido *</label>
               <input
                 v-model="requestForm.preferredDateTime"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-400': reqErrors.preferredDateTime }"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors dark:[color-scheme:dark]"
+                :class="{ 'border-red-400 dark:border-red-500': reqErrors.preferredDateTime }"
                 :min="minDatetime"
                 required
               />
@@ -323,51 +323,51 @@
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">Horario alternativo (opcional)</label>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Horario alternativo (opcional)</label>
               <input
                 v-model="requestForm.alternativeDateTime"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors dark:[color-scheme:dark]"
                 :min="requestForm.preferredDateTime || minDatetime"
               />
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">Mensaje para el agente</label>
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Mensaje para el agente</label>
               <textarea
                 v-model="requestForm.message"
                 rows="3"
                 placeholder="Preguntas, observaciones o requisitos especiales..."
-                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors"
               />
             </div>
 
             <!-- PA2: Info de notificación -->
-            <p class="text-xs text-gray-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              📨 Al enviar esta solicitud, <strong>{{ requestTarget.agentName }}</strong>
+            <p class="text-xs text-gray-500 dark:text-gray-300 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg px-3 py-2">
+              📨 Al enviar esta solicitud, <strong class="dark:text-amber-200">{{ requestTarget.agentName }}</strong>
               recibirá una notificación y se pondrá en contacto contigo.
             </p>
 
             <div class="flex gap-3 pt-1">
               <button type="button" @click="closeRequestModal"
-                class="flex-1 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50">
+                class="flex-1 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Cancelar
               </button>
               <button type="submit" :disabled="requestSubmitting"
-                class="flex-1 py-2.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                class="flex-1 py-2.5 text-sm font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 transition-colors">
                 {{ requestSubmitting ? 'Enviando...' : 'Enviar solicitud' }}
               </button>
             </div>
           </form>
 
           <!-- Éxito -->
-          <div v-if="requestSuccess" class="mt-4 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-            <svg class="h-8 w-8 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="requestSuccess" class="mt-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center transition-colors">
+            <svg class="h-8 w-8 text-green-500 dark:text-green-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p class="text-sm font-semibold text-green-800">¡Solicitud enviada!</p>
-            <p class="text-xs text-green-700 mt-1">El agente {{ requestTarget?.agentName }} ha sido notificado.</p>
-            <button @click="closeRequestModal" class="mt-3 text-xs text-green-700 underline">Cerrar</button>
+            <p class="text-sm font-semibold text-green-800 dark:text-green-200">¡Solicitud enviada!</p>
+            <p class="text-xs text-green-700 dark:text-green-300 mt-1">El agente {{ requestTarget?.agentName }} ha sido notificado.</p>
+            <button @click="closeRequestModal" class="mt-3 text-xs text-green-700 dark:text-green-300 underline">Cerrar</button>
           </div>
         </div>
       </div>
