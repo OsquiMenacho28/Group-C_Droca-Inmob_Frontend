@@ -3,10 +3,15 @@
     <div class="absolute top-4 right-4">
       <theme-toggle />
     </div>
-     
+
+    <!-- Mensaje de error -->
+    <div v-if="errorMessage" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+      {{ errorMessage }}
+    </div>
+
     <!-- Normal Login Form -->
     <login-form v-if="!showChangePassword" @submit="handleLogin"/>
-    
+
     <!-- Password Change Modal for First Login -->
     <fwb-modal v-if="showChangePassword" @close="handleCancelChange">
       <template #header>
@@ -60,6 +65,7 @@ const router = useRouter()
 const { login, user } = useAuth()
 
 const showChangePassword = ref(false)
+const errorMessage = ref('')
 const changePasswordForm = ref({
   currentPassword: '',
   newPassword: '',
@@ -67,15 +73,16 @@ const changePasswordForm = ref({
 })
 
 const passwordMismatch = computed(() => {
-  return changePasswordForm.value.newPassword && 
-         changePasswordForm.value.confirmPassword && 
+  return changePasswordForm.value.newPassword &&
+         changePasswordForm.value.confirmPassword &&
          changePasswordForm.value.newPassword !== changePasswordForm.value.confirmPassword
 })
 
 const handleLogin = async (payload: any) => {
+  errorMessage.value = ''
   try {
     await login(payload)
-    
+
     // Check if user needs to change password
     if (localStorage.getItem('must_change_password') === 'true') {
       showChangePassword.value = true
@@ -83,8 +90,24 @@ const handleLogin = async (payload: any) => {
     } else {
       router.push({ name: 'Dashboard' })
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login error:', error)
+    
+    // Mostrar mensaje de error amigable
+    if (error.response?.status === 401) {
+      errorMessage.value = 'Credenciales inválidas. Por favor, verifica tu email y contraseña.'
+    } else if (error.response?.data?.detail) {
+      errorMessage.value = error.response.data.detail
+    } else if (error.message) {
+      errorMessage.value = error.message
+    } else {
+      errorMessage.value = 'Error al iniciar sesión'
+    }
+    
+    // Auto-cerrar después de 5 segundos
+    setTimeout(() => {
+      errorMessage.value = ''
+    }, 5000)
   }
 }
 
@@ -92,28 +115,28 @@ const handleChangePassword = async () => {
   if (passwordMismatch.value) {
     return
   }
-  
+
   try {
     // Get email from the JWT token's email claim
     const email = user.value?.email
-    
+
     if (!email) {
       console.error('No email found in token')
       alert('Unable to retrieve email. Please log in again.')
       return
     }
-    
-    console.log('Changing password for email:', email) // Debug log
-    
+
+    console.log('Changing password for email:', email)
+
     await authService.changePassword({
       email: email,
       currentPassword: changePasswordForm.value.currentPassword,
       newPassword: changePasswordForm.value.newPassword
     })
-    
+
     // Clear the must_change_password flag
     localStorage.removeItem('must_change_password')
-    
+
     // Refresh token to get new one without mustChangePassword flag
     const refreshToken = localStorage.getItem('refresh_token')
     if (refreshToken) {
@@ -121,7 +144,7 @@ const handleChangePassword = async () => {
       localStorage.setItem('access_token', response.accessToken)
       localStorage.setItem('refresh_token', response.refreshToken)
     }
-    
+
     showChangePassword.value = false
     router.push({ name: 'Dashboard' })
   } catch (error: any) {

@@ -1,11 +1,17 @@
-// FILE: src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
-import LoginView from '../views/LoginView.vue'
-import UsersView from '../views/UsersView.vue'
-import DashboardView from '../views/DashboardView.vue'
 import MainLayout from '../layouts/MainLayout.vue'
-import AdminProperties from '../views/AdminProperties.vue' // Importación directa
+import LoginView from '../views/LoginView.vue'
+import DashboardView from '../views/DashboardView.vue'
+import UsersView from '../views/UsersView.vue'
+import AdminProperties from '../views/AdminProperties.vue'
+import AgentDashboard from '../views/AgentDashboard.vue'
+import AgentClients from '../views/AgentClients.vue'
+import CalendarView from "../views/CalendarView.vue"
+import ScheduleVisitView from "../views/ScheduleVisitView.vue"
+import PropertiesClientView from "../views/PropertiesClientView.vue"
+import OwnerDashboard from '../views/OwnerDashboard.vue'
+import ClientDashboard from '../views/ClientDashboard.vue'
 
 const routes = [
   {
@@ -29,28 +35,58 @@ const routes = [
         component: DashboardView
       },
       {
-        path: 'agent',
-        name: 'AgentDashboard',
-        component: () => import('../views/AgentDashboard.vue'),
-        meta: { requiresAuth: true, role: 'AGENT' }
-      },
-      {
-        path: 'agent/clients',
-        name: 'AgentClients',
-        component: () => import('../views/AgentClients.vue'),
-        meta: { requiresAuth: true, role: 'AGENT' }
-      },
-      {
         path: 'admin/users',
         name: 'Users',
         component: UsersView,
-        meta: { requiresAuth: true, role: 'ADMIN' }
+        meta: { role: 'ADMIN' }
       },
       {
         path: 'admin/properties',
         name: 'AdminProperties',
-        component: AdminProperties, // Vista de gestión global
-        meta: { requiresAuth: true, role: 'ADMIN' }
+        component: AdminProperties,
+        meta: { role: 'ADMIN' }
+      },
+      {
+        path: 'agent',
+        name: 'AgentDashboard',
+        component: AgentDashboard,
+        meta: { role: 'AGENT' }
+      },
+      {
+        path: 'agent/clients',
+        name: 'AgentClients',
+        component: AgentClients,
+        meta: { role: 'AGENT' }
+      },
+      {
+        path: '/calendar',
+        name: 'Calendar',
+        component: CalendarView,
+        meta: { role: 'AGENT' }
+      },
+      {
+        path: '/schedule-visit',
+        name: 'ScheduleVisit',
+        component: ScheduleVisitView,
+        meta: { role: 'AGENT' }
+      },
+      {
+        path: '/properties',
+        name: 'Properties',
+        component: PropertiesClientView,
+        meta: { role: 'CLIENT' }
+      },
+      {
+        path: 'owner',
+        name: 'OwnerDashboard',
+        component: OwnerDashboard,
+        meta: { role: 'OWNER' }  // ← Already exists, good!
+      },
+      {
+        path: 'client',
+        name: 'ClientDashboard',
+        component: ClientDashboard,
+        meta: { role: 'CLIENT' }
       },
       {
         path: 'admin/audit',
@@ -71,14 +107,21 @@ router.beforeEach((to, _from, next) => {
   const { isAuthenticated, user } = useAuth()
   if (!isAuthenticated.value && to.name !== 'Login') {
     next({ name: 'Login' })
-  } else if (to.meta.requiresGuest && isAuthenticated.value) {
+  } 
+  else if (to.meta.requiresGuest && isAuthenticated.value) {
     next({ name: 'Dashboard' })
-  } else if (to.meta.role) {
+  } 
+  else if (to.meta.role) {
     const roles = user.value?.roles || []
     const userType = user.value?.userType
-    const hasRole = roles.includes(to.meta.role) || (to.meta.role === 'ADMIN' && userType === 'ADMIN')
+    const hasRole = roles.includes(to.meta.role) || 
+                    userType === 'ADMIN' || 
+                    (to.meta.role === 'AGENT' && userType === 'EMPLOYEE') ||
+                    (to.meta.role === 'CLIENT' && userType === 'INTERESTED_CLIENT')
+
     hasRole ? next() : next({ name: 'Dashboard' })
-  } else {
+  } 
+  else {
     next()
   }
 })

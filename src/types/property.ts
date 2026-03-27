@@ -36,3 +36,10 @@ export interface PresignedUrlResponse {
   uploadUrl: string;
   publicUrl: string;
 }
+
+export interface PriceHistory {
+  oldPrice: number;
+  newPrice: number;
+  changedAt: string;
+  changedBy: string;
+}
