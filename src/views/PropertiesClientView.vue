@@ -656,6 +656,10 @@ const myClientName = computed(() => {
   return "";
 });
 
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
+
 // ── Estado principal ──
 const properties = ref<Property[]>([]);
 const loading = ref(false);
@@ -710,6 +714,8 @@ async function loadProperties() {
   loading.value = true;
   error.value = "";
   try {
+    const result = await getAvailableProperties({});
+    console.log("Propiedad ejemplo:", JSON.stringify(result[0], null, 2));
     properties.value = await getAvailableProperties({
       zone: filters.value.zone || undefined,
       minPrice: filters.value.minPrice,
@@ -717,6 +723,12 @@ async function loadProperties() {
       type: filters.value.type || undefined,
     });
     loadAgentNames(properties.value);
+    router.push({
+      query: {
+        ...route.query, // Preserve existing query parameters
+        ...filters.value, // Add or overwrite with new filters
+      },
+    });
   } catch (e: any) {
     error.value = e.message || "No se pudieron cargar las propiedades";
   } finally {
