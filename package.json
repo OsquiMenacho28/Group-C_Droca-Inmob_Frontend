@@ -12,6 +12,7 @@
     "axios": "^1.13.6",
     "flowbite": "^4.0.1",
     "flowbite-vue": "^0.2.3",
+    "sweetalert2": "^11.26.24",
     "vue": "^3.5.30",
     "vue-router": "^4.6.4"
   },

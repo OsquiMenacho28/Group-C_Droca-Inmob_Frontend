@@ -227,7 +227,7 @@
             <img
               v-if="prop.imageUrl"
               :src="prop.imageUrl"
-              :alt="prop.name"
+              :alt="prop.title"
               class="w-full h-full object-cover"
             />
             <svg
@@ -248,7 +248,7 @@
             <span
               class="absolute top-3 left-3 bg-green-500 dark:bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm"
             >
-              Disponible
+              {{ prop.status }}
             </span>
             <!-- Tipo -->
             <span
@@ -261,7 +261,7 @@
           <!-- Info -->
           <div class="p-4">
             <h3 class="font-semibold text-gray-900 dark:text-white truncate">
-              {{ prop.name }}
+              {{ prop.title }}
             </h3>
             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
               📍 {{ prop.address }}
@@ -327,7 +327,7 @@
             <div class="flex items-start justify-between">
               <div>
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">
-                  {{ selectedProperty.name }}
+                  {{ selectedProperty.title }}
                 </h2>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   {{ selectedProperty.address }}
@@ -458,11 +458,14 @@
 
           <!-- Formulario PA2 -->
           <form @submit.prevent="submitVisitRequest" class="space-y-4">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              El * indica que el campo es obligatorio.
+            </p>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label
                   class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
-                  >Tu nombre *</label
+                  >Tu nombre <strong class="text-red-500">*</strong></label
                 >
                 <input
                   v-model="requestForm.clientName"
@@ -483,7 +486,7 @@
               <div>
                 <label
                   class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
-                  >Email *</label
+                  >Email <strong class="text-red-500">*</strong></label
                 >
                 <input
                   v-model="requestForm.clientEmail"
@@ -519,7 +522,8 @@
             <div>
               <label
                 class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1"
-                >Horario preferido *</label
+                >Horario preferido
+                <strong class="text-red-500">*</strong></label
               >
               <input
                 v-model="requestForm.preferredDateTime"
@@ -596,7 +600,7 @@
           </form>
 
           <!-- Éxito -->
-          <div
+          <!-- <div
             v-if="requestSuccess"
             class="mt-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center transition-colors"
           >
@@ -625,7 +629,7 @@
             >
               Cerrar
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
     </Transition>
@@ -633,12 +637,12 @@
 </template>
 
 <script setup lang="ts">
+import Swal from "sweetalert2";
 import { ref, computed, onMounted } from "vue";
 import {
   getAvailableProperties,
   createVisitRequest,
 } from "../services/visitRequestService";
-import { userService } from "../services/userService";
 import type { Property, ClientVisitRequestDTO } from "../types/visitCalendar";
 
 // ── Auth — leer del JWT ──
@@ -691,23 +695,14 @@ const minDatetime = computed(() => {
 
 const agentNames = ref<Record<string, string>>({});
 
-async function loadAgentNames(propList: any[]) {
-  // Extraer IDs únicos de agentes asignados
-  const ids = [
-    ...new Set(propList.map((p) => p.assignedAgentId).filter(Boolean)),
-  ];
-
-  if (ids.length === 0) return;
-
-  try {
-    //TODO: Error 403 forbidden.
-    const users = await userService.getUsers();
-    users.data.forEach((u: any) => {
-      agentNames.value[u.id] = u.fullName || `${u.firstName} ${u.lastName}`;
-    });
-  } catch {
-    // silencioso
-  }
+function loadAgentNames(propList: any[]) {
+  // El nombre del agente viene directamente de la propiedad
+  // No se llama a /users porque el cliente no tiene permiso
+  propList.forEach((p: any) => {
+    if (p.assignedAgentId && p.agentName) {
+      agentNames.value[p.assignedAgentId] = p.agentName;
+    }
+  });
 }
 
 // ── Cargar propiedades ──
@@ -721,7 +716,7 @@ async function loadProperties() {
       maxPrice: filters.value.maxPrice,
       type: filters.value.type || undefined,
     });
-    await loadAgentNames(properties.value);
+    loadAgentNames(properties.value);
   } catch (e: any) {
     error.value = e.message || "No se pudieron cargar las propiedades";
   } finally {
@@ -809,7 +804,14 @@ async function submitVisitRequest() {
       message: requestForm.value.message || undefined,
     };
     await createVisitRequest(dto);
-    requestSuccess.value = true;
+    closeRequestModal();
+    await Swal.fire({
+      icon: "success",
+      title: "¡Solicitud enviada!",
+      text: `El agente ${requestTarget.value?.agentName} ha sido notificado.`,
+      confirmButtonText: "Aceptar",
+      confirmButtonColor: "#2563eb",
+    });
   } catch (e: any) {
     alert("Error al enviar la solicitud: " + e.message);
   } finally {
