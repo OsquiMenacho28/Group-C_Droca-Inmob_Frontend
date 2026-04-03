@@ -5,8 +5,7 @@
 // ============================================================
 
 import { api } from './api'
-import type { Property, PropertyFormPayload, PresignedUrlResponse, AssignAgentPayload } from '../types/property'
-
+import type { Property, PropertyFormPayload, PresignedUrlResponse, AssignAgentPayload, OperationType } from '../types/property'
 export const propertyService = {
   /**
    * Obtiene todas las propiedades (requiere rol ADMIN)
@@ -95,5 +94,10 @@ export const propertyService = {
   async assignOwner(propertyId: string, payload: { ownerId: string }) {
     const response = await api.patch<Property>(`/properties/${propertyId}/assign-owner`, payload);
     return response.data;
-  }
+  },
+  
+  async updateOperationType(propertyId: string, operationType: OperationType) {
+  const response = await api.patch<Property>(`/properties/${propertyId}/operation-type`, { operationType });
+  return response.data;
+},
 }

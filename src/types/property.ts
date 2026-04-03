@@ -1,3 +1,5 @@
+export type OperationType = 'VENTA' | 'ALQUILER' | 'ANTICRETICO';
+
 export interface AssignmentHistory {
   agentId: string;
   assignedAt: string;
@@ -10,17 +12,15 @@ export interface Property {
   address: string;
   price: number;
   type: string;
+  operationType: OperationType; // <-- Nuevo campo
   m2: number;
   rooms: number;
   status: string;
   imageUrls: string[];
   assignedAgentId: string | null;
   assignmentHistory: AssignmentHistory[];
-}
-
-// Asegúrate de tener este export aquí:
-export interface AssignAgentPayload {
-  agentId: string;
+  ownerId?: string;
+  visitCount?: number;
 }
 
 export interface PropertyFormPayload {
@@ -28,8 +28,10 @@ export interface PropertyFormPayload {
   address: string;
   price: number;
   type: string;
+  operationType: OperationType; // <-- Nuevo campo
   m2: number;
   rooms: number;
+  ownerId?: string | null;
 }
 
 export interface PresignedUrlResponse {
@@ -42,4 +44,8 @@ export interface PriceHistory {
   newPrice: number;
   changedAt: string;
   changedBy: string;
+}
+
+export interface AssignAgentPayload {
+  agentId: string;
 }

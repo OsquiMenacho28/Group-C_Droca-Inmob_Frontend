@@ -22,6 +22,7 @@ export async function getAvailableProperties(filters?: {
   minPrice?: number;
   maxPrice?: number;
   type?: string;
+  operationType?: string
 }): Promise<Property[]> {
   const params = new URLSearchParams();
   params.append("status", "DISPONIBLE");
@@ -31,6 +32,7 @@ export async function getAvailableProperties(filters?: {
   if (filters?.maxPrice !== undefined)
     params.append("maxPrice", String(filters.maxPrice));
   if (filters?.type) params.append("type", filters.type);
+  if (filters?.operationType) params.append('operationType', filters.operationType);
   console.log(`URL : http://localhost:8080/properties?${params.toString()}`);
   const response = await api.get(`/properties?${params}`);
   console.log("Respuesta del backend:", response.data);

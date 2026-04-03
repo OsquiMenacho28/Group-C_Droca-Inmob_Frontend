@@ -671,6 +671,7 @@ const filters = ref({
   minPrice: undefined as number | undefined,
   maxPrice: undefined as number | undefined,
   type: "",
+  operationType: ""
 });
 
 // ── Modales ──
@@ -745,6 +746,7 @@ function clearFilters() {
     minPrice: undefined,
     maxPrice: undefined,
     type: "",
+    operationType: ""
   };
   loadProperties();
 }
