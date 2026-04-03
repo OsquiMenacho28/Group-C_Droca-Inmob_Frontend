@@ -728,12 +728,12 @@ const filters = ref({
   // zone: "",
   title: "",
   type: "",
+  operationType: "",
   minPrice: undefined as number | undefined,
   maxPrice: undefined as number | undefined,
   sortBy: "price",
   sortOrder: "ASC",
   page: 0,
-  operationType: ""
 });
 
 // ── Modales ──
@@ -780,6 +780,7 @@ async function loadProperties() {
     const result = await getAvailableProperties({
       title: filters.value.title || undefined,
       type: filters.value.type || undefined,
+      operationType: filters.value.operationType || undefined,
       minPrice: filters.value.minPrice,
       maxPrice: filters.value.maxPrice,
       sortBy: filters.value.sortBy,
@@ -800,6 +801,9 @@ async function loadProperties() {
         status: "DISPONIBLE",
         ...(filters.value.title && { title: filters.value.title }),
         ...(filters.value.type && { type: filters.value.type }),
+        ...(filters.value.operationType && {
+          operationType: filters.value.operationType,
+        }),
         ...(filters.value.minPrice !== undefined && {
           minPrice: String(filters.value.minPrice),
         }),
@@ -828,12 +832,12 @@ function clearFilters() {
   filters.value = {
     title: "",
     type: "",
+    operationType: "",
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
     sortBy: "price",
     sortOrder: "ASC",
     page: 0,
-    operationType: ""
   };
   loadProperties();
 }
