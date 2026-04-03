@@ -733,6 +733,7 @@ const filters = ref({
   sortBy: "price",
   sortOrder: "ASC",
   page: 0,
+  operationType: ""
 });
 
 // ── Modales ──
@@ -832,6 +833,7 @@ function clearFilters() {
     sortBy: "price",
     sortOrder: "ASC",
     page: 0,
+    operationType: ""
   };
   loadProperties();
 }

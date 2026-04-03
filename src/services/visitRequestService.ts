@@ -20,6 +20,7 @@ import type {
 export async function getAvailableProperties(filters?: {
   title?: string;
   type?: string;
+  operationType?: string;
   minPrice?: number;
   maxPrice?: number;
   sortBy?: string;
@@ -35,6 +36,8 @@ export async function getAvailableProperties(filters?: {
   const params = new URLSearchParams({ status: "DISPONIBLE" });
   if (filters?.title) params.append("title", filters.title);
   if (filters?.type) params.append("type", filters.type);
+  if (filters?.operationType)
+    params.append("operationType", filters.operationType);
   if (filters?.minPrice !== undefined)
     params.append("minPrice", String(filters.minPrice));
   if (filters?.maxPrice !== undefined)
