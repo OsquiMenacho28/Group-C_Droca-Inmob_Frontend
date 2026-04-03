@@ -12,7 +12,7 @@ export interface Property {
   address: string;
   price: number;
   type: string;
-  operationType: OperationType; // <-- Nuevo campo
+  operationType: OperationType; 
   m2: number;
   rooms: number;
   status: string;

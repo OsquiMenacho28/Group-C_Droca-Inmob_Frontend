@@ -10,8 +10,8 @@ export const propertyService = {
   /**
    * Obtiene todas las propiedades (requiere rol ADMIN)
    */
-  async getProperties() {
-    const response = await api.get<Property[]>('/properties');
+  async getProperties(filters?: { title?: string; operationType?: string; status?: string; agentId?: string }) {
+    const response = await api.get<Property[]>('/properties', { params: filters });
     return response.data;
   },
 

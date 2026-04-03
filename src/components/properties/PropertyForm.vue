@@ -3,15 +3,16 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <fwb-input v-model="form.title" label="Título" placeholder="Ej: Apto en el centro" required />
       <fwb-input v-model="form.address" label="Dirección Exacta" placeholder="Calle..." required />
-      <fwb-input v-model.number="form.price" type="number" label="Precio ($)" required />
-
+      
       <div>
-        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de Operación</label>
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de Operación *</label>
         <select v-model="form.operationType" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white">
+          <option value="" disabled>Seleccione una opción</option>
           <option value="VENTA">Venta</option>
           <option value="ALQUILER">Alquiler</option>
           <option value="ANTICRETICO">Anticrético</option>
         </select>
+        <p v-if="showValidation && !form.operationType" class="text-red-500 text-xs mt-1">El tipo de operación es obligatorio</p>
       </div>
 
       <div>
@@ -23,6 +24,7 @@
         </select>
       </div>
 
+      <fwb-input v-model.number="form.price" type="number" label="Precio ($)" required />
       <fwb-input v-model.number="form.m2" type="number" label="Superficie (m²)" required />
       <fwb-input v-model.number="form.rooms" type="number" label="Habitaciones" required />
 
@@ -48,17 +50,17 @@
 import { reactive, ref, onMounted } from 'vue'
 import { FwbInput, FwbButton } from 'flowbite-vue'
 import { userService } from '../../services/userService'
-import type { OperationType } from '../../types/property'
 
 const emit = defineEmits(['submit', 'cancel'])
 const owners = ref<any[]>([])
+const showValidation = ref(false)
 
 const form = reactive({
   title: '',
   address: '',
   price: 0,
   type: 'APARTAMENTO',
-  operationType: 'VENTA',
+  operationType: '', // Inicia vacío para PA1
   m2: 0,
   rooms: 0,
   ownerId: ''
@@ -74,11 +76,10 @@ const loadOwners = async () => {
 }
 
 const submit = () => {
-  const payload = {
-    ...form,
-    ownerId: form.ownerId || null
-  }
-  emit('submit', payload)
+  showValidation.value = true
+  if (!form.operationType) return // Detener si falta campo obligatorio
+  
+  emit('submit', { ...form, ownerId: form.ownerId || null })
 }
 
 onMounted(loadOwners)
