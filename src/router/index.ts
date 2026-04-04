@@ -126,4 +126,11 @@ router.beforeEach((to, _from, next) => {
   }
 })
 
+router.onError((error) => {
+  console.error('Router error:', error)
+  if (error.message?.includes('Cannot destructure property')) {
+    window.location.reload()
+  }
+})
+
 export default router

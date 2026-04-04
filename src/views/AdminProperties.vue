@@ -32,16 +32,25 @@
       </div>
     </div>
 
-    <div v-if="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-if="loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+      <p class="mt-2 text-gray-500">Cargando propiedades...</p>
+    </div>
+
+    <div v-else-if="allProperties.length === 0" class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed">
+      <p class="text-gray-500">No se encontraron propiedades</p>
+    </div>
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <fwb-card v-for="p in allProperties" :key="p.id" class="flex flex-col h-full border-gray-200 dark:border-gray-700 relative">
         <div class="absolute top-2 left-2 z-10">
-          <fwb-badge :type="getOpTypeBadge(p.operationType)">{{ p.operationType }}</fwb-badge>
+          <fwb-badge :type="getOpTypeBadge(p.operationType)">{{ p.operationType || 'No definido' }}</fwb-badge>
         </div>
 
         <div class="p-5 flex-1 flex flex-col">
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{ p.title }}</h5>
-          <p class="text-sm text-gray-500 mb-4">{{ p.address }}</p>
-          <p class="text-2xl font-black text-blue-600">${{ p.price.toLocaleString() }}</p>
+          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">{{ p.title || 'Sin título' }}</h5>
+          <p class="text-sm text-gray-500 mb-4">{{ p.address || 'Sin dirección' }}</p>
+          <p class="text-2xl font-black text-blue-600">${{ (p.price || 0).toLocaleString() }}</p>
 
           <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
             <fwb-button size="sm" color="alternative" @click="prepPriceUpdate(p)">Precio</fwb-button>
@@ -53,6 +62,7 @@
       </fwb-card>
     </div>
 
+    <!-- Modales (resto igual) -->
     <fwb-modal v-if="showPriceModal" @close="showPriceModal = false">
       <template #header><div class="text-lg font-bold">Modificar Precio</div></template>
       <template #body>
@@ -135,24 +145,56 @@ const availableOwners = computed(() =>
   allUsers.value.filter(u => u.userType === 'OWNER' && u.status === 'ACTIVE')
 )
 
-// CARGA
+// CARGA - Manejar respuesta paginada correctamente
 const load = async () => {
   loading.value = true
   try {
-    const filters = { title: filterTitle.value || undefined, operationType: filterOpType.value || undefined }
-    const [p, u] = await Promise.all([propertyService.getProperties(filters), userService.getUsers()])
-    allProperties.value = p
-    allUsers.value = u
-  } finally { loading.value = false }
+    const filters: any = {}
+    if (filterTitle.value) filters.title = filterTitle.value
+    if (filterOpType.value) filters.operationType = filterOpType.value
+    
+    const response = await propertyService.getProperties(filters)
+    
+    // Verificar si la respuesta es paginada o array directo
+    if (response && response.data && Array.isArray(response.data)) {
+      allProperties.value = response.data
+    } else if (response && response.data && response.data.data && Array.isArray(response.data.data)) {
+      allProperties.value = response.data.data
+    } else if (Array.isArray(response)) {
+      allProperties.value = response
+    } else {
+      console.error('Formato de respuesta inesperado:', response)
+      allProperties.value = []
+    }
+    
+    // Cargar usuarios solo si es necesario
+    try {
+      const users = await userService.getUsers()
+      allUsers.value = users
+    } catch (userError) {
+      console.error('Error cargando usuarios:', userError)
+      allUsers.value = []
+    }
+  } catch (error) {
+    console.error('Error cargando propiedades:', error)
+    allProperties.value = []
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleFilterDebounce = () => {
-  clearTimeout(debounceTimer); debounceTimer = setTimeout(load, 500)
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(load, 500)
 }
 
-const clearAllFilters = () => { filterTitle.value = ''; filterOpType.value = ''; load() }
+const clearAllFilters = () => { 
+  filterTitle.value = ''; 
+  filterOpType.value = ''; 
+  load() 
+}
 
-// HELPERS (BadgeType manual para evitar error de importación)
+// HELPERS
 const getOpTypeBadge = (type: string): any => {
   if (type === 'VENTA') return 'indigo'
   if (type === 'ALQUILER') return 'green'
@@ -160,47 +202,71 @@ const getOpTypeBadge = (type: string): any => {
   return 'dark'
 }
 
-// FUNCIONES DE PREPARACIÓN (Resuelven error 2339)
+// FUNCIONES DE PREPARACIÓN
 const prepAssignment = (p: Property) => { selectedProp.value = p; showAssignModal.value = true }
 const prepOwnerAssignment = (p: Property) => { selectedProp.value = p; selectedOwnerId.value = p.ownerId || ''; showOwnerModal.value = true }
-const prepPriceUpdate = (p: Property) => { selectedProp.value = p; newPrice.value = p.price; showPriceModal.value = true }
-const prepOpTypeUpdate = (p: Property) => { selectedProp.value = p; newOpType.value = p.operationType; showOpTypeModal.value = true }
+const prepPriceUpdate = (p: Property) => { selectedProp.value = p; newPrice.value = p.price || 0; showPriceModal.value = true }
+const prepOpTypeUpdate = (p: Property) => { selectedProp.value = p; newOpType.value = p.operationType || 'VENTA'; showOpTypeModal.value = true }
 
-// ACCIONES DE GUARDADO (Resuelven error 6133)
+// ACCIONES DE GUARDADO
 const doPriceUpdate = async () => {
   if (!selectedProp.value) return
   try {
     await propertyService.updatePrice(selectedProp.value.id, newPrice.value)
-    showPriceModal.value = false; await load()
-  } catch (e) { alert("Error") }
+    showPriceModal.value = false
+    await load()
+  } catch (e) { 
+    console.error('Error actualizando precio:', e)
+    alert('Error al actualizar el precio') 
+  }
 }
 
 const doAssignOwner = async () => {
   if (!selectedProp.value) return
   try {
     await propertyService.assignOwner(selectedProp.value.id, { ownerId: selectedOwnerId.value })
-    showOwnerModal.value = false; await load()
-  } catch (e) { alert("Error") }
+    showOwnerModal.value = false
+    await load()
+  } catch (e) { 
+    console.error('Error asignando propietario:', e)
+    alert('Error al asignar propietario') 
+  }
 }
 
 const doOpTypeUpdate = async () => {
   if (!selectedProp.value) return
   try {
     await api.patch(`/properties/${selectedProp.value.id}/operation-type`, { operationType: newOpType.value })
-    showOpTypeModal.value = false; await load()
-  } catch (e) { alert("Error") }
+    showOpTypeModal.value = false
+    await load()
+  } catch (e) { 
+    console.error('Error actualizando tipo de operación:', e)
+    alert('Error al actualizar el tipo de operación') 
+  }
 }
 
 const doAssign = async (agentId: string) => {
   if (!selectedProp.value) return
   try {
     await propertyService.assignAgent(selectedProp.value.id, { agentId })
-    showAssignModal.value = false; await load()
-  } catch (e) { alert("Error") }
+    showAssignModal.value = false
+    await load()
+  } catch (e) { 
+    console.error('Error asignando agente:', e)
+    alert('Error al asignar agente') 
+  }
 }
 
 const handleCreate = async (data: any) => {
-  try { await propertyService.createProperty(data); showCreateModal.value = false; await load() } catch (e) { alert("Error") }
+  try { 
+    await propertyService.createProperty(data)
+    showCreateModal.value = false
+    await load()
+    alert('Propiedad registrada con éxito')
+  } catch (e) { 
+    console.error('Error creando propiedad:', e)
+    alert('Error al registrar la propiedad') 
+  }
 }
 
 onMounted(load)

@@ -11,8 +11,24 @@ export const propertyService = {
    * Obtiene todas las propiedades (requiere rol ADMIN)
    */
   async getProperties(filters?: { title?: string; operationType?: string; status?: string; agentId?: string }) {
-    const response = await api.get<Property[]>('/properties', { params: filters });
-    return response.data;
+    try {
+      const response = await api.get('/properties', { params: filters });
+      
+      // Normalizar la respuesta para que siempre sea un array
+      if (response.data && response.data.data && Array.isArray(response.data.data)) {
+        return response.data.data;
+      } else if (Array.isArray(response.data)) {
+        return response.data;
+      } else if (response.data && response.data.content && Array.isArray(response.data.content)) {
+        return response.data.content;
+      } else {
+        console.warn('Formato de respuesta no reconocido:', response.data);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      throw error;
+    }
   },
 
   /**
@@ -99,5 +115,5 @@ export const propertyService = {
   async updateOperationType(propertyId: string, operationType: OperationType) {
   const response = await api.patch<Property>(`/properties/${propertyId}/operation-type`, { operationType });
   return response.data;
-},
+  },
 }
