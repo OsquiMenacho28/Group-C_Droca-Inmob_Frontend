@@ -320,17 +320,31 @@ const closeCreateEditModal = () => {
 const handleCreateEdit = async (data: any) => {
   try {
     if (isEditing.value && editingProperty.value) {
-      if (data.price !== editingProperty.value.price) await propertyService.updatePrice(editingProperty.value.id, data.price)
-      if (data.operationType !== editingProperty.value.operationType) await api.patch(`/properties/${editingProperty.value.id}/operation-type`, { operationType: data.operationType })
+      const updatePayload = {
+        title: data.title,
+        address: data.address,
+        type: data.type,
+        m2: data.m2,
+        rooms: data.rooms,
+        price: data.price,
+        operationType: data.operationType,
+        ownerId: data.ownerId || null
+      };
+      
+      console.log('Actualizando propiedad con payload:', updatePayload);
+      await propertyService.updateProperty(editingProperty.value.id, updatePayload);
+      alert('Propiedad actualizada con éxito');
     } else {
-      await propertyService.createProperty(data)
+      await propertyService.createProperty(data);
+      alert('Inmueble registrado con éxito');
     }
-    closeCreateEditModal()
-    await load()
+    closeCreateEditModal();
+    await load();
   } catch (e: any) {
-    alert('Error: ' + (e.response?.data?.detail || 'Error al procesar'))
+    console.error('Error saving property:', e);
+    alert('Error: ' + (e.response?.data?.detail || e.message || 'Error de conexión'));
   }
-}
+};
 
 const confirmDelete = (property: any) => {
   propertyToDelete.value = property

@@ -274,6 +274,11 @@ export const propertyService = {
     await api.delete(`/documents/${documentId}`);
   },
 
+  async updateProperty(propertyId: string, payload: any) {
+    const response = await api.put(`/properties/${propertyId}`, payload);
+    return response.data;
+  },
+
   async uploadExclusivityContract(propertyId: string, file: File): Promise<DocumentResponse> {
     const { uploadUrl, objectKey } = await this.generateDocumentUploadUrl({
       propertyId,
