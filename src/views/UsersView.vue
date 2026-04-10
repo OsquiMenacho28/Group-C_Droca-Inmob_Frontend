@@ -289,6 +289,18 @@ const closeDetailsModal = () => {
 }
 
 const handleSubmit = async (formData: any) => {
+  // Validación local: no permitir crear o actualizar un propietario con CI duplicado
+  const taxId = formData.taxId?.toString().trim().toLowerCase()
+  if (formData.userType === 'OWNER' && taxId) {
+    const duplicateOwner = users.value.find(user =>
+      user.taxId?.toString().trim().toLowerCase() === taxId &&
+      user.id !== editingUser.value?.id
+    )
+    if (duplicateOwner) {
+      showToast('⚠️ El CI ya está registrado en el sistema. No se puede guardar un propietario duplicado.', 'error')
+      return
+    }
+  }
   try {
     if (isEditing.value && editingUser.value) {
       await update(editingUser.value.id, formData)
