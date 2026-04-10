@@ -2,7 +2,7 @@
 // Consumes the reassignment endpoints from the visit-calendar-service.
 // Uses the shared axios instance (with auth interceptor) from the project.
 
-import { api } from "./api"; // existing axios instance with JWT interceptor + baseURL
+import { api } from "./api";
 import type {
   ReassignmentSolicitation,
   ReassignmentRequest,
@@ -67,16 +67,16 @@ const reassignmentService = {
   },
 
   /**
-   * GET /users?role=AGENT
+   * GET /users?userType=EMPLOYEE
    * Get the list of available agents for the target selector.
-   * Adjust the endpoint to match your user-service implementation.
+   * Filters by EMPLOYEE userType to exclude admins and clients.
    */
   async getAvailableAgents(): Promise<AvailableAgent[]> {
     const { data } = await api.get<AvailableAgent[]>("/users", {
-      params: { role: "AGENT" },
+      params: { userType: "EMPLOYEE" }
     });
     return data;
-  },
+  }
 };
 
 export default reassignmentService;

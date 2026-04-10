@@ -4,25 +4,25 @@
 export type RequestStatus = "PENDING" | "ACCEPTED" | "REJECTED";
 
 export interface ReassignmentRequest {
-  targetAgentId: string;
+  destinationAgentId: string;
   reason: string;
 }
 
 export interface ReassignmentResponseRequest {
-  decision: "ACCEPTED" | "REJECTED";
-  comment?: string;
+  decision: "ACCEPTED" | "REJECTED";  // ← El backend espera "decision"
+  comment?: string;                    // ← El backend espera "comment"
 }
 
 export interface ReassignmentSolicitation {
   id: string;
   visitId: string;
-  requestingAgentId: string;
-  targetAgentId: string;
+  requestingAgentId: string;      // ← CORREGIDO: debe coincidir con el backend
+  destinationAgentId: string;
   reason: string;
   status: RequestStatus;
-  requestDate: string;
-  responseDate?: string;
-  responseComment?: string;
+  requestedAt: string;             // ← CORREGIDO: debe ser "requestedAt"
+  repliedAt?: string;              // ← CORREGIDO: debe ser "repliedAt"
+  commentReply?: string;           // ← CORREGIDO: debe ser "commentReply"
 }
 
 export interface PendingCount {
@@ -35,4 +35,5 @@ export interface AvailableAgent {
   firstName: string;
   lastName: string;
   email: string;
+  userType?: string;
 }

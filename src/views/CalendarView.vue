@@ -448,28 +448,32 @@
               >
             </div>
           </div>
-          <div class="mt-6 flex gap-3">
+          <div class="mt-6 flex gap-3 flex-wrap">
             <button
               @click="selectedEvent = null"
               class="flex-1 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200"
             >
               Cerrar
             </button>
-            <button
-              v-if="
-                selectedEvent?.ownEvent && selectedEvent?.status !== 'CANCELLED'
-              "
-              @click="handleCancel(selectedEvent!)"
-              :disabled="cancelling"
-              class="flex-1 py-2.5 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:opacity-50"
+
+            <template
+              v-if="selectedEvent?.ownEvent && selectedEvent?.status !== 'CANCELLED'"
             >
-              {{ cancelling ? "Procesando..." : "Cancelar Visita" }}
-            </button>
-            <ReassignButton
-              :visit-id="selectedEvent.id"
-              :visit-info="`Inicio: ${selectedEvent?.startTime}, Fin: ${selectedEvent?.endTime}`"
-              @request-sent="onReassignmentRequestSent"
-            />
+              <button
+                @click="handleCancel(selectedEvent!)"
+                :disabled="cancelling"
+                class="flex-1 py-2.5 text-sm font-bold text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:opacity-50"
+              >
+                {{ cancelling ? "Procesando..." : "Cancelar" }}
+              </button>
+
+              <ReassignButton
+                class="flex-1"
+                :visit-id="selectedEvent.id"
+                :visit-info="`${shortTime(selectedEvent.startTime)} - ${selectedEvent.propertyName}`"
+                @request-sent="handleReassignmentSent"
+              />
+            </template>
           </div>
         </div>
       </div>
@@ -698,8 +702,15 @@ async function handleCancel(ev: CalendarEventResponse) {
   }
 }
 
-function onReassignmentRequestSent() {
-  // Optional: refresh the visit detail or show a local message
+/**
+ * Manejador para cuando se envía una solicitud de reasignación
+ * Cierra el modal y refresca el calendario para reflejar los cambios
+ */
+function handleReassignmentSent() {
+  // Cerrar el modal de detalle
+  selectedEvent.value = null;
+  // Recargar el calendario para mostrar el estado actualizado
+  loadCalendar();
 }
 
 // --- EVENTOS DE CIERRE ---

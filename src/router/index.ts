@@ -63,12 +63,9 @@ const routes = [
       },
       {
         path: "/reassignments/inbox",
-        name: "reassignment-inbox",
+        name: "ReassignmentInbox",
         component: ReassignmentInboxView,
-        meta: {
-          role: "AGENT", // Only agents can access the inbox
-          title: "Reassignment Requests",
-        },
+        meta: { role: "AGENT" },
       },
       {
         path: "/calendar",
@@ -92,7 +89,7 @@ const routes = [
         path: "owner",
         name: "OwnerDashboard",
         component: OwnerDashboard,
-        meta: { role: "OWNER" }, // ← Already exists, good!
+        meta: { role: "OWNER" },
       },
       {
         path: "client/favorites",
@@ -113,13 +110,16 @@ const routes = [
         meta: { requiresAuth: true, role: "ADMIN" },
       },
       {
+        path: "operations",
+        name: "Operations",
+        component: () => import("../views/OperationsView.vue"),
+        meta: { role: "AGENT" },
+      },
+      {
         path: "/operations/:id",
-        name: "operation-detail",
+        name: "OperationDetail",
         component: OperationDetailView,
-        meta: {
-          role: "AGENT",
-          title: "Operation Detail",
-        },
+        meta: { role: "AGENT" },
       },
       {
         path: "admin/properties/audit",

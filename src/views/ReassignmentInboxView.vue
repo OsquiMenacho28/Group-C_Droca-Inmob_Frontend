@@ -130,7 +130,7 @@
                   Agent ID: {{ r.requestingAgentId }}
                 </p>
                 <p class="text-xs text-gray-500">
-                  Requested reassignment · {{ formatDate(r.requestDate) }}
+                  Requested reassignment · {{ formatDate(r.requestedAt) }}
                 </p>
               </div>
             </div>
