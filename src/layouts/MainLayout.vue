@@ -185,7 +185,20 @@
                 d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
               />
             </svg>
-            Reasignaciones
+            Solicitudes Recibidas
+            <NotificationBadge />
+          </router-link>
+
+          <router-link
+            v-if="isAgent"
+            to="/reassignments/sent"
+            class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+            active-class="bg-blue-50 text-blue-700 font-medium"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            Mis Solicitudes Enviadas
             <NotificationBadge />
           </router-link>
 

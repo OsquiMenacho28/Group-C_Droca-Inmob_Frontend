@@ -16,6 +16,7 @@ import ClientDashboard from "../views/ClientDashboard.vue";
 import ReassignmentInboxView from "../views/ReassignmentInboxView.vue";
 import OperationDetailView from "../views/OperationDetailView.vue";
 import PropertyAuditView from "../views/PropertyAuditView.vue";
+import SentRequestsView from '../views/SentRequestsView.vue';
 
 const routes = [
   {
@@ -133,7 +134,13 @@ const routes = [
         name: "PropertyAudit",
         component: PropertyAuditView,
         meta: { requiresAuth: true, role: "ADMIN" }
-      }
+      },
+      {
+        path: "/reassignments/sent",  // ← Sin barra inicial, es relativa al MainLayout
+        name: "SentRequests",
+        component: SentRequestsView,
+        meta: { role: "AGENT" },
+      },
     ],
   },
 ];
