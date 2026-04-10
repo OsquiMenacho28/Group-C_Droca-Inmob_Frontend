@@ -76,7 +76,7 @@
             {{ log.personName }}
           </p>
           <p class="text-xs text-gray-500 dark:text-gray-400">
-            Por: <span class="font-mono text-gray-700 dark:text-gray-300">{{ log.changedBy }}</span>
+            Por: <span class="font-mono text-gray-700 dark:text-gray-300">{{ getChangedByLabel(log) }}</span>
           </p>
           <p v-if="log.action === 'BAJA'" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
             Motivo: <span class="font-mono text-gray-700 dark:text-gray-300">{{ getBajaReason(log) || 'No especificado' }}</span>
@@ -115,9 +115,10 @@ const filterAction = ref('')
 
 const filteredLogs = computed(() => {
   return logs.value.filter(log => {
+    const changedBy = (log.changedBy || '').toString().toLowerCase()
     const matchesSearch = !search.value.trim() ||
       log.personName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      log.changedBy?.toLowerCase().includes(search.value.toLowerCase())
+      changedBy.includes(search.value.toLowerCase())
     const matchesAction = !filterAction.value || log.action === filterAction.value
     return matchesSearch && matchesAction
   })
@@ -143,6 +144,11 @@ const personTypeLabel = (type: string) => {
 
 const getBajaReason = (log: any) => {
   return log.changes?.find((change: any) => change.field === 'motivoBaja')?.newValue
+}
+
+const getChangedByLabel = (log: any) => {
+  const value = (log?.changedBy || '').toString().trim()
+  return value || 'Usuario no identificado'
 }
 
 onMounted(async () => {
