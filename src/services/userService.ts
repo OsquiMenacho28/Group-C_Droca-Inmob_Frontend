@@ -31,7 +31,11 @@ export const userService = {
       hireDate: payload.hireDate,
       taxId: payload.taxId,
       preferredContactMethod: payload.preferredContactMethod,
-      budget: payload.budget
+      budget: payload.budget,
+      preferredZone: payload.preferredZone,
+      preferredPropertyType: payload.preferredPropertyType,
+      preferredRooms: payload.preferredRooms,
+      assignedAgentId: payload.assignedAgentId
     }
     
     // Solo agregar assignedAgentId si se proporcionó
