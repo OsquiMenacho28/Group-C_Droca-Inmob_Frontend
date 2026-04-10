@@ -76,7 +76,15 @@ const reassignmentService = {
       params: { userType: "EMPLOYEE" }
     });
     return data;
-  }
+  },
+
+  // GET /api/reassignments/sent → Solicitudes enviadas por el agente autenticado
+  async getSentRequests(): Promise<ReassignmentSolicitation[]> {
+      const { data } = await api.get<ReassignmentSolicitation[]>(
+          `${BASE}/reassignments/sent`,
+      );
+      return data;
+  },
 };
 
 export default reassignmentService;

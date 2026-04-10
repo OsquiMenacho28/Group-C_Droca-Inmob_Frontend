@@ -21,6 +21,22 @@ export function useReassignment() {
   // ── Computed ──────────────────────────────────────────────────────────────
   const hasPending = computed(() => pendingCount.value > 0);
 
+  // Añadir al estado
+  const sentRequests = ref<ReassignmentSolicitation[]>([]);
+
+    // Añadir método
+  async function loadSentRequests() {
+      loading.value = true;
+      error.value = null;
+      try {
+          sentRequests.value = await reassignmentService.getSentRequests();
+      } catch (e: any) {
+          error.value = e?.response?.data?.error ?? "Failed to load sent reassignment requests.";
+      } finally {
+          loading.value = false;
+      }
+  }
+  // Retornar también sentRequests y loadSentRequests
   // ── Methods ───────────────────────────────────────────────────────────────
 
   /**
