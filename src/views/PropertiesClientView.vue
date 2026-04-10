@@ -77,7 +77,7 @@
               <option value="">Todos</option>
               <option value="CASA">Casa</option>
               <option value="APARTAMENTO">Apartamento</option>
-              <option value="COMERCIAL">Local Comercial</option>
+              <option value="LOCAL">Local Comercial</option>
             </select>
           </div>
 
