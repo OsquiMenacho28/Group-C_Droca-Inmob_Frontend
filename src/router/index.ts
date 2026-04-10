@@ -14,6 +14,7 @@ import OwnerDashboard from "../views/OwnerDashboard.vue";
 import ClientDashboard from "../views/ClientDashboard.vue";
 import ReassignmentInboxView from "../views/ReassignmentInboxView.vue";
 import OperationDetailView from "../views/OperationDetailView.vue";
+import PropertyAuditView from "../views/PropertyAuditView.vue";
 
 const routes = [
   {
@@ -120,6 +121,12 @@ const routes = [
           title: "Operation Detail",
         },
       },
+      {
+        path: "admin/properties/audit",
+        name: "PropertyAudit",
+        component: PropertyAuditView,
+        meta: { requiresAuth: true, role: "ADMIN" }
+      }
     ],
   },
 ];
