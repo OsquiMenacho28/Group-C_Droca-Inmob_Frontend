@@ -8,18 +8,6 @@ const users = ref<any[]>([])
 const roles = ref<any[]>([])
 
 export function useUsers() {
-  const resolvePersonId = async (authUserId: string): Promise<string | undefined> => {
-    const localUser = users.value.find(u => u.id === authUserId)
-    if (localUser?.profileInternalId) return localUser.profileInternalId
-
-    try {
-      const profile = await personService.getPersonByAuthUserId(authUserId)
-      return profile?.id
-    } catch {
-      return undefined
-    }
-  }
-
   const load = async () => {
     try {
       const baseUsers = await userService.getUsers()
@@ -64,17 +52,7 @@ export function useUsers() {
 
   const deactivate = async (id: string) => {
     try {
-      const targetUser = users.value.find(u => u.id === id)
       await userService.deactivateUser(id)
-
-      // El endpoint de BAJA solo aplica para clientes interesados.
-      if (targetUser?.userType === 'INTERESTED_CLIENT') {
-        const personId = await resolvePersonId(id)
-        if (!personId) {
-          throw new Error('No se pudo resolver el perfil de persona para registrar la desactivación en auditoría')
-        }
-        await userService.darDeBaja(personId, 'Desactivado desde panel de administración')
-      }
 
       const idx = users.value.findIndex(u => u.id === id)
       if (idx !== -1) {

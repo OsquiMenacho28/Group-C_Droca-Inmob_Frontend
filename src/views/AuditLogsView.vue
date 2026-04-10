@@ -3,17 +3,9 @@
     <div class="flex justify-between items-center">
       <div>
         <h1 class="text-3xl font-bold dark:text-white">Tablero de Auditoría</h1>
-        <p class="text-gray-500 text-sm">Historial de creaciones, ediciones y bajas/desactivaciones de perfiles</p>
+        <p class="text-gray-500 text-sm">Historial de creaciones, ediciones, desactivaciones, reactivaciones y bajas</p>
       </div>
-      <div class="flex gap-2">
-        <fwb-button @click="loadLogs" color="alternative" size="sm">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          Actualizar
-        </fwb-button>
-        <fwb-badge type="indigo">Admin Mode</fwb-badge>
-      </div>
+      <fwb-badge type="indigo">Admin Mode</fwb-badge>
     </div>
 
     <!-- Filtros -->
@@ -36,7 +28,10 @@
           <option value="">Todas las acciones</option>
           <option value="CREATED">Creaciones</option>
           <option value="UPDATED">Ediciones</option>
-          <option value="BAJA">Bajas / Desactivaciones</option>
+          <option value="DEACTIVATE">Desactivaciones</option>
+          <option value="REACTIVATE">Reactivaciones</option>
+          <option value="DELETE">Eliminaciones</option>
+          <option value="BAJA">Bajas</option>
         </select>
       </div>
     </div>
@@ -56,9 +51,13 @@
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
                 : log.action === 'UPDATED'
                   ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
-                  : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300'
+                  : log.action === 'DEACTIVATE' || log.action === 'BAJA'
+                    ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300'
+                    : log.action === 'REACTIVATE'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
             ]">
-              {{ log.action === 'CREATED' ? 'Creación' : log.action === 'UPDATED' ? 'Edición' : 'Baja' }}
+              {{ actionLabel(log.action) }}
             </span>
             <!-- Tipo de persona -->
             <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
@@ -78,13 +77,13 @@
           <p class="text-xs text-gray-500 dark:text-gray-400">
             Por: <span class="font-mono text-gray-700 dark:text-gray-300">{{ getChangedByLabel(log) }}</span>
           </p>
-          <p v-if="log.action === 'BAJA'" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Motivo: <span class="font-mono text-gray-700 dark:text-gray-300">{{ getBajaReason(log) || 'No especificado' }}</span>
+          <p v-if="log.action === 'DEACTIVATE' || log.action === 'BAJA'" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Motivo: <span class="font-mono text-gray-700 dark:text-gray-300">{{ getBajaReason(log) || log.details || 'No especificado' }}</span>
           </p>
         </div>
 
-        <!-- Campos modificados -->
-        <div v-if="log.changes?.length" class="mt-3 space-y-1">
+        <!-- Campos modificados (solo UPDATED) -->
+        <div v-if="log.action === 'UPDATED' && log.changes?.length" class="mt-3 space-y-1">
           <div v-for="change in log.changes" :key="change.field"
             class="flex items-center gap-2 text-xs bg-gray-50 dark:bg-gray-900/50 rounded p-2">
             <span class="font-medium text-gray-600 dark:text-gray-400 w-32 shrink-0">{{ change.field }}</span>
@@ -105,7 +104,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { FwbBadge, FwbButton } from 'flowbite-vue'
+import { FwbBadge } from 'flowbite-vue'
 import { auditService } from '../services/auditService'
 
 const logs = ref<any[]>([])
@@ -115,10 +114,9 @@ const filterAction = ref('')
 
 const filteredLogs = computed(() => {
   return logs.value.filter(log => {
-    const changedBy = (log.changedBy || '').toString().toLowerCase()
     const matchesSearch = !search.value.trim() ||
       log.personName?.toLowerCase().includes(search.value.toLowerCase()) ||
-      changedBy.includes(search.value.toLowerCase())
+      log.changedBy?.toLowerCase().includes(search.value.toLowerCase())
     const matchesAction = !filterAction.value || log.action === filterAction.value
     return matchesSearch && matchesAction
   })
@@ -137,13 +135,23 @@ const personTypeLabel = (type: string) => {
     ADMIN: 'Admin',
     EMPLOYEE: 'Agente',
     OWNER: 'Propietario',
-    INTERESTED_CLIENT: 'Cliente'
+    INTERESTED_CLIENT: 'Cliente',
+    USER: 'Usuario'
   }
   return map[type] || type
 }
 
-const getBajaReason = (log: any) => {
-  return log.changes?.find((change: any) => change.field === 'motivoBaja')?.newValue
+const actionLabel = (action: string) => {
+  const map: Record<string, string> = {
+    CREATED: 'Creación',
+    UPDATED: 'Edición',
+    DEACTIVATE: 'Desactivación',
+    REACTIVATE: 'Reactivación',
+    DELETE: 'Eliminación',
+    BAJA: 'Baja',
+    ROLE_ASSIGN: 'Asignación de rol'
+  }
+  return map[action] || action
 }
 
 const getChangedByLabel = (log: any) => {
@@ -151,11 +159,11 @@ const getChangedByLabel = (log: any) => {
   return value || 'Usuario no identificado'
 }
 
-onMounted(async () => {
-  await loadLogs()
-})
+const getBajaReason = (log: any) => {
+  return log.changes?.find((change: any) => change.field === 'motivoBaja')?.newValue
+}
 
-const loadLogs = async () => {
+onMounted(async () => {
   loading.value = true
   try {
     logs.value = await auditService.getLogs()
@@ -164,5 +172,5 @@ const loadLogs = async () => {
   } finally {
     loading.value = false
   }
-}
+})
 </script>
