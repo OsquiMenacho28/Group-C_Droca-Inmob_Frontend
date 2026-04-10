@@ -13,6 +13,7 @@ import PropertiesClientView from "../views/PropertiesClientView.vue";
 import OwnerDashboard from "../views/OwnerDashboard.vue";
 import ClientDashboard from "../views/ClientDashboard.vue";
 import ReassignmentInboxView from "../views/ReassignmentInboxView.vue";
+import OperationDetailView from "../views/OperationDetailView.vue";
 
 const routes = [
   {
@@ -109,6 +110,15 @@ const routes = [
         name: "AuditLogs",
         component: () => import("../views/AuditLogsView.vue"),
         meta: { requiresAuth: true, role: "ADMIN" },
+      },
+      {
+        path: "/operations/:id",
+        name: "operation-detail",
+        component: OperationDetailView,
+        meta: {
+          role: "AGENT",
+          title: "Operation Detail",
+        },
       },
     ],
   },
