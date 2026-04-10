@@ -140,6 +140,7 @@
             }"
           >
             Calendario
+            <VisitRequestNotificationBadge v-if="isAgent" />
           </router-link>
 
           <router-link
@@ -279,6 +280,7 @@ import {
   FwbListGroup,
 } from "flowbite-vue";
 import NotificationBadge from "../components/visits/reassignment/NotificationBadge.vue";
+import VisitRequestNotificationBadge from "../components/visits/requests/VisitRequestNotificationBadge.vue";
 import { useAuth } from "../composables/useAuth";
 import { t } from "../locales/i18n";
 import ThemeToggle from "../components/ThemeToggle.vue";

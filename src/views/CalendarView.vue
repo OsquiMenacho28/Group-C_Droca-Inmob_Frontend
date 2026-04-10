@@ -61,6 +61,73 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
+      <div
+        v-if="pendingRequests.length > 0"
+        class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 shadow-sm"
+      >
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-amber-900 dark:text-amber-200">
+              Solicitudes de visita pendientes
+            </h2>
+            <p class="text-xs text-amber-700 dark:text-amber-300">
+              Tienes {{ pendingRequests.length }} solicitud{{ pendingRequests.length !== 1 ? 'es' : '' }} nueva{{ pendingRequests.length !== 1 ? 's' : '' }} de clientes.
+            </p>
+          </div>
+          <button
+            @click="loadPendingRequests"
+            class="text-xs font-semibold text-amber-700 dark:text-amber-300 hover:underline"
+          >
+            Actualizar
+          </button>
+        </div>
+
+        <div class="space-y-3">
+          <div
+            v-for="request in pendingRequests.slice(0, 5)"
+            :key="request.id"
+            class="bg-white dark:bg-gray-800 border border-amber-100 dark:border-gray-700 rounded-lg p-3"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                  {{ request.propertyName }}
+                </p>
+                <p class="text-xs text-gray-600 dark:text-gray-300">
+                  Cliente: {{ request.clientName }}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ formatPendingDate(request.preferredDateTime) }}
+                </p>
+                <p v-if="request.message" class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                  {{ request.message }}
+                </p>
+              </div>
+              <span class="shrink-0 px-2 py-1 text-[10px] font-bold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300">
+                Pendiente
+              </span>
+            </div>
+
+            <div class="flex gap-2 mt-3">
+              <button
+                @click="handleAcceptRequest(request.id)"
+                :disabled="requestActionLoadingId === request.id"
+                class="px-3 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {{ requestActionLoadingId === request.id ? 'Procesando...' : 'Aceptar' }}
+              </button>
+              <button
+                @click="handleRejectRequest(request.id)"
+                :disabled="requestActionLoadingId === request.id"
+                class="px-3 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50"
+              >
+                Rechazar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== SECCIÓN DE FILTROS (DROPDOWNS BUSCABLES) ===== -->
       <div
         class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors shadow-sm"
@@ -490,7 +557,13 @@ import { useAuth } from "../composables/useAuth";
 import type {
   CalendarResponse,
   CalendarEventResponse,
+  VisitRequestResponse,
 } from "../types/visitCalendar";
+import {
+  getPendingRequestsForAgent,
+  acceptVisitRequest,
+  rejectVisitRequest,
+} from "../services/visitRequestService";
 import ReassignButton from "../components/visits/reassignment/ReassignButton.vue";
 
 // --- AUTH & CONFIG ---
@@ -504,6 +577,9 @@ const calendarData = ref<CalendarResponse | null>(null);
 const selectedEvent = ref<CalendarEventResponse | null>(null);
 const cancelling = ref(false);
 const currentWeekStart = ref(getMonday(new Date()));
+const pendingRequests = ref<VisitRequestResponse[]>([])
+const requestActionLoadingId = ref("")
+let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null
 
 // --- ESTADOS FILTROS (DROPDOWNS) ---
 const allProperties = ref<any[]>([]);
@@ -575,6 +651,20 @@ async function loadCalendar() {
   }
 }
 
+async function loadPendingRequests() {
+  if (!myAgentId.value) {
+    pendingRequests.value = []
+    return
+  }
+
+  try {
+    const requests = await getPendingRequestsForAgent(myAgentId.value)
+    pendingRequests.value = requests.filter(request => request.status === 'PENDING')
+  } catch (e) {
+    console.error('No se pudieron cargar las solicitudes pendientes:', e)
+  }
+}
+
 // --- FILTRADO LOCAL ---
 const filteredProperties = computed(() => {
   const s = searchTermProperty.value.toLowerCase();
@@ -639,6 +729,15 @@ const teamEvents = computed(
 const uniqueProperties = computed(
   () => new Set(calendarData.value?.events.map((e) => e.propertyId)).size,
 );
+
+const formatPendingDate = (iso: string) =>
+  new Date(iso).toLocaleString("es-BO", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 
 function eventCardClass(ev: CalendarEventResponse) {
   if (ev.status === "CANCELLED")
@@ -713,6 +812,34 @@ function handleReassignmentSent() {
   loadCalendar();
 }
 
+async function handleAcceptRequest(requestId: string) {
+  if (!myAgentId.value) return
+
+  requestActionLoadingId.value = requestId
+  try {
+    await acceptVisitRequest(requestId, myAgentId.value)
+    await Promise.all([loadPendingRequests(), loadCalendar()])
+  } catch (e: any) {
+    alert(e?.response?.data?.message || e?.message || 'No se pudo aceptar la solicitud')
+  } finally {
+    requestActionLoadingId.value = ""
+  }
+}
+
+async function handleRejectRequest(requestId: string) {
+  if (!myAgentId.value) return
+
+  requestActionLoadingId.value = requestId
+  try {
+    await rejectVisitRequest(requestId, myAgentId.value)
+    await loadPendingRequests()
+  } catch (e: any) {
+    alert(e?.response?.data?.message || e?.message || 'No se pudo rechazar la solicitud')
+  } finally {
+    requestActionLoadingId.value = ""
+  }
+}
+
 // --- EVENTOS DE CIERRE ---
 const closeClickOutside = (e: any) => {
   if (!e.target.closest("#prop-filter-container"))
@@ -724,9 +851,14 @@ const closeClickOutside = (e: any) => {
 onMounted(() => {
   loadFilterData();
   loadCalendar();
+  loadPendingRequests();
   window.addEventListener("click", closeClickOutside);
+  pendingRequestsIntervalId = setInterval(loadPendingRequests, 30_000)
 });
-onUnmounted(() => window.removeEventListener("click", closeClickOutside));
+onUnmounted(() => {
+  window.removeEventListener("click", closeClickOutside)
+  if (pendingRequestsIntervalId) clearInterval(pendingRequestsIntervalId)
+});
 </script>
 
 <style scoped>
