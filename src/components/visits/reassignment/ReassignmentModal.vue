@@ -8,7 +8,7 @@
     <Transition name="fade">
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+        class="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
         @click.self="$emit('update:modelValue', false)"
       >
         <div
@@ -122,7 +122,7 @@
                   :key="agent.id"
                   class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
                   :class="
-                    form.targetAgentId === agent.id
+                    form.destinationAgentId === agent.id
                       ? 'border-blue-500 bg-blue-50'
                       : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
                   "
@@ -130,14 +130,14 @@
                   <input
                     type="radio"
                     :value="agent.id"
-                    v-model="form.targetAgentId"
+                    v-model="form.destinationAgentId"
                     class="sr-only"
                   />
                   <!-- Initials avatar -->
                   <div
                     class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
                     :class="
-                      form.targetAgentId === agent.id
+                      form.destinationAgentId === agent.id
                         ? 'bg-blue-600'
                         : 'bg-gray-400'
                     "
@@ -154,7 +154,7 @@
                     </p>
                   </div>
                   <div
-                    v-if="form.targetAgentId === agent.id"
+                    v-if="form.destinationAgentId === agent.id"
                     class="text-blue-500"
                   >
                     <svg
@@ -179,8 +179,8 @@
                 </p>
               </div>
 
-              <p v-if="errors.targetAgentId" class="text-red-500 text-xs mt-1">
-                {{ errors.targetAgentId }}
+              <p v-if="errors.destinationAgentId" class="text-red-500 text-xs mt-1">
+                {{ errors.destinationAgentId }}
               </p>
             </div>
 
@@ -258,14 +258,14 @@ import reassignmentService from "../../../services/reassignmentService";
 
 // ── Props & Emits ─────────────────────────────────────────────────────────
 const props = defineProps<{
-  modelValue: boolean; // v-model: controls visibility
-  visitId: string; // ID of the visit to reassign
-  visitInfo?: string; // Human-readable label (e.g. "Jun 15 2025 10:00")
+  modelValue: boolean;
+  visitId: string;
+  visitInfo?: string;
 }>();
 
 const emit = defineEmits<{
   (e: "update:modelValue", val: boolean): void;
-  (e: "requestSent"): void; // Emitted on successful submission
+  (e: "requestSent"): void;
 }>();
 
 // ── Local state ───────────────────────────────────────────────────────────
@@ -275,12 +275,12 @@ const loading = ref(false);
 const errorMsg = ref<string | null>(null);
 
 const form = reactive({
-  targetAgentId: "",
+  destinationAgentId: "", // ← Cambiado de targetAgentId
   reason: "",
 });
 
 const errors = reactive({
-  targetAgentId: "",
+  destinationAgentId: "", // ← Cambiado de targetAgentId
   reason: "",
 });
 
@@ -308,12 +308,12 @@ async function fetchAgents() {
 }
 
 function validate(): boolean {
-  errors.targetAgentId = "";
+  errors.destinationAgentId = "";
   errors.reason = "";
   let valid = true;
 
-  if (!form.targetAgentId) {
-    errors.targetAgentId = "You must select a target colleague.";
+  if (!form.destinationAgentId) {
+    errors.destinationAgentId = "You must select a target colleague.";
     valid = false;
   }
   if (!form.reason.trim() || form.reason.trim().length < 10) {
@@ -333,7 +333,7 @@ async function handleSubmit() {
   errorMsg.value = null;
   try {
     await reassignmentService.requestReassignment(props.visitId, {
-      targetAgentId: form.targetAgentId,
+      destinationAgentId: form.destinationAgentId, // ← Cambiado de targetAgentId
       reason: form.reason.trim(),
     });
     emit("requestSent");
@@ -348,9 +348,9 @@ async function handleSubmit() {
 }
 
 function resetForm() {
-  form.targetAgentId = "";
+  form.destinationAgentId = "";
   form.reason = "";
-  errors.targetAgentId = "";
+  errors.destinationAgentId = "";
   errors.reason = "";
   errorMsg.value = null;
   agents.value = [];

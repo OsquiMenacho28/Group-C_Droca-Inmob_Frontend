@@ -17,21 +17,17 @@ export const api = axios.create({
   }
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-      // Add X-Auth-User-Id header if token exists
-      const decoded = parseJwt(token);
-      if (decoded?.sub || decoded?.userId) {
-        config.headers['X-Auth-User-Id'] = decoded.sub || decoded.userId;
-      }
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+    const decoded = parseJwt(token);
+    if (decoded?.sub || decoded?.userId) {
+      config.headers['X-Auth-User-Id'] = decoded.sub || decoded.userId;
     }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  }
+  return config;
+});
 
 api.interceptors.response.use(
   (response) => response,
