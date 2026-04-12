@@ -1,9 +1,3 @@
-// ============================================================
-//  src/services/calendarService.ts
-//  Llamadas a la API del visit-calendar-service.
-//  HU1: calendario compartido | HU2: programar visita
-// ============================================================
-
 import { api } from './api';
 
 import type {
@@ -13,19 +7,6 @@ import type {
   CreateVisitRequest,
 } from '@/types/visitCalendar';
 
-// ---------------------------------------------------------------
-//  HU1: GET /api/calendar
-//  Visualizar el calendario compartido del equipo
-// ---------------------------------------------------------------
-
-/**
- * Obtiene el calendario del equipo en un rango de fechas.
- * @param from         - inicio del rango (ISO string)
- * @param to           - fin del rango (ISO string)
- * @param agentId      - filtro opcional por agente
- * @param propertyId   - filtro opcional por propiedad (HU1 PA3)
- * @param myAgentId    - ID del agente autenticado (para marcar ownEvent, HU1 PA1)
- */
 export async function getCalendar(
   from: string,
   to: string,
@@ -43,14 +24,6 @@ export async function getCalendar(
   return response.data.data;
 }
 
-// ---------------------------------------------------------------
-//  HU2: Programar visita
-// ---------------------------------------------------------------
-
-/**
- * Verifica si hay conflicto de horario ANTES de crear el evento.
- * Permite alertar al usuario sin guardar nada (HU2 PA2 + HU1 PA2).
- */
 export async function checkConflict(
   propertyId: string,
   startTime: string,
@@ -61,11 +34,6 @@ export async function checkConflict(
   return response.data.data;
 }
 
-/**
- * Crea una visita en el calendario.
- * Lanza error si hay conflicto de horario (409 Conflict del backend).
- * La visita aparece automáticamente en el calendario compartido (HU2 PA1).
- */
 export async function createVisit(
   data: CreateVisitRequest,
   agentId: string
@@ -76,11 +44,6 @@ export async function createVisit(
   return response.data.data;
 }
 
-/**
- * Obtiene la agenda del día de un agente (HU2 PA3).
- * @param agentId - ID del agente
- * @param day     - cualquier datetime del día a consultar (ISO string)
- */
 export async function getDayAgenda(
   agentId: string,
   day: string
@@ -92,9 +55,6 @@ export async function getDayAgenda(
   return response.data.data;
 }
 
-/**
- * Cancela una visita (solo el agente dueño puede cancelar la suya).
- */
 export async function cancelVisit(
   visitId: string,
   agentId: string
@@ -109,11 +69,6 @@ export async function cancelVisit(
   return response.data.data;
 }
 
-// ---------------------------------------------------------------
-//  Helpers de fecha para el calendario visual
-// ---------------------------------------------------------------
-
-/** Devuelve el inicio y fin de la semana que contiene la fecha dada */
 export function getWeekRange(date: Date): { from: string; to: string } {
   const day = date.getDay();
   const diffToMonday = day === 0 ? -6 : 1 - day;
@@ -131,7 +86,6 @@ export function getWeekRange(date: Date): { from: string; to: string } {
   };
 }
 
-/** Formatea un datetime ISO a "Lun 2 Jun, 10:00" */
 export function formatEventTime(iso: string): string {
   return new Date(iso).toLocaleString('es-BO', {
     weekday: 'short',
@@ -142,12 +96,10 @@ export function formatEventTime(iso: string): string {
   });
 }
 
-/** Convierte un ISO string a input[type=datetime-local] value */
 export function isoToDatetimeLocal(iso: string): string {
   return iso.slice(0, 16);
 }
 
-/** Convierte un input[type=datetime-local] value a ISO string */
 export function datetimeLocalToIso(val: string): string {
   return new Date(val).toISOString();
 }

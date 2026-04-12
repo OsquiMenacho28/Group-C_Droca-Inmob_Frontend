@@ -1,24 +1,9 @@
-// src/services/receiptService.ts
-// Consumes the receipt endpoints from the operation-service (port 8086).
-// Uses the project's shared axios instance with the JWT auth interceptor.
-
-import { api } from './api'; // existing axios instance with baseURL + JWT interceptor
+import { api } from './api';
 import type { Receipt, ReceiptUploadPayload } from '@/types/receipt';
 
 const BASE = '/api/operations';
 
 const receiptService = {
-  /**
-   * POST /api/operations/{operationId}/receipts
-   *
-   * Sends the file and metadata as multipart/form-data.
-   * Progress tracking is supported via the onUploadProgress callback.
-   *
-   * @param operationId   Target operation
-   * @param file          The PDF / image file to upload
-   * @param payload       amount, currency, paymentDate, concept
-   * @param onProgress    Optional callback receiving upload percentage (0–100)
-   */
   async attachReceipt(
     operationId: string,
     file: File,
@@ -50,12 +35,6 @@ const receiptService = {
     return data;
   },
 
-  /**
-   * GET /api/operations/{operationId}/receipts
-   *
-   * Returns all receipts for the given operation,
-   * each containing a pre-signed MinIO download URL.
-   */
   async listReceipts(operationId: string): Promise<Receipt[]> {
     const { data } = await api.get<Receipt[]>(
       `${BASE}/${operationId}/receipts`
@@ -63,11 +42,6 @@ const receiptService = {
     return data;
   },
 
-  /**
-   * DELETE /api/operations/{operationId}/receipts/{receiptId}
-   *
-   * Deletes the receipt document and removes the file from MinIO.
-   */
   async deleteReceipt(operationId: string, receiptId: string): Promise<void> {
     await api.delete(`${BASE}/${operationId}/receipts/${receiptId}`);
   },

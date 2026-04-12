@@ -1,9 +1,4 @@
 <template>
-  <!--
-    ReassignmentModal.vue
-    Modal allowing the agent to select a target colleague and enter a reason
-    for the reassignment. Triggered from the visit detail view.
-  -->
   <Teleport to="body">
     <Transition name="fade">
       <div
@@ -14,7 +9,6 @@
         <div
           class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
         >
-          <!-- Header -->
           <div
             class="bg-linear-to-r from-blue-600 to-blue-800 px-6 py-5 flex items-center justify-between"
           >
@@ -37,9 +31,7 @@
             </button>
           </div>
 
-          <!-- Body -->
           <div class="px-6 py-6 space-y-5">
-            <!-- General error -->
             <div
               v-if="errorMsg"
               class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm"
@@ -48,13 +40,11 @@
               {{ errorMsg }}
             </div>
 
-            <!-- Target agent selector -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 Select target colleague <span class="text-red-500">*</span>
               </label>
 
-              <!-- Loading state -->
               <div
                 v-if="loadingAgents"
                 class="flex items-center gap-2 text-gray-500 text-sm py-2"
@@ -63,7 +53,6 @@
                 Loading agents...
               </div>
 
-              <!-- Agent list -->
               <div v-else class="space-y-2 max-h-48 overflow-y-auto pr-1">
                 <label
                   v-for="agent in agents"
@@ -81,7 +70,6 @@
                     v-model="form.destinationAgentId"
                     class="sr-only"
                   />
-                  <!-- Initials avatar -->
                   <div
                     class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0"
                     :class="
@@ -125,7 +113,6 @@
               </p>
             </div>
 
-            <!-- Reason field -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 Reason for reassignment <span class="text-red-500">*</span>
@@ -150,7 +137,6 @@
             </div>
           </div>
 
-          <!-- Footer -->
           <div class="px-6 pb-6 flex gap-3 justify-end">
             <button
               @click="$emit('update:modelValue', false)"
@@ -183,7 +169,6 @@ import IconLucideAlertCircle from '~icons/lucide/alert-circle';
 import IconLucideCircleCheck from '~icons/lucide/circle-check';
 import IconLucideLoader from '~icons/lucide/loader';
 
-// ── Props & Emits ─────────────────────────────────────────────────────────
 const props = defineProps<{
   modelValue: boolean;
   visitId: string;
@@ -195,23 +180,21 @@ const emit = defineEmits<{
   (e: 'requestSent'): void;
 }>();
 
-// ── Local state ───────────────────────────────────────────────────────────
 const agents = ref<AvailableAgent[]>([]);
 const loadingAgents = ref(false);
 const loading = ref(false);
 const errorMsg = ref<string | null>(null);
 
 const form = reactive({
-  destinationAgentId: '', // ← Cambiado de targetAgentId
+  destinationAgentId: '',
   reason: '',
 });
 
 const errors = reactive({
-  destinationAgentId: '', // ← Cambiado de targetAgentId
+  destinationAgentId: '',
   reason: '',
 });
 
-// ── Watchers ──────────────────────────────────────────────────────────────
 watch(
   () => props.modelValue,
   async (open) => {
@@ -222,7 +205,6 @@ watch(
   }
 );
 
-// ── Methods ───────────────────────────────────────────────────────────────
 async function fetchAgents() {
   loadingAgents.value = true;
   try {
@@ -260,7 +242,7 @@ async function handleSubmit() {
   errorMsg.value = null;
   try {
     await reassignmentService.requestReassignment(props.visitId, {
-      destinationAgentId: form.destinationAgentId, // ← Cambiado de targetAgentId
+      destinationAgentId: form.destinationAgentId,
       reason: form.reason.trim(),
     });
     emit('requestSent');

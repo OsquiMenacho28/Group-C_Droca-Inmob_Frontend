@@ -338,21 +338,17 @@ import IconLucideCircleCheck from '~icons/lucide/circle-check';
 import IconLucideCalendar from '~icons/lucide/calendar';
 import IconLucideLoader from '~icons/lucide/loader';
 
-// --- AUTH ---
-const { user } = useAuth(); // Obtenemos el usuario decodificado del token
+const { user } = useAuth();
 
-// Extraemos los datos del agente de forma reactiva
 const myAgentId = computed(
   () => (user.value?.sub || user.value?.userId || '') as string
 );
 const myAgentName = computed(() => {
   if (user.value?.fullName) return user.value.fullName;
   if (user.value?.name) return user.value.name;
-  // Si el token no tiene nombre, usamos el email como fallback
   return (user.value?.email as string)?.split('@')[0] || 'Agente';
 });
 
-// --- ESTADO ---
 const form = ref({
   propertyId: '',
   propertyName: '',
@@ -363,10 +359,10 @@ const form = ref({
 });
 
 const loadingList = ref(false);
-const allProperties = ref<VisitProperty[]>([]); // Lista completa cacheada
+const allProperties = ref<VisitProperty[]>([]);
 const searchTerm = ref('');
 const showDropdown = ref(false);
-const propertyInfo = ref<Property | null>(null); // Detalle del seleccionado
+const propertyInfo = ref<Property | null>(null);
 
 const errors = ref<Record<string, string>>({});
 const conflictResult = ref<ConflictResponse | null>(null);
@@ -374,14 +370,10 @@ const checkingConflict = ref(false);
 const submitting = ref(false);
 const dayAgenda = ref<CalendarEventResponse[]>([]);
 
-// --- LOGICA DE CARGA Y FILTRADO LOCAL ---
-
 const loadInitialData = async () => {
   loadingList.value = true;
   try {
-    // Cargamos todos de una vez para filtrar en cliente (Mejor UX)
     const data = await propertyService.getProperties();
-    // Filtramos solo los que están disponibles para ahorrarle trabajo al agente
     allProperties.value = data.filter(
       (p: VisitProperty) => p.status === 'DISPONIBLE'
     ) as VisitProperty[];
@@ -401,7 +393,7 @@ const filteredProperties = computed(() => {
         String(p.title).toLowerCase().includes(s) ||
         String(p.address).toLowerCase().includes(s)
     )
-    .slice(0, 20); // Limitamos visualmente el dropdown
+    .slice(0, 20);
 });
 
 const handleSelect = async (id: string) => {
@@ -409,7 +401,6 @@ const handleSelect = async (id: string) => {
   searchTerm.value = 'Cargando detalle...';
 
   try {
-    // UX: Traemos el detalle fresco del servidor por ID
     const detail = await propertyService.getPropertyById(id);
 
     form.value.propertyId = detail.id;
@@ -418,15 +409,12 @@ const handleSelect = async (id: string) => {
     propertyInfo.value = detail;
     searchTerm.value = detail.title;
 
-    // Al seleccionar, disparamos validación de tiempo si ya están llenos
     if (form.value.startTimeLocal) onTimeChange();
   } catch {
     alert('No se pudo obtener el detalle del inmueble.');
     searchTerm.value = '';
   }
 };
-
-// --- LOGICA DE CONFLICTOS ---
 
 let conflictTimer: ReturnType<typeof setTimeout> | null = null;
 const onTimeChange = () => {
@@ -453,12 +441,9 @@ const onTimeChange = () => {
   }, 500);
 };
 
-// --- SUBMIT ---
-
 const handleSubmit = async () => {
   errors.value = {};
 
-  // Validaciones básicas antes de enviar
   if (!form.value.propertyId) {
     errors.value.propertyId = 'Selecciona un inmueble';
     return;
@@ -476,14 +461,13 @@ const handleSubmit = async () => {
 
   submitting.value = true;
   try {
-    // IMPORTANTE: Pasamos myAgentId.value y myAgentName.value (porque son computed)
     await createVisit(
       {
         propertyId: form.value.propertyId,
         propertyName: form.value.propertyName,
         propertyAddress: form.value.propertyAddress,
-        agentId: myAgentId.value as string, // <--- Corregido (.value)
-        agentName: myAgentName.value as string, // <--- Corregido (.value)
+        agentId: myAgentId.value as string,
+        agentName: myAgentName.value as string,
         startTime: new Date(form.value.startTimeLocal).toISOString(),
         endTime: new Date(form.value.endTimeLocal).toISOString(),
         notes: form.value.notes,
@@ -491,7 +475,6 @@ const handleSubmit = async () => {
       myAgentId.value as string
     );
 
-    // Cargar agenda actualizada
     dayAgenda.value = await getDayAgenda(
       myAgentId.value as string,
       new Date(form.value.startTimeLocal).toISOString()
@@ -519,8 +502,6 @@ const handleSubmit = async () => {
   }
 };
 
-// --- HELPERS ---
-
 const applySuggestion = (start?: string, end?: string) => {
   if (start)
     form.value.startTimeLocal = new Date(start).toISOString().slice(0, 16);
@@ -540,7 +521,6 @@ const minDatetime = computed(() => {
   return now.toISOString().slice(0, 16);
 });
 
-// Cerrar dropdown al hacer clic fuera
 const closeClickOutside = (e: Event) => {
   if (
     !(e.target instanceof HTMLElement) ||

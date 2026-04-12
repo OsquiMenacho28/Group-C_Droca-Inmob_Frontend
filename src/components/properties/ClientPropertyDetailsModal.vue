@@ -13,9 +13,7 @@
 
     <template #body>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Left column: Images -->
         <div class="space-y-3">
-          <!-- Main Image -->
           <div
             class="rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 aspect-video"
           >
@@ -32,7 +30,6 @@
             </div>
           </div>
 
-          <!-- Thumbnails -->
           <div
             v-if="property?.imageUrls && property.imageUrls.length > 1"
             class="flex gap-2 overflow-x-auto"
@@ -48,9 +45,7 @@
           </div>
         </div>
 
-        <!-- Right column: Property details -->
         <div class="space-y-4">
-          <!-- Basic Info -->
           <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
             <h4
               class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3"
@@ -87,7 +82,6 @@
             </div>
           </div>
 
-          <!-- Price -->
           <div
             class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl"
           >
@@ -101,7 +95,6 @@
             </p>
           </div>
 
-          <!-- Agent Info -->
           <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
             <h4
               class="text-xs font-black text-gray-500 uppercase tracking-widest mb-2"
@@ -129,7 +122,6 @@
             </div>
           </div>
 
-          <!-- Description if available -->
           <div
             v-if="property?.description"
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl"

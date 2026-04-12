@@ -218,12 +218,10 @@ const loadOwners = async () => {
   loading.value = true;
   try {
     const baseUsers = await userService.getUsers();
-    // Obtenemos el ID del agente logueado
     const agentId = user.value?.sub || user.value?.userId;
 
     const filteredBase = (baseUsers || []).filter((u: Owner) => {
       if (u.userType !== 'OWNER') return false;
-      // FIX: Usamos agentId para filtrar y que TS no se queje de "never read"
       if (!agentId) return true;
       return !u.assignedAgentId || u.assignedAgentId === agentId;
     });
@@ -231,7 +229,6 @@ const loadOwners = async () => {
     owners.value = await Promise.all(
       filteredBase.map(async (u: Owner) => {
         try {
-          // Ahora personService ya está importado
           const profile = await personService.getPersonByAuthUserId(u.id);
           return { ...u, ...profile };
         } catch {
@@ -292,7 +289,7 @@ const handleSubmit = async (formData: Record<string, unknown>) => {
   try {
     const payload = {
       ...formData,
-      taxId: formData.taxId?.toString().trim(), // Limpieza de datos
+      taxId: formData.taxId?.toString().trim(),
       userType: 'OWNER',
       roleIds: ['rol_owner'],
     };

@@ -1,5 +1,3 @@
-<!-- FILE: Frontend/Frontend/src/components/users/UsersTable.vue -->
-
 <template>
   <div
     class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
@@ -57,7 +55,6 @@
             <span class="font-mono text-sm">
               {{ u.taxId || '-' }}
             </span>
-            <!-- Indicador visual si es owner con CI -->
             <span
               v-if="u.userType === 'OWNER' && u.taxId"
               class="ml-1 text-xs text-blue-500"

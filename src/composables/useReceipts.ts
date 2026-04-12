@@ -1,6 +1,3 @@
-// src/composables/useReceipts.ts
-// Composable encapsulating receipt state and operations for an operation detail view.
-
 import { ref } from 'vue';
 import receiptService from '@/services/receiptService';
 import type { Receipt, ReceiptUploadPayload } from '@/types/receipt';
@@ -11,15 +8,12 @@ import {
 } from '@/types/receipt';
 
 export function useReceipts(operationId: string) {
-  // ── State ─────────────────────────────────────────────────────────────────
   const receipts = ref<Receipt[]>([]);
   const loading = ref(false);
   const uploading = ref(false);
   const uploadProgress = ref(0);
   const error = ref<string | null>(null);
   const uploadError = ref<string | null>(null);
-
-  // ── Methods ───────────────────────────────────────────────────────────────
 
   /** Fetches all receipts for the operation. */
   async function loadReceipts() {
@@ -46,7 +40,6 @@ export function useReceipts(operationId: string) {
   ): Promise<boolean> {
     uploadError.value = null;
 
-    // Client-side validation (mirrors backend rules — PA2 enforcement)
     const validationError = validateFile(file);
     if (validationError) {
       uploadError.value = validationError;
@@ -65,7 +58,6 @@ export function useReceipts(operationId: string) {
           uploadProgress.value = percent;
         }
       );
-      // Prepend to the list so the newest receipt appears first
       receipts.value = [newReceipt, ...receipts.value];
       return true;
     } catch (err: unknown) {
@@ -95,8 +87,6 @@ export function useReceipts(operationId: string) {
     }
   }
 
-  // ── File validation (client-side) ─────────────────────────────────────────
-
   /**
    * Returns a user-friendly error message if the file is invalid, or null if valid.
    * Mirrors the backend validation in MinioStorageService.
@@ -117,14 +107,12 @@ export function useReceipts(operationId: string) {
   }
 
   return {
-    // State
     receipts,
     loading,
     uploading,
     uploadProgress,
     error,
     uploadError,
-    // Methods
     loadReceipts,
     attachReceipt,
     deleteReceipt,

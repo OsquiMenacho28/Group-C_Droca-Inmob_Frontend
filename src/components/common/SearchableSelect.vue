@@ -8,7 +8,6 @@
     </label>
 
     <div class="relative">
-      <!-- Search input -->
       <div class="relative">
         <div
           class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -37,7 +36,6 @@
         </button>
       </div>
 
-      <!-- Dropdown list -->
       <Transition name="dropdown">
         <div
           v-if="showDropdown"
@@ -78,7 +76,6 @@
       </Transition>
     </div>
 
-    <!-- Clear button -->
     <button
       v-if="modelValue && showClearButton"
       @click="clear"
@@ -142,7 +139,6 @@ const clear = () => {
   emit('clear');
 };
 
-// Close dropdown when clicking outside
 const handleClickOutside = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
   if (!target.closest('.relative')) {
@@ -158,7 +154,6 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 
-// Initialize search term from model value if item exists
 watch(
   () => props.modelValue,
   (newVal) => {

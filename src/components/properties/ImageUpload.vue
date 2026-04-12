@@ -154,7 +154,6 @@ const loadImages = async () => {
   try {
     const images = await propertyService.getPropertyImages(props.propertyId);
     uploadedImages.value = images;
-    // Emitimos solo las URLs para compatibilidad con el resto del formulario
     emit(
       'images-updated',
       images.map((img) => img.temporaryDownloadUrl || img.publicUrl)
@@ -184,18 +183,15 @@ const uploadFiles = async (files: File[]) => {
   for (const file of imageFiles) {
     uploadingImages.value.set(file, 0);
     try {
-      // 1. Obtener URL de subida
       const { uploadUrl, objectKey } =
         await propertyService.generateImageUploadUrl(props.propertyId, file);
 
-      // 2. Subir directamente a MinIO
       await fetch(uploadUrl, {
         method: 'PUT',
         body: file,
         headers: { 'Content-Type': file.type },
       });
 
-      // 3. Confirmar subida
       await propertyService.confirmImageUpload(props.propertyId, {
         objectKey,
         originalFileName: file.name,
@@ -203,7 +199,6 @@ const uploadFiles = async (files: File[]) => {
         mimeType: file.type,
       });
 
-      // 4. Refrescar lista completa
       await loadImages();
     } catch {
       alert(`Error al subir ${file.name}`);
@@ -221,7 +216,6 @@ const removeImage = async (imageId: string, index: number) => {
 
   try {
     await propertyService.deleteImage(props.propertyId, imageId);
-    // Actualizamos localmente para evitar parpadeos
     uploadedImages.value.splice(index, 1);
     emit(
       'images-updated',

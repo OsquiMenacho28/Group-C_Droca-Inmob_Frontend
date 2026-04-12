@@ -1,19 +1,5 @@
 <template>
-  <!--
-    ReceiptList.vue
-    Displays all receipts attached to an operation.
-    Each row shows: file type icon, file name, concept, payment date,
-    amount + currency, a download button, and a delete button.
-
-    USAGE:
-      <ReceiptList
-        :receipts="receipts"
-        :loading="loading"
-        @delete="onDelete"
-      />
-  -->
   <div>
-    <!-- Loading skeleton -->
     <div v-if="loading" class="space-y-3">
       <div
         v-for="i in 3"
@@ -29,7 +15,6 @@
       </div>
     </div>
 
-    <!-- Empty state -->
     <div
       v-else-if="receipts.length === 0"
       class="flex flex-col items-center justify-center py-12 text-center"
@@ -45,25 +30,20 @@
       </p>
     </div>
 
-    <!-- Receipt rows -->
     <TransitionGroup v-else name="receipt-list" tag="div" class="space-y-3">
       <div
         v-for="receipt in receipts"
         :key="receipt.id"
         class="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group"
       >
-        <!-- File type icon -->
         <div
           class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 text-white"
           :class="isPdf(receipt) ? 'bg-red-500' : 'bg-emerald-500'"
         >
-          <!-- PDF icon -->
           <IconLucideFileText v-if="isPdf(receipt)" class="w-5 h-5" />
-          <!-- Image icon -->
           <IconLucideImage v-else class="w-5 h-5" />
         </div>
 
-        <!-- File info -->
         <div class="flex-1 min-w-0">
           <p
             class="text-sm font-medium text-gray-800 truncate"
@@ -84,7 +64,6 @@
           </div>
         </div>
 
-        <!-- Amount badge -->
         <div class="text-right shrink-0 hidden sm:block">
           <p class="text-sm font-bold text-gray-800">
             {{ formatAmount(receipt.amount, receipt.currency) }}
@@ -94,9 +73,7 @@
           </p>
         </div>
 
-        <!-- Actions -->
         <div class="flex items-center gap-2 shrink-0">
-          <!-- Download button -->
           <a
             v-if="receipt.downloadUrl"
             :href="receipt.downloadUrl"
@@ -109,7 +86,6 @@
             Download
           </a>
 
-          <!-- Delete button -->
           <button
             @click="confirmDelete(receipt)"
             :disabled="deletingId === receipt.id"
@@ -127,7 +103,6 @@
       </div>
     </TransitionGroup>
 
-    <!-- Delete confirmation modal -->
     <Teleport to="body">
       <Transition name="fade">
         <div
@@ -191,7 +166,6 @@ import IconLucideLoader from '~icons/lucide/loader';
 import { ref } from 'vue';
 import type { Receipt } from '@/types/receipt';
 
-// ── Props & Emits ─────────────────────────────────────────────────────────
 defineProps<{
   receipts: Receipt[];
   loading: boolean;
@@ -201,11 +175,9 @@ const emit = defineEmits<{
   (e: 'delete', receiptId: string): void;
 }>();
 
-// ── State ─────────────────────────────────────────────────────────────────
 const receiptToDelete = ref<Receipt | null>(null);
 const deletingId = ref<string | null>(null);
 
-// ── Methods ───────────────────────────────────────────────────────────────
 function confirmDelete(receipt: Receipt) {
   receiptToDelete.value = receipt;
 }
@@ -215,7 +187,6 @@ function handleDelete() {
   deletingId.value = receiptToDelete.value.id;
   emit('delete', receiptToDelete.value.id);
   receiptToDelete.value = null;
-  // Parent clears deletingId via receipts list update; reset after short delay
   setTimeout(() => {
     deletingId.value = null;
   }, 1500);

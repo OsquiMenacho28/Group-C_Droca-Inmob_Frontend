@@ -4,7 +4,6 @@
       <theme-toggle />
     </div>
 
-    <!-- Mensaje de error -->
     <div
       v-if="errorMessage"
       class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg"
@@ -12,10 +11,8 @@
       {{ errorMessage }}
     </div>
 
-    <!-- Normal Login Form -->
     <login-form v-if="!showChangePassword" @submit="handleLogin" />
 
-    <!-- Password Change Modal for First Login -->
     <fwb-modal v-if="showChangePassword" @close="handleCancelChange">
       <template #header>
         <div class="text-lg font-bold">Change Temporary Password</div>
@@ -96,7 +93,6 @@ const handleLogin = async (payload: { email: string; password: string }) => {
   try {
     await login({ email: payload.email, password: payload.password });
 
-    // Check if user needs to change password
     if (localStorage.getItem('must_change_password') === 'true') {
       showChangePassword.value = true;
       changePasswordForm.value.currentPassword = payload.password as string;
@@ -106,7 +102,6 @@ const handleLogin = async (payload: { email: string; password: string }) => {
   } catch (error: unknown) {
     console.error('Login error:', error);
 
-    // Mostrar mensaje de error amigable
     const err = error as {
       response?: { status?: number; data?: { detail?: string } };
       message?: string;
@@ -122,7 +117,6 @@ const handleLogin = async (payload: { email: string; password: string }) => {
       errorMessage.value = 'Error al iniciar sesión';
     }
 
-    // Auto-cerrar después de 5 segundos
     setTimeout(() => {
       errorMessage.value = '';
     }, 5000);
@@ -135,7 +129,6 @@ const handleChangePassword = async () => {
   }
 
   try {
-    // Get email from the JWT token's email claim
     const email = user.value?.email;
 
     if (!email) {
@@ -151,10 +144,8 @@ const handleChangePassword = async () => {
       newPassword: changePasswordForm.value.newPassword,
     });
 
-    // Clear the must_change_password flag
     localStorage.removeItem('must_change_password');
 
-    // Refresh token to get new one without mustChangePassword flag
     const refreshToken = localStorage.getItem('refresh_token');
     if (refreshToken) {
       const response = await authService.refreshToken(refreshToken);

@@ -1,5 +1,3 @@
-// FILE: Frontend/Frontend/src/types/user.ts
-
 export type UserType = 'ADMIN' | 'EMPLOYEE' | 'OWNER' | 'INTERESTED_CLIENT';
 
 export type User = {
@@ -13,7 +11,6 @@ export type User = {
   status: string;
   primaryRoleIds: string[];
   birthDate?: string;
-  // Campos específicos
   department?: string;
   position?: string;
   hireDate?: string;
@@ -29,7 +26,6 @@ export type UserFormPayload = {
   phone: string;
   userType: UserType;
   birthDate: string;
-  // Campos específicos
   department?: string;
   position?: string;
   hireDate?: string;

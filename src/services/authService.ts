@@ -4,7 +4,7 @@ import type { LoginPayload } from '@/types/user';
 export const authService = {
   async login(payload: LoginPayload) {
     const response = await api.post('/auth/login', payload);
-    return response.data; // Expected { accessToken, refreshToken, tokenType, expiresIn, mustChangePassword }
+    return response.data;
   },
 
   async changePassword(payload: {

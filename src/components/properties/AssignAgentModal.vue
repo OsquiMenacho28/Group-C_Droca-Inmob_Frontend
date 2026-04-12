@@ -1,4 +1,3 @@
-<!-- FILE: src/components/properties/AssignAgentModal.vue -->
 <template>
   <fwb-modal v-if="show" @close="$emit('close')">
     <template #header>

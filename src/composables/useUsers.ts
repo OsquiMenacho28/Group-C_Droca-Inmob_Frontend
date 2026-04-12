@@ -1,5 +1,3 @@
-// FILE: Frontend/Frontend/src/composables/useUsers.ts
-
 import { ref } from 'vue';
 import { userService } from '@/services/userService';
 import { personService } from '@/services/personService';
@@ -97,7 +95,6 @@ export function useUsers() {
 
   const remove = async (id: string) => {
     try {
-      // La BAJA ya se registra durante deactivate(); aqui solo se elimina definitivamente.
       await userService.deleteUser(id);
       users.value = users.value.filter((u) => u.id !== id);
     } catch (error) {

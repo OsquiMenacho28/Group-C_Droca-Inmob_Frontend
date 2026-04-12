@@ -13,7 +13,6 @@
       </template>
       <template #default>
         <fwb-navbar-collapse>
-          <!-- Admin Link -->
           <router-link
             v-if="isAdmin"
             to="/dashboard/admin/users"
@@ -26,7 +25,6 @@
             {{ t.nav.users }}
           </router-link>
 
-          <!-- Agent Link -->
           <router-link
             v-if="isAgent"
             to="/dashboard/agent"
@@ -39,7 +37,6 @@
             {{ t.nav.myInmuebles }}
           </router-link>
 
-          <!-- Owner Link -->
           <router-link
             v-if="isOwner"
             to="/dashboard/owner"
@@ -52,7 +49,6 @@
             {{ t.nav.myProperties }}
           </router-link>
 
-          <!-- Client Favorites Link -->
           <router-link
             v-if="isClient"
             to="/dashboard/client/favorites"
@@ -274,19 +270,16 @@ import IconLucideClipboardList from '~icons/lucide/clipboard-list';
 
 const { user, logout } = useAuth();
 
-// Helper functions to get user information
 const getUserEmail = () => {
   return user.value?.email || user.value?.sub || 'No email';
 };
 
 const getUserDisplayName = () => {
-  // Try to get name from token if available
   if (user.value?.name) return user.value.name;
   if (user.value?.fullName) return user.value.fullName;
-  // Fallback to email or user ID
   const email = getUserEmail();
   if (email && email !== user.value?.sub) {
-    return String(email).split('@')[0]; // Show part before @
+    return String(email).split('@')[0];
   }
   return 'User';
 };

@@ -136,7 +136,7 @@ const routes = [
         meta: { requiresAuth: true, role: 'ADMIN' },
       },
       {
-        path: '/reassignments/sent', // ← Sin barra inicial, es relativa al MainLayout
+        path: '/reassignments/sent',
         name: 'SentRequests',
         component: SentRequestsView,
         meta: { role: 'AGENT' },

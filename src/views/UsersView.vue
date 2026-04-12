@@ -1,12 +1,9 @@
-<!-- FILE: Frontend/Frontend/src/views/UsersView.vue -->
-
 <template>
   <div class="space-y-6">
     <div class="flex justify-between items-center">
       <h1 class="text-2xl font-bold">Gestión de Usuarios</h1>
     </div>
 
-    <!-- Barra de búsqueda por CI -->
     <div
       class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4"
     >
@@ -81,7 +78,6 @@
       </div>
     </div>
 
-    <!-- Tabla de usuarios con datos filtrados -->
     <users-table
       :users="filteredUsers"
       :roles="roles"
@@ -179,7 +175,6 @@
             </div>
           </div>
 
-          <!-- Mostrar campos específicos según el tipo -->
           <div v-if="selectedUser?.userType === 'OWNER'" class="border-t pt-4">
             <h3 class="text-md font-semibold mb-2">
               Información del Propietario
@@ -251,7 +246,6 @@
             </div>
           </div>
 
-          <!-- Botón de dar de baja solo si está inactivo -->
           <div
             v-if="selectedUser?.status === 'INACTIVE'"
             class="border-t pt-4 flex justify-end"
@@ -267,7 +261,6 @@
       </template>
     </fwb-modal>
 
-    <!-- Toast/Alert for feedback -->
     <div
       v-if="toast.visible"
       :class="[
@@ -324,11 +317,9 @@ const isEditing = ref(false);
 const editingUser = ref<UserRecord | null>(null);
 const formKey = ref(0);
 
-//Estado para búsqueda por CI
 const searchCI = ref('');
 const searchTimeout = ref<ReturnType<typeof setTimeout>>();
 
-//Estado para filtro de estado
 const statusFilter = ref<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
 
 const toast = ref({ visible: false, message: '', type: 'success' });
@@ -343,11 +334,9 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   }, 5000);
 };
 
-// ✅ NUEVO: Filtrar usuarios por CI y estado
 const filteredUsers = computed(() => {
   let filtered = users.value;
 
-  // Filtro por CI
   if (searchCI.value && searchCI.value.trim() !== '') {
     const searchTerm = searchCI.value.trim().toLowerCase();
     filtered = filtered.filter((user) => {
@@ -356,7 +345,6 @@ const filteredUsers = computed(() => {
     });
   }
 
-  // Filtro por estado
   if (statusFilter.value !== 'ALL') {
     filtered = filtered.filter((user) => user.status === statusFilter.value);
   }
@@ -364,16 +352,11 @@ const filteredUsers = computed(() => {
   return filtered;
 });
 
-// ✅ NUEVO: Manejar búsqueda con debounce
 const handleSearch = () => {
   clearTimeout(searchTimeout.value);
-  searchTimeout.value = setTimeout(() => {
-    // La búsqueda ya se maneja con el computed filteredUsers
-    // Solo mostramos feedback visual
-  }, 300);
+  searchTimeout.value = setTimeout(() => {}, 300);
 };
 
-// ✅ NUEVO: Limpiar búsqueda
 const clearSearch = () => {
   searchCI.value = '';
 };
@@ -407,7 +390,6 @@ const closeDetailsModal = () => {
 };
 
 const handleSubmit = async (formData: Record<string, unknown>) => {
-  // Validación local: no permitir crear o actualizar un propietario con CI duplicado
   const taxId = formData.taxId?.toString().trim().toLowerCase();
   if (formData.userType === 'OWNER' && taxId) {
     const duplicateOwner = users.value.find(
@@ -432,7 +414,6 @@ const handleSubmit = async (formData: Record<string, unknown>) => {
       showToast('Usuario creado correctamente');
     }
     closeModal();
-    // Limpiar búsqueda al crear/editar para mostrar la lista completa actualizada
     clearSearch();
   } catch (e: unknown) {
     const err = e as {

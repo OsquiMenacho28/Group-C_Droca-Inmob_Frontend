@@ -95,7 +95,6 @@
       </div>
     </div>
 
-    <!-- Image Upload Section - Only show when propertyId exists (edit mode) -->
     <div
       v-if="props.propertyId"
       class="border-t border-gray-200 dark:border-gray-700 pt-4"
@@ -215,7 +214,6 @@ const submit = () => {
   emit('submit', submitData);
 };
 
-// Initialize form from props
 watch(
   () => props.initialData,
   (data) => {

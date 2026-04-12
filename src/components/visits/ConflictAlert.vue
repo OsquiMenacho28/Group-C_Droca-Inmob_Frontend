@@ -1,16 +1,9 @@
 <template>
-  <!-- 
-    ConflictAlert.vue
-    Componente reutilizable que muestra la alerta de conflicto de horario.
-    HU1 PA2: alerta cuando se intenta programar una visita en horario ocupado.
-    HU2 PA2: impide la creación y sugiere un horario alternativo.
-  -->
   <div
     v-if="conflict.hasConflict"
     class="rounded-lg border border-red-300 bg-red-50 p-4 mb-4"
     role="alert"
   >
-    <!-- Cabecera de alerta -->
     <div class="flex items-start gap-3">
       <IconLucideAlertTriangle class="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
       <div class="flex-1">
@@ -21,7 +14,6 @@
       </div>
     </div>
 
-    <!-- Eventos conflictivos -->
     <div class="mt-3 ml-8">
       <p class="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">
         Visitas ya programadas en ese horario:
@@ -41,7 +33,6 @@
       </ul>
     </div>
 
-    <!-- Sugerencia de horario alternativo -->
     <div
       v-if="conflict.suggestedStartTime"
       class="mt-3 ml-8 rounded bg-amber-50 border border-amber-200 px-3 py-2"

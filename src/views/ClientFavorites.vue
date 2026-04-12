@@ -1,6 +1,5 @@
 <template>
   <div class="p-6 space-y-6">
-    <!-- Header -->
     <div
       class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
     >
@@ -23,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Loading State -->
     <div v-if="loading" class="text-center py-20">
       <div
         class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"
@@ -31,7 +29,6 @@
       <p class="mt-2 text-gray-500">Cargando tus favoritos...</p>
     </div>
 
-    <!-- Error State -->
     <div
       v-else-if="error"
       class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400"
@@ -45,7 +42,6 @@
       </button>
     </div>
 
-    <!-- Empty State -->
     <div
       v-else-if="favoriteProperties.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
@@ -62,14 +58,12 @@
       </router-link>
     </div>
 
-    <!-- Favorites Grid -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <fwb-card
         v-for="prop in favoriteProperties"
         :key="prop.id"
         class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative group"
       >
-        <!-- Remove Favorite Button (Top Right) -->
         <button
           @click.stop="removeFavorite(prop.id)"
           class="absolute top-3 right-3 z-20 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
@@ -78,7 +72,6 @@
           <IconLucideTrash class="w-4 h-4" />
         </button>
 
-        <!-- View Details Button (Top Left) -->
         <button
           @click.stop="viewDetails(prop)"
           class="absolute top-3 left-3 z-20 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:text-blue-600 transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
@@ -87,7 +80,6 @@
           <IconLucideEye class="w-4 h-4" />
         </button>
 
-        <!-- Heart Icon (Always visible to indicate it's a favorite) -->
         <div
           class="absolute top-3 right-3 z-10 opacity-100 group-hover:opacity-0 transition-opacity"
         >
@@ -96,7 +88,6 @@
           </div>
         </div>
 
-        <!-- Property Image -->
         <div
           class="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 relative"
         >
@@ -110,7 +101,6 @@
             <IconLucideImage class="w-12 h-12 mb-2" />
             <span class="text-sm">Sin imagen</span>
           </div>
-          <!-- Status Badge -->
           <div class="absolute bottom-2 right-2">
             <span
               class="px-2 py-1 rounded-full text-xs font-semibold shadow-md"
@@ -140,7 +130,6 @@
               }}
             </span>
           </div>
-          <!-- Operation Type Badge -->
           <div class="absolute bottom-2 left-2">
             <fwb-badge :type="getOpTypeBadge(prop.operationType)">
               {{ prop.operationType || 'VENTA' }}
@@ -148,7 +137,6 @@
           </div>
         </div>
 
-        <!-- Property Info -->
         <div class="p-5 flex-1 flex flex-col">
           <div class="flex gap-2 mb-2">
             <fwb-badge type="dark" size="xs">{{
@@ -189,7 +177,6 @@
             </div>
           </div>
 
-          <!-- Actions -->
           <div
             class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
@@ -220,7 +207,6 @@
       </fwb-card>
     </div>
 
-    <!-- Property Details Modal -->
     <property-details-modal
       v-if="showDetailsModal"
       :show="showDetailsModal"
@@ -274,28 +260,21 @@ const loadFavoritesAndProperties = async () => {
   error.value = '';
 
   try {
-    // 1. Get favorite IDs from backend
     const favoriteIds = await favoriteService.getFavorites();
     favorites.value = new Set(favoriteIds);
 
-    // 2. If no favorites, show empty state
     if (favoriteIds.length === 0) {
       favoriteProperties.value = [];
       loading.value = false;
       return;
     }
 
-    // 3. Fetch all properties (or fetch individually by ID)
-    // Note: The backend should ideally have a GET /properties?ids=... endpoint
-    // For now, we fetch all and filter
     const allProperties = await propertyService.getProperties();
 
-    // 4. Filter only favorite properties
     const filtered = allProperties.filter((p: Property) =>
       favoriteIds.includes(p.id as string)
     );
 
-    // 5. Sort to maintain the same order as favoriteIds (optional)
     favoriteProperties.value = favoriteIds
       .map((id) => filtered.find((p: Property) => p.id === id))
       .filter((p): p is Property => Boolean(p));

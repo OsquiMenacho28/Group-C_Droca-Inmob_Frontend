@@ -1,8 +1,6 @@
-<!-- FILE: frontend/src/views/OperationsView.vue -->
 <template>
   <div class="min-h-screen bg-gray-50 py-8 px-4">
     <div class="max-w-6xl mx-auto space-y-6">
-      <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Operaciones</h1>
@@ -12,7 +10,6 @@
         </div>
       </div>
 
-      <!-- Loading state -->
       <div v-if="loading" class="text-center py-20">
         <div
           class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"
@@ -20,7 +17,6 @@
         <p class="mt-2 text-gray-500">Cargando operaciones...</p>
       </div>
 
-      <!-- Error state -->
       <div
         v-else-if="error"
         class="bg-red-50 border border-red-200 rounded-2xl p-5 text-red-700 text-sm"
@@ -31,7 +27,6 @@
         </button>
       </div>
 
-      <!-- Empty state -->
       <div
         v-else-if="operations.length === 0"
         class="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100"
@@ -45,7 +40,6 @@
         </p>
       </div>
 
-      <!-- Operations grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <RouterLink
           v-for="op in operations"
@@ -53,7 +47,6 @@
           :to="`/operations/${op.id}`"
           class="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group cursor-pointer"
         >
-          <!-- Card header -->
           <div class="p-5 pb-3 border-b border-gray-50">
             <div class="flex items-center justify-between">
               <span
@@ -75,7 +68,6 @@
             </p>
           </div>
 
-          <!-- Card body -->
           <div class="p-5 space-y-3">
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Agente:</span>
@@ -100,7 +92,6 @@
             </div>
           </div>
 
-          <!-- Card footer -->
           <div class="px-5 py-3 bg-gray-50 border-t border-gray-100">
             <span
               class="text-xs text-blue-600 font-medium flex items-center gap-1"

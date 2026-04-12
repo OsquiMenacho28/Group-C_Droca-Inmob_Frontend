@@ -1,12 +1,6 @@
 <template>
-  <!--
-    ReassignmentInboxView.vue
-    Inbox view showing all PENDING reassignment requests received by
-    the authenticated agent, with Accept / Reject actions.
-  -->
   <div class="min-h-screen bg-gray-50 py-8 px-4">
     <div class="max-w-3xl mx-auto space-y-6">
-      <!-- Page header -->
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">
@@ -29,7 +23,6 @@
         </button>
       </div>
 
-      <!-- Loading skeleton -->
       <div v-if="loading" class="space-y-3">
         <div
           v-for="i in 3"
@@ -42,7 +35,6 @@
         </div>
       </div>
 
-      <!-- Error state -->
       <div
         v-else-if="error"
         class="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center gap-3 text-red-700"
@@ -51,7 +43,6 @@
         <p class="text-sm">{{ error }}</p>
       </div>
 
-      <!-- Empty state -->
       <div
         v-else-if="requests.length === 0"
         class="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100"
@@ -67,19 +58,16 @@
         </p>
       </div>
 
-      <!-- Request cards -->
       <TransitionGroup name="list" tag="div" class="space-y-4" v-else>
         <div
           v-for="r in requests"
           :key="r.id"
           class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
         >
-          <!-- Card header -->
           <div
             class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3"
           >
             <div class="flex items-center gap-3">
-              <!-- Requesting agent avatar -->
               <div
                 class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0"
               >
@@ -101,9 +89,7 @@
             </span>
           </div>
 
-          <!-- Card body -->
           <div class="px-5 py-4 space-y-3">
-            <!-- visit ID -->
             <div class="flex items-center gap-2 text-sm text-gray-600">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 shrink-0" />
               <span class="text-gray-500">visit ID:</span>
@@ -112,7 +98,6 @@
               }}</span>
             </div>
 
-            <!-- Reason -->
             <div class="bg-blue-50 rounded-xl px-4 py-3">
               <p
                 class="text-xs font-medium text-blue-700 mb-1 uppercase tracking-wide"
@@ -123,7 +108,6 @@
             </div>
           </div>
 
-          <!-- Action buttons -->
           <div class="px-5 pb-5 flex gap-3">
             <button
               @click="openResponseModal(r, 'ACCEPTED')"
@@ -146,7 +130,6 @@
       </TransitionGroup>
     </div>
 
-    <!-- Confirmation modal -->
     <ConfirmResponseModal
       v-model="responseModalVisible"
       :request="selectedRequest"
@@ -154,7 +137,6 @@
       @confirmed="handleConfirmed"
     />
 
-    <!-- Success toast -->
     <Teleport to="body">
       <Transition name="toast">
         <div
@@ -191,7 +173,6 @@ const {
   respondToRequest,
 } = useReassignment();
 
-// ── Local state ───────────────────────────────────────────────────────────
 const responseModalVisible = ref(false);
 const selectedRequest = ref<ReassignmentSolicitation | null>(null);
 const selectedDecision = ref<'ACCEPTED' | 'REJECTED'>('ACCEPTED');
@@ -199,14 +180,12 @@ const processingId = ref<string | null>(null);
 const toastVisible = ref(false);
 const toastMsg = ref('');
 
-// ── Lifecycle ─────────────────────────────────────────────────────────────
 onMounted(load);
 
 async function load() {
   await loadReceivedRequests();
 }
 
-// ── Methods ───────────────────────────────────────────────────────────────
 function openResponseModal(
   r: ReassignmentSolicitation,
   decision: 'ACCEPTED' | 'REJECTED'

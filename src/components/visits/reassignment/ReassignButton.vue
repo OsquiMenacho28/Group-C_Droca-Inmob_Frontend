@@ -1,29 +1,15 @@
 <template>
-  <!--
-    ReassignButton.vue
-    "Request Reassignment" button placed inside the visit detail
-    view/component. Opens the ReassignmentModal on click.
-
-    USAGE:
-      <ReassignButton
-        :visit-id="visit.id"
-        :visit-info="`${formatDate(visit.dateTime)} — ${visit.property}`"
-        @request-sent="onRequestSent"
-      />
-  -->
   <div>
     <button
       @click="openModal"
       class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-amber-400 bg-amber-50 text-amber-700 text-sm font-medium hover:bg-amber-100 hover:border-amber-500 transition-all group"
     >
-      <!-- Swap icon -->
       <IconLucideArrowLeftRight
         class="w-4 h-4 group-hover:rotate-180 transition-transform duration-300"
       />
       Solicitar Reasignación
     </button>
 
-    <!-- Reassignment modal -->
     <ReassignmentModal
       v-model="modalVisible"
       :visit-id="visitId"
@@ -31,7 +17,6 @@
       @request-sent="onRequestSent"
     />
 
-    <!-- Success toast -->
     <Teleport to="body">
       <Transition name="toast">
         <div
@@ -52,21 +37,18 @@ import ReassignmentModal from '@/components/visits/reassignment/ReassignmentModa
 import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
 import IconLucideCircleCheck from '~icons/lucide/circle-check';
 
-// ── Props & Emits ─────────────────────────────────────────────────────────
 defineProps<{
   visitId: string;
-  visitInfo?: string; // Human-readable label shown in the modal header
+  visitInfo?: string;
 }>();
 
 const emit = defineEmits<{
   (e: 'requestSent'): void;
 }>();
 
-// ── State ─────────────────────────────────────────────────────────────────
 const modalVisible = ref(false);
 const toastVisible = ref(false);
 
-// ── Methods ───────────────────────────────────────────────────────────────
 function openModal() {
   modalVisible.value = true;
 }

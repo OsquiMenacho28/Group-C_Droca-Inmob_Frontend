@@ -33,7 +33,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    // Attempt silent refresh if 401 received
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -45,7 +44,6 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem('refresh_token');
         if (!refreshToken) throw new Error('No refresh token available');
 
-        // Use base axios to avoid interceptor loop
         const res = await axios.post(`${api.defaults.baseURL}/auth/refresh`, {
           refreshToken,
         });
@@ -59,7 +57,6 @@ api.interceptors.response.use(
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh token failed or expired
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         window.location.href = '/login';

@@ -1,5 +1,3 @@
-<!-- FILE: Frontend/Frontend/src/components/users/UserForm.vue -->
-
 <template>
   <form @submit.prevent="submit" class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -111,7 +109,6 @@
       </div>
     </div>
 
-    <!-- Selector de tipo de usuario - Ocultar en modo clientOnly o ownerOnly -->
     <div v-if="!clientOnly && !ownerOnly">
       <label
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -133,7 +130,6 @@
       </select>
     </div>
 
-    <!-- Campos de empleado - Ocultar en modo clientOnly -->
     <div
       v-if="!clientOnly && form.userType === 'EMPLOYEE'"
       class="space-y-4 border-t pt-4"
@@ -182,7 +178,6 @@
       </div>
     </div>
 
-    <!-- Campos de propietario - Ocultar en modo clientOnly -->
     <div
       v-if="ownerOnly || (!clientOnly && form.userType === 'OWNER')"
       class="space-y-4 border-t pt-4"
@@ -208,7 +203,6 @@
       </div>
     </div>
 
-    <!-- Campos de cliente interesado - Siempre visibles en modo clientOnly -->
     <div
       v-if="
         (!clientOnly && form.userType === 'INTERESTED_CLIENT') || clientOnly
@@ -302,14 +296,12 @@ const errors = ref<Record<string, string>>({});
 const modifiedFields = ref<Set<string>>(new Set());
 const { user: currentUser } = useAuth();
 
-// Estados específicos para email
 const emailFormatError = ref('');
 const emailDuplicateError = ref('');
 const emailChecking = ref(false);
 let emailDebounceTimer: ReturnType<typeof setTimeout>;
 let lastValidatedEmail = '';
 
-// Lógica para filtrar las opciones del selector según el rol del usuario actual
 const availableUserTypes = computed(() => {
   const roles = (currentUser.value?.roles as string[]) || [];
   const isAgent = roles.includes('AGENT') && !roles.includes('ADMIN');
@@ -321,7 +313,6 @@ const availableUserTypes = computed(() => {
     ];
   }
 
-  // Si es ADMIN, mostrar todas las opciones
   return [
     { value: 'ADMIN', label: 'Administrador' },
     { value: 'EMPLOYEE', label: 'Empleado / Agente' },
@@ -378,7 +369,6 @@ const initialValues = mapData(props.initialData || null);
 const form = reactive<UserFormPayload>({ ...initialValues });
 const originalValues = reactive<UserFormPayload>({ ...initialValues });
 
-// Asegurar que el userType sea correcto si es modo forzado
 watch(
   () => props.ownerOnly,
   (val) => {
@@ -387,7 +377,6 @@ watch(
   { immediate: true }
 );
 
-// Validación de formato de email
 const validateEmailFormat = (email: string): boolean => {
   if (!email) {
     emailFormatError.value = 'Email requerido';
@@ -403,12 +392,10 @@ const validateEmailFormat = (email: string): boolean => {
   return true;
 };
 
-// Validación de unicidad de email
 const validateEmailUniqueness = async (
   email: string,
   skipIfSameAsOriginal: boolean = true
 ): Promise<boolean> => {
-  // Si es modo cliente, el backend se encarga de la unicidad
   if (props.clientOnly) {
     emailDuplicateError.value = '';
     return true;
@@ -457,7 +444,6 @@ const validateEmailUniqueness = async (
   }
 };
 
-// Validación completa de email
 const validateEmail = async (
   email: string,
   skipUniquenessCheck: boolean = false
@@ -474,7 +460,6 @@ const validateEmail = async (
   return true;
 };
 
-// Manejar input de email con debounce
 const onEmailInput = () => {
   const email = form.email;
   validateEmailFormat(email);
@@ -489,14 +474,12 @@ const onEmailInput = () => {
   }, 800);
 };
 
-// Validar email al perder foco
 const validateEmailOnBlur = async () => {
   if (form.email) {
     await validateEmail(form.email, false);
   }
 };
 
-// Validación de campos de empleado
 const validateEmployeeFields = () => {
   if (!props.clientOnly && form.userType === 'EMPLOYEE') {
     if (!form.department || form.department.trim().length < 2) {
@@ -527,7 +510,6 @@ const validateEmployeeFields = () => {
   return true;
 };
 
-// Validación robusta para todos los campos
 const validateField = (field: keyof UserFormPayload) => {
   const value = form[field];
 
@@ -626,7 +608,6 @@ const validateField = (field: keyof UserFormPayload) => {
   }
 };
 
-// Validar todos los campos requeridos antes de enviar
 const validateAllRequiredFields = (): boolean => {
   let isValid = true;
 
@@ -799,7 +780,6 @@ const getRoleIdByUserType = (userType: string): string => {
   return roles[userType] || 'rol_interested_client';
 };
 
-// Validación final antes de enviar
 const submit = async () => {
   const isEmailValid = await validateEmail(form.email, false);
   if (!isEmailValid) return;
@@ -901,7 +881,6 @@ const submit = async () => {
       payload.taxId = form.taxId?.trim();
     }
 
-    // Preferencias de cliente interesado
     if (modifiedFields.value.has('preferredContactMethod'))
       payload.preferredContactMethod = form.preferredContactMethod;
     if (modifiedFields.value.has('budget')) payload.budget = form.budget;
@@ -914,7 +893,6 @@ const submit = async () => {
         ? Number(form.preferredRooms)
         : null;
   } else {
-    // Crear nuevo usuario
     payload = {
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
@@ -939,7 +917,6 @@ const submit = async () => {
     };
 
     if (props.clientOnly) {
-      // Modo agente creando cliente
       if (form.preferredContactMethod)
         payload.preferredContactMethod = form.preferredContactMethod;
       if (form.budget) payload.budget = form.budget;
@@ -968,7 +945,6 @@ const submit = async () => {
     }
   }
 
-  // Forzar tipo y rol si es modo propietario exclusivo
   if (props.ownerOnly) {
     payload.userType = 'OWNER';
     payload.roleIds = ['rol_owner'];

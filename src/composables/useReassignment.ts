@@ -1,6 +1,3 @@
-// src/composables/useReassignment.ts
-// Composable that encapsulates state and logic for visit reassignment.
-
 import { ref, computed } from 'vue';
 import reassignmentService from '@/services/reassignmentService';
 import type {
@@ -18,36 +15,13 @@ interface ApiErrorResponse {
 }
 
 export function useReassignment() {
-  // ── State ─────────────────────────────────────────────────────────────────
   const receivedRequests = ref<ReassignmentSolicitation[]>([]);
   const availableAgents = ref<AvailableAgent[]>([]);
   const pendingCount = ref<number>(0);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  // ── Computed ──────────────────────────────────────────────────────────────
   const hasPending = computed(() => pendingCount.value > 0);
-
-  // Añadir al estado
-  // TODO: Use sentRequests when loadSentRequests is implemented
-  // const sentRequests = ref<ReassignmentSolicitation[]>([]);
-
-  // TODO: Implement loadSentRequests if needed
-  // async function loadSentRequests() {
-  //   loading.value = true;
-  //   error.value = null;
-  //   try {
-  //     sentRequests.value = await reassignmentService.getSentRequests();
-  //   } catch (e: any) {
-  //     error.value =
-  //       e?.response?.data?.error ??
-  //       'Failed to load sent reassignment requests.';
-  //   } finally {
-  //     loading.value = false;
-  //   }
-  // }
-  // Retornar también sentRequests y loadSentRequests
-  // ── Methods ───────────────────────────────────────────────────────────────
 
   /**
    * Loads all PENDING requests received by the authenticated agent.
@@ -74,7 +48,6 @@ export function useReassignment() {
     try {
       pendingCount.value = await reassignmentService.getPendingCount();
     } catch {
-      // Silent: badge simply shows nothing if the call fails
       pendingCount.value = 0;
     }
   }
@@ -130,7 +103,6 @@ export function useReassignment() {
     error.value = null;
     try {
       await reassignmentService.respondToRequest(requestId, payload);
-      // Remove the responded request from the local list
       receivedRequests.value = receivedRequests.value.filter(
         (r) => r.id !== requestId
       );
@@ -148,14 +120,12 @@ export function useReassignment() {
   }
 
   return {
-    // State
     receivedRequests,
     availableAgents,
     pendingCount,
     hasPending,
     loading,
     error,
-    // Methods
     loadReceivedRequests,
     loadPendingCount,
     loadAvailableAgents,

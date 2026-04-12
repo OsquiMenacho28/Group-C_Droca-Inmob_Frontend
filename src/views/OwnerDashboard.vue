@@ -37,7 +37,6 @@
         :key="prop.id"
         class="overflow-hidden hover:shadow-lg transition-shadow relative"
       >
-        <!-- Visit Count Badge -->
         <div class="absolute top-4 right-4 z-10">
           <div
             class="bg-blue-600 text-white rounded-full px-3 py-1 text-sm font-bold flex items-center gap-1 shadow-lg"
@@ -48,7 +47,6 @@
           </div>
         </div>
 
-        <!-- Property Image -->
         <div
           class="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center relative"
         >
@@ -61,7 +59,6 @@
             <IconLucideImage class="w-12 h-12 mb-2" />
             <span class="text-sm">Sin imagen</span>
           </div>
-          <!-- Status Badge on Image -->
           <div class="absolute top-4 left-4">
             <span
               :class="[
@@ -176,7 +173,6 @@ const loadProperties = async () => {
   error.value = '';
 
   try {
-    // Get user ID from JWT token
     const ownerId = (user.value?.sub ||
       user.value?.userId ||
       user.value?.id ||
@@ -190,12 +186,10 @@ const loadProperties = async () => {
 
     console.log('Loading properties for owner:', ownerId);
 
-    // Get owner's properties from property service
     const props = await propertyService.getPropertiesByOwner(ownerId);
 
     console.log('Properties found:', props.length);
 
-    // For each property, fetch visit count from calendar service
     const propsWithVisits = await Promise.all(
       (props as PropertyWithVisits[]).map(async (prop: PropertyWithVisits) => {
         try {
@@ -219,7 +213,6 @@ const loadProperties = async () => {
     };
     console.error('Error loading owner properties:', err);
 
-    // Provide user-friendly error messages
     if (errorObj.response?.status === 403) {
       error.value =
         'No tienes permiso para ver estas propiedades. Solo los propietarios pueden acceder a este panel.';

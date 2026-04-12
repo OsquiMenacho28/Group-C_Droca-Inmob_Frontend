@@ -11,7 +11,7 @@ function parseJwt(t: string): Record<string, unknown> | null {
     const base64Url = t.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const decoded = JSON.parse(window.atob(base64));
-    console.log('Decoded JWT:', decoded); // Debug log to see what's in the token
+    console.log('Decoded JWT:', decoded);
     return decoded;
   } catch {
     return null;

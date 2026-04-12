@@ -1,5 +1,3 @@
-// FILE: Frontend/Frontend/src/services/userService.ts
-
 import { api } from './api';
 import type { UserType } from '@/types/user';
 
@@ -15,7 +13,6 @@ const getRoleIdByUserType = (userType: UserType): string => {
 
 export const userService = {
   async createUser(payload: Record<string, unknown>) {
-    // El payload ya viene con firstName y lastName desde UserForm
     const apiPayload: Record<string, unknown> = {
       firstName: payload.firstName,
       lastName: payload.lastName,
@@ -32,7 +29,6 @@ export const userService = {
         payload.sendTemporaryCredentials !== undefined
           ? payload.sendTemporaryCredentials
           : true,
-      // Campos específicos
       department: payload.department,
       position: payload.position,
       hireDate: payload.hireDate,
@@ -45,7 +41,6 @@ export const userService = {
       assignedAgentId: payload.assignedAgentId,
     };
 
-    // Solo agregar assignedAgentId si se proporcionó
     if (payload.assignedAgentId) {
       apiPayload.assignedAgentId = payload.assignedAgentId;
     }
@@ -55,7 +50,6 @@ export const userService = {
   },
 
   async updateUser(userId: string, payload: Record<string, unknown>) {
-    // En edición, el payload ya viene con los campos a actualizar
     const response = await api.put(`/users/${userId}`, payload);
     return response.data;
   },

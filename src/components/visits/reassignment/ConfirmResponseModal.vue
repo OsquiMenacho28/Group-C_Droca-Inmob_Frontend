@@ -1,9 +1,4 @@
 <template>
-  <!--
-    ConfirmResponseModal.vue
-    Confirmation modal shown when the agent decides to accept or reject
-    a received reassignment request. Allows adding an optional comment.
-  -->
   <Teleport to="body">
     <Transition name="fade">
       <div
@@ -14,7 +9,6 @@
         <div
           class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
         >
-          <!-- Header — color varies by decision -->
           <div
             class="px-6 py-5 flex items-center gap-4"
             :class="
@@ -43,7 +37,6 @@
             </div>
           </div>
 
-          <!-- Request summary -->
           <div class="px-6 py-5 space-y-4">
             <div
               class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm text-gray-700"
@@ -62,7 +55,6 @@
               </div>
             </div>
 
-            <!-- Optional comment -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 Comment
@@ -81,7 +73,6 @@
             </div>
           </div>
 
-          <!-- Actions -->
           <div class="px-6 pb-6 flex gap-3 justify-end">
             <button
               @click="$emit('update:modelValue', false)"

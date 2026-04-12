@@ -11,7 +11,6 @@
 
     <template #body>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Columna Izquierda: Datos Actuales -->
         <div class="space-y-4">
           <div
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
@@ -61,7 +60,6 @@
           </div>
         </div>
 
-        <!-- Columna Derecha: HISTÓRICO DE CAMBIOS (AUDITORÍA) -->
         <div class="space-y-6">
           <div class="relative pl-6 border-l-2 border-blue-500">
             <div

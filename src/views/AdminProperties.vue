@@ -392,7 +392,6 @@ import DocumentUpload from '@/components/properties/DocumentUpload.vue';
 import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
 import type { Property, PropertyFormPayload } from '@/types/property';
 
-// --- INTERFACES ---
 interface User {
   id: string;
   fullName: string;
@@ -404,7 +403,6 @@ interface User {
   assignedAgentId?: string;
 }
 
-// --- ESTADOS ---
 const allProperties = ref<Property[]>([]);
 const allUsers = ref<User[]>([]);
 const loading = ref(false);
@@ -433,7 +431,6 @@ const newPrice = ref(0);
 const newOpType = ref('');
 const selectedOwnerId = ref('');
 
-// --- COMPUTED ---
 const activeAgents = computed(() =>
   allUsers.value.filter(
     (u) =>
@@ -445,7 +442,6 @@ const availableOwners = computed(() =>
   allUsers.value.filter((u) => u.userType === 'OWNER' && u.status === 'ACTIVE')
 );
 
-// --- MÉTODOS ---
 const load = async () => {
   loading.value = true;
   try {
@@ -608,7 +604,6 @@ const handleImageError = (event: Event) => {
   (event.target as HTMLImageElement).style.display = 'none';
 };
 
-// Pre-Modales
 const prepAssignment = (p: Property) => {
   selectedProp.value = p;
   showAssignModal.value = true;
@@ -629,7 +624,6 @@ const prepOpTypeUpdate = (p: Property) => {
   showOpTypeModal.value = true;
 };
 
-// Acciones de Modales
 const doPriceUpdate = async () => {
   if (!selectedProp.value) return;
 

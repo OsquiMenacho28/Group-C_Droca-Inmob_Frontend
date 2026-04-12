@@ -1,19 +1,10 @@
 <template>
-  <!--
-    ReceiptUploader.vue
-    Drag-and-drop file uploader with form fields for amount, currency,
-    payment date, and concept. Emits 'uploaded' on success.
-
-    USAGE inside OperationReceiptsSection:
-      <ReceiptUploader :operation-id="operationId" @uploaded="onUploaded" />
-  -->
   <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
     <h3 class="text-base font-semibold text-gray-800 flex items-center gap-2">
       <IconLucideUpload class="w-5 h-5 text-blue-500" />
       Attach Payment Receipt
     </h3>
 
-    <!-- ── Drop Zone ──────────────────────────────────────────────────────── -->
     <div
       class="relative border-2 border-dashed rounded-xl transition-all duration-200 cursor-pointer"
       :class="[
@@ -35,7 +26,6 @@
         @change="onFileChange"
       />
 
-      <!-- No file selected -->
       <div
         v-if="!selectedFile"
         class="flex flex-col items-center gap-3 text-center pointer-events-none"
@@ -56,9 +46,7 @@
         </div>
       </div>
 
-      <!-- File selected — preview row -->
       <div v-else class="flex items-center gap-4 pointer-events-none">
-        <!-- File type icon -->
         <div
           class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
           :class="isPdf ? 'bg-red-100' : 'bg-green-100'"
@@ -84,7 +72,6 @@
       </div>
     </div>
 
-    <!-- File validation error (PA2) -->
     <div
       v-if="fileError"
       class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm"
@@ -93,9 +80,7 @@
       {{ fileError }}
     </div>
 
-    <!-- ── Payment Metadata Form ───────────────────────────────────────────── -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <!-- Amount -->
       <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">
           Amount <span class="text-red-500">*</span>
@@ -114,7 +99,6 @@
         </p>
       </div>
 
-      <!-- Currency -->
       <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">
           Currency <span class="text-red-500">*</span>
@@ -134,7 +118,6 @@
         </p>
       </div>
 
-      <!-- Payment Date -->
       <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">
           Payment Date <span class="text-red-500">*</span>
@@ -150,7 +133,6 @@
         </p>
       </div>
 
-      <!-- Concept -->
       <div>
         <label class="block text-xs font-medium text-gray-600 mb-1">
           Concept <span class="text-red-500">*</span>
@@ -169,7 +151,6 @@
       </div>
     </div>
 
-    <!-- Upload error from the server -->
     <div
       v-if="uploadError"
       class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm"
@@ -178,7 +159,6 @@
       {{ uploadError }}
     </div>
 
-    <!-- Upload progress bar -->
     <div v-if="uploading" class="space-y-1">
       <div class="flex justify-between text-xs text-gray-500">
         <span>Uploading...</span>
@@ -192,7 +172,6 @@
       </div>
     </div>
 
-    <!-- Submit button -->
     <div class="flex justify-end">
       <button
         @click="handleSubmit"
@@ -223,19 +202,16 @@ import {
   ALLOWED_TYPE_LABELS,
 } from '@/types/receipt';
 
-// ── Props & Emits ─────────────────────────────────────────────────────────
 const props = defineProps<{ operationId: string }>();
 
 const emit = defineEmits<{
   (e: 'uploaded'): void;
 }>();
 
-// ── Composable ────────────────────────────────────────────────────────────
 const { attachReceipt, uploading, uploadProgress, uploadError } = useReceipts(
   props.operationId
 );
 
-// ── Local state ───────────────────────────────────────────────────────────
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const selectedFile = ref<File | null>(null);
 const isDragging = ref(false);
@@ -255,10 +231,8 @@ const formErrors = reactive({
   concept: '',
 });
 
-// ── Computed ──────────────────────────────────────────────────────────────
 const isPdf = computed(() => selectedFile.value?.type === 'application/pdf');
 
-// ── File handling ─────────────────────────────────────────────────────────
 function triggerFilePicker() {
   fileInputRef.value?.click();
 }
@@ -276,7 +250,6 @@ function onDrop(event: DragEvent) {
 
 function applyFile(file: File) {
   fileError.value = null;
-  // Client-side validation (PA2: show format error immediately)
   if (
     !ALLOWED_MIME_TYPES.includes(
       file.type as (typeof ALLOWED_MIME_TYPES)[number]
@@ -301,7 +274,6 @@ function clearFile() {
   if (fileInputRef.value) fileInputRef.value.value = '';
 }
 
-// ── Form validation ───────────────────────────────────────────────────────
 function validateForm(): boolean {
   formErrors.amount = '';
   formErrors.currency = '';
@@ -328,7 +300,6 @@ function validateForm(): boolean {
   return valid;
 }
 
-// ── Submit ────────────────────────────────────────────────────────────────
 async function handleSubmit() {
   if (!selectedFile.value) {
     fileError.value = 'Please select a file to upload.';
@@ -344,7 +315,6 @@ async function handleSubmit() {
   });
 
   if (success) {
-    // Reset form
     clearFile();
     form.amount = '';
     form.currency = 'BOB';
@@ -354,7 +324,6 @@ async function handleSubmit() {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';

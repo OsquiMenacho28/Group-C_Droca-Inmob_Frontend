@@ -1,17 +1,7 @@
 <template>
-  <!--
-    PropertiesClientView.vue — HU3
-    "Yo como cliente buscador, quiero ver propiedades disponibles
-    para agendar una cita."
-
-    PA1: Solo se muestran propiedades con estado "Disponible".
-    PA2: Al solicitar una cita, el agente responsable es notificado.
-    PA3: Filtros por zona y rango de precio actualizan los resultados.
-  -->
   <div
     class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300"
   >
-    <!-- HEADER -->
     <div
       class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
     >
@@ -34,12 +24,10 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-      <!-- ===== FILTROS ===== -->
       <div
         class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
       >
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Título -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -52,7 +40,6 @@
             />
           </div>
 
-          <!-- Tipo -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -69,7 +56,6 @@
             </select>
           </div>
 
-          <!-- Precio mínimo -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -84,7 +70,6 @@
             />
           </div>
 
-          <!-- Precio máximo -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -99,7 +84,6 @@
             />
           </div>
 
-          <!-- Ordenar por -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -116,7 +100,6 @@
             </select>
           </div>
 
-          <!-- Orden -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -131,7 +114,6 @@
             </select>
           </div>
 
-          <!-- Tamaño de Página -->
           <div>
             <label
               class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
@@ -172,7 +154,6 @@
         </p>
       </div>
 
-      <!-- RESUMEN -->
       <p class="text-sm text-gray-600 dark:text-gray-400">
         <span class="font-semibold text-gray-900 dark:text-white">{{
           properties.length
@@ -182,7 +163,6 @@
         }}
       </p>
 
-      <!-- ESTADO cargando / error -->
       <div
         v-if="loading"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -231,7 +211,6 @@
         </button>
       </div>
 
-      <!-- GRID DE PROPIEDADES -->
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <div
           v-for="prop in properties"
@@ -239,7 +218,6 @@
           class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all cursor-pointer"
           @click="openPropertyModal(prop)"
         >
-          <!-- Imagen / placeholder -->
           <div
             class="relative h-44 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center transition-colors"
           >
@@ -253,7 +231,6 @@
               v-else
               class="h-16 w-16 text-blue-300 dark:text-gray-500"
             />
-            <!-- Badge Disponible -->
             <span
               class="absolute top-3 left-3 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm"
               :class="{
@@ -282,7 +259,6 @@
                         : prop.status
               }}
             </span>
-            <!-- Tipo -->
             <span
               class="absolute top-3 right-3 bg-white/90 dark:bg-gray-900/80 text-gray-700 dark:text-gray-200 text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm"
             >
@@ -305,7 +281,6 @@
             </button>
           </div>
 
-          <!-- Info -->
           <div class="p-4">
             <h3 class="font-semibold text-gray-900 dark:text-white truncate">
               {{ prop.title }}
@@ -351,7 +326,6 @@
         </div>
       </div>
 
-      <!-- PAGINACIÓN -->
       <div
         v-if="totalPages > 1"
         class="flex justify-center items-center space-x-2 mt-6 pb-10"
@@ -388,7 +362,6 @@
       </div>
     </div>
 
-    <!-- ===== MODAL DETALLE PROPIEDAD ===== -->
     <client-property-details-modal
       v-if="selectedProperty && !showRequestModal"
       :show="!!selectedProperty"
@@ -397,7 +370,6 @@
       @schedule-visit="handleScheduleVisit"
     />
 
-    <!-- ===== MODAL SOLICITUD DE CITA ===== -->
     <Transition name="fade">
       <div
         v-if="showRequestModal && requestTarget"
@@ -424,7 +396,6 @@
             </button>
           </div>
 
-          <!-- Formulario PA2 -->
           <form @submit.prevent="submitVisitRequest" class="space-y-4">
             <p class="text-sm text-gray-500 dark:text-gray-400">
               El * indica que el campo es obligatorio.
@@ -538,7 +509,6 @@
               />
             </div>
 
-            <!-- PA2: Info de notificación -->
             <p
               class="text-xs text-gray-500 dark:text-gray-300 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg px-3 py-2"
             >
@@ -566,38 +536,6 @@
               </button>
             </div>
           </form>
-
-          <!-- Éxito -->
-          <!-- <div
-            v-if="requestSuccess"
-            class="mt-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4 text-center transition-colors"
-          >
-            <svg
-              class="h-8 w-8 text-green-500 dark:text-green-400 mx-auto mb-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p class="text-sm font-semibold text-green-800 dark:text-green-200">
-              ¡Solicitud enviada!
-            </p>
-            <p class="text-xs text-green-700 dark:text-green-300 mt-1">
-              El agente {{ requestTarget?.agentName }} ha sido notificado.
-            </p>
-            <button
-              @click="closeRequestModal"
-              class="mt-3 text-xs text-green-700 dark:text-green-300 underline"
-            >
-              Cerrar
-            </button>
-          </div> -->
         </div>
       </div>
     </Transition>
@@ -620,7 +558,6 @@ import type { Property, ClientVisitRequestDTO } from '@/types/visitCalendar';
 import type { Property as PropertyType } from '@/types/property';
 import ClientPropertyDetailsModal from '@/components/properties/ClientPropertyDetailsModal.vue';
 
-// ── Auth — leer del JWT ──
 import { useAuth } from '@/composables/useAuth';
 const { user } = useAuth();
 const myClientId = computed(() => (user.value?.sub || '') as string);
@@ -636,19 +573,15 @@ import { useRouter } from 'vue-router';
 import { favoriteService } from '@/services/favoriteService';
 const router = useRouter();
 
-// ── Pagination ──
 const totalElements = ref(0);
 const totalPages = ref(0);
 const PAGE_SIZE_OPTIONS = [9, 18, 27, 45];
 
-// ── Estado principal ──
 const properties = ref<Property[]>([]);
 const loading = ref(false);
 const error = ref('');
 
-// ── Filtros PA3 ──
 const filters = ref({
-  // zone: "",
   title: '',
   type: '',
   operationType: '',
@@ -660,14 +593,12 @@ const filters = ref({
   pageSize: 9,
 });
 
-// ── Modales ──
 const selectedProperty = ref<Property | null>(null);
 const showRequestModal = ref(false);
 const requestTarget = ref<Property | null>(null);
 const requestSuccess = ref(false);
 const requestSubmitting = ref(false);
 
-// ── Formulario de solicitud ──
 const requestForm = ref({
   clientName: myClientName.value as string,
   clientEmail: myClientEmail.value as string,
@@ -687,8 +618,6 @@ const minDatetime = computed(() => {
 const agentNames = ref<Record<string, string>>({});
 
 function loadAgentNames(propList: Property[]) {
-  // El nombre del agente viene directamente de la propiedad
-  // No se llama a /users porque el cliente no tiene permiso
   propList.forEach((p: Property) => {
     if (p.assignedAgentId && p.agentName) {
       agentNames.value[p.assignedAgentId] = p.agentName;
@@ -701,14 +630,13 @@ const favorites = ref<Set<string>>(new Set());
 const toggleFavorite = async (propertyId: string) => {
   try {
     if (favorites.value.has(propertyId)) {
-      favorites.value.delete(propertyId); // Optimistic update
+      favorites.value.delete(propertyId);
       await favoriteService.removeFavorite(propertyId);
     } else {
       favorites.value.add(propertyId);
       await favoriteService.addFavorite(propertyId);
     }
   } catch (error: unknown) {
-    // Revert optimistic update on error
     if (favorites.value.has(propertyId)) {
       favorites.value.delete(propertyId);
     } else {
@@ -742,7 +670,6 @@ const loadFavorites = async () => {
 
 const isFavorite = (id: string) => favorites.value.has(id);
 
-// ── Cargar propiedades ──
 async function loadProperties() {
   loading.value = true;
   error.value = '';
@@ -765,7 +692,6 @@ async function loadProperties() {
 
     loadAgentNames(properties.value);
 
-    // Reflejar en la URL para Postman / compartir
     router.replace({
       query: {
         status: 'DISPONIBLE',
@@ -819,7 +745,6 @@ function goToPage(p: number) {
   loadProperties();
 }
 
-// ── Modales ──
 function openPropertyModal(prop: Property) {
   selectedProperty.value = prop;
   showRequestModal.value = false;
@@ -862,7 +787,6 @@ function closeRequestModal() {
   requestTarget.value = null;
 }
 
-// ── Validar solicitud ──
 function validateRequest(): boolean {
   reqErrors.value = {};
   if (!String(requestForm.value.clientName).trim())
@@ -874,7 +798,6 @@ function validateRequest(): boolean {
   return Object.keys(reqErrors.value).length === 0;
 }
 
-// ── PA2: Enviar solicitud → notifica al agente ──
 async function submitVisitRequest() {
   if (!validateRequest() || !requestTarget.value) return;
   requestSubmitting.value = true;

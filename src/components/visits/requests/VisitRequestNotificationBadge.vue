@@ -29,9 +29,7 @@ async function fetchCount() {
     count.value = requests.filter(
       (request) => request.status === 'PENDING'
     ).length;
-  } catch {
-    // Silent fallback: no bloquear la UI del navbar.
-  }
+  } catch {}
 }
 
 onMounted(() => {

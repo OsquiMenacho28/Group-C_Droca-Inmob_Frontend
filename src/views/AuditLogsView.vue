@@ -11,7 +11,6 @@
       <fwb-badge type="indigo">Admin Mode</fwb-badge>
     </div>
 
-    <!-- Filtros -->
     <div
       class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4"
     >
@@ -44,7 +43,6 @@
       </div>
     </div>
 
-    <!-- Lista de logs -->
     <div v-if="loading" class="text-center py-20 dark:text-white">
       Cargando registros...
     </div>
@@ -57,7 +55,6 @@
       >
         <div class="flex items-start justify-between">
           <div class="flex items-center gap-3">
-            <!-- Badge acción -->
             <span
               :class="[
                 'px-2 py-1 text-xs font-semibold rounded-full',
@@ -74,14 +71,12 @@
             >
               {{ actionLabel(log.action) }}
             </span>
-            <!-- Tipo de persona -->
             <span
               class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
             >
               {{ personTypeLabel(log.personType) }}
             </span>
           </div>
-          <!-- Fecha -->
           <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">
             {{ formatDate(log.timestamp) }}
           </span>
@@ -108,7 +103,6 @@
           </p>
         </div>
 
-        <!-- Campos modificados (solo UPDATED) -->
         <div
           v-if="log.action === 'UPDATED' && log.changes?.length"
           class="mt-3 space-y-1"

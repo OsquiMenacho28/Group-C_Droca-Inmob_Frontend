@@ -12,12 +12,10 @@
       <fwb-badge type="indigo">Admin Mode</fwb-badge>
     </div>
 
-    <!-- Filtros con dropdowns buscables -->
     <div
       class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
     >
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Filtro por Usuario (Agente) -->
         <SearchableSelect
           v-model="filters.userId"
           :items="userOptions"
@@ -27,7 +25,6 @@
           show-clear-button
         />
 
-        <!-- Filtro por Propiedad -->
         <SearchableSelect
           v-model="filters.propertyId"
           :items="propertyOptions"
@@ -37,7 +34,6 @@
           show-clear-button
         />
 
-        <!-- Rango de fechas -->
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label
@@ -83,7 +79,6 @@
       </div>
     </div>
 
-    <!-- Resumen de filtros activos -->
     <div v-if="hasActiveFilters" class="flex flex-wrap gap-2">
       <span class="text-xs text-gray-500">Filtros activos:</span>
       <span
@@ -118,7 +113,6 @@
       </span>
     </div>
 
-    <!-- Loading State -->
     <div v-if="loading" class="text-center py-20">
       <div
         class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"
@@ -126,7 +120,6 @@
       <p class="mt-2 text-gray-500">Cargando registros de auditoría...</p>
     </div>
 
-    <!-- Tabla de Logs -->
     <div v-else-if="logs.length > 0" class="overflow-x-auto">
       <fwb-table hoverable>
         <fwb-table-head>
@@ -215,7 +208,6 @@
       </fwb-table>
     </div>
 
-    <!-- Empty State -->
     <div
       v-else-if="!loading && logs.length === 0 && !hasSearched"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
@@ -242,9 +234,7 @@
       </p>
     </div>
 
-    <!-- Modal de Detalles (same as before) -->
     <fwb-modal v-if="selectedLog" @close="selectedLog = null" size="lg">
-      <!-- ... modal content ... -->
       <template #header>
         <div class="flex items-center gap-3">
           <div
@@ -270,7 +260,6 @@
       </template>
       <template #body>
         <div class="space-y-6">
-          <!-- Información del usuario -->
           <div class="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
             <h4
               class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3"
@@ -293,7 +282,6 @@
             </div>
           </div>
 
-          <!-- Campos Modificados -->
           <div class="space-y-6">
             <div v-if="selectedLog.changes && selectedLog.changes.length > 0">
               <h4
@@ -434,7 +422,6 @@ const loading = ref(false);
 const selectedLog = ref<AuditLog | null>(null);
 const hasSearched = ref(false);
 
-// Data for dropdowns
 const users = ref<
   {
     id: string;
@@ -526,7 +513,6 @@ const loadProperties = async () => {
 
 const formatDateTime = (timestamp: string) => {
   if (!timestamp) return '—';
-  // El backend envía UTC, el constructor de Date lo convierte automáticamente a local
   return new Date(timestamp).toLocaleString(undefined, {
     year: 'numeric',
     month: '2-digit',
@@ -539,8 +525,6 @@ const formatDateTime = (timestamp: string) => {
 
 const formatDateShort = (dateStr: string) => {
   if (!dateStr) return '';
-  // Para evitar desfases de zona horaria al parsear "YYYY-MM-DD",
-  // construimos la fecha usando componentes locales
   const [year, month, day] = dateStr.split('-').map(Number);
   const date = new Date(year, month - 1, day);
   return date.toLocaleDateString();
@@ -569,10 +553,8 @@ const fetchLogs = async () => {
       params.append('propertyId', filters.value.propertyId);
 
     if (filters.value.from) {
-      // Parsear año, mes (0-indexed), día para crear fecha en hora LOCAL
       const [year, month, day] = filters.value.from.split('-').map(Number);
       const fromDate = new Date(year, month - 1, day, 0, 0, 0, 0);
-      // toISOString() convertirá esta fecha local a su equivalente en UTC
       params.append('from', fromDate.toISOString());
     }
 

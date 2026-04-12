@@ -1,9 +1,3 @@
-// ============================================================
-//  src/services/propertyService.ts
-//  Llamadas a la API del property-service.
-//  Refactored: Gestión de imágenes por ID para evitar errores de Gateway (//)
-// ============================================================
-
 import { api } from './api';
 import type {
   Property,
@@ -12,7 +6,6 @@ import type {
   OperationType,
 } from '@/types/property';
 
-// --- Document Interfaces ---
 export interface DocumentResponse {
   id: string;
   documentType: string;
@@ -39,7 +32,6 @@ export interface GenerateUploadUrlRequest {
   mimeType?: string;
 }
 
-// --- Image Interfaces ---
 export interface ImageResponse {
   id: string;
   originalFileName: string;
@@ -75,13 +67,6 @@ export interface ConfirmImageUploadRequest {
 }
 
 export const propertyService = {
-  // ============================================================
-  // PROPERTY AGGREGATE ROOT (CRUD & Lifecycle)
-  // ============================================================
-
-  /**
-   * Obtiene todas las propiedades (requiere rol ADMIN)
-   */
   async getProperties(filters?: {
     title?: string;
     operationType?: string;
@@ -115,41 +100,26 @@ export const propertyService = {
     }
   },
 
-  /**
-   * Obtiene las propiedades asignadas a un agente específico
-   */
   async getPropertiesByAgent(agentId: string) {
     const response = await api.get<Property[]>(`/properties/agent/${agentId}`);
     return response.data;
   },
 
-  /**
-   * Obtiene las propiedades de un propietario (HU03)
-   */
   async getPropertiesByOwner(ownerId: string) {
     const response = await api.get<Property[]>(`/properties/owner/${ownerId}`);
     return response.data;
   },
 
-  /**
-   * Obtiene una propiedad por su ID
-   */
   async getPropertyById(id: string): Promise<Property> {
     const response = await api.get<Property>(`/properties/${id}`);
     return response.data;
   },
 
-  /**
-   * Crea una nueva propiedad
-   */
   async createProperty(payload: PropertyFormPayload) {
     const response = await api.post<Property>('/properties', payload);
     return response.data;
   },
 
-  /**
-   * Actualiza el precio de una propiedad (Admin)
-   */
   async updatePrice(propertyId: string, newPrice: number) {
     const response = await api.patch<Property>(
       `/properties/${propertyId}/price`,
@@ -158,9 +128,6 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Asigna un agente a una propiedad (Admin)
-   */
   async assignAgent(propertyId: string, payload: AssignAgentPayload) {
     const response = await api.patch<Property>(
       `/properties/${propertyId}/assign-agent`,
@@ -169,9 +136,6 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Asigna un propietario a una propiedad (Admin)
-   */
   async assignOwner(propertyId: string, payload: { ownerId: string }) {
     const response = await api.patch<Property>(
       `/properties/${propertyId}/assign-owner`,
@@ -180,9 +144,6 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Actualiza el tipo de operación (Admin)
-   */
   async updateOperationType(propertyId: string, operationType: OperationType) {
     const response = await api.patch<Property>(
       `/properties/${propertyId}/operation-type`,
@@ -191,20 +152,10 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Elimina una propiedad y sus recursos asociados
-   */
   async deleteProperty(propertyId: string): Promise<void> {
     await api.delete(`/properties/${propertyId}`);
   },
 
-  // ============================================================
-  // IMAGE SUB-RESOURCE
-  // ============================================================
-
-  /**
-   * Genera URL prefirmada para subir una imagen.
-   */
   async generateImageUploadUrl(
     propertyId: string,
     file: File
@@ -220,9 +171,6 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Confirma la subida de una imagen y adjunta metadatos.
-   */
   async confirmImageUpload(
     propertyId: string,
     payload: ConfirmImageUploadRequest
@@ -234,25 +182,15 @@ export const propertyService = {
     return response.data;
   },
 
-  /**
-   * Obtiene todas las imágenes de una propiedad con URLs temporales.
-   */
   async getPropertyImages(propertyId: string): Promise<ImageResponse[]> {
     const response = await api.get(`/properties/${propertyId}/images`);
     return response.data;
   },
 
-  /**
-   * ELIMINACIÓN SEGURA: Usa el ID de la imagen en lugar de la URL completa.
-   * Esto evita el error de "//" en el API Gateway.
-   */
   async deleteImage(propertyId: string, imageId: string): Promise<void> {
     await api.delete(`/properties/${propertyId}/images/${imageId}`);
   },
 
-  /**
-   * Reordena las imágenes de la propiedad.
-   */
   async reorderImages(
     propertyId: string,
     orderedImageIds: string[]
@@ -263,10 +201,6 @@ export const propertyService = {
     );
     return response.data;
   },
-
-  // ============================================================
-  // DOCUMENT MANAGEMENT (US1 & US2)
-  // ============================================================
 
   async generateDocumentUploadUrl(request: GenerateUploadUrlRequest): Promise<{
     uploadUrl: string;

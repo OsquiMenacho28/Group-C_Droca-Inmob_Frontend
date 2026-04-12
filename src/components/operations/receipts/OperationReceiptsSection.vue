@@ -1,15 +1,5 @@
 <template>
-  <!--
-    OperationReceiptsSection.vue
-    Main "Reservation Receipts" section that lives inside the operation
-    detail view. Composes ReceiptUploader + ReceiptList into a single
-    self-contained block that an agent can drop into any existing detail page.
-
-    USAGE in OperationDetailView.vue (or similar):
-      <OperationReceiptsSection :operation-id="operation.id" />
-  -->
   <section class="space-y-6">
-    <!-- Section header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div
@@ -26,7 +16,6 @@
         </div>
       </div>
 
-      <!-- Toggle uploader button -->
       <button
         @click="showUploader = !showUploader"
         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition"
@@ -44,7 +33,6 @@
       </button>
     </div>
 
-    <!-- Error banner (list load error) -->
     <div
       v-if="error"
       class="flex items-center gap-3 bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-700"
@@ -53,7 +41,6 @@
       {{ error }}
     </div>
 
-    <!-- Uploader (collapsible) -->
     <Transition name="slide-down">
       <ReceiptUploader
         v-if="showUploader"
@@ -62,7 +49,6 @@
       />
     </Transition>
 
-    <!-- Success toast after upload -->
     <Teleport to="body">
       <Transition name="toast">
         <div
@@ -75,14 +61,12 @@
       </Transition>
     </Teleport>
 
-    <!-- Receipt list -->
     <ReceiptList
       :receipts="receipts"
       :loading="loading"
       @delete="handleDelete"
     />
 
-    <!-- Summary footer — shown only when there are receipts -->
     <div
       v-if="receipts.length > 0"
       class="bg-gray-50 rounded-2xl border border-gray-200 px-5 py-4"
@@ -97,7 +81,6 @@
           </p>
         </div>
 
-        <!-- Group totals by currency -->
         <div class="flex flex-wrap gap-4">
           <div
             v-for="(total, currency) in totalsByCurrency"
@@ -129,22 +112,17 @@ import IconLucidePlus from '~icons/lucide/plus';
 import IconLucideAlertCircle from '~icons/lucide/alert-circle';
 import IconLucideCircleCheck from '~icons/lucide/circle-check';
 
-// ── Props ─────────────────────────────────────────────────────────────────
 const props = defineProps<{ operationId: string }>();
 
-// ── Composable ────────────────────────────────────────────────────────────
 const { receipts, loading, error, loadReceipts, deleteReceipt } = useReceipts(
   props.operationId
 );
 
-// ── Local state ───────────────────────────────────────────────────────────
 const showUploader = ref(false);
 const toastVisible = ref(false);
 
-// ── Lifecycle ─────────────────────────────────────────────────────────────
 onMounted(loadReceipts);
 
-// ── Computed — totals grouped by currency ─────────────────────────────────
 const totalsByCurrency = computed(() => {
   return receipts.value.reduce<Record<string, number>>((acc, r) => {
     acc[r.currency] = (acc[r.currency] ?? 0) + Number(r.amount);
@@ -152,7 +130,6 @@ const totalsByCurrency = computed(() => {
   }, {});
 });
 
-// ── Methods ───────────────────────────────────────────────────────────────
 function onUploaded() {
   showUploader.value = false;
   showToast();

@@ -81,7 +81,6 @@
         :key="p.id"
         class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative"
       >
-        <!-- Action Buttons -->
         <div class="absolute top-2 right-2 z-10 flex gap-1">
           <button
             @click="openEditModal(p)"
@@ -144,7 +143,6 @@
               ${{ p.price.toLocaleString() }}
             </p>
 
-            <!-- Document Upload Section -->
             <div
               class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700"
             >
@@ -202,7 +200,6 @@
       </button>
     </div>
 
-    <!-- Create/Edit Modal -->
     <fwb-modal
       v-if="showCreateEditModal"
       @close="closeCreateEditModal"
@@ -224,7 +221,6 @@
       </template>
     </fwb-modal>
 
-    <!-- Delete Confirmation Modal -->
     <fwb-modal v-if="showDeleteModal" @close="showDeleteModal = false">
       <template #header>
         <div class="text-lg font-bold text-red-600">Confirmar Eliminación</div>
@@ -306,7 +302,6 @@ const currentPage = ref(0);
 const totalPages = ref(0);
 const pageSize = ref(6);
 
-// Filtros
 const filterTitle = ref('');
 const filterOpType = ref('');
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;

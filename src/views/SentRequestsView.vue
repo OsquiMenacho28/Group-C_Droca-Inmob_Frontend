@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-8 px-4">
     <div class="max-w-3xl mx-auto space-y-6">
-      <!-- Page header -->
       <div class="flex items-center justify-between">
         <div>
           <div class="flex items-center gap-3">
@@ -32,7 +31,6 @@
         </button>
       </div>
 
-      <!-- Stats summary -->
       <div class="grid grid-cols-3 gap-4">
         <div
           class="bg-white rounded-xl border border-gray-200 p-4 text-center shadow-sm"
@@ -58,7 +56,6 @@
         </div>
       </div>
 
-      <!-- Loading skeleton -->
       <div v-if="loading" class="space-y-3">
         <div
           v-for="i in 3"
@@ -71,7 +68,6 @@
         </div>
       </div>
 
-      <!-- Error state -->
       <div
         v-else-if="error"
         class="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-center gap-3 text-red-700"
@@ -80,7 +76,6 @@
         <p class="text-sm">{{ error }}</p>
       </div>
 
-      <!-- Empty state -->
       <div
         v-else-if="sentRequests.length === 0"
         class="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100"
@@ -104,14 +99,12 @@
         </router-link>
       </div>
 
-      <!-- Request cards -->
       <TransitionGroup name="list" tag="div" class="space-y-4" v-else>
         <div
           v-for="r in sentRequests"
           :key="r.id"
           class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
         >
-          <!-- Card header -->
           <div
             class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3"
             :class="{
@@ -121,7 +114,6 @@
             }"
           >
             <div class="flex items-center gap-3">
-              <!-- Avatar -->
               <div
                 class="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                 :class="{
@@ -178,9 +170,7 @@
             </span>
           </div>
 
-          <!-- Card body -->
           <div class="px-5 py-4 space-y-3">
-            <!-- Visit ID -->
             <div class="flex items-center gap-2 text-sm text-gray-600">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 shrink-0" />
               <span class="text-gray-500">Cita ID:</span>
@@ -189,7 +179,6 @@
               }}</span>
             </div>
 
-            <!-- Reason -->
             <div
               class="rounded-xl px-4 py-3"
               :class="{
@@ -205,7 +194,6 @@
               <p class="text-sm text-gray-700">{{ r.reason }}</p>
             </div>
 
-            <!-- Reply comment (if any) -->
             <div
               v-if="r.commentReply"
               class="bg-blue-50 rounded-xl px-4 py-3 border border-blue-100"
@@ -224,7 +212,6 @@
               </p>
             </div>
 
-            <!-- Waiting message for pending requests -->
             <div
               v-if="r.status === 'PENDING'"
               class="flex items-center gap-2 text-xs text-yellow-600 bg-yellow-50 rounded-lg px-3 py-2"
@@ -233,7 +220,6 @@
               Esperando respuesta de tu colega...
             </div>
 
-            <!-- Success message for accepted requests -->
             <div
               v-if="r.status === 'ACCEPTED'"
               class="flex items-center gap-2 text-xs text-green-600 bg-green-50 rounded-lg px-3 py-2"
@@ -243,7 +229,6 @@
               agenda.
             </div>
 
-            <!-- Info message for rejected requests -->
             <div
               v-if="r.status === 'REJECTED'"
               class="flex items-center gap-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2"
@@ -253,7 +238,6 @@
             </div>
           </div>
 
-          <!-- Footer with action buttons (only for pending) -->
           <div v-if="r.status === 'PENDING'" class="px-5 pb-5">
             <div class="flex gap-3 pt-2 border-t border-gray-100">
               <button
@@ -272,7 +256,6 @@
         </div>
       </TransitionGroup>
 
-      <!-- Auto-refresh indicator -->
       <div v-if="sentRequests.length > 0 && !loading" class="text-center">
         <p class="text-[10px] text-gray-400">
           Actualizando automáticamente cada 30 segundos
@@ -300,14 +283,12 @@ import IconLucideClock from '~icons/lucide/clock';
 import IconLucideCircleCheck from '~icons/lucide/circle-check';
 import IconLucideLoader from '~icons/lucide/loader';
 
-// ── State ─────────────────────────────────────────────────────────────────
 const sentRequests = ref<ReassignmentSolicitation[]>([]);
 const loading = ref(false);
 const error = ref('');
 const cancellingId = ref<string | null>(null);
 let intervalId: ReturnType<typeof setInterval> | null = null;
 
-// ── Computed stats ────────────────────────────────────────────────────────
 const stats = computed(() => {
   const total = sentRequests.value.length;
   const pending = sentRequests.value.filter(
@@ -322,7 +303,6 @@ const stats = computed(() => {
   return { total, pending, accepted, rejected };
 });
 
-// ── Methods ───────────────────────────────────────────────────────────────
 async function load() {
   loading.value = true;
   error.value = '';
@@ -354,7 +334,6 @@ async function cancelRequest(requestId: string) {
 
   cancellingId.value = requestId;
   try {
-    // Endpoint para cancelar solicitud pendiente (si existe)
     await api.delete(`/api/reassignments/${requestId}`);
     await load();
     Swal.fire({
@@ -400,10 +379,8 @@ function formatDate(iso: string): string {
   });
 }
 
-// ── Lifecycle ─────────────────────────────────────────────────────────────
 onMounted(() => {
   load();
-  // Auto-refresh every 30 seconds
   intervalId = setInterval(load, 30000);
 });
 

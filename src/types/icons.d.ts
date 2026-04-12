@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '~icons/*' {
   import type { DefineComponent } from 'vue';
   const component: DefineComponent<
@@ -8,4 +7,3 @@ declare module '~icons/*' {
   >;
   export default component;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */

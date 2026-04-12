@@ -75,7 +75,6 @@
             </div>
           </div>
 
-          <!-- Imagen principal de la propiedad -->
           <div
             v-if="property?.imageUrls?.length"
             class="rounded-xl overflow-hidden bg-gray-200 shadow-sm"
@@ -98,7 +97,6 @@
             </div>
           </div>
 
-          <!-- Tarjeta del Responsable (Propietario) -->
           <div
             class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
           >
@@ -119,7 +117,6 @@
             </div>
 
             <div v-else-if="owner" class="flex items-start space-x-3">
-              <!-- Avatar del propietario -->
               <div class="flex-shrink-0">
                 <div
                   class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center"
@@ -131,7 +128,6 @@
                 </div>
               </div>
 
-              <!-- Información del propietario -->
               <div class="flex-1 min-w-0">
                 <h5
                   class="text-sm font-semibold text-gray-900 dark:text-white truncate"
@@ -142,7 +138,6 @@
                   Propietario
                 </p>
 
-                <!-- Información de contacto -->
                 <div class="space-y-1">
                   <div
                     v-if="owner.email"
@@ -161,7 +156,6 @@
                   </div>
                 </div>
 
-                <!-- Botones de contacto directo -->
                 <div class="flex gap-2 mt-3">
                   <fwb-button
                     v-if="owner.phone"
@@ -173,19 +167,6 @@
                     <IconLucideMessageSquare class="w-3 h-3 mr-1" />
                     WhatsApp
                   </fwb-button>
-                  <!--
-                  <fwb-button 
-                    v-if="owner.email" 
-                    @click="contactViaEmail" 
-                    size="xs" 
-                    color="blue"
-                    class="flex-1"
-                  >
-                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    Email
-                  </fwb-button>-->
                 </div>
               </div>
             </div>
@@ -293,7 +274,6 @@
             </div>
           </div>
 
-          <!-- Historial de Estados (PA2) -->
           <div class="relative pl-6 border-l-2 border-red-500">
             <div
               class="absolute -left-[9px] top-0 w-4 h-4 bg-red-500 rounded-full border-4 border-white dark:border-gray-900"
@@ -416,7 +396,6 @@ const loadOwnerInfo = async () => {
   }
 };
 
-// Watch for property changes to load owner info
 watch(
   () => props.property,
   (newProperty) => {
@@ -435,9 +414,9 @@ const handleStatusChange = async () => {
   try {
     await propertyService.updateStatus(props.property.id, localStatus.value);
     alert('Estado actualizado correctamente');
-    emit('status-updated'); // Para refrescar la lista en el dashboard
+    emit('status-updated');
   } catch (err: unknown) {
-    localStatus.value = props.property.status; // Revertir
+    localStatus.value = props.property.status;
     const errorObj = err as { response?: { data?: { detail?: string } } };
     alert(
       errorObj.response?.data?.detail ||
@@ -498,10 +477,8 @@ const formatDate = (dateStr: string) => {
 const contactViaWhatsApp = () => {
   if (!owner.value?.phone || !props.property) return;
 
-  // Limpiar el número de teléfono (remover espacios, guiones, etc.)
   const cleanPhone = owner.value.phone.replace(/\D/g, '');
 
-  // Crear mensaje predeterminado sobre la propiedad
   const firstName = owner.value.firstName || '';
   const title = props.property.title || '';
   const address = props.property.address || '';
@@ -509,37 +486,10 @@ const contactViaWhatsApp = () => {
     `Hola ${firstName}, me contacto por la propiedad "${title}" ubicada en ${address}. ¿Podríamos coordinar una visita?`
   );
 
-  // Abrir WhatsApp con el mensaje
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${message}`;
   window.open(whatsappUrl, '_blank');
 };
 
-// TODO: Implement email contact
-// const contactViaEmail = () => {
-//   if (!owner.value?.email) return;
-//
-//   // Crear asunto y cuerpo del email
-//   const subject = encodeURIComponent(
-//     `Consulta sobre propiedad: ${props.property.title}`
-//   );
-//   const body = encodeURIComponent(
-//     `Hola ${owner.value.firstName},\n\n` +
-//       `Me contacto por la propiedad "${props.property.title}" ubicada en ${props.property.address}.\n\n` +
-//       `Detalles de la propiedad:\n` +
-//       `- Área: ${props.property.m2} m²\n` +
-//       `- Dormitorios: ${props.property.rooms}\n` +
-//       `- Tipo: ${props.property.type}\n\n` +
-//       `¿Podríamos coordinar una visita?\n\n` +
-//       `Saludos,\n` +
-//       `${user.value?.firstName || ''} ${user.value?.lastName || ''}`
-//   );
-//
-//   // Abrir cliente de email
-//   const emailUrl = `mailto:${owner.value.email}?subject=${subject}&body=${body}`;
-//   window.open(emailUrl, '_blank');
-// };
-
-// Watch para mantener localStatus sincronizado cuando cambia la propiedad
 watch(
   () => props.property?.status,
   (newStatus) => {

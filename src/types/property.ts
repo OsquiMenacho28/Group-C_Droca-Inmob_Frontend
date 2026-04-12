@@ -35,7 +35,6 @@ export interface Property {
   assignmentHistory?: AssignmentHistory[];
   ownerId?: string;
   visitCount?: number;
-  // Optional properties for display purposes
   priceHistory?: PriceHistory[];
   statusHistory?: StatusHistory[];
   area?: number;
@@ -49,7 +48,7 @@ export interface PropertyFormPayload {
   address: string;
   price: number;
   type: string;
-  operationType: OperationType; // <-- Nuevo campo
+  operationType: OperationType;
   m2: number;
   rooms: number;
   ownerId?: string | null;

@@ -1,16 +1,6 @@
-// ============================================================
-//  src/types/visitCalendar.ts
-//  Tipos TypeScript para las HU del calendario de visitas.
-//  Espejo de los DTOs del backend visit-calendar-service.
-// ============================================================
-
-// --- Enums ---
-
 export type EventType = 'VISIT' | 'CLIENT_REQUEST';
 export type EventStatus = 'SCHEDULED' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 export type RequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
-
-// --- CalendarEvent ---
 
 export interface CalendarEventResponse {
   id: string;
@@ -19,7 +9,7 @@ export interface CalendarEventResponse {
   propertyAddress?: string;
   agentId: string;
   agentName: string;
-  startTime: string; // ISO 8601
+  startTime: string;
   endTime: string;
   type: EventType;
   status: EventStatus;
@@ -27,7 +17,6 @@ export interface CalendarEventResponse {
   createdAt: string;
   clientId?: string;
   clientName?: string;
-  /** true si el evento pertenece al agente autenticado → destacar visualmente (HU1 PA1) */
   ownEvent: boolean;
 }
 
@@ -39,8 +28,6 @@ export interface CalendarResponse {
   myEvents: number;
 }
 
-// --- Conflict Check ---
-
 export interface ConflictResponse {
   hasConflict: boolean;
   message: string;
@@ -49,20 +36,16 @@ export interface ConflictResponse {
   suggestedEndTime?: string;
 }
 
-// --- Create Visit (HU2) ---
-
 export interface CreateVisitRequest {
   propertyId: string;
   propertyName: string;
   propertyAddress?: string;
   agentId: string;
   agentName: string;
-  startTime: string; // ISO 8601
+  startTime: string;
   endTime: string;
   notes?: string;
 }
-
-// --- Client Visit Request (HU3) ---
 
 export interface ClientVisitRequestDTO {
   propertyId: string;
@@ -73,7 +56,7 @@ export interface ClientVisitRequestDTO {
   clientName: string;
   clientEmail: string;
   clientPhone?: string;
-  preferredDateTime: string; // ISO 8601
+  preferredDateTime: string;
   alternativeDateTime?: string;
   message?: string;
 }
@@ -97,8 +80,6 @@ export interface VisitRequestResponse {
   notificationSent: boolean;
 }
 
-// --- Property (para HU3 portal cliente) ---
-
 export interface Property {
   id: string;
   title: string;
@@ -106,7 +87,7 @@ export interface Property {
   address: string;
   zone: string;
   price: number;
-  type: string; // 'CASA' | 'DEPARTAMENTO' | 'TERRENO' | 'LOCAL'
+  type: string;
   m2: number;
   rooms: number;
   status:
@@ -129,15 +110,11 @@ export interface Property {
   area?: number;
 }
 
-// --- API Generic Response ---
-
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
 }
-
-// --- Calendar UI helpers ---
 
 export interface CalendarDay {
   date: Date;

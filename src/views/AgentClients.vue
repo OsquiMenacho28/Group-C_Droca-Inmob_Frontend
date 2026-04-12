@@ -1,6 +1,5 @@
 <template>
   <div class="p-6 space-y-6">
-    <!-- Cabecera estilo Property -->
     <div
       class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
     >
@@ -23,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Buscador -->
     <div
       class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4"
     >
@@ -49,14 +47,12 @@
       <p class="mt-2 text-gray-500">Cargando clientes...</p>
     </div>
 
-    <!-- GRID DE CARDS (Igual que AdminProperties) -->
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <fwb-card
         v-for="c in filteredClients"
         :key="c.id"
         class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative"
       >
-        <!-- Botón de Histórico (Top Right) -->
         <button
           @click="openDetails(c)"
           class="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:text-blue-600 transition-all hover:scale-110"
@@ -65,7 +61,6 @@
           <IconLucideClock class="w-5 h-5" />
         </button>
 
-        <!-- Cabecera Visual (Gradiente en lugar de foto) -->
         <div
           class="h-32 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative"
         >
@@ -81,7 +76,6 @@
           </div>
         </div>
 
-        <!-- Contenido de la Card -->
         <div class="p-5 flex-1 flex flex-col">
           <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
             {{ c.fullName || `${c.firstName} ${c.lastName}` }}
@@ -109,7 +103,6 @@
             </div>
           </div>
 
-          <!-- Acciones -->
           <div
             class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
@@ -134,7 +127,6 @@
       </fwb-card>
     </div>
 
-    <!-- Mensaje si no hay resultados -->
     <div
       v-if="!loading && filteredClients.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed"
@@ -142,7 +134,6 @@
       <p class="text-gray-500">No se encontraron clientes que coincidan.</p>
     </div>
 
-    <!-- MODAL HISTÓRICO Y DETALLES -->
     <client-details-modal
       v-if="showDetailsModal && selectedClient"
       :show="showDetailsModal"
@@ -150,7 +141,6 @@
       @close="showDetailsModal = false"
     />
 
-    <!-- MODAL CREACIÓN / EDICIÓN -->
     <fwb-modal v-if="showModal" @close="closeModal">
       <template #header>
         <div class="text-lg font-semibold">

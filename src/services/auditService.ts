@@ -56,7 +56,6 @@ export const auditService = {
 
     const userLabelById = new Map<string, string>();
 
-    // Recorremos por antiguedad para conservar el ultimo nombre/email conocido.
     rawIdentityLogs
       .slice()
       .sort((a: IdentityLog, b: IdentityLog) => {

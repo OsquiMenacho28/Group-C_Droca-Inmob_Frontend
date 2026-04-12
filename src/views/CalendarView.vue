@@ -2,7 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300"
   >
-    <!-- ===== HEADER ===== -->
     <div
       class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
     >
@@ -118,12 +117,10 @@
         </div>
       </div>
 
-      <!-- ===== SECCIÓN DE FILTROS (DROPDOWNS BUSCABLES) ===== -->
       <div
         class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors shadow-sm"
       >
         <div class="flex flex-col lg:flex-row gap-4">
-          <!-- Navegación de semana -->
           <div class="flex items-center gap-2 shrink-0">
             <button
               @click="prevWeek"
@@ -149,7 +146,6 @@
             </button>
           </div>
 
-          <!-- DROPDOWN INMUEBLE -->
           <div class="flex-1 relative" id="prop-filter-container">
             <label
               class="block text-[10px] uppercase font-bold text-gray-400 mb-1 ml-1"
@@ -179,7 +175,6 @@
                 />
               </button>
             </div>
-            <!-- Lista desplegable -->
             <div
               v-if="showPropertyDropdown"
               class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl max-h-60 overflow-y-auto"
@@ -210,7 +205,6 @@
             </div>
           </div>
 
-          <!-- DROPDOWN AGENTE -->
           <div class="flex-1 relative" id="agent-filter-container">
             <label
               class="block text-[10px] uppercase font-bold text-gray-400 mb-1 ml-1"
@@ -240,7 +234,6 @@
                 />
               </button>
             </div>
-            <!-- Lista desplegable -->
             <div
               v-if="showAgentDropdown"
               class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl max-h-60 overflow-y-auto"
@@ -269,7 +262,6 @@
             </div>
           </div>
 
-          <!-- Botón Limpiar -->
           <div class="flex items-end pb-0.5">
             <button
               v-if="filterPropertyId || filterAgentId"
@@ -282,7 +274,6 @@
         </div>
       </div>
 
-      <!-- ===== RESUMEN ===== -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" v-if="calendarData">
         <div
           class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center"
@@ -326,12 +317,10 @@
         </div>
       </div>
 
-      <!-- ===== VISTA SEMANAL ===== -->
       <div
         v-if="!loading"
         class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors"
       >
-        <!-- Cabecera Días -->
         <div
           class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700"
         >
@@ -359,7 +348,6 @@
           </div>
         </div>
 
-        <!-- Cuerpo Calendario -->
         <div class="grid grid-cols-7 min-h-[450px]">
           <div
             v-for="(day, idx) in weekDays"
@@ -388,7 +376,6 @@
       </div>
     </div>
 
-    <!-- ===== MODAL DETALLE ===== -->
     <Transition name="fade">
       <div
         v-if="selectedEvent"
@@ -498,13 +485,11 @@ import {
 } from '@/services/visitRequestService';
 import ReassignButton from '@/components/visits/reassignment/ReassignButton.vue';
 
-// --- AUTH & CONFIG ---
 const { user } = useAuth();
 const myAgentId = computed(
   () => (user.value?.sub || user.value?.userId || '') as string
 );
 
-// --- ESTADOS PRINCIPALES ---
 const loading = ref(false);
 const error = ref('');
 const calendarData = ref<CalendarResponse | null>(null);
@@ -515,7 +500,6 @@ const pendingRequests = ref<VisitRequestResponse[]>([]);
 const requestActionLoadingId = ref('');
 let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null;
 
-// --- ESTADOS FILTROS (DROPDOWNS) ---
 const allProperties = ref<
   { id: string; title: string; address: string; [key: string]: unknown }[]
 >([]);
@@ -535,7 +519,6 @@ const searchTermAgent = ref('');
 const showAgentDropdown = ref(false);
 const filterAgentId = ref('');
 
-// --- LÓGICA DE SEMANA ---
 function getMonday(d: Date): Date {
   const day = d.getDay();
   const diff = day === 0 ? -6 : 1 - day;
@@ -557,7 +540,6 @@ const weekLabel = computed(() => {
   return `${from.getDate()} ${from.toLocaleString('es-BO', { month: 'short' })} — ${to.getDate()} ${to.toLocaleString('es-BO', { month: 'short', year: 'numeric' })}`;
 });
 
-// --- CARGA DE DATOS ---
 const loadFilterData = async () => {
   try {
     const [p, u] = await Promise.all([
@@ -622,7 +604,6 @@ async function loadPendingRequests() {
   }
 }
 
-// --- FILTRADO LOCAL ---
 const filteredProperties = computed(() => {
   const s = searchTermProperty.value.toLowerCase();
   if (!s) return allProperties.value.slice(0, 10);
@@ -643,7 +624,6 @@ const filteredAgents = computed(() => {
     .slice(0, 10);
 });
 
-// --- ACCIONES DE FILTRO ---
 const selectProperty = (p: {
   id: string;
   title: string;
@@ -672,7 +652,6 @@ function clearFilters() {
   loadCalendar();
 }
 
-// --- HELPERS VISUALES ---
 const eventsForDay = (day: Date) =>
   calendarData.value?.events.filter(
     (ev) => new Date(ev.startTime).toDateString() === day.toDateString()
@@ -726,7 +705,6 @@ const statusLabel = (s: string) =>
     CANCELLED: 'Cancelada',
   })[s] || s;
 
-// --- ACCIONES NAVEGACIÓN ---
 function prevWeek() {
   currentWeekStart.value = new Date(
     currentWeekStart.value.setDate(currentWeekStart.value.getDate() - 7)
@@ -744,7 +722,6 @@ function goToday() {
   loadCalendar();
 }
 
-// --- ACCIONES EVENTO ---
 const selectEvent = (ev: CalendarEventResponse) => {
   selectedEvent.value = ev;
 };
@@ -770,9 +747,7 @@ async function handleCancel(ev: CalendarEventResponse) {
  * Cierra el modal y refresca el calendario para reflejar los cambios
  */
 function handleReassignmentSent() {
-  // Cerrar el modal de detalle
   selectedEvent.value = null;
-  // Recargar el calendario para mostrar el estado actualizado
   loadCalendar();
 }
 
@@ -804,7 +779,6 @@ async function handleRejectRequest(requestId: string) {
   }
 }
 
-// --- EVENTOS DE CIERRE ---
 const closeClickOutside = (e: MouseEvent) => {
   if (!e.target || !(e.target instanceof HTMLElement)) return;
   if (!e.target.closest('#prop-filter-container'))

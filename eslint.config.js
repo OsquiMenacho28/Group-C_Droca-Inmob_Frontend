@@ -29,12 +29,10 @@ export default [
       prettier: prettierPlugin,
     },
     rules: {
-      // Vue 3 recommended rules
       'vue/multi-word-component-names': 'off',
       'vue/require-default-prop': 'warn',
       'vue/require-prop-types': 'warn',
 
-      // TypeScript ESLint recommended
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -43,7 +41,6 @@ export default [
         { argsIgnorePattern: '^_' },
       ],
 
-      // Prettier
       'prettier/prettier': 'error',
     },
   },
