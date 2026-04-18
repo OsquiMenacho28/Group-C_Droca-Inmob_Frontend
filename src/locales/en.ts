@@ -948,6 +948,7 @@ export const en = {
     fiscalInfo: 'Fiscal Information',
     fiscalHelp: 'This document legally identifies the property owner.',
     clientPrefs: 'Client Preferences',
+    assignedAgent: 'Assigned Agent',
     admin: 'Administrator',
     email: 'Email',
     phone: 'Phone',

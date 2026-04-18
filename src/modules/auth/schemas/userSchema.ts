@@ -101,6 +101,7 @@ export const userSchema = baseUserSchema
     preferredZone: z.string().optional(),
     preferredPropertyType: z.string().optional(),
     preferredRooms: z.union([z.number(), z.string(), z.null()]).optional(),
+    assignedAgentId: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.userType === 'EMPLOYEE') {

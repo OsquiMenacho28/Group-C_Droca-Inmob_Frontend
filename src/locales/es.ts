@@ -956,6 +956,7 @@ export const es = {
     fiscalInfo: 'Información Fiscal',
     fiscalHelp: 'Este documento identifica legalmente al propietario del inmueble.',
     clientPrefs: 'Preferencias del Cliente',
+    assignedAgent: 'Agente Asignado',
     admin: 'Administrador',
     email: 'Email',
     phone: 'Teléfono',
