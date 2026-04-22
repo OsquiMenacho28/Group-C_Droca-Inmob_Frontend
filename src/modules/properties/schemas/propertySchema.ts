@@ -25,6 +25,8 @@ export const propertySchema = z.object({
   ownerId: z.string().nullable().optional(),
   imageUrls: z.array(z.string()).optional(),
   description: z.string().optional(),
+  latitude: z.number().min(-90).max(90).optional().nullable(),
+  longitude: z.number().min(-180).max(180).optional().nullable(),
 });
 
 export type PropertyFormValues = z.infer<typeof propertySchema>;

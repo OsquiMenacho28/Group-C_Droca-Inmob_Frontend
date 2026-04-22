@@ -141,6 +141,24 @@
       </fwb-button>
       <fwb-button type="submit" gradient="blue">{{ t('propertyForm.confirmRegister') }}</fwb-button>
     </div>
+    <div v-if="props.propertyId" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ubicación Geográfica</h3>
+        <fwb-button
+          size="xs"
+          gradient="green"
+          @click="handleSaveLocation"
+          :disabled="savingLocation"
+        >
+          <div class="flex items-center gap-1">
+            <IconLucideMapPin class="w-4 h-4" />
+            {{ savingLocation ? 'Guardando...' : 'Guardar Ubicación' }}
+          </div>
+        </fwb-button>
+      </div>
+
+      <PropertyMapPicker v-model="locationModel" />
+    </div>
   </form>
 </template>
 
@@ -156,6 +174,9 @@
   import ImageUpload from '@/components/properties/ImageUpload.vue';
   import type { PropertyFormPayload, OperationType } from '@/types/property';
   import { useI18n } from 'vue-i18n';
+  import PropertyMapPicker from './PropertyMapPicker.vue';
+  import IconLucideMapPin from '~icons/lucide/map-pin';
+  import { propertyService } from '@/modules/properties';
 
   const { t } = useI18n();
 
@@ -277,4 +298,43 @@
   );
 
   onMounted(loadOwners);
+
+  const savingLocation = ref(false);
+  const locationModel = ref({
+    lat: (props.initialData?.latitude as number) || null,
+    lng: (props.initialData?.longitude as number) || null,
+  });
+
+  const handleSaveLocation = async () => {
+    if (!locationModel.value.lat || !locationModel.value.lng) {
+      alert('La ubicación es obligatoria. Por favor, selecciona un punto en el mapa.');
+      return;
+    }
+
+    // Validación de rango frontend
+    if (
+      locationModel.value.lat < -90 ||
+      locationModel.value.lat > 90 ||
+      locationModel.value.lng < -180 ||
+      locationModel.value.lng > 180
+    ) {
+      alert('Las coordenadas están fuera del rango permitido (Lat: -90 a 90, Lon: -180 a 180).');
+      return;
+    }
+
+    savingLocation.value = true;
+    try {
+      await propertyService.updateLocation(
+        props.propertyId!,
+        locationModel.value.lat,
+        locationModel.value.lng
+      );
+      alert('Ubicación guardada con éxito.');
+    } catch (error) {
+      console.error(error);
+      alert('Error al guardar la ubicación.');
+    } finally {
+      savingLocation.value = false;
+    }
+  };
 </script>
