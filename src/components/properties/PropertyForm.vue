@@ -195,7 +195,7 @@
     propertyId?: string;
   }>();
 
-  const emit = defineEmits(['submit', 'cancel']);
+  const emit = defineEmits(['submit', 'cancel', 'location-updated']);
   const owners = ref<OwnerUser[]>([]);
   const authStore = useAuthStore();
 
@@ -324,15 +324,21 @@
 
     savingLocation.value = true;
     try {
-      await propertyService.updateLocation(
+      // El backend devuelve la propiedad actualizada
+      const updatedProperty = await propertyService.updateLocation(
         props.propertyId!,
         locationModel.value.lat,
         locationModel.value.lng
       );
+
+      // 1. Notificar al usuario
+      // Podrías usar SweetAlert2 para algo más elegante que un alert
       alert('Ubicación guardada con éxito.');
+
+      // 2. EMITIR el cambio al componente padre
+      emit('location-updated', updatedProperty);
     } catch (error) {
       console.error(error);
-      alert('Error al guardar la ubicación.');
     } finally {
       savingLocation.value = false;
     }
