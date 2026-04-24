@@ -201,6 +201,7 @@ export const en = {
     accept: 'Accept',
     reject: 'Reject',
     processing: 'Processing...',
+    rescheduling: 'Rescheduling...',
     back: 'Back',
     saving: 'Saving...',
     save: 'Save',
@@ -397,6 +398,15 @@ export const en = {
     status409: 'This visit cannot be rescheduled because it is not cancelled.',
     status422: 'The agent or property is not available at that date and time.',
     status404: 'Visit not found.',
+    visitCancelledAt: 'Visit cancelled at:',
+    optionalLabel: '(optional)',
+    referenceInfo:
+      'A new visit will be created with the same property, client, and agent. The cancelled visit will remain as a reference.',
+    agentAndPropertyAvailability:
+      'The system will verify that the agent and property are available.',
+    confirmReschedule: 'Confirm rescheduling',
+    newDateTimeRequired: 'The new date and time are required.',
+    newDateTimeFuture: 'The new date and time must be in the future.',
   },
   conflict: {
     title: 'Schedule conflict detected',
