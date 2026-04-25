@@ -407,6 +407,11 @@ export const en = {
     confirmReschedule: 'Confirm rescheduling',
     newDateTimeRequired: 'The new date and time are required.',
     newDateTimeFuture: 'The new date and time must be in the future.',
+    visitWasRescheduled: 'This visit was rescheduled',
+    viewVisit: 'View visit',
+    scheduledVisit: 'Scheduled visit',
+    cancelledVisit: 'Cancelled visit',
+    completedVisit: 'Completed visit',
   },
   conflict: {
     title: 'Schedule conflict detected',
