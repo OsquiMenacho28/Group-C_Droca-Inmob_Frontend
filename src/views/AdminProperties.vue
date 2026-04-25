@@ -214,8 +214,8 @@
           :key="formKey"
           :initial-data="editingProperty || undefined"
           :property-id="(editingProperty?.id as string) || undefined"
-          @submit="handleCreateEdit"
           @location-updated="handleLocalLocationUpdate"
+          @submit="handleCreateEdit"
           @cancel="closeCreateEditModal"
         />
       </template>

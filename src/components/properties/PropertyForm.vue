@@ -164,6 +164,7 @@
 
 <script setup lang="ts">
   import { ref, onMounted, watch, computed } from 'vue';
+  import Swal from 'sweetalert2';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
   import { propertySchema } from '@/modules/properties/schemas/propertySchema';
@@ -177,6 +178,7 @@
   import PropertyMapPicker from './PropertyMapPicker.vue';
   import IconLucideMapPin from '~icons/lucide/map-pin';
   import { propertyService } from '@/modules/properties';
+  import { handleApiError } from '@/api/errorHandler';
 
   const { t } = useI18n();
 
@@ -306,39 +308,45 @@
   });
 
   const handleSaveLocation = async () => {
-    if (!locationModel.value.lat || !locationModel.value.lng) {
-      alert('La ubicación es obligatoria. Por favor, selecciona un punto en el mapa.');
+    const { lat, lng } = locationModel.value;
+
+    // 1. Validar que no estén vacíos
+    if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
+      alert('Por favor, ingresa coordenadas válidas o selecciona un punto en el mapa.');
       return;
     }
 
-    // Validación de rango frontend
-    if (
-      locationModel.value.lat < -90 ||
-      locationModel.value.lat > 90 ||
-      locationModel.value.lng < -180 ||
-      locationModel.value.lng > 180
-    ) {
-      alert('Las coordenadas están fuera del rango permitido (Lat: -90 a 90, Lon: -180 a 180).');
+    // 2. Validar rangos geográficos (Tarea de aceptación)
+    if (lat < -90 || lat > 90) {
+      alert('La latitud debe estar entre -90 y 90 grados.');
+      return;
+    }
+    if (lng < -180 || lng > 180) {
+      alert('La longitud debe estar entre -180 y 180 grados.');
       return;
     }
 
     savingLocation.value = true;
     try {
-      // El backend devuelve la propiedad actualizada
-      const updatedProperty = await propertyService.updateLocation(
-        props.propertyId!,
-        locationModel.value.lat,
-        locationModel.value.lng
-      );
+      const updatedProperty = await propertyService.updateLocation(props.propertyId!, lat, lng);
 
-      // 1. Notificar al usuario
-      // Podrías usar SweetAlert2 para algo más elegante que un alert
-      alert('Ubicación guardada con éxito.');
+      // Notificación elegante (SweetAlert2)
+      Swal.fire({
+        title: 'Ubicación guardada',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        showConfirmButton: false,
+      });
 
-      // 2. EMITIR el cambio al componente padre
       emit('location-updated', updatedProperty);
     } catch (error) {
-      console.error(error);
+      // El backend también validará esto, pero el frontend da feedback inmediato
+      //alert('Error al guardar la ubicación. Verifica los datos.');
+      const appError = handleApiError(error);
+      alert(`Error: ${appError.message}`);
+      console.error('Detalle técnico:', error);
     } finally {
       savingLocation.value = false;
     }

@@ -203,8 +203,8 @@
           :key="formKey"
           :initial-data="editingProperty || undefined"
           :property-id="(editingProperty?.id as string) || undefined"
-          @submit="handleCreateEdit"
           @location-updated="handleLocalLocationUpdate"
+          @submit="handleCreateEdit"
           @cancel="closeCreateEditModal"
         />
       </template>
@@ -471,13 +471,15 @@
   };
 
   const handleLocalLocationUpdate = (updatedProp: Property) => {
-    // Para AgentDashboard.vue usa 'myProperties', para AdminProperties.vue usa 'allProperties'
-    const targetList = myProperties.value; // o allProperties.value
+    // Aquí SÍ se llama myProperties
+    const index = myProperties.value.findIndex((p) => p.id === updatedProp.id);
 
-    const index = targetList.findIndex((p) => p.id === updatedProp.id);
     if (index !== -1) {
-      // Reemplazamos el objeto antiguo por el nuevo manteniendo la reactividad
-      targetList[index] = { ...targetList[index], ...updatedProp };
+      myProperties.value[index] = { ...myProperties.value[index], ...updatedProp };
+
+      if (selectedProp.value && selectedProp.value.id === updatedProp.id) {
+        selectedProp.value = { ...updatedProp };
+      }
     }
   };
   onMounted(load);
