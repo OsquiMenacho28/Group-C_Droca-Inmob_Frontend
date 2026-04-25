@@ -214,6 +214,7 @@
           :key="formKey"
           :initial-data="editingProperty || undefined"
           :property-id="(editingProperty?.id as string) || undefined"
+          @location-updated="handleLocalLocationUpdate"
           @submit="handleCreateEdit"
           @cancel="closeCreateEditModal"
         />
@@ -603,5 +604,19 @@
     }
   };
 
+  const handleLocalLocationUpdate = (updatedProp: Property) => {
+    // CORRECCIÓN: Usar allProperties en lugar de myProperties
+    const index = allProperties.value.findIndex((p) => p.id === updatedProp.id);
+
+    if (index !== -1) {
+      // Actualizamos el objeto en la lista reactiva
+      allProperties.value[index] = { ...allProperties.value[index], ...updatedProp };
+
+      // También actualizamos el objeto seleccionado para que el modal/formulario refleje el cambio
+      if (selectedProp.value && selectedProp.value.id === updatedProp.id) {
+        selectedProp.value = { ...updatedProp };
+      }
+    }
+  };
   onMounted(load);
 </script>

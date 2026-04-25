@@ -157,6 +157,7 @@
       console.log('Changing password for email:', emailVal);
 
       await authService.changePassword({
+        email: emailVal,
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
       });

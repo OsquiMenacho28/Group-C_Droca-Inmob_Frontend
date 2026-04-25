@@ -7,7 +7,7 @@ export const authService = {
     return response.data.data;
   },
 
-  async changePassword(payload: { currentPassword: string; newPassword: string }) {
+  async changePassword(payload: { email: string; currentPassword: string; newPassword: string }) {
     const response = await api.post('/auth/change-password', payload);
     return response.data.data;
   },

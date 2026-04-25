@@ -93,6 +93,24 @@
           {{ t('userForm.modifyingName') }}
         </p>
       </div>
+
+      <div v-if="isAdmin && userType === 'INTERESTED_CLIENT'">
+        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          {{ t('userForm.assignedAgent') }}
+        </label>
+        <select
+          v-model="assignedAgentId"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        >
+          <option :value="null">{{ t('adminProperties.notAssigned') }}</option>
+          <option v-for="agent in activeAgents" :key="agent.id" :value="agent.id">
+            {{ agent.fullName }}
+          </option>
+        </select>
+        <p v-if="isFieldModified('assignedAgentId')" class="text-xs text-blue-600 mt-1">
+          {{ t('userForm.modifyingRole') }}
+        </p>
+      </div>
     </div>
 
     <div v-if="!clientOnly && !ownerOnly">
@@ -263,6 +281,14 @@
   const modifiedFields = ref<Set<string>>(new Set());
   const authStore = useAuthStore();
   const currentUser = computed(() => authStore.user as UserClaims | null);
+  const isAdmin = computed(() => (currentUser.value?.roles as string[])?.includes('ADMIN'));
+
+  const allUsers = ref<any[]>([]);
+  const activeAgents = computed(() =>
+    allUsers.value.filter(
+      (u) => (u.userType === 'EMPLOYEE' || u.userType === 'ADMIN') && u.status === 'ACTIVE'
+    )
+  );
 
   const {
     emailFormatError,
@@ -278,7 +304,17 @@
     initialValues: mapInitialData(),
   });
 
-  onMounted(() => {});
+  onMounted(async () => {
+    if (isAdmin.value) {
+      try {
+        const { userService } = await import('@/services/userService');
+        const res = await userService.getUsers(0, 1000);
+        allUsers.value = res.data || [];
+      } catch (e) {
+        console.error('Failed to load agents for UserForm:', e);
+      }
+    }
+  });
 
   const [firstName, firstNameAttrs] = defineField('firstName');
   const [lastName, lastNameAttrs] = defineField('lastName');
@@ -295,6 +331,7 @@
   const [preferredZone] = defineField('preferredZone');
   const [preferredPropertyType] = defineField('preferredPropertyType');
   const [preferredRoomsRaw] = defineField('preferredRooms');
+  const [assignedAgentId] = defineField('assignedAgentId');
 
   const preferredRooms = computed({
     get: () => {
@@ -356,6 +393,7 @@
       preferredZone: String(d.preferredZone || ''),
       preferredPropertyType: String(d.preferredPropertyType || ''),
       preferredRooms: (d.preferredRooms as number | string) || '',
+      assignedAgentId: String(d.assignedAgentId || ''),
     };
   }
 
@@ -645,7 +683,7 @@
         payload.hireDate = formValues.hireDate;
       }
 
-      if (!props.clientOnly && modifiedFields.value.has('taxId')) {
+      if (modifiedFields.value.has('taxId')) {
         if (formValues.userType === 'OWNER') {
           if (!formValues.taxId?.trim() || formValues.taxId.trim().length < 7) {
             return;
@@ -655,6 +693,10 @@
           }
         }
         payload.taxId = formValues.taxId?.trim();
+      }
+
+      if (modifiedFields.value.has('assignedAgentId')) {
+        payload.assignedAgentId = formValues.assignedAgentId || null;
       }
 
       if (modifiedFields.value.has('preferredContactMethod'))

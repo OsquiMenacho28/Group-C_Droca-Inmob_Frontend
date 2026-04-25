@@ -203,6 +203,7 @@
           :key="formKey"
           :initial-data="editingProperty || undefined"
           :property-id="(editingProperty?.id as string) || undefined"
+          @location-updated="handleLocalLocationUpdate"
           @submit="handleCreateEdit"
           @cancel="closeCreateEditModal"
         />
@@ -469,5 +470,17 @@
     showDetailsModal.value = true;
   };
 
+  const handleLocalLocationUpdate = (updatedProp: Property) => {
+    // Aquí SÍ se llama myProperties
+    const index = myProperties.value.findIndex((p) => p.id === updatedProp.id);
+
+    if (index !== -1) {
+      myProperties.value[index] = { ...myProperties.value[index], ...updatedProp };
+
+      if (selectedProp.value && selectedProp.value.id === updatedProp.id) {
+        selectedProp.value = { ...updatedProp };
+      }
+    }
+  };
   onMounted(load);
 </script>

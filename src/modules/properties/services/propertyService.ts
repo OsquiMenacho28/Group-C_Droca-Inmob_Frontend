@@ -274,6 +274,14 @@ export const propertyService = {
       file.type
     );
   },
+
+  async updateLocation(propertyId: string, latitude: number, longitude: number) {
+    const response = await api.patch(`/properties/${propertyId}/location`, {
+      latitude,
+      longitude,
+    });
+    return response.data.data;
+  },
 };
 
 export { propertyService as default };

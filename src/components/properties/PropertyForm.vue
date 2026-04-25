@@ -141,11 +141,30 @@
       </fwb-button>
       <fwb-button type="submit" gradient="blue">{{ t('propertyForm.confirmRegister') }}</fwb-button>
     </div>
+    <div v-if="props.propertyId" class="border-t border-gray-200 dark:border-gray-700 pt-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ubicación Geográfica</h3>
+        <fwb-button
+          size="xs"
+          gradient="green"
+          @click="handleSaveLocation"
+          :disabled="savingLocation"
+        >
+          <div class="flex items-center gap-1">
+            <IconLucideMapPin class="w-4 h-4" />
+            {{ savingLocation ? 'Guardando...' : 'Guardar Ubicación' }}
+          </div>
+        </fwb-button>
+      </div>
+
+      <PropertyMapPicker v-model="locationModel" />
+    </div>
   </form>
 </template>
 
 <script setup lang="ts">
   import { ref, onMounted, watch, computed } from 'vue';
+  import Swal from 'sweetalert2';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
   import { propertySchema } from '@/modules/properties/schemas/propertySchema';
@@ -156,6 +175,10 @@
   import ImageUpload from '@/components/properties/ImageUpload.vue';
   import type { PropertyFormPayload, OperationType } from '@/types/property';
   import { useI18n } from 'vue-i18n';
+  import PropertyMapPicker from './PropertyMapPicker.vue';
+  import IconLucideMapPin from '~icons/lucide/map-pin';
+  import { propertyService } from '@/modules/properties';
+  import { handleApiError } from '@/api/errorHandler';
 
   const { t } = useI18n();
 
@@ -174,7 +197,7 @@
     propertyId?: string;
   }>();
 
-  const emit = defineEmits(['submit', 'cancel']);
+  const emit = defineEmits(['submit', 'cancel', 'location-updated']);
   const owners = ref<OwnerUser[]>([]);
   const authStore = useAuthStore();
 
@@ -277,4 +300,55 @@
   );
 
   onMounted(loadOwners);
+
+  const savingLocation = ref(false);
+  const locationModel = ref({
+    lat: (props.initialData?.latitude as number) || null,
+    lng: (props.initialData?.longitude as number) || null,
+  });
+
+  const handleSaveLocation = async () => {
+    const { lat, lng } = locationModel.value;
+
+    // 1. Validar que no estén vacíos
+    if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
+      alert('Por favor, ingresa coordenadas válidas o selecciona un punto en el mapa.');
+      return;
+    }
+
+    // 2. Validar rangos geográficos (Tarea de aceptación)
+    if (lat < -90 || lat > 90) {
+      alert('La latitud debe estar entre -90 y 90 grados.');
+      return;
+    }
+    if (lng < -180 || lng > 180) {
+      alert('La longitud debe estar entre -180 y 180 grados.');
+      return;
+    }
+
+    savingLocation.value = true;
+    try {
+      const updatedProperty = await propertyService.updateLocation(props.propertyId!, lat, lng);
+
+      // Notificación elegante (SweetAlert2)
+      Swal.fire({
+        title: 'Ubicación guardada',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        timer: 3000,
+        showConfirmButton: false,
+      });
+
+      emit('location-updated', updatedProperty);
+    } catch (error) {
+      // El backend también validará esto, pero el frontend da feedback inmediato
+      //alert('Error al guardar la ubicación. Verifica los datos.');
+      const appError = handleApiError(error);
+      alert(`Error: ${appError.message}`);
+      console.error('Detalle técnico:', error);
+    } finally {
+      savingLocation.value = false;
+    }
+  };
 </script>
