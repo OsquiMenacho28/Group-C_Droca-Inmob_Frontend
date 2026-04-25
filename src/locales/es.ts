@@ -879,6 +879,12 @@ export const es = {
     cancel: 'Cancelar',
     rooms: 'Habitaciones',
     confirmRegister: 'Confirmar Registro',
+    locationTitle: 'Ubicación Geográfica',
+    saveLocation: 'Guardar Ubicación',
+    locationRequired: 'La ubicación es obligatoria. Por favor, selecciona un punto en el mapa.',
+    locationRangeError:
+      'Las coordenadas deben estar en los rangos: Lat (-90 a 90) y Lon (-180 a 180).',
+    locationSuccess: 'Ubicación actualizada correctamente.',
   },
   imageUpload: {
     dragDrop: 'Arrastra y suelta imágenes aquí o haz clic para seleccionar',

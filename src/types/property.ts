@@ -42,6 +42,8 @@ export interface Property {
   bedrooms?: number;
   agentName?: string;
   description?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface PropertyFormPayload {
@@ -71,4 +73,9 @@ export interface PriceHistory {
 
 export interface AssignAgentPayload {
   agentId: string;
+}
+
+export interface LocationPayload {
+  latitude: number;
+  longitude: number;
 }
