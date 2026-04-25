@@ -204,6 +204,7 @@
           :initial-data="editingProperty || undefined"
           :property-id="(editingProperty?.id as string) || undefined"
           @submit="handleCreateEdit"
+          @location-updated="handleLocalLocationUpdate"
           @cancel="closeCreateEditModal"
         />
       </template>
@@ -469,5 +470,15 @@
     showDetailsModal.value = true;
   };
 
+  const handleLocalLocationUpdate = (updatedProp: Property) => {
+    // Para AgentDashboard.vue usa 'myProperties', para AdminProperties.vue usa 'allProperties'
+    const targetList = myProperties.value; // o allProperties.value
+
+    const index = targetList.findIndex((p) => p.id === updatedProp.id);
+    if (index !== -1) {
+      // Reemplazamos el objeto antiguo por el nuevo manteniendo la reactividad
+      targetList[index] = { ...targetList[index], ...updatedProp };
+    }
+  };
   onMounted(load);
 </script>
