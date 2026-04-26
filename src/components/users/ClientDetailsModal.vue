@@ -60,6 +60,8 @@
               {{ client.preferredContactMethod || t('clientDetails.notSpecified') }}
             </p>
           </div>
+
+          <IdentityDocumentsSection :person-id="client.personId" :auth-user-id="client.authUserId" />
         </div>
 
         <div class="space-y-6">
@@ -136,6 +138,7 @@
   import IconLucidePhone from '~icons/lucide/phone';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
   const { t } = useI18n();
 
@@ -150,6 +153,8 @@
   }
 
   interface ClientRecord {
+    personId?: string;
+    authUserId?: string;
     fullName?: string;
     preferredZone?: string;
     budget?: number;
