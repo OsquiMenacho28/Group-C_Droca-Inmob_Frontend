@@ -100,6 +100,9 @@
           <div
             class="grid grid-cols-1 gap-2 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
+            <fwb-button size="sm" color="alternative" @click="openDetailsModal(o)" class="w-full">
+              {{ t('agentOwners.details') }}
+            </fwb-button>
             <fwb-button size="sm" color="alternative" @click="openEditModal(o)" class="w-full">
               {{ t('agentOwners.editProfile') }}
             </fwb-button>
@@ -142,6 +145,13 @@
       </template>
     </fwb-modal>
 
+    <owner-details-modal
+      v-if="showDetailsModal && selectedOwner"
+      :show="showDetailsModal"
+      :owner="selectedOwner"
+      @close="showDetailsModal = false"
+    />
+
     <div
       v-if="toast.visible"
       :class="[
@@ -163,6 +173,7 @@
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { personService } from '@/services/personService';
   import UserForm from '@/components/users/UserForm.vue';
+  import OwnerDetailsModal from '@/components/users/OwnerDetailsModal.vue';
   import Pagination from '@/components/ui/Pagination.vue';
   import { useI18n } from 'vue-i18n';
   import { handleApiError } from '@/api/errorHandler';
@@ -174,8 +185,10 @@
   const owners = ref<User[]>([]);
   const loading = ref(false);
   const showModal = ref(false);
+  const showDetailsModal = ref(false);
   const isEditing = ref(false);
   const editingOwner = ref<Record<string, unknown> | null>(null);
+  const selectedOwner = ref<Record<string, unknown> | null>(null);
   const formKey = ref(0);
   const searchName = ref('');
 
@@ -223,9 +236,15 @@
         filteredBase.map(async (u: User) => {
           try {
             const profile = await personService.getPersonByAuthUserId(u.id);
-            return { ...u, ...profile };
+            return {
+              ...u,
+              ...profile,
+              id: u.id,
+              authUserId: u.id,
+              personId: profile.id as string,
+            };
           } catch {
-            return u;
+            return { ...u, authUserId: u.id, personId: undefined };
           }
         })
       );
@@ -259,6 +278,11 @@
     isEditing.value = true;
     formKey.value++;
     showModal.value = true;
+  };
+
+  const openDetailsModal = (owner: User) => {
+    selectedOwner.value = owner as unknown as Record<string, unknown>;
+    showDetailsModal.value = true;
   };
 
   const closeModal = () => {

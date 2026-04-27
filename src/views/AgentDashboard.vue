@@ -75,7 +75,7 @@
       <fwb-card
         v-for="p in myProperties"
         :key="p.id"
-        class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative"
+        class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative dark:bg-gray-800"
       >
         <div class="absolute top-2 right-2 z-10 flex gap-1">
           <button
@@ -116,7 +116,7 @@
           <div class="absolute bottom-2 right-2">
             <span
               :class="getStatusBadgeClass(p.status)"
-              class="text-xs font-medium px-2.5 py-0.5 rounded"
+              class="text-xs font-medium px-2.5 py-0.5 rounded shadow-sm"
             >
               {{ t('status.' + p.status) }}
             </span>
@@ -126,9 +126,9 @@
         <div class="p-5 flex-1 flex flex-col">
           <div class="flex gap-2 mb-3">
             <fwb-badge :type="getOpTypeBadge(p.operationType)">
-              {{ t('propertyOperations.' + p.operationType) }}
+              {{ p.operationType ? t('propertyOperations.' + p.operationType) : '--' }}
             </fwb-badge>
-            <fwb-badge type="dark">{{ t('propertyTypes.' + p.type) }}</fwb-badge>
+            <fwb-badge type="dark">{{ p.type ? t('propertyTypes.' + p.type) : '--' }}</fwb-badge>
           </div>
 
           <h5 class="text-xl font-bold dark:text-white mb-1">{{ p.title }}</h5>
@@ -142,11 +142,23 @@
 
           <div class="mt-auto">
             <p class="text-2xl font-black text-blue-600">
-              ${{ p.price.toLocaleString(getLocaleString()) }}
+              ${{ (p.price || 0).toLocaleString(getLocaleString()) }}
             </p>
 
             <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
               <document-upload :property-id="p.id" :agent-id="p.assignedAgentId || undefined" />
+            </div>
+
+            <div class="mt-4">
+              <fwb-button
+                v-if="p.status !== 'VENDIDO'"
+                size="sm"
+                gradient="green"
+                class="w-full"
+                @click="prepClosure(p)"
+              >
+                {{ t('adminProperties.registerClosure') }}
+              </fwb-button>
             </div>
           </div>
         </div>
@@ -241,6 +253,22 @@
       @close="showDetailsModal = false"
       @status-updated="load"
     />
+
+    <closure-modal
+      v-if="showClosureModal"
+      :show="showClosureModal"
+      :property="selectedProp!"
+      @close="showClosureModal = false"
+      @success="handleClosureSuccess"
+    />
+
+    <!-- Global Toast -->
+    <AppToast
+      :show="toast.show"
+      :message="toast.message"
+      :type="toast.type"
+      @close="toast.show = false"
+    />
   </div>
 </template>
 
@@ -249,19 +277,21 @@
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideTrash from '~icons/lucide/trash';
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, reactive } from 'vue';
   import { FwbCard, FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { apiClient as api } from '@/api';
   import type { ApiResponse } from '@/api/types';
-  import type { Property, PropertyFormPayload } from '@/types/property';
+  import type { Property, PropertyFormPayload, OperationType } from '@/types/property';
   import PropertyForm from '@/components/properties/PropertyForm.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
+  import ClosureModal from '@/components/operations/ClosureModal.vue';
   import type { AxiosError } from 'axios';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   interface ApiErrorResponse {
     error?: string;
@@ -276,6 +306,7 @@
   const deleting = ref(false);
   const showCreateEditModal = ref(false);
   const showDeleteModal = ref(false);
+  const showClosureModal = ref(false);
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
   const propertyToDelete = ref<Property | null>(null);
@@ -289,6 +320,13 @@
   const filterTitle = ref('');
   const filterOpType = ref('');
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
+  });
 
   const isAdmin = computed(() => {
     const u = authStore.user as UserClaims | null;
@@ -392,7 +430,7 @@
           type: (data as Record<string, unknown>).type as string,
           m2: (data as Record<string, unknown>).m2 as number,
           rooms: (data as Record<string, unknown>).rooms as number,
-          operationType: (data as Record<string, unknown>).operationType as string,
+          operationType: (data as Record<string, unknown>).operationType as OperationType,
           ownerId: ((data as Record<string, unknown>).ownerId as string) || null,
         };
 
@@ -400,22 +438,27 @@
           editingProperty.value.id as string,
           updatePayload
         );
-        alert(t('agentDashboard.propertyUpdated'));
+
+        toast.message = t('agentDashboard.propertyUpdated');
+        toast.type = 'success';
+        toast.show = true;
       } else {
         const payload = data as PropertyFormPayload;
         await propertyService.createProperty(payload);
-        alert(t('agentDashboard.propertyCreated'));
+
+        toast.message = t('agentDashboard.propertyCreated');
+        toast.type = 'success';
+        toast.show = true;
       }
       closeCreateEditModal();
       await load();
     } catch (e: unknown) {
       const axiosError = e as AxiosError<ApiErrorResponse>;
       console.error(t('common.error') + ' saving property:', e);
-      alert(
-        t('common.error') +
-          ': ' +
-          (axiosError.response?.data?.detail || axiosError.message || t('common.error'))
-      );
+
+      toast.message = axiosError.response?.data?.detail || axiosError.message || t('common.error');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
@@ -432,18 +475,17 @@
       await api.delete(`/properties/${propertyToDelete.value.id}`);
       showDeleteModal.value = false;
       await load();
-      alert(t('agentDashboard.propertyUpdated'));
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
     } catch (e: unknown) {
       const axiosError = e as AxiosError<ApiErrorResponse>;
       console.error(t('common.error') + ' ' + t('common.delete').toLowerCase() + ' property:', e);
-      alert(
-        axiosError.response?.data?.detail ||
-          t('common.error') +
-            ' ' +
-            t('common.delete').toLowerCase() +
-            ' ' +
-            t('nav.myProperties').toLowerCase()
-      );
+
+      toast.message = axiosError.response?.data?.detail || t('common.error');
+      toast.type = 'error';
+      toast.show = true;
     } finally {
       deleting.value = false;
       propertyToDelete.value = null;
@@ -470,17 +512,54 @@
     showDetailsModal.value = true;
   };
 
-  const handleLocalLocationUpdate = (updatedProp: Property) => {
-    // Aquí SÍ se llama myProperties
-    const index = myProperties.value.findIndex((p) => p.id === updatedProp.id);
+  const prepClosure = (p: Property) => {
+    selectedProp.value = p;
+    showClosureModal.value = true;
+  };
 
+  const handleClosureSuccess = async () => {
+    toast.message = t('adminProperties.closureSuccess');
+    toast.type = 'success';
+    toast.show = true;
+
+    showClosureModal.value = false;
+    await load();
+  };
+
+  const handleLocalLocationUpdate = (updatedProp: Property) => {
+    const index = myProperties.value.findIndex((p) => p.id === updatedProp.id);
     if (index !== -1) {
       myProperties.value[index] = { ...myProperties.value[index], ...updatedProp };
-
       if (selectedProp.value && selectedProp.value.id === updatedProp.id) {
         selectedProp.value = { ...updatedProp };
       }
     }
   };
-  onMounted(load);
+  onMounted(async () => {
+    await load();
+
+    // Check if we arrived here to clone a property
+    const state = window.history.state;
+    if (state && state.cloneProperty) {
+      const sourceData = state.cloneProperty;
+
+      editingProperty.value = {
+        ...sourceData,
+        id: undefined, // Ensure it's a new property
+        title: sourceData.title + ' (COPY)',
+        status: 'DISPONIBLE', // Force reset status
+      };
+
+      isEditing.value = false;
+      formKey.value++;
+
+      // Small delay to ensure reactivity cycle
+      setTimeout(() => {
+        showCreateEditModal.value = true;
+      }, 100);
+
+      // Clear state to avoid reopening on refresh
+      window.history.replaceState({ ...state, cloneProperty: null }, '');
+    }
+  });
 </script>

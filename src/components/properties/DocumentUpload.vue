@@ -178,11 +178,19 @@
         </div>
       </template>
     </fwb-modal>
+
+    <!-- Global Toast -->
+    <AppToast
+      :show="toast.show"
+      :message="toast.message"
+      :type="toast.type"
+      @close="toast.show = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, reactive } from 'vue';
   import { FwbButton, FwbModal } from 'flowbite-vue';
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucideFileText from '~icons/lucide/file-text';
@@ -193,6 +201,7 @@
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   const { t } = useI18n();
 
@@ -208,9 +217,16 @@
   const showPermissionModal = ref(false);
   const selectedDoc = ref<DocumentResponse | null>(null);
 
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
+  });
+
   const downloadTimers = ref<Record<string, { expiresAt: number; timerId: number | null }>>({});
 
-  const permissionForm = ref({
+  const permissionForm = reactive({
     roles: {
       ADMIN: false,
       AGENT: false,
@@ -256,12 +272,16 @@
     const isValidExt = fileExt === 'pdf' || fileExt === 'doc' || fileExt === 'docx';
 
     if (!validTypes.includes(file.type) && !isValidExt) {
-      alert(t('documentUpload.onlyPdfDoc'));
+      toast.message = t('documentUpload.onlyPdfDoc');
+      toast.type = 'error';
+      toast.show = true;
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      alert(t('documentUpload.maxFileSize'));
+      toast.message = t('documentUpload.maxFileSize');
+      toast.type = 'error';
+      toast.show = true;
       return;
     }
 
@@ -270,17 +290,21 @@
       await propertyService.uploadExclusivityContract(props.propertyId, file);
       await loadDocuments();
 
-      alert(t('documentUpload.uploadSuccessMessage'));
+      toast.message = t('documentUpload.uploadSuccessMessage');
+      toast.type = 'success';
+      toast.show = true;
     } catch (err: unknown) {
       console.error('Error uploading document:', err);
       const errorObj = err as {
         response?: { data?: { detail?: string; message?: string } };
       };
-      alert(
+
+      toast.message =
         errorObj.response?.data?.detail ||
-          errorObj.response?.data?.message ||
-          t('documentUpload.uploadError')
-      );
+        errorObj.response?.data?.message ||
+        t('documentUpload.uploadError');
+      toast.type = 'error';
+      toast.show = true;
     } finally {
       uploading.value = false;
       if (fileInput.value) fileInput.value.value = '';
@@ -367,7 +391,9 @@
       window.open(downloadUrl, '_blank');
     } catch (error) {
       console.error('Error downloading document:', error);
-      alert(t('documentUpload.downloadError'));
+      toast.message = t('documentUpload.downloadError');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
@@ -377,42 +403,52 @@
     try {
       await propertyService.deleteDocument(doc.id);
       await loadDocuments();
-      alert(t('documentUpload.deleteSuccess'));
+
+      toast.message = t('documentUpload.deleteSuccess');
+      toast.type = 'success';
+      toast.show = true;
     } catch (error) {
       console.error('Error deleting document:', error);
-      alert(t('documentUpload.deleteError'));
+
+      toast.message = t('documentUpload.deleteError');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
   const addAgentPermission = () => {
-    if (newAgentId.value && !permissionForm.value.specificAgents.includes(newAgentId.value)) {
-      permissionForm.value.specificAgents.push(newAgentId.value);
+    if (newAgentId.value && !permissionForm.specificAgents.includes(newAgentId.value)) {
+      permissionForm.specificAgents.push(newAgentId.value);
       newAgentId.value = '';
     }
   };
 
   const removeAgentPermission = (agentId: string) => {
-    permissionForm.value.specificAgents = permissionForm.value.specificAgents.filter(
-      (a) => a !== agentId
-    );
+    permissionForm.specificAgents = permissionForm.specificAgents.filter((a) => a !== agentId);
   };
 
   const savePermissions = async () => {
     if (!selectedDoc.value) return;
 
     const accessPolicy: string[] = [];
-    if (permissionForm.value.roles.ADMIN) accessPolicy.push('ROLE_ADMIN');
-    if (permissionForm.value.roles.AGENT) accessPolicy.push('ROLE_AGENT');
-    accessPolicy.push(...permissionForm.value.specificAgents);
+    if (permissionForm.roles.ADMIN) accessPolicy.push('ROLE_ADMIN');
+    if (permissionForm.roles.AGENT) accessPolicy.push('ROLE_AGENT');
+    accessPolicy.push(...permissionForm.specificAgents);
 
     try {
       await propertyService.updateDocumentPermissions(selectedDoc.value.id, accessPolicy);
       await loadDocuments();
       showPermissionModal.value = false;
-      alert(t('documentUpload.permissionsSuccess'));
+
+      toast.message = t('documentUpload.permissionsSuccess');
+      toast.type = 'success';
+      toast.show = true;
     } catch (error) {
       console.error('Error updating permissions:', error);
-      alert(t('documentUpload.permissionsError'));
+
+      toast.message = t('documentUpload.permissionsError');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 

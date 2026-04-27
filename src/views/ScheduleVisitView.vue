@@ -158,14 +158,16 @@
               </label>
               <input
                 v-model="startTimeLocal"
-                @change="onTimeChange"
                 type="datetime-local"
                 class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
-                :min="minDatetime"
+                :min="new Date().toISOString().slice(0, 16)"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
                 }"
               />
+              <p v-if="fieldErrors.startTime" class="text-xs text-red-500 mt-1">
+                {{ fieldErrors.startTime }}
+              </p>
             </div>
             <div class="space-y-1">
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -174,19 +176,18 @@
               </label>
               <input
                 v-model="endTimeLocal"
-                @change="onTimeChange"
                 type="datetime-local"
                 class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
-                :min="startTimeLocal || minDatetime"
+                :min="startTimeLocal || new Date().toISOString().slice(0, 16)"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
                 }"
               />
+              <p v-if="fieldErrors.endTime" class="text-xs text-red-500 mt-1">
+                {{ fieldErrors.endTime }}
+              </p>
             </div>
           </div>
-          <p v-if="fieldErrors.startTime || fieldErrors.endTime" class="text-xs text-red-500">
-            {{ fieldErrors.startTime || fieldErrors.endTime }}
-          </p>
 
           <ConflictAlert
             v-if="conflictResult"
@@ -402,6 +403,7 @@
   watch(startTimeLocal, (val) => {
     if (val) {
       startTime.value = new Date(val).toISOString();
+      onTimeChange();
     } else {
       startTime.value = '';
     }
@@ -410,6 +412,7 @@
   watch(endTimeLocal, (val) => {
     if (val) {
       endTime.value = new Date(val).toISOString();
+      onTimeChange();
     } else {
       endTime.value = '';
     }
@@ -551,12 +554,6 @@
       hour: '2-digit',
       minute: '2-digit',
     });
-
-  const minDatetime = computed(() => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 15);
-    return now.toISOString().slice(0, 16);
-  });
 
   const closeClickOutside = (e: Event) => {
     if (!(e.target instanceof HTMLElement) || !e.target.closest('#property-select-container'))
