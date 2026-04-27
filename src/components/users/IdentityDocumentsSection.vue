@@ -1,5 +1,7 @@
 <template>
-  <section class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 space-y-4">
+  <section
+    class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 space-y-4"
+  >
     <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
       <div class="min-w-0 flex-1">
         <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">
@@ -16,7 +18,9 @@
       </span>
     </div>
 
-    <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3 dark:border-gray-700 dark:bg-gray-900/30 space-y-4">
+    <div
+      class="rounded-xl border border-gray-100 bg-gray-50/80 p-3 dark:border-gray-700 dark:bg-gray-900/30 space-y-4"
+    >
       <div>
         <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
           {{ t('identityDocuments.documentType') }}
@@ -82,7 +86,9 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0 space-y-2">
             <div>
-              <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              <p
+                class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+              >
                 {{ t('identityDocuments.fileNameLabel') }}
               </p>
               <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
@@ -92,7 +98,9 @@
 
             <div class="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
               <div>
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <p
+                  class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('identityDocuments.typeLabel') }}
                 </p>
                 <p class="text-gray-900 dark:text-white">
@@ -101,7 +109,9 @@
               </div>
 
               <div>
-                <p class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <p
+                  class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('identityDocuments.uploadDateLabel') }}
                 </p>
                 <p class="text-gray-900 dark:text-white">
@@ -111,7 +121,9 @@
             </div>
           </div>
 
-          <span class="w-fit rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+          <span
+            class="w-fit rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+          >
             {{ resolveTypeLabel(document.documentType) }}
           </span>
         </div>
@@ -126,7 +138,9 @@
             :disabled="deletingId === document.id"
             @click.stop="deleteDocument(document.id)"
           >
-            {{ deletingId === document.id ? t('common.processing') : t('identityDocuments.delete') }}
+            {{
+              deletingId === document.id ? t('common.processing') : t('identityDocuments.delete')
+            }}
           </fwb-button>
         </div>
       </article>
@@ -270,7 +284,11 @@
 
     uploading.value = true;
     try {
-      await identityDocumentService.uploadDocument(personId, selectedType.value, selectedFile.value);
+      await identityDocumentService.uploadDocument(
+        personId,
+        selectedType.value,
+        selectedFile.value
+      );
       setFeedback(t('identityDocuments.uploadSuccess'), 'success');
       clearSelectedFile();
       await loadDocuments();
@@ -316,11 +334,15 @@
     try {
       const parsedUrl = new URL(document.fileUrl);
       const pathSegments = parsedUrl.pathname.split('/').filter(Boolean);
-      return decodeURIComponent(pathSegments[pathSegments.length - 1] || t('identityDocuments.unnamedFile'));
+      return decodeURIComponent(
+        pathSegments[pathSegments.length - 1] || t('identityDocuments.unnamedFile')
+      );
     } catch {
       const sanitizedUrl = document.fileUrl.split('?')[0];
       const pathSegments = sanitizedUrl.split('/').filter(Boolean);
-      return decodeURIComponent(pathSegments[pathSegments.length - 1] || t('identityDocuments.unnamedFile'));
+      return decodeURIComponent(
+        pathSegments[pathSegments.length - 1] || t('identityDocuments.unnamedFile')
+      );
     }
   };
 

@@ -171,6 +171,14 @@
             <fwb-button size="sm" gradient="purple" @click="prepOwnerAssignment(p)">
               {{ t('adminProperties.ownerLabel') }}
             </fwb-button>
+            <fwb-button
+              size="sm"
+              gradient="green"
+              @click="prepClosure(p)"
+              v-if="p.status !== 'VENDIDO'"
+            >
+              {{ t('adminProperties.registerClosure') }}
+            </fwb-button>
           </div>
         </div>
       </fwb-card>
@@ -313,6 +321,22 @@
         </fwb-button>
       </template>
     </fwb-modal>
+
+    <closure-modal
+      v-if="showClosureModal"
+      :show="showClosureModal"
+      :property="selectedProp!"
+      @close="showClosureModal = false"
+      @success="handleClosureSuccess"
+    />
+
+    <!-- Global Toast -->
+    <AppToast
+      :show="toast.show"
+      :message="toast.message"
+      :type="toast.type"
+      @close="toast.show = false"
+    />
   </div>
 </template>
 
@@ -321,7 +345,7 @@
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideTrash from '~icons/lucide/trash';
-  import { ref, onMounted, computed, watch } from 'vue';
+  import { ref, onMounted, computed, watch, reactive } from 'vue';
   import { FwbCard, FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { userService } from '@/services/userService';
@@ -333,7 +357,9 @@
   import Pagination from '@/components/ui/Pagination.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
+  import ClosureModal from '@/components/operations/ClosureModal.vue';
   import type { Property, PropertyFormPayload } from '@/types/property';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   const { t } = useI18n();
 
@@ -367,6 +393,7 @@
   const showOwnerModal = ref(false);
   const showDeleteModal = ref(false);
   const showDetailsModal = ref(false);
+  const showClosureModal = ref(false);
 
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
@@ -376,6 +403,13 @@
   const newPrice = ref(0);
   const newOpType = ref('');
   const selectedOwnerId = ref('');
+
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
+  });
 
   const activeAgents = computed(() =>
     allUsers.value.filter(
@@ -499,15 +533,23 @@
     try {
       if (isEditing.value && editingProperty.value) {
         await propertyService.updateProperty(editingProperty.value.id as string, data);
-        alert(t('adminProperties.propertyUpdated'));
+
+        toast.message = t('adminProperties.propertyUpdated');
+        toast.type = 'success';
+        toast.show = true;
       } else {
         await propertyService.createProperty(data);
-        alert(t('adminProperties.propertyCreated'));
+
+        toast.message = t('adminProperties.propertyCreated');
+        toast.type = 'success';
+        toast.show = true;
       }
       closeCreateEditModal();
       await load();
     } catch {
-      alert(t('common.error'));
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
@@ -524,6 +566,14 @@
       await api.delete(`/properties/${propertyToDelete.value.id}`);
       showDeleteModal.value = false;
       await load();
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
+    } catch {
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
     } finally {
       deleting.value = false;
     }
@@ -556,36 +606,90 @@
   const doPriceUpdate = async () => {
     if (!selectedProp.value) return;
 
-    await propertyService.updatePrice(selectedProp.value.id, newPrice.value);
-    showPriceModal.value = false;
-    await load();
+    try {
+      await propertyService.updatePrice(selectedProp.value.id, newPrice.value);
+      showPriceModal.value = false;
+      await load();
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
+    } catch {
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
+    }
   };
 
   const doAssignOwner = async () => {
     if (!selectedProp.value) return;
 
-    await propertyService.assignOwner(selectedProp.value.id, {
-      ownerId: selectedOwnerId.value,
-    });
-    showOwnerModal.value = false;
-    await load();
+    try {
+      await propertyService.assignOwner(selectedProp.value.id, {
+        ownerId: selectedOwnerId.value,
+      });
+      showOwnerModal.value = false;
+      await load();
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
+    } catch {
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
+    }
   };
 
   const doOpTypeUpdate = async () => {
     if (!selectedProp.value) return;
 
-    await api.patch(`/properties/${selectedProp.value.id}/operation-type`, {
-      operationType: newOpType.value,
-    });
-    showOpTypeModal.value = false;
-    await load();
+    try {
+      await api.patch(`/properties/${selectedProp.value.id}/operation-type`, {
+        operationType: newOpType.value,
+      });
+      showOpTypeModal.value = false;
+      await load();
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
+    } catch {
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
+    }
   };
 
   const doAssign = async (agentId: string) => {
     if (!selectedProp.value) return;
 
-    await propertyService.assignAgent(selectedProp.value.id, { agentId });
-    showAssignModal.value = false;
+    try {
+      await propertyService.assignAgent(selectedProp.value.id, { agentId });
+      showAssignModal.value = false;
+      await load();
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
+    } catch {
+      toast.message = t('common.error');
+      toast.type = 'error';
+      toast.show = true;
+    }
+  };
+
+  const prepClosure = (p: Property) => {
+    selectedProp.value = p;
+    showClosureModal.value = true;
+  };
+
+  const handleClosureSuccess = async () => {
+    toast.message = t('adminProperties.closureSuccess');
+    toast.type = 'success';
+    toast.show = true;
+
+    showClosureModal.value = false;
     await load();
   };
 
@@ -605,18 +709,41 @@
   };
 
   const handleLocalLocationUpdate = (updatedProp: Property) => {
-    // CORRECCIÓN: Usar allProperties en lugar de myProperties
     const index = allProperties.value.findIndex((p) => p.id === updatedProp.id);
-
     if (index !== -1) {
-      // Actualizamos el objeto en la lista reactiva
       allProperties.value[index] = { ...allProperties.value[index], ...updatedProp };
-
-      // También actualizamos el objeto seleccionado para que el modal/formulario refleje el cambio
       if (selectedProp.value && selectedProp.value.id === updatedProp.id) {
         selectedProp.value = { ...updatedProp };
       }
     }
   };
-  onMounted(load);
+  onMounted(async () => {
+    await load();
+
+    // Check if we arrived here to clone a property
+    const state = window.history.state;
+    if (state && state.cloneProperty) {
+      const sourceData = state.cloneProperty;
+
+      // Map fields to match PropertyForm expectations if necessary
+      // (though they should already match)
+      editingProperty.value = {
+        ...sourceData,
+        id: undefined, // Ensure it's a new property
+        title: sourceData.title + ' (COPY)',
+        status: 'DISPONIBLE', // Force reset status
+      };
+
+      isEditing.value = false;
+      formKey.value++;
+
+      // Small delay to ensure reactivity cycle
+      setTimeout(() => {
+        showCreateEditModal.value = true;
+      }, 100);
+
+      // Clear state to avoid reopening on refresh
+      window.history.replaceState({ ...state, cloneProperty: null }, '');
+    }
+  });
 </script>
