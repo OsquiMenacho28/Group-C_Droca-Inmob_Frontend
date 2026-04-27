@@ -101,7 +101,6 @@
           </NavLink>
 
           <NavLink
-            v-if="isAdmin || isAgent"
             to="/dashboard/operations"
             :label="t('nav.operations')"
             :icon="IconLucideFileText"

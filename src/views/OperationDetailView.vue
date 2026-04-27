@@ -16,7 +16,10 @@
           {{ t('operations.backToList') }}
         </FwbButton>
 
-        <div v-if="operation && operation.status !== 'CANCELLED'" class="flex gap-2 flex-wrap">
+        <div
+          v-if="canManage && operation && operation.status !== 'CANCELLED'"
+          class="flex gap-2 flex-wrap"
+        >
           <FwbButton
             color="red"
             size="xs"
@@ -242,7 +245,7 @@
         </div>
 
         <!-- Receipts -->
-        <OperationReceiptsSection :operation-id="operationId" />
+        <OperationReceiptsSection :operation-id="operationId" :can-delete="canManage" />
       </template>
     </div>
 
@@ -318,9 +321,18 @@
     type: 'success' as 'success' | 'error' | 'info',
   });
 
+  const currentUser = computed(() => authStore.user as UserClaims | null);
+
   const isAdmin = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    return u?.roles?.includes('ADMIN') || u?.userType === 'ADMIN';
+    return currentUser.value?.roles?.includes('ADMIN') || currentUser.value?.userType === 'ADMIN';
+  });
+
+  const isAssignedAgent = computed(() => {
+    return operation.value?.agentId === currentUser.value?.id;
+  });
+
+  const canManage = computed(() => {
+    return isAdmin.value || isAssignedAgent.value;
   });
 
   const loadOperation = async () => {

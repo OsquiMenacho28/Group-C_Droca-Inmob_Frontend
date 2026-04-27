@@ -115,6 +115,7 @@
             </FwbButton>
 
             <FwbButton
+              v-if="canDelete"
               @click="confirmDelete(receipt)"
               :disabled="deletingId === receipt.id"
               color="red"
@@ -216,10 +217,16 @@
 
   const { t } = useI18n();
 
-  defineProps<{
-    receipts: Receipt[];
-    loading: boolean;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      receipts: Receipt[];
+      loading: boolean;
+      canDelete?: boolean;
+    }>(),
+    {
+      canDelete: false,
+    }
+  );
 
   const emit = defineEmits<{
     (e: 'delete', receiptId: string): void;

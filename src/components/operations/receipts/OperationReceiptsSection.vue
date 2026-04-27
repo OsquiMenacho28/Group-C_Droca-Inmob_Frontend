@@ -68,7 +68,12 @@
     </FwbAlert>
 
     <div class="space-y-4">
-      <ReceiptList :receipts="receipts" :loading="loading" @delete="handleDelete" />
+      <ReceiptList
+        :receipts="receipts"
+        :loading="loading"
+        :can-delete="canDelete"
+        @delete="handleDelete"
+      />
     </div>
 
     <FwbCard
@@ -124,7 +129,15 @@
 
   const { t } = useI18n();
 
-  const props = defineProps<{ operationId: string }>();
+  const props = withDefaults(
+    defineProps<{
+      operationId: string;
+      canDelete?: boolean;
+    }>(),
+    {
+      canDelete: false,
+    }
+  );
 
   const { receipts, loading, error, loadReceipts, deleteReceipt } = useReceipts(props.operationId);
 
@@ -142,6 +155,7 @@
 
   function onUploaded() {
     showUploader.value = false;
+    loadReceipts(); // Refresh list after upload
     showToast();
   }
 
