@@ -523,6 +523,10 @@ export const en = {
     download: 'Download',
     delete: 'Delete',
     cancel: 'Cancel',
+    fileSize: 'Size',
+    uploadedOn: 'Uploaded on',
+    unknownFile: 'Unknown file',
+    paymentDate: 'Payment date',
   },
   receiptsSection: {
     title: 'Reservation Receipts',

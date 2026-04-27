@@ -522,6 +522,10 @@ export const es = {
     download: 'Descargar',
     delete: 'Eliminar',
     cancel: 'Cancelar',
+    fileSize: 'Tamaño',
+    uploadedOn: 'Subido el',
+    unknownFile: 'Archivo desconocido',
+    paymentDate: 'Fecha de pago',
   },
   receiptsSection: {
     title: 'Comprobantes de Reserva',

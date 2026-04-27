@@ -56,9 +56,9 @@
           <div class="flex-1 min-w-0">
             <h4
               class="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-              :title="receipt.originalFileName"
+              :title="receipt.fileName"
             >
-              {{ receipt.originalFileName }}
+              {{ receipt.fileName || t('receipts.unknownFile') }}
             </h4>
             <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
               <span
@@ -71,11 +71,12 @@
                 class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 font-medium"
               >
                 <IconLucideCalendar class="w-3.5 h-3.5 opacity-70" />
+                <span class="font-bold">{{ t('receipts.paymentDate') }}:</span>
                 {{ formatDate(receipt.paymentDate) }}
               </div>
               <span class="text-gray-300 dark:text-gray-700 hidden xs:inline">|</span>
               <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">
-                {{ formatSize(receipt.fileSizeBytes) }}
+                {{ t('receipts.fileSize') }}: {{ formatSize(receipt.size) }}
               </span>
             </div>
           </div>
@@ -89,7 +90,7 @@
             <p
               class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest bg-gray-50 dark:bg-gray-900/50 px-2 py-1 rounded"
             >
-              {{ t('common.date') }}: {{ formatDate(receipt.uploadedAt) }}
+              {{ t('receipts.uploadedOn') }}: {{ formatDate(receipt.createdAt) }}
             </p>
           </div>
 
@@ -164,7 +165,7 @@
                 <IconLucideFileText class="w-5 h-5 text-gray-500" />
               </div>
               <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
-                {{ receiptToDelete?.originalFileName }}
+                {{ receiptToDelete?.fileName }}
               </p>
             </div>
           </div>
@@ -245,12 +246,16 @@
   }
 
   function formatDate(iso: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+    if (!iso) return t('common.notSpecified');
+    try {
+      return new Date(iso).toLocaleString(getLocaleString(), {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch {
+      return iso;
+    }
   }
 
   function formatAmount(amount: number, currency: string): string {
@@ -262,8 +267,9 @@
   }
 
   function formatSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' ' + t('common.units.bytes');
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' ' + t('common.units.kb');
-    return (bytes / (1024 * 1024)).toFixed(1) + ' ' + t('common.units.mb');
+    if (!bytes || isNaN(bytes)) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 </script>

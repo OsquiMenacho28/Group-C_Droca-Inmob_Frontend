@@ -295,7 +295,9 @@
     if (fileInputRef.value) fileInputRef.value.value = '';
   }
 
-  function clearUploadError() {}
+  function clearUploadError() {
+    uploadError.value = null;
+  }
 
   function validateForm(): boolean {
     formErrors.amount = '';
