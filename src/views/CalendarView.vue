@@ -381,82 +381,13 @@
         </div>
       </template>
       <template #footer>
-        <div class="flex gap-3 flex-wrap w-full">
+        <div class="flex gap-3 w-full">
+          <FwbButton @click="goToVisitDetail(selectedEvent!.id)" color="blue" class="flex-1">
+            {{ t('common.details') }}
+          </FwbButton>
           <FwbButton @click="closeEventModal" color="alternative" class="flex-1">
             {{ t('common.close') }}
           </FwbButton>
-
-          <template v-if="selectedEvent?.ownEvent && selectedEvent?.status !== 'CANCELLED'">
-            <FwbButton
-              @click="handleCancel(selectedEvent!)"
-              :disabled="cancelling"
-              color="red"
-              class="flex-1"
-            >
-              {{ cancelling ? t('common.processing') : t('common.cancel') }}
-            </FwbButton>
-
-            <ReassignButton
-              class="flex-1"
-              :visit-id="selectedEvent.id"
-              :visit-info="`${shortTime(selectedEvent.startTime)} - ${selectedEvent.propertyName}`"
-              @request-sent="handleReassignmentSent"
-            />
-          </template>
-        </div>
-        <div>
-          <template v-if="selectedEvent?.status === 'CANCELLED'">
-            <!-- Only visible when visit.status === 'CANCELLED' -->
-            <RescheduleButton :visit="selectedEvent" @rescheduled="onRescheduled" />
-
-            <!-- Shows link to new visit if this one was rescheduled -->
-            <!-- <RescheduledVisitLink :visit-id="selectedEvent.id" :key="refreshKey" /> -->
-          </template>
-        </div>
-        <!-- Show only if this visit itself was created by rescheduling another -->
-        <div
-          v-if="selectedEvent?.originVisitId"
-          class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3"
-        >
-          <svg
-            class="w-4 h-4 text-amber-500 shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-            />
-          </svg>
-          <p class="text-sm text-amber-700">
-            Esta visita fue creada al reprogramar la visita original.
-          </p>
-          <RouterLink
-            :to="`/visits/${selectedEvent.originVisitId}`"
-            class="ml-auto text-xs text-amber-700 underline hover:text-amber-900 shrink-0"
-          >
-            Ver visita original
-          </RouterLink>
-        </div>
-      </template>
-    </FwbModal>
-
-    <FwbModal v-if="showCancelConfirm" @close="showCancelConfirm = false">
-      <template #header>
-        <span class="text-red-600 dark:text-red-500">{{ t('calendar.confirmCancelTitle') }}</span>
-      </template>
-      <template #body>
-        <p class="text-gray-600 dark:text-gray-300">{{ t('calendar.confirmCancelText') }}</p>
-      </template>
-      <template #footer>
-        <div class="flex gap-2 justify-end">
-          <FwbButton @click="showCancelConfirm = false" color="alternative">
-            {{ t('calendar.noKeep') }}
-          </FwbButton>
-          <FwbButton @click="executeCancel" color="red">{{ t('calendar.yesCancel') }}</FwbButton>
         </div>
       </template>
     </FwbModal>
@@ -476,8 +407,9 @@
   import IconLucideChevronDown from '~icons/lucide/chevron-down';
   import IconLucideUser from '~icons/lucide/user';
   import { ref, computed, onMounted, onUnmounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { FwbCard, FwbButton, FwbModal, FwbInput, FwbAlert, FwbBadge } from 'flowbite-vue';
-  import { getCalendar, cancelVisit } from '@/services/calendarService';
+  import { getCalendar } from '@/services/calendarService';
   import { propertyService } from '@/modules/properties';
   import { userService } from '@/services/userService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
@@ -486,20 +418,17 @@
     CalendarEventResponse,
     VisitRequestResponse,
   } from '@/types/visitCalendar';
-  import type { RescheduleResponse } from '@/types/reschedule';
   import {
     getPendingRequestsForAgent,
     acceptVisitRequest,
     rejectVisitRequest,
   } from '@/services/visitRequestService';
-  import ReassignButton from '@/components/visits/reassignment/ReassignButton.vue';
-  import RescheduleButton from '@/components/visits/reschedule/RescheduleButton.vue';
-  // import RescheduledVisitLink from '@/components/visits/reschedule/RescheduledVisitLink.vue';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import { handleApiError } from '@/api/errorHandler';
 
   const { t } = useI18n();
+  const router = useRouter();
   const authStore = useAuthStore();
   const myAgentId = computed(() => {
     const u = authStore.user as UserClaims | null;
@@ -511,16 +440,12 @@
   const calendarData = ref<CalendarResponse | null>(null);
   const selectedEvent = ref<CalendarEventResponse | null>(null);
   const showEventModal = ref(false);
-  const cancelling = ref(false);
   const currentWeekStart = ref(getMonday(new Date()));
   const pendingRequests = ref<VisitRequestResponse[]>([]);
   const requestActionLoadingId = ref('');
-  const showCancelConfirm = ref(false);
-  const pendingCancelEvent = ref<CalendarEventResponse | null>(null);
   const alertMessage = ref('');
   const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
   let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null;
-  const refreshKey = ref(0); // incremented after rescheduling to force RescheduledVisitLink reload
 
   const allProperties = ref<
     { id: string; title: string; address: string; [key: string]: unknown }[]
@@ -751,35 +676,9 @@
     selectedEvent.value = null;
   };
 
-  async function handleCancel(ev: CalendarEventResponse) {
-    showCancelConfirm.value = true;
-    pendingCancelEvent.value = ev;
-  }
-
-  async function executeCancel() {
-    if (!pendingCancelEvent.value) return;
-    showCancelConfirm.value = false;
-    cancelling.value = true;
-    try {
-      const updated = await cancelVisit(pendingCancelEvent.value.id, myAgentId.value);
-      if (calendarData.value) {
-        const idx = calendarData.value.events.findIndex(
-          (e) => e.id === pendingCancelEvent.value!.id
-        );
-        if (idx !== -1) calendarData.value.events[idx] = updated;
-      }
-      closeEventModal();
-    } catch {
-      showAlert(t('calendar.loadError'));
-    } finally {
-      cancelling.value = false;
-      pendingCancelEvent.value = null;
-    }
-  }
-
-  function handleReassignmentSent() {
+  function goToVisitDetail(visitId: string) {
     closeEventModal();
-    loadCalendar();
+    router.push(`/visits/${visitId}`);
   }
 
   async function handleAcceptRequest(requestId: string) {
@@ -808,11 +707,6 @@
     } finally {
       requestActionLoadingId.value = '';
     }
-  }
-
-  function onRescheduled(_response: RescheduleResponse) {
-    // Increment refreshKey to force RescheduledVisitLink to re-query the API
-    refreshKey.value++;
   }
 
   const closeClickOutside = (e: MouseEvent) => {

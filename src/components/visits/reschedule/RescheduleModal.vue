@@ -17,26 +17,16 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
         @click.self="close"
       >
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+        >
           <!-- Header -->
           <div
             class="bg-linear-to-r from-indigo-600 to-indigo-800 px-6 py-5 flex items-center justify-between"
           >
             <div class="flex items-center gap-3">
               <div class="bg-white/20 rounded-full p-2">
-                <svg
-                  class="w-5 h-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
+                <IconLucideCalendar class="w-5 h-5 text-white" />
               </div>
               <div>
                 <h3 class="text-white font-semibold text-lg">{{ t('rescheduleVisit.title') }}</h3>
@@ -46,14 +36,7 @@
               </div>
             </div>
             <FwbButton @click="close" class="text-white/70 hover:text-white transition-colors">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <IconLucideX class="w-6 h-6" />
             </FwbButton>
           </div>
 
@@ -61,22 +44,12 @@
           <div class="px-6 py-6 space-y-5">
             <!-- Info banner -->
             <div
-              class="flex items-start gap-3 bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3"
+              class="flex items-start gap-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-xl px-4 py-3"
             >
-              <svg
-                class="w-5 h-5 text-indigo-500 shrink-0 mt-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p class="text-sm text-indigo-700">
+              <IconLucideInfo
+                class="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5"
+              />
+              <p class="text-sm text-indigo-700 dark:text-indigo-300">
                 {{ t('rescheduleVisit.referenceInfo') }}
               </p>
             </div>
@@ -84,21 +57,15 @@
             <!-- Error banner -->
             <div
               v-if="error"
-              class="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm"
+              class="flex items-start gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl px-4 py-3 text-sm"
             >
-              <svg class="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <IconLucideCircleX class="w-4 h-4 shrink-0 mt-0.5" />
               {{ error }}
             </div>
 
             <!-- New date/time picker -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ t('rescheduleVisit.newStartTime') }}
                 <span class="text-red-500">*</span>
               </label>
@@ -106,18 +73,18 @@
                 v-model="newStartTime"
                 type="datetime-local"
                 :min="minDateTime"
-                class="w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                :class="dateError ? 'border-red-400' : 'border-gray-300'"
+                class="w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition dark:bg-gray-700 dark:text-white"
+                :class="dateError ? 'border-red-400' : 'border-gray-300 dark:border-gray-600'"
               />
               <p v-if="dateError" class="text-red-500 text-xs mt-1">{{ dateError }}</p>
-              <p class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {{ t('rescheduleVisit.agentAndPropertyAvailability') }}
               </p>
             </div>
 
             <!-- Optional notes -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {{ t('rescheduleVisit.notes') }}
                 <span class="text-gray-400 font-normal">
                   {{ t('rescheduleVisit.optionalLabel') }}
@@ -128,9 +95,11 @@
                 rows="2"
                 maxlength="500"
                 :placeholder="t('rescheduleVisit.notesPlaceholder')"
-                class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none transition"
+                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm text-gray-800 dark:text-white dark:bg-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none transition"
               />
-              <p class="text-xs text-gray-400 text-right mt-1">{{ notes.length }}/500</p>
+              <p class="text-xs text-gray-400 dark:text-gray-500 text-right mt-1">
+                {{ notes.length }}/500
+              </p>
             </div>
           </div>
 
@@ -138,7 +107,7 @@
           <div class="px-6 pb-6 flex gap-3 justify-end">
             <FwbButton
               @click="close"
-              class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-medium hover:bg-gray-50 transition"
+              class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
               {{ t('common.cancel') }}
             </FwbButton>
@@ -147,25 +116,8 @@
               :disabled="loading"
               class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
             >
-              <svg v-if="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                <circle
-                  class="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  stroke-width="4"
-                />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
-              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+              <IconLucideLoader2 v-if="loading" class="animate-spin w-4 h-4" />
+              <IconLucideCalendar v-else class="w-4 h-4" />
               {{ loading ? t('common.rescheduling') : t('rescheduleVisit.confirmReschedule') }}
             </FwbButton>
           </div>
@@ -182,6 +134,11 @@
   import { FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import IconLucideCalendar from '~icons/lucide/calendar';
+  import IconLucideX from '~icons/lucide/x';
+  import IconLucideInfo from '~icons/lucide/info';
+  import IconLucideCircleX from '~icons/lucide/circle-x';
+  import IconLucideLoader2 from '~icons/lucide/loader-2';
 
   const { t } = useI18n();
 
