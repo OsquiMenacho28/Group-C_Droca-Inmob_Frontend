@@ -123,10 +123,16 @@ const routes = [
         meta: { role: 'AGENT' },
       },
       {
-        path: '/operations/:id',
+        path: 'operations/:id',
         name: 'OperationDetail',
         component: OperationDetailView,
         meta: { role: 'AGENT' },
+      },
+      {
+        path: 'reports/agent-ranking',
+        name: 'AgentRanking',
+        component: () => import('@/views/AgentRankingView.vue'),
+        meta: { role: 'ADMIN' },
       },
       {
         path: '/reassignments/sent',
