@@ -7,6 +7,8 @@ import type {
   CalendarEventResponse,
   ConflictResponse,
   CreateVisitRequest,
+  Vehicle,
+  VehicleAssignmentRequest,
 } from '@/types/visitCalendar';
 
 export async function getCalendar(
@@ -43,6 +45,27 @@ export async function createVisit(
   const response = await api.post('/visits', data, {
     headers: { 'X-Agent-Id': agentId },
   });
+  return response.data.data;
+}
+
+export async function getAvailableVehicles(dateTimeIso: string): Promise<Vehicle[]> {
+  const date = new Date(dateTimeIso);
+  const dateParam = date.toISOString().slice(0, 10);
+  const timeParam = date.toISOString().slice(11, 16);
+  const params = new URLSearchParams({
+    available: 'true',
+    date: dateParam,
+    time: timeParam,
+  });
+  const response = await api.get(`/vehicles?${params}`);
+  return response.data.data;
+}
+
+export async function assignVehicleToVisit(
+  visitId: string,
+  payload: VehicleAssignmentRequest
+): Promise<CalendarEventResponse> {
+  const response = await api.post(`/visits/${visitId}/vehicle`, payload);
   return response.data.data;
 }
 

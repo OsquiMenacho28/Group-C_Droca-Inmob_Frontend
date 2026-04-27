@@ -378,6 +378,26 @@
               {{ statusLabel(selectedEvent?.status ?? '') }}
             </FwbBadge>
           </div>
+          <div class="flex justify-between gap-4">
+            <span class="text-gray-500">{{ t('calendar.assignedVehicle') }}</span>
+            <template v-if="selectedEvent?.vehicleId && selectedEventVehicle">
+              <div class="text-right font-bold dark:text-white">
+                <p>{{ selectedEventVehicle.licensePlate }}</p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  {{ selectedEventVehicle.brand }} {{ selectedEventVehicle.model }}
+                </p>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  {{ t('calendar.vehicleCapacity', { capacity: selectedEventVehicle.passengerCapacity }) }}
+                </p>
+              </div>
+            </template>
+            <span
+              v-else
+              class="font-medium text-gray-500 dark:text-gray-400 text-right"
+            >
+              {{ t('calendar.noVehicleAssigned') }}
+            </span>
+          </div>
         </div>
       </template>
       <template #footer>
@@ -441,6 +461,7 @@
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { FwbCard, FwbButton, FwbModal, FwbInput, FwbAlert, FwbBadge } from 'flowbite-vue';
   import { getCalendar, cancelVisit } from '@/services/calendarService';
+  import vehicleService from '@/services/vehicleService';
   import { propertyService } from '@/modules/properties';
   import { userService } from '@/services/userService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
@@ -448,6 +469,7 @@
     CalendarResponse,
     CalendarEventResponse,
     VisitRequestResponse,
+    Vehicle,
   } from '@/types/visitCalendar';
   import {
     getPendingRequestsForAgent,
@@ -470,6 +492,7 @@
   const error = ref('');
   const calendarData = ref<CalendarResponse | null>(null);
   const selectedEvent = ref<CalendarEventResponse | null>(null);
+  const selectedEventVehicle = ref<Vehicle | null>(null);
   const showEventModal = ref(false);
   const cancelling = ref(false);
   const currentWeekStart = ref(getMonday(new Date()));
@@ -499,6 +522,7 @@
   const searchTermAgent = ref('');
   const showAgentDropdown = ref(false);
   const filterAgentId = ref('');
+  const fleet = ref<Vehicle[] | null>(null);
 
   function getMonday(d: Date): Date {
     const day = d.getDay();
@@ -702,12 +726,39 @@
 
   const selectEvent = (ev: CalendarEventResponse) => {
     selectedEvent.value = ev;
+    selectedEventVehicle.value = null;
     showEventModal.value = true;
+    void loadSelectedEventVehicle(ev.vehicleId);
   };
 
   const closeEventModal = () => {
     showEventModal.value = false;
     selectedEvent.value = null;
+    selectedEventVehicle.value = null;
+  };
+
+  const ensureFleetLoaded = async () => {
+    if (fleet.value) {
+      return fleet.value;
+    }
+
+    const vehicles = await vehicleService.getVehicles();
+    fleet.value = vehicles;
+    return vehicles;
+  };
+
+  const loadSelectedEventVehicle = async (vehicleId?: string) => {
+    if (!vehicleId) {
+      selectedEventVehicle.value = null;
+      return;
+    }
+
+    try {
+      const vehicles = await ensureFleetLoaded();
+      selectedEventVehicle.value = vehicles.find((vehicle) => vehicle.id === vehicleId) ?? null;
+    } catch {
+      selectedEventVehicle.value = null;
+    }
   };
 
   async function handleCancel(ev: CalendarEventResponse) {
