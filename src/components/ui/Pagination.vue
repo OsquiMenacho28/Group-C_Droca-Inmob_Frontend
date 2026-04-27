@@ -5,17 +5,13 @@
       class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 order-2 md:order-1"
     >
       <span>{{ t('common.show') }}</span>
-      <div class="relative">
-        <select
-          :value="pageSize"
-          @change="onPageSizeChange"
-          class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1.5 pr-8 min-w-[70px] appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20stroke%3D%22%236B7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%222%22%20d%3D%22m1%201%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1em_1em] bg-[position:right_0.5rem_center] bg-no-repeat transition-colors"
-        >
-          <option v-for="size in sizeOptions" :key="size" :value="size">
-            {{ size }}
-          </option>
-        </select>
-      </div>
+      <fwb-select
+        :model-value="String(pageSize)"
+        @update:model-value="onPageSizeChange"
+        :options="sizeOptionsMapped"
+        size="sm"
+        class="!w-20"
+      />
       <span>{{ t('common.entries') }}</span>
       <span v-if="total > 0" class="ml-2 hidden sm:inline">
         ({{ t('common.total') }}: {{ total }})
@@ -72,22 +68,17 @@
       </ul>
 
       <!-- Go to page -->
-      <div v-if="totalPages > 1" class="flex items-center space-x-2">
-        <label
-          for="go-to-page"
-          class="text-sm font-medium text-gray-600 dark:text-gray-400 shrink-0"
-        >
+      <div v-if="totalPages > 1" class="flex items-center gap-2">
+        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
           {{ t('common.goTo') }}
-        </label>
-        <input
+        </span>
+        <fwb-input
           type="number"
-          id="go-to-page"
           v-model="jumpPage"
           @keyup.enter="handleJump"
-          min="1"
-          :max="totalPages"
-          class="bg-white dark:bg-gray-800 w-14 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block px-2.5 py-1.5 shadow-sm placeholder:text-gray-400"
-          placeholder="1"
+          :placeholder="String(currentPage + 1)"
+          size="sm"
+          class="!w-16"
         />
         <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
           {{ t('common.page') }}
@@ -100,6 +91,7 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue';
   import { useI18n } from 'vue-i18n';
+  import { FwbSelect, FwbInput } from 'flowbite-vue';
 
   const props = defineProps<{
     currentPage: number;
@@ -118,6 +110,9 @@
   const { t } = useI18n();
   const jumpPage = ref<number | string>('');
   const sizeOptions = computed(() => props.sizeOptions || [5, 10, 20, 50, 100]);
+  const sizeOptionsMapped = computed(() =>
+    sizeOptions.value.map((s) => ({ value: String(s), name: String(s) }))
+  );
 
   const visiblePages = computed(() => {
     const pages: number[] = [];
@@ -150,8 +145,8 @@
     }
   };
 
-  const onPageSizeChange = (event: Event) => {
-    const newSize = parseInt((event.target as HTMLSelectElement).value);
+  const onPageSizeChange = (val: string) => {
+    const newSize = parseInt(val);
     emit('update:pageSize', newSize);
     emit('update:currentPage', 0);
     emit('change');
