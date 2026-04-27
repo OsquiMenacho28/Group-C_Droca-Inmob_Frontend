@@ -5,32 +5,23 @@
         v-model="titleModel"
         :label="t('propertyForm.title')"
         :placeholder="t('propertyForm.title')"
-        :invalid="!!errors.title"
-      >
-        <template v-if="errors.title" #message>
-          <span class="text-red-500 text-xs">{{ errors.title }}</span>
-        </template>
-      </fwb-input>
+        :validation-status="errors.title ? 'error' : undefined"
+        :validation-message="errors.title"
+      />
       <fwb-input
         v-model="addressModel"
         :label="t('propertyForm.address')"
         :placeholder="t('propertyForm.address')"
-        :invalid="!!errors.address"
-      >
-        <template v-if="errors.address" #message>
-          <span class="text-red-500 text-xs">{{ errors.address }}</span>
-        </template>
-      </fwb-input>
+        :validation-status="errors.address ? 'error' : undefined"
+        :validation-message="errors.address"
+      />
       <fwb-input
         v-model="zoneModel"
         :label="t('clientProperties.zoneLabel').replace(':', '')"
         :placeholder="t('clientProperties.zoneLabel').replace(':', '')"
-        :invalid="!!errors.zone"
-      >
-        <template v-if="errors.zone" #message>
-          <span class="text-red-500 text-xs">{{ errors.zone }}</span>
-        </template>
-      </fwb-input>
+        :validation-status="errors.zone ? 'error' : undefined"
+        :validation-message="errors.zone"
+      />
 
       <div>
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -59,9 +50,13 @@
           v-model="typeModel"
           class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:text-white"
         >
-          <option value="APARTAMENTO">{{ t('propertyForm.apartment') }}</option>
+          <option value="DEPARTAMENTO">{{ t('propertyForm.apartment') }}</option>
           <option value="CASA">{{ t('propertyForm.house') }}</option>
           <option value="COMERCIAL">{{ t('propertyForm.commercialSpace') }}</option>
+          <option value="TERRENO">{{ t('propertyTypes.TERRENO') }}</option>
+          <option value="OFICINA">{{ t('propertyTypes.OFICINA') }}</option>
+          <option value="INDUSTRIAL">{{ t('propertyTypes.INDUSTRIAL') }}</option>
+          <option value="OTROS">{{ t('propertyTypes.OTROS') }}</option>
         </select>
       </div>
 
@@ -71,12 +66,9 @@
           type="number"
           :label="t('common.price')"
           :disabled="isPriceDisabled"
-          :invalid="!!errors.price"
-        >
-          <template v-if="errors.price" #message>
-            <span class="text-red-500 text-xs">{{ errors.price }}</span>
-          </template>
-        </fwb-input>
+          :validation-status="errors.price ? 'error' : undefined"
+          :validation-message="errors.price"
+        />
         <p v-if="isPriceDisabled" class="text-xs text-yellow-600 mt-1">
           {{ t('propertyForm.priceWarning') }}
         </p>
@@ -86,22 +78,16 @@
         v-model.number="m2Model"
         type="number"
         :label="t('common.m2')"
-        :invalid="!!errors.m2"
-      >
-        <template v-if="errors.m2" #message>
-          <span class="text-red-500 text-xs">{{ errors.m2 }}</span>
-        </template>
-      </fwb-input>
+        :validation-status="errors.m2 ? 'error' : undefined"
+        :validation-message="errors.m2"
+      />
       <fwb-input
         v-model.number="roomsModel"
         type="number"
         :label="t('propertyForm.rooms')"
-        :invalid="!!errors.rooms"
-      >
-        <template v-if="errors.rooms" #message>
-          <span class="text-red-500 text-xs">{{ errors.rooms }}</span>
-        </template>
-      </fwb-input>
+        :validation-status="errors.rooms ? 'error' : undefined"
+        :validation-message="errors.rooms"
+      />
 
       <div class="col-span-2">
         <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -159,12 +145,19 @@
 
       <PropertyMapPicker v-model="locationModel" />
     </div>
+
+    <!-- Global Toast -->
+    <AppToast
+      :show="toast.show"
+      :message="toast.message"
+      :type="toast.type"
+      @close="toast.show = false"
+    />
   </form>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, watch, computed } from 'vue';
-  import Swal from 'sweetalert2';
+  import { ref, onMounted, watch, computed, reactive } from 'vue';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
   import { propertySchema } from '@/modules/properties/schemas/propertySchema';
@@ -179,6 +172,7 @@
   import IconLucideMapPin from '~icons/lucide/map-pin';
   import { propertyService } from '@/modules/properties';
   import { handleApiError } from '@/api/errorHandler';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   const { t } = useI18n();
 
@@ -201,6 +195,13 @@
   const owners = ref<OwnerUser[]>([]);
   const authStore = useAuthStore();
 
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
+  });
+
   const isAgent = computed(() => {
     const u = authStore.user as UserClaims | null;
     const roles = (u?.roles as string[]) || [];
@@ -222,7 +223,7 @@
       address: '',
       zone: '',
       price: 0,
-      type: 'APARTAMENTO',
+      type: 'DEPARTAMENTO',
       operationType: '' as PropertyFormValues['operationType'],
       m2: 0,
       rooms: 0,
@@ -287,7 +288,7 @@
           address: (data.address as string) || '',
           zone: (data.zone as string) || '',
           price: (data.price as number) || 0,
-          type: (data.type as string) || 'APARTAMENTO',
+          type: (data.type as string) || 'DEPARTAMENTO',
           operationType: (data.operationType as string) || '',
           m2: (data.m2 as number) || 0,
           rooms: (data.rooms as number) || 0,
@@ -310,19 +311,23 @@
   const handleSaveLocation = async () => {
     const { lat, lng } = locationModel.value;
 
-    // 1. Validar que no estén vacíos
     if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
-      alert('Por favor, ingresa coordenadas válidas o selecciona un punto en el mapa.');
+      toast.message = 'Por favor, ingresa coordenadas válidas o selecciona un punto en el mapa.';
+      toast.type = 'error';
+      toast.show = true;
       return;
     }
 
-    // 2. Validar rangos geográficos (Tarea de aceptación)
     if (lat < -90 || lat > 90) {
-      alert('La latitud debe estar entre -90 y 90 grados.');
+      toast.message = 'La latitud debe estar entre -90 y 90 grados.';
+      toast.type = 'error';
+      toast.show = true;
       return;
     }
     if (lng < -180 || lng > 180) {
-      alert('La longitud debe estar entre -180 y 180 grados.');
+      toast.message = 'La longitud debe estar entre -180 y 180 grados.';
+      toast.type = 'error';
+      toast.show = true;
       return;
     }
 
@@ -330,22 +335,16 @@
     try {
       const updatedProperty = await propertyService.updateLocation(props.propertyId!, lat, lng);
 
-      // Notificación elegante (SweetAlert2)
-      Swal.fire({
-        title: 'Ubicación guardada',
-        icon: 'success',
-        toast: true,
-        position: 'top-end',
-        timer: 3000,
-        showConfirmButton: false,
-      });
+      toast.message = t('propertyForm.locationSuccess');
+      toast.type = 'success';
+      toast.show = true;
 
       emit('location-updated', updatedProperty);
     } catch (error) {
-      // El backend también validará esto, pero el frontend da feedback inmediato
-      //alert('Error al guardar la ubicación. Verifica los datos.');
       const appError = handleApiError(error);
-      alert(`Error: ${appError.message}`);
+      toast.message = `Error: ${appError.message}`;
+      toast.type = 'error';
+      toast.show = true;
       console.error('Detalle técnico:', error);
     } finally {
       savingLocation.value = false;
