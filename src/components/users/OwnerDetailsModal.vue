@@ -12,33 +12,56 @@
     <template #body>
       <div class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+          <div
+            class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
+          >
             <h4 class="text-xs font-black text-amber-600 uppercase tracking-widest mb-3">
               {{ t('ownerDetails.ownerInfo') }}
             </h4>
             <div class="space-y-3 text-sm">
               <div class="flex items-center justify-between gap-3">
                 <span class="text-gray-500">{{ t('ownerDetails.email') }}</span>
-                <span class="text-right dark:text-white">{{ owner.email || t('common.notSpecified') }}</span>
+                <span class="text-right dark:text-white">
+                  {{ owner.email || t('common.notSpecified') }}
+                </span>
               </div>
               <div class="flex items-center justify-between gap-3">
                 <span class="text-gray-500">{{ t('ownerDetails.phone') }}</span>
-                <span class="text-right dark:text-white">{{ owner.phone || t('common.notSpecified') }}</span>
+                <span class="text-right dark:text-white">
+                  {{ owner.phone || t('common.notSpecified') }}
+                </span>
               </div>
               <div class="flex items-center justify-between gap-3">
                 <span class="text-gray-500">{{ t('ownerDetails.taxId') }}</span>
-                <span class="text-right dark:text-white">{{ owner.taxId || t('common.notSpecified') }}</span>
+                <span class="text-right dark:text-white">
+                  {{ owner.taxId || t('common.notSpecified') }}
+                </span>
               </div>
               <div class="flex items-center justify-between gap-3">
                 <span class="text-gray-500">{{ t('ownerDetails.status') }}</span>
-                <span class="text-right font-semibold" :class="owner.status === 'ACTIVE' ? 'text-green-600' : 'text-gray-500 dark:text-gray-300'">
-                  {{ owner.status === 'ACTIVE' ? t('users.status.active') : owner.status === 'INACTIVE' ? t('users.status.inactive') : owner.status || t('common.notSpecified') }}
+                <span
+                  class="text-right font-semibold"
+                  :class="
+                    owner.status === 'ACTIVE'
+                      ? 'text-green-600'
+                      : 'text-gray-500 dark:text-gray-300'
+                  "
+                >
+                  {{
+                    owner.status === 'ACTIVE'
+                      ? t('users.status.active')
+                      : owner.status === 'INACTIVE'
+                        ? t('users.status.inactive')
+                        : owner.status || t('common.notSpecified')
+                  }}
                 </span>
               </div>
             </div>
           </div>
 
-          <div class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+          <div
+            class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
+          >
             <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
               {{ t('ownerDetails.summary') }}
             </h4>

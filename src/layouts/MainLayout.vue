@@ -1,6 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <fwb-navbar class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+    <fwb-navbar
+      class="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+    >
       <template #logo>
         <div class="flex items-center gap-2">
           <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
@@ -10,148 +12,99 @@
       </template>
       <template #default>
         <fwb-navbar-collapse>
-          <router-link
-            v-if="isAdmin"
-            to="/dashboard/admin/users"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'Users',
-            }"
-          >
-            {{ t('nav.users') }}
-          </router-link>
+          <!-- Admin Links -->
+          <template v-if="isAdmin">
+            <NavLink
+              to="/dashboard/admin/users"
+              :label="t('nav.users')"
+              :icon="IconLucideUsers"
+              exact
+            />
+            <NavLink
+              to="/dashboard/admin/properties"
+              :label="t('nav.inventoryManagement')"
+              :icon="IconLucideBuilding2"
+              matchPath="properties"
+            />
+            <NavLink
+              to="/dashboard/admin/audit"
+              :label="t('nav.audit')"
+              :icon="IconLucideShieldCheck"
+            />
+            <NavLink
+              to="/dashboard/reports/agent-ranking"
+              :label="t('nav.agentRanking')"
+              :icon="IconLucideTrophy"
+            />
+          </template>
 
-          <router-link
-            v-if="isAgent"
-            to="/dashboard/agent"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'AgentDashboard',
-            }"
-          >
-            {{ t('nav.myInmuebles') }}
-          </router-link>
+          <!-- Agent Links -->
+          <template v-if="isAgent">
+            <NavLink
+              to="/dashboard/agent"
+              :label="t('nav.myInmuebles')"
+              :icon="IconLucideLayoutDashboard"
+            />
+            <NavLink
+              to="/dashboard/agent/clients"
+              :label="t('nav.myClients')"
+              :icon="IconLucideUsers"
+            />
+            <NavLink
+              to="/dashboard/agent/owners"
+              :label="t('nav.myOwners')"
+              :icon="IconLucideUserCircle"
+            />
+            <NavLink
+              to="/reassignments/inbox"
+              :label="t('nav.receivedRequests')"
+              :icon="IconLucideArrowLeftRight"
+            >
+              <template #suffix><NotificationBadge /></template>
+            </NavLink>
+            <NavLink
+              to="/reassignments/sent"
+              :label="t('nav.sentRequests')"
+              :icon="IconLucideClipboardList"
+            >
+              <template #suffix><NotificationBadge /></template>
+            </NavLink>
+          </template>
 
-          <router-link
-            v-if="isOwner"
-            to="/dashboard/owner"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'OwnerDashboard',
-            }"
-          >
-            {{ t('nav.myProperties') }}
-          </router-link>
+          <!-- Owner Links -->
+          <template v-if="isOwner">
+            <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
+          </template>
 
-          <router-link
-            v-if="isClient"
-            to="/dashboard/client/favorites"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'ClientFavorites',
-            }"
-          >
-            {{ t('nav.favorites') }}
-          </router-link>
+          <!-- Client Links -->
+          <template v-if="isClient">
+            <NavLink
+              to="/properties"
+              :label="t('nav.availableProperties')"
+              :icon="IconLucideBuilding"
+            />
+            <NavLink
+              to="/dashboard/client/favorites"
+              :label="t('nav.favorites')"
+              :icon="IconLucideHeart"
+            />
+          </template>
 
-          <router-link
-            v-if="isAdmin"
-            to="/dashboard/admin/properties"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.path.includes('properties'),
-            }"
-          >
-            {{ t('nav.inventoryManagement') }}
-          </router-link>
-
-          <router-link
-            v-if="isAdmin"
-            to="/dashboard/admin/audit"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'Audit',
-            }"
-          >
-            {{ t('nav.audit') }}
-          </router-link>
-
-          <router-link
-            v-if="isAgent"
-            to="/dashboard/agent/clients"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'AgentClients',
-            }"
-          >
-            {{ t('nav.myClients') }}
-          </router-link>
-
-          <router-link
-            v-if="isAgent"
-            to="/dashboard/agent/owners"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'AgentOwners',
-            }"
-          >
-            {{ t('nav.myOwners') }}
-          </router-link>
-
-          <router-link
-            v-if="isAgent || isAdmin"
+          <!-- Shared/Common Links -->
+          <NavLink
+            v-if="isAdmin || isAgent"
             to="/calendar"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'Calendar',
-            }"
+            :label="t('nav.calendar')"
+            :icon="IconLucideCalendar"
           >
-            {{ t('nav.calendar') }}
-            <VisitRequestNotificationBadge v-if="isAgent" />
-          </router-link>
+            <template #suffix><VisitRequestNotificationBadge v-if="isAgent" /></template>
+          </NavLink>
 
-          <router-link
-            v-if="isClient"
-            to="/properties"
-            class="block py-2 pr-4 pl-3 rounded md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-            :class="{
-              'text-blue-700 dark:text-white font-bold': $route.name === 'Properties',
-            }"
-          >
-            {{ t('nav.availableProperties') }}
-          </router-link>
-
-          <router-link
-            v-if="isAgent"
+          <NavLink
             to="/dashboard/operations"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
-            active-class="bg-blue-50 text-blue-700 font-medium"
-          >
-            <IconLucideFileText class="w-5 h-5" />
-            {{ t('nav.operations') }}
-          </router-link>
-
-          <router-link
-            v-if="isAgent"
-            to="/reassignments/inbox"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
-            active-class="bg-blue-50 text-blue-700 font-medium"
-          >
-            <IconLucideArrowLeftRight class="w-5 h-5" />
-            {{ t('nav.receivedRequests') }}
-            <NotificationBadge />
-          </router-link>
-
-          <router-link
-            v-if="isAgent"
-            to="/reassignments/sent"
-            class="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
-            active-class="bg-blue-50 text-blue-700 font-medium"
-          >
-            <IconLucideClipboardList class="w-5 h-5" />
-            {{ t('nav.sentRequests') }}
-            <NotificationBadge />
-          </router-link>
+            :label="t('nav.operations')"
+            :icon="IconLucideFileText"
+          />
         </fwb-navbar-collapse>
       </template>
       <template #right-side>
@@ -186,7 +139,7 @@
               </div>
               <a
                 href="#"
-                @mousedown.prevent="handleLogout"
+                @click.prevent="handleLogout"
                 class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-600 dark:text-red-500 dark:hover:text-white cursor-pointer border-t border-gray-100 dark:border-gray-700"
               >
                 {{ t('nav.logout') }}
@@ -211,10 +164,21 @@
   import { useI18n } from 'vue-i18n';
   import ThemeToggle from '@/components/ThemeToggle.vue';
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
+  import NavLink from '@/components/ui/NavLink.vue';
   import { computed } from 'vue';
   import IconLucideFileText from '~icons/lucide/file-text';
+  import IconLucideTrophy from '~icons/lucide/trophy';
   import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
+  import IconLucideUsers from '~icons/lucide/users';
+  import IconLucideBuilding2 from '~icons/lucide/building-2';
+  import IconLucideShieldCheck from '~icons/lucide/shield-check';
+  import IconLucideLayoutDashboard from '~icons/lucide/layout-dashboard';
+  import IconLucideUserCircle from '~icons/lucide/user-circle';
+  import IconLucideHome from '~icons/lucide/home';
+  import IconLucideBuilding from '~icons/lucide/building';
+  import IconLucideHeart from '~icons/lucide/heart';
+  import IconLucideCalendar from '~icons/lucide/calendar';
 
   const authStore = useAuthStore();
   const { t } = useI18n();

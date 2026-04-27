@@ -61,13 +61,16 @@
             </p>
           </div>
 
-          <IdentityDocumentsSection :person-id="client.personId" :auth-user-id="client.authUserId" />
+          <IdentityDocumentsSection
+            :person-id="client.personId"
+            :auth-user-id="client.authUserId"
+          />
         </div>
 
         <div class="space-y-6">
           <div class="relative pl-6 border-l-2 border-blue-500">
             <div
-              class="absolute -left-[9px] top-0 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-900"
+              class="absolute -left-2.25 top-0 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-900"
             ></div>
             <h4 class="text-sm font-bold dark:text-white uppercase tracking-tight mb-4">
               {{ t('clientDetails.changeHistory') }}
@@ -75,7 +78,7 @@
 
             <div
               v-if="client.auditLog?.length"
-              class="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
+              class="space-y-4 max-h-100 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
             >
               <div
                 v-for="(entry, i) in [...client.auditLog].reverse()"

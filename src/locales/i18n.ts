@@ -2,6 +2,12 @@ import { createI18n } from 'vue-i18n';
 import { es } from '@/locales/es';
 import { en } from '@/locales/en';
 
+type MessageSchema = typeof es;
+
+declare module 'vue-i18n' {
+  export interface DefineLocaleMessage extends MessageSchema {}
+}
+
 export type Language = 'es' | 'en';
 
 const DEFAULT_LANGUAGE: Language = 'es';

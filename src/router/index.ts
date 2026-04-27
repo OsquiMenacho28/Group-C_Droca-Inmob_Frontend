@@ -120,13 +120,19 @@ const routes = [
         path: 'operations',
         name: 'Operations',
         component: () => import('@/views/OperationsView.vue'),
-        meta: { role: 'AGENT' },
+        meta: { roles: ['ADMIN', 'AGENT', 'OWNER', 'CLIENT'] },
       },
       {
-        path: '/operations/:id',
+        path: 'operations/:id',
         name: 'OperationDetail',
         component: OperationDetailView,
-        meta: { role: 'AGENT' },
+        meta: { roles: ['ADMIN', 'AGENT', 'OWNER', 'CLIENT'] },
+      },
+      {
+        path: 'reports/agent-ranking',
+        name: 'AgentRanking',
+        component: () => import('@/views/AgentRankingView.vue'),
+        meta: { role: 'ADMIN' },
       },
       {
         path: '/reassignments/sent',
@@ -149,16 +155,31 @@ router.beforeEach((to, _from, next) => {
     next({ name: 'Login' });
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next({ name: 'Dashboard' });
-  } else if (to.meta.role) {
+  } else if (to.meta.role || to.meta.roles) {
     const roles = (authStore.user?.roles as string[]) || [];
     const userType = authStore.user?.userType;
-    const hasRole =
-      roles.includes(to.meta.role as string) ||
-      userType === 'ADMIN' ||
-      (to.meta.role === 'AGENT' && userType === 'EMPLOYEE') ||
-      (to.meta.role === 'CLIENT' && userType === 'INTERESTED_CLIENT');
 
-    hasRole ? next() : next({ name: 'Dashboard' });
+    // Helper to check if user has a specific logical role
+    const hasRequiredRole = (targetRole: string) => {
+      return (
+        roles.includes(targetRole) ||
+        userType === 'ADMIN' ||
+        (targetRole === 'AGENT' && userType === 'EMPLOYEE') ||
+        (targetRole === 'CLIENT' && userType === 'INTERESTED_CLIENT') ||
+        (targetRole === 'OWNER' && userType === 'OWNER')
+      );
+    };
+
+    let authorized = false;
+    if (to.meta.roles && Array.isArray(to.meta.roles)) {
+      authorized = to.meta.roles.some((r: string) => hasRequiredRole(r));
+    } else if (to.meta.role) {
+      authorized = hasRequiredRole(to.meta.role as string);
+    } else {
+      authorized = true;
+    }
+
+    authorized ? next() : next({ name: 'Dashboard' });
   } else {
     next();
   }

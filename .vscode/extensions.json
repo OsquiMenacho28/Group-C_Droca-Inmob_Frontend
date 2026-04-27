@@ -2,6 +2,7 @@
   "recommendations": [
     "Vue.volar",
     "esbenp.prettier-vscode",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "lokalise.i18n-ally"
   ]
 }

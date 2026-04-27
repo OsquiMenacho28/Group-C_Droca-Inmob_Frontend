@@ -291,7 +291,8 @@
         return;
       }
 
-      const allProperties = await propertyService.getProperties();
+      const allPropertiesResponse = await propertyService.getProperties();
+      const allProperties = allPropertiesResponse.data || [];
 
       const filtered = allProperties.filter((p: Property) => favoriteIds.includes(p.id as string));
 
