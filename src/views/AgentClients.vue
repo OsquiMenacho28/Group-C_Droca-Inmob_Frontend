@@ -214,9 +214,14 @@
         filteredBase.map(async (u: User) => {
           try {
             const profile = await personService.getPersonByAuthUserId(u.id);
-            return { ...u, ...profile };
+            return {
+              ...u,
+              ...profile,
+              authUserId: u.id,
+              personId: profile.id as string,
+            };
           } catch {
-            return u;
+            return { ...u, authUserId: u.id, personId: undefined };
           }
         })
       );
