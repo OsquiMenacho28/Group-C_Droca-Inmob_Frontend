@@ -4,7 +4,7 @@
       <FwbCard
         v-for="i in 3"
         :key="i"
-        class="!max-w-full w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 animate-pulse"
+        class="max-w-full! w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 animate-pulse"
       >
         <div class="p-8 flex items-center gap-6">
           <div class="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-2xl shrink-0" />
@@ -19,24 +19,28 @@
 
     <FwbCard
       v-else-if="receipts.length === 0"
-      class="!max-w-full w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 flex flex-col items-center justify-center py-20 text-center"
+      class="max-w-full! w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 overflow-hidden"
     >
-      <div
-        class="w-20 h-20 bg-gray-50 dark:bg-gray-900/50 rounded-full flex items-center justify-center mb-6 shadow-inner"
-      >
-        <IconLucideClipboardList class="w-10 h-10 text-gray-300 dark:text-gray-600" />
+      <div class="flex flex-col items-center justify-center py-20 text-center w-full">
+        <div
+          class="w-20 h-20 bg-gray-50 dark:bg-gray-900/50 rounded-full flex items-center justify-center mb-6 shadow-inner mx-auto"
+        >
+          <IconLucideClipboardList class="w-10 h-10 text-gray-300 dark:text-gray-600" />
+        </div>
+        <p class="text-xl font-bold text-gray-900 dark:text-white">
+          {{ t('receipts.emptyTitle') }}
+        </p>
+        <p class="text-base text-gray-500 dark:text-gray-400 mt-2 max-w-sm leading-relaxed mx-auto">
+          {{ t('receipts.emptySubtext') }}
+        </p>
       </div>
-      <p class="text-xl font-bold text-gray-900 dark:text-white">{{ t('receipts.emptyTitle') }}</p>
-      <p class="text-base text-gray-500 dark:text-gray-400 mt-2 max-w-sm leading-relaxed">
-        {{ t('receipts.emptySubtext') }}
-      </p>
     </FwbCard>
 
     <div v-else class="space-y-4">
       <FwbCard
         v-for="receipt in receipts"
         :key="receipt.id"
-        class="!max-w-full w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-all duration-300 group overflow-hidden"
+        class="max-w-full! w-full border-gray-200 dark:border-gray-700 dark:bg-gray-800 hover:shadow-lg transition-all duration-300 group overflow-hidden"
       >
         <div
           class="p-6 md:p-8 flex flex-col lg:flex-row items-start lg:items-center gap-6 md:gap-8"
