@@ -312,7 +312,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-7 min-h-[450px]">
+        <div class="grid grid-cols-7 min-h-112.5">
           <div
             v-for="(day, idx) in weekDays"
             :key="idx"
@@ -404,6 +404,43 @@
             />
           </template>
         </div>
+        <div>
+          <template v-if="selectedEvent?.status === 'CANCELLED'">
+            <!-- Only visible when visit.status === 'CANCELLED' -->
+            <RescheduleButton :visit="selectedEvent" @rescheduled="onRescheduled" />
+
+            <!-- Shows link to new visit if this one was rescheduled -->
+            <!-- <RescheduledVisitLink :visit-id="selectedEvent.id" :key="refreshKey" /> -->
+          </template>
+        </div>
+        <!-- Show only if this visit itself was created by rescheduling another -->
+        <div
+          v-if="selectedEvent?.originVisitId"
+          class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3"
+        >
+          <svg
+            class="w-4 h-4 text-amber-500 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+            />
+          </svg>
+          <p class="text-sm text-amber-700">
+            Esta visita fue creada al reprogramar la visita original.
+          </p>
+          <RouterLink
+            :to="`/visits/${selectedEvent.originVisitId}`"
+            class="ml-auto text-xs text-amber-700 underline hover:text-amber-900 shrink-0"
+          >
+            Ver visita original
+          </RouterLink>
+        </div>
       </template>
     </FwbModal>
 
@@ -449,12 +486,15 @@
     CalendarEventResponse,
     VisitRequestResponse,
   } from '@/types/visitCalendar';
+  import type { RescheduleResponse } from '@/types/reschedule';
   import {
     getPendingRequestsForAgent,
     acceptVisitRequest,
     rejectVisitRequest,
   } from '@/services/visitRequestService';
   import ReassignButton from '@/components/visits/reassignment/ReassignButton.vue';
+  import RescheduleButton from '@/components/visits/reschedule/RescheduleButton.vue';
+  // import RescheduledVisitLink from '@/components/visits/reschedule/RescheduledVisitLink.vue';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import { handleApiError } from '@/api/errorHandler';
@@ -480,6 +520,7 @@
   const alertMessage = ref('');
   const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
   let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null;
+  const refreshKey = ref(0); // incremented after rescheduling to force RescheduledVisitLink reload
 
   const allProperties = ref<
     { id: string; title: string; address: string; [key: string]: unknown }[]
@@ -767,6 +808,11 @@
     } finally {
       requestActionLoadingId.value = '';
     }
+  }
+
+  function onRescheduled(_response: RescheduleResponse) {
+    // Increment refreshKey to force RescheduledVisitLink to re-query the API
+    refreshKey.value++;
   }
 
   const closeClickOutside = (e: MouseEvent) => {

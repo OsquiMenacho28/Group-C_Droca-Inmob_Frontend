@@ -16,6 +16,7 @@ import ClientDashboard from '@/views/ClientDashboard.vue';
 import ReassignmentInboxView from '@/views/ReassignmentInboxView.vue';
 import OperationDetailView from '@/views/OperationDetailView.vue';
 import SentRequestsView from '@/views/SentRequestsView.vue';
+import VisitDetailView from '@/views/VisitDetailView.vue';
 
 const routes = [
   {
@@ -132,6 +133,12 @@ const routes = [
         path: '/reassignments/sent',
         name: 'SentRequests',
         component: SentRequestsView,
+        meta: { role: 'AGENT' },
+      },
+      {
+        path: '/visits/:id',
+        name: 'VisitDetail',
+        component: VisitDetailView,
         meta: { role: 'AGENT' },
       },
     ],

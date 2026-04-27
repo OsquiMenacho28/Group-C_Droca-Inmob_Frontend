@@ -17,7 +17,7 @@
     <!-- Reschedule button -->
     <FwbButton
       @click="openModal"
-      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-indigo-400 bg-indigo-50 text-indigo-700 text-sm font-medium hover:bg-indigo-100 hover:border-indigo-500 transition-all group"
+      class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-indigo-400 bg-indigo-50 text-white text-sm font-medium hover:bg-indigo-100 hover:border-indigo-500 transition-all group"
     >
       <svg
         class="w-4 h-4 group-hover:scale-110 transition-transform"
@@ -32,16 +32,11 @@
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
         />
       </svg>
-      {{ t('scheduleVisit.submit') }}
+      {{ t('rescheduleVisit.submit') }}
     </FwbButton>
 
     <!-- Modal -->
-    <RescheduleModal
-      v-model="modalVisible"
-      :visit-id="visit.id"
-      :visit-info="visit.dateTime"
-      @rescheduled="handleRescheduled"
-    />
+    <RescheduleModal v-model="modalVisible" :visit="visit" @rescheduled="handleRescheduled" />
 
     <!-- Success toast -->
     <Teleport to="body">
@@ -57,7 +52,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          {{ t('scheduleVisit.successMessage') }}
+          {{ t('rescheduleVisit.successMessage') }}
         </div>
       </Transition>
     </Teleport>

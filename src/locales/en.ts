@@ -389,7 +389,7 @@ export const en = {
   rescheduleVisit: {
     title: 'Reschedule Visit',
     subtitle: 'Select a new date and time for the visit',
-    newDateTime: 'New Date and Time',
+    newStartTime: 'New Start Time',
     notes: 'Additional notes',
     notesPlaceholder: 'E.g.: The client arrives late, keys at reception...',
     submit: 'Reschedule Visit',
@@ -405,12 +405,13 @@ export const en = {
     agentAndPropertyAvailability:
       'The system will verify that the agent and property are available.',
     confirmReschedule: 'Confirm rescheduling',
-    newDateTimeRequired: 'The new date and time are required.',
-    newDateTimeFuture: 'The new date and time must be in the future.',
+    newDateTimeRequired: 'The new start time is required.',
+    newDateTimeFuture: 'The new start time must be in the future.',
     visitWasRescheduled: 'This visit was rescheduled',
     viewVisit: 'View visit',
     scheduledVisit: 'Scheduled visit',
     cancelledVisit: 'Cancelled visit',
+    confirmedVisit: 'Confirmed visit',
     completedVisit: 'Completed visit',
   },
   conflict: {

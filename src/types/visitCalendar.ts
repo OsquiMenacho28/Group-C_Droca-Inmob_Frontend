@@ -14,6 +14,7 @@ export interface CalendarEventResponse {
   type: EventType;
   status: EventStatus;
   notes?: string;
+  originVisitId?: string; // Set if this visit was created by rescheduling
   createdAt: string;
   clientId?: string;
   clientName?: string;

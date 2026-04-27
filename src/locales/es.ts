@@ -393,7 +393,7 @@ export const es = {
   rescheduleVisit: {
     title: 'Reprogramar Visita',
     subtitle: 'Selecciona una nueva fecha y hora para la visita',
-    newDateTime: 'Nueva Fecha y Hora',
+    newStartTime: 'Nueva Hora de Inicio',
     notes: 'Notas para la nueva visita',
     notesPlaceholder: 'Ej: El cliente confirma que puede asistir a esta nueva hora...',
     submit: 'Reprogramar Visita',
@@ -409,12 +409,13 @@ export const es = {
     agentAndPropertyAvailability:
       'El sistema verificará que el agente y el inmueble estén disponibles.',
     confirmReschedule: 'Confirmar reprogramación',
-    newDateTimeRequired: 'La nueva fecha y hora son obligatorias.',
-    newDateTimeFuture: 'La nueva fecha y hora deben ser en el futuro.',
+    newDateTimeRequired: 'La nueva hora de inicio es obligatoria.',
+    newDateTimeFuture: 'La nueva hora de inicio debe ser en el futuro.',
     visitWasRescheduled: 'Esta visita fue reprogramada',
     viewVisit: 'Ver visita',
     scheduledVisit: 'Visita programada',
     cancelledVisit: 'Visita cancelada',
+    confirmedVisit: 'Visita confirmada',
     completedVisit: 'Visita completada',
   },
   conflict: {

@@ -8,12 +8,7 @@
     con validación de disponibilidad del agente y del inmueble.
 
     USO:
-      <RescheduleModal
-        v-model="showModal"
-        :visit-id="visit.id"
-        :visit-info="visit.dateTime"
-        @rescheduled="onRescheduled"
-      />
+      <RescheduleModal v-model="modalVisible" :visit="visit" @rescheduled="handleRescheduled" />
   -->
   <Teleport to="body">
     <Transition name="fade">
@@ -46,7 +41,7 @@
               <div>
                 <h3 class="text-white font-semibold text-lg">{{ t('rescheduleVisit.title') }}</h3>
                 <p class="text-indigo-200 text-sm">
-                  {{ t('rescheduleVisit.visitCancelledAt') }} {{ formatDate(visitInfo) }}
+                  {{ t('rescheduleVisit.visitCancelledAt') }} {{ formatDate(visit?.startTime) }}
                 </p>
               </div>
             </div>
@@ -104,11 +99,11 @@
             <!-- New date/time picker -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
-                {{ t('rescheduleVisit.newDateTime') }}
+                {{ t('rescheduleVisit.newStartTime') }}
                 <span class="text-red-500">*</span>
               </label>
               <input
-                v-model="newDateTime"
+                v-model="newStartTime"
                 type="datetime-local"
                 :min="minDateTime"
                 class="w-full rounded-xl border px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
@@ -183,7 +178,7 @@
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue';
   import { useReschedule } from '@/composables/useReschedule';
-  import type { RescheduleResponse } from '@/types/reschedule';
+  import type { RescheduleResponse, Visit } from '@/types/reschedule';
   import { FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
@@ -193,8 +188,7 @@
   // ── Props & Emits ─────────────────────────────────────────────────────────
   const props = defineProps<{
     modelValue: boolean; // v-model: controls visibility
-    visitId: string; // ID of the cancelled visit to reschedule
-    visitInfo?: string; // ISO datetime of the original visit (for display)
+    visit: Visit; // The cancelled visit to reschedule
   }>();
 
   const emit = defineEmits<{
@@ -206,7 +200,7 @@
   const { loading, error, reschedule } = useReschedule();
 
   // ── Local state ───────────────────────────────────────────────────────────
-  const newDateTime = ref('');
+  const newStartTime = ref('');
   const notes = ref('');
   const dateError = ref('');
 
@@ -218,12 +212,20 @@
     return now.toISOString().slice(0, 16);
   });
 
+  // Calculate the duration of the original visit
+  const visitDuration = computed(() => {
+    if (!props.visit?.startTime || !props.visit?.endTime) return 0;
+    const start = new Date(props.visit.startTime).getTime();
+    const end = new Date(props.visit.endTime).getTime();
+    return end - start; // in milliseconds
+  });
+
   // Reset form when modal opens
   watch(
     () => props.modelValue,
     (open) => {
       if (open) {
-        newDateTime.value = '';
+        newStartTime.value = '';
         notes.value = '';
         dateError.value = '';
         error.value = null;
@@ -238,11 +240,11 @@
 
   function validate(): boolean {
     dateError.value = '';
-    if (!newDateTime.value) {
+    if (!newStartTime.value) {
       dateError.value = t('rescheduleVisit.newDateTimeRequired');
       return false;
     }
-    const selected = new Date(newDateTime.value);
+    const selected = new Date(newStartTime.value);
     if (selected <= new Date()) {
       dateError.value = t('rescheduleVisit.newDateTimeFuture');
       return false;
@@ -253,10 +255,17 @@
   async function handleSubmit() {
     if (!validate()) return;
 
-    // Convert datetime-local string to ISO-8601 (backend expects LocalDateTime format)
-    const isoDateTime = new Date(newDateTime.value).toISOString().slice(0, 19);
+    // Convert datetime-local strings to ISO-8601 (backend expects LocalDateTime format)
+    const newStartTimeISO = new Date(newStartTime.value).toISOString().slice(0, 19);
+    const newEndTimeDate = new Date(new Date(newStartTime.value).getTime() + visitDuration.value);
+    const newEndTimeISO = newEndTimeDate.toISOString().slice(0, 19);
 
-    const result = await reschedule(props.visitId, isoDateTime, notes.value.trim() || undefined);
+    const result = await reschedule(
+      props.visit.id,
+      newStartTimeISO,
+      newEndTimeISO,
+      notes.value.trim() || undefined
+    );
 
     if (result) {
       emit('rescheduled', result);

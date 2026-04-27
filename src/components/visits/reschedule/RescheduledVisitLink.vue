@@ -42,7 +42,7 @@
           ></span>
           <div>
             <p class="text-sm font-medium text-gray-800">
-              {{ formatDate(visit.dateTime) }}
+              {{ formatDate(visit.startTime) }} - {{ formatDate(visit.endTime) }}
             </p>
             <p class="text-xs text-gray-500">
               {{ statusLabel(visit.status) }}
@@ -73,7 +73,7 @@
 <script setup lang="ts">
   import { computed, onMounted } from 'vue';
   import { useReschedule } from '@/composables/useReschedule';
-  import type { VisitStatus } from '@/types/reschedule';
+  import type { EventStatus } from '@/types/reschedule';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
 
@@ -106,19 +106,21 @@
     });
   }
 
-  function statusLabel(status: VisitStatus): string {
-    const map: Record<VisitStatus, string> = {
+  function statusLabel(status: EventStatus): string {
+    const map: Record<EventStatus, string> = {
       SCHEDULED: t('rescheduleVisit.scheduledVisit'),
       CANCELLED: t('rescheduleVisit.cancelledVisit'),
+      CONFIRMED: t('rescheduleVisit.confirmedVisit'),
       COMPLETED: t('rescheduleVisit.completedVisit'),
     };
     return map[status] ?? status;
   }
 
-  function statusDotClass(status: VisitStatus): string {
-    const map: Record<VisitStatus, string> = {
+  function statusDotClass(status: EventStatus): string {
+    const map: Record<EventStatus, string> = {
       SCHEDULED: 'bg-green-500',
       CANCELLED: 'bg-red-400',
+      CONFIRMED: 'bg-blue-500',
       COMPLETED: 'bg-gray-400',
     };
     return map[status] ?? 'bg-gray-300';
