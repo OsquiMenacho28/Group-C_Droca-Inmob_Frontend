@@ -387,14 +387,15 @@
                   {{ selectedEventVehicle.brand }} {{ selectedEventVehicle.model }}
                 </p>
                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
-                  {{ t('calendar.vehicleCapacity', { capacity: selectedEventVehicle.passengerCapacity }) }}
+                  {{
+                    t('calendar.vehicleCapacity', {
+                      capacity: selectedEventVehicle.passengerCapacity,
+                    })
+                  }}
                 </p>
               </div>
             </template>
-            <span
-              v-else
-              class="font-medium text-gray-500 dark:text-gray-400 text-right"
-            >
+            <span v-else class="font-medium text-gray-500 dark:text-gray-400 text-right">
               {{ t('calendar.noVehicleAssigned') }}
             </span>
           </div>
@@ -724,11 +725,11 @@
     loadCalendar();
   }
 
-  const selectEvent = (ev: CalendarEventResponse) => {
+  const selectEvent = async (ev: CalendarEventResponse) => {
     selectedEvent.value = ev;
     selectedEventVehicle.value = null;
     showEventModal.value = true;
-    void loadSelectedEventVehicle(ev.vehicleId);
+    await loadSelectedEventVehicle(ev.vehicleId);
   };
 
   const closeEventModal = () => {

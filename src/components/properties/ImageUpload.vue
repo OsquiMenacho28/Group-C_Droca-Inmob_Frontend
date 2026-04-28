@@ -107,16 +107,25 @@
         </fwb-button>
       </div>
     </div>
+
+    <!-- Global Toast -->
+    <AppToast
+      :show="toast.show"
+      :message="toast.message"
+      :type="toast.type"
+      @close="toast.show = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, reactive } from 'vue';
   import { FwbButton } from 'flowbite-vue';
   import IconLucideImage from '~icons/lucide/image';
   import IconLucideX from '~icons/lucide/x';
   import { propertyService, type ImageResponse } from '@/modules/properties';
   import { useI18n } from 'vue-i18n';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   const { t } = useI18n();
 
@@ -135,6 +144,13 @@
   const reorderMode = ref(false);
   const reorderImages = ref<ImageResponse[]>([]);
   let dragStartIndex = -1;
+
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
+  });
 
   const canReorder = computed(() => uploadedImages.value.length > 1);
 
@@ -194,7 +210,9 @@
 
         await loadImages();
       } catch {
-        alert(t('imageUpload.uploadError', { name: file.name }));
+        toast.message = t('imageUpload.uploadError', { name: file.name });
+        toast.type = 'error';
+        toast.show = true;
       } finally {
         uploadingImages.value.delete(file);
       }
@@ -214,9 +232,15 @@
         'images-updated',
         uploadedImages.value.map((img) => img.temporaryDownloadUrl || img.publicUrl)
       );
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
     } catch (error) {
       console.error('Error eliminando imagen:', error);
-      alert(t('imageUpload.deleteError'));
+      toast.message = t('imageUpload.deleteError');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
@@ -250,8 +274,14 @@
         'images-updated',
         updated.map((img) => img.temporaryDownloadUrl || img.publicUrl)
       );
+
+      toast.message = t('common.success');
+      toast.type = 'success';
+      toast.show = true;
     } catch {
-      alert(t('imageUpload.saveOrderError'));
+      toast.message = t('imageUpload.saveOrderError');
+      toast.type = 'error';
+      toast.show = true;
     }
   };
 
@@ -262,4 +292,3 @@
 
   onMounted(loadImages);
 </script>
-PropertyService

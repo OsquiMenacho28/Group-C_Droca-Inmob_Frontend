@@ -166,6 +166,9 @@
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
                 }"
               />
+              <p v-if="fieldErrors.startTime" class="text-xs text-red-500 mt-1">
+                {{ fieldErrors.startTime }}
+              </p>
             </div>
             <div class="space-y-1">
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -182,11 +185,11 @@
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
                 }"
               />
+              <p v-if="fieldErrors.endTime" class="text-xs text-red-500 mt-1">
+                {{ fieldErrors.endTime }}
+              </p>
             </div>
           </div>
-          <p v-if="fieldErrors.startTime || fieldErrors.endTime" class="text-xs text-red-500">
-            {{ fieldErrors.startTime || fieldErrors.endTime }}
-          </p>
 
           <div class="space-y-1">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -221,19 +224,25 @@
                 </p>
                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <div>
-                    <p class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
                       {{ t('scheduleVisit.vehiclePlateLabel') }}
                     </p>
                     <p class="font-medium">{{ selectedVehicle.licensePlate }}</p>
                   </div>
                   <div>
-                    <p class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
                       {{ t('scheduleVisit.vehicleBrandLabel') }}
                     </p>
                     <p class="font-medium">{{ selectedVehicle.brand }}</p>
                   </div>
                   <div>
-                    <p class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300">
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
                       {{ t('scheduleVisit.vehicleCapacityLabel') }}
                     </p>
                     <p class="font-medium">{{ selectedVehicle.passengerCapacity }}</p>
@@ -357,7 +366,7 @@
     <FwbModal v-if="showErrorModal" @close="showErrorModal = false">
       <template #header>
         <div class="flex items-center gap-2">
-          <IconLucideAlertCircle class="w-5 h-5 text-red-600" />
+          <IconLucideAlertCircle class="h-5 w-5 text-red-600" />
           <span>{{ t('common.error') }}</span>
         </div>
       </template>
@@ -412,6 +421,7 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideLoader from '~icons/lucide/loader';
   import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+
   const { t } = useI18n();
 
   const showSuccessModal = ref(false);
@@ -551,7 +561,9 @@
       return null;
     }
 
-    return availableVehicles.value.find((vehicle) => vehicle.id === selectedVehicleId.value) ?? null;
+    return (
+      availableVehicles.value.find((vehicle) => vehicle.id === selectedVehicleId.value) ?? null
+    );
   });
 
   const handleSelect = async (id: string) => {

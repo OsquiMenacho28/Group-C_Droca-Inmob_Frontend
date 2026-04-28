@@ -56,7 +56,7 @@
         </button>
 
         <div
-          class="h-32 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative"
+          class="h-32 bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center relative"
         >
           <div
             class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl font-black uppercase shadow-inner"

@@ -5,11 +5,11 @@ export interface Receipt {
   currency: string;
   paymentDate: string;
   concept: string;
-  originalFileName: string;
+  fileName: string;
   contentType: string;
-  fileSizeBytes: number;
-  uploadedByAgentId: string;
-  uploadedAt: string;
+  size: number;
+  createdBy: string;
+  createdAt: string;
   downloadUrl: string;
 }
 

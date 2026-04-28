@@ -262,7 +262,7 @@
   import { FwbInput, FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
 
-  import type { UserFormPayload } from '@/types/user';
+  import type { UserFormPayload, User } from '@/types/user';
   import { userSchema } from '@/modules/auth/schemas/userSchema';
   import type { UserFormValues } from '@/modules/auth/schemas/userSchema';
   import { useEmailValidation } from '@/composables/useEmailValidation';
@@ -283,7 +283,7 @@
   const currentUser = computed(() => authStore.user as UserClaims | null);
   const isAdmin = computed(() => (currentUser.value?.roles as string[])?.includes('ADMIN'));
 
-  const allUsers = ref<any[]>([]);
+  const allUsers = ref<User[]>([]);
   const activeAgents = computed(() =>
     allUsers.value.filter(
       (u) => (u.userType === 'EMPLOYEE' || u.userType === 'ADMIN') && u.status === 'ACTIVE'

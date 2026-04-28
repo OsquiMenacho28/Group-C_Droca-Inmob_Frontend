@@ -12,18 +12,13 @@
   -->
   <div v-if="hasRescheduled" class="mt-4">
     <!-- Banner with link(s) -->
-    <div class="bg-indigo-50 border border-indigo-200 rounded-2xl px-5 py-4 space-y-3">
+    <div
+      class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-2xl px-5 py-4 space-y-3 transition-colors"
+    >
       <!-- Header -->
       <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 7l5 5m0 0l-5 5m5-5H6"
-          />
-        </svg>
-        <p class="text-sm font-semibold text-indigo-700">
+        <IconLucideArrowRight class="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+        <p class="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
           {{ t('rescheduleVisit.visitWasRescheduled') }}
         </p>
       </div>
@@ -32,7 +27,7 @@
       <div
         v-for="visit in rescheduledVisits"
         :key="visit.id"
-        class="flex items-center justify-between bg-white rounded-xl border border-indigo-100 px-4 py-3"
+        class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl border border-indigo-100 dark:border-indigo-800 px-4 py-3 transition-colors"
       >
         <div class="flex items-center gap-3">
           <!-- Status dot -->
@@ -41,10 +36,10 @@
             :class="statusDotClass(visit.status)"
           ></span>
           <div>
-            <p class="text-sm font-medium text-gray-800">
-              {{ formatDate(visit.dateTime) }}
+            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
+              {{ formatDate(visit.startTime) }} - {{ formatDate(visit.endTime) }}
             </p>
-            <p class="text-xs text-gray-500">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
               {{ statusLabel(visit.status) }}
             </p>
           </div>
@@ -56,14 +51,7 @@
           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition shrink-0"
         >
           {{ t('rescheduleVisit.viewVisit') }}
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <IconLucideChevronRight class="w-3.5 h-3.5" />
         </RouterLink>
       </div>
     </div>
@@ -73,9 +61,11 @@
 <script setup lang="ts">
   import { computed, onMounted } from 'vue';
   import { useReschedule } from '@/composables/useReschedule';
-  import type { VisitStatus } from '@/types/reschedule';
+  import type { EventStatus } from '@/types/reschedule';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import IconLucideArrowRight from '~icons/lucide/arrow-right';
+  import IconLucideChevronRight from '~icons/lucide/chevron-right';
 
   const { t } = useI18n();
 
@@ -106,19 +96,21 @@
     });
   }
 
-  function statusLabel(status: VisitStatus): string {
-    const map: Record<VisitStatus, string> = {
+  function statusLabel(status: EventStatus): string {
+    const map: Record<EventStatus, string> = {
       SCHEDULED: t('rescheduleVisit.scheduledVisit'),
       CANCELLED: t('rescheduleVisit.cancelledVisit'),
+      CONFIRMED: t('rescheduleVisit.confirmedVisit'),
       COMPLETED: t('rescheduleVisit.completedVisit'),
     };
     return map[status] ?? status;
   }
 
-  function statusDotClass(status: VisitStatus): string {
-    const map: Record<VisitStatus, string> = {
+  function statusDotClass(status: EventStatus): string {
+    const map: Record<EventStatus, string> = {
       SCHEDULED: 'bg-green-500',
       CANCELLED: 'bg-red-400',
+      CONFIRMED: 'bg-blue-500',
       COMPLETED: 'bg-gray-400',
     };
     return map[status] ?? 'bg-gray-300';

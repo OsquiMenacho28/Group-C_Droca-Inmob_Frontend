@@ -24,23 +24,23 @@
         </FwbButton>
       </FwbAlert>
 
-      <div
+      <FwbCard
         v-else-if="operations.length === 0"
-        class="bg-white dark:bg-gray-800 rounded-xl p-12 text-center border border-gray-100 dark:border-gray-700 shadow-sm"
+        class="!max-w-none p-12 text-center border-gray-100 dark:border-gray-700 shadow-sm dark:bg-gray-800"
       >
         <IconLucideClipboardList class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('operations.emptyTitle') }}
         </h3>
         <p class="text-gray-500 dark:text-gray-400 text-sm">{{ t('operations.emptyText') }}</p>
-      </div>
+      </FwbCard>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <FwbCard
           v-for="op in operations"
           :key="op.id"
           class="overflow-hidden hover:shadow-lg transition-all group cursor-pointer border-gray-200 dark:border-gray-700 dark:bg-gray-800"
-          @click="$router.push(`/operations/${op.id}`)"
+          @click="$router.push(`/dashboard/operations/${op.id}`)"
         >
           <div class="p-5 pb-3 border-b border-gray-50 dark:border-gray-700">
             <div class="flex items-center justify-between">

@@ -43,7 +43,7 @@
                   v-if="!isClientView"
                   v-model="localStatus"
                   @change="handleStatusChange"
-                  :disabled="updatingStatus || (property?.status === 'VENDIDO' && !isAdmin)"
+                  :disabled="updatingStatus || property?.status === 'VENDIDO'"
                   class="text-xs font-bold rounded-lg border-gray-300 py-1 px-2 dark:bg-gray-700 dark:text-white"
                   :class="statusColorClass(localStatus)"
                 >
@@ -52,7 +52,6 @@
                   <option value="EN_NEGOCIACION">
                     {{ t('propertyDetails.statusNegotiating') }}
                   </option>
-                  <option value="VENDIDO">{{ t('propertyDetails.statusSold') }}</option>
                 </select>
                 <span
                   v-else
@@ -305,14 +304,21 @@
       </div>
     </template>
   </fwb-modal>
+
+  <!-- Global Toast -->
+  <AppToast
+    :show="toast.show"
+    :message="toast.message"
+    :type="toast.type"
+    @close="toast.show = false"
+  />
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from 'vue';
+  import { ref, watch, reactive } from 'vue';
   import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { personService } from '@/services/personService';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
   import type { Property } from '@/types/property';
   import IconLucideImage from '~icons/lucide/image';
   import IconLucideMail from '~icons/lucide/mail';
@@ -322,6 +328,7 @@
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
+  import AppToast from '@/components/ui/AppToast.vue';
 
   const { t } = useI18n();
 
@@ -341,16 +348,17 @@
   }>();
 
   const emit = defineEmits(['close', 'status-updated']);
-  const authStore = useAuthStore();
 
   const localStatus = ref(props.property?.status || '');
   const updatingStatus = ref(false);
   const owner = ref<PersonOwner | null>(null);
   const loadingOwner = ref(false);
 
-  const isAdmin = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    return ((u?.roles as string[]) || [])?.includes('ADMIN') || u?.userType === 'ADMIN';
+  // UI States
+  const toast = reactive({
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'info',
   });
 
   const loadOwnerInfo = async () => {
@@ -387,12 +395,19 @@
     updatingStatus.value = true;
     try {
       await propertyService.updateStatus(props.property.id, localStatus.value);
-      alert(t('propertyDetails.statusUpdated'));
+
+      toast.message = t('propertyDetails.statusUpdated');
+      toast.type = 'success';
+      toast.show = true;
+
       emit('status-updated');
     } catch (err: unknown) {
       localStatus.value = props.property.status;
       const errorObj = err as { response?: { data?: { detail?: string } } };
-      alert(errorObj.response?.data?.detail || t('propertyDetails.statusUpdateError'));
+
+      toast.message = errorObj.response?.data?.detail || t('propertyDetails.statusUpdateError');
+      toast.type = 'error';
+      toast.show = true;
     } finally {
       updatingStatus.value = false;
     }

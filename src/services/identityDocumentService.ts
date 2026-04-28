@@ -18,7 +18,9 @@ export interface IdentityDocument {
 
 export const identityDocumentService = {
   async getDocuments(personId: string): Promise<IdentityDocument[]> {
-    const response = await api.get<ApiResponse<IdentityDocument[]>>(`/persons/${personId}/documents`);
+    const response = await api.get<ApiResponse<IdentityDocument[]>>(
+      `/persons/${personId}/documents`
+    );
     return response.data.data || [];
   },
 

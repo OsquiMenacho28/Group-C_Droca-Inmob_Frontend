@@ -52,6 +52,33 @@
         {{ t('auth.createAccount') }}
       </a>
     </div>
+
+    <!-- Safe to delete: Quick Login Helpers -->
+    <div class="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+      <p class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+        Quick Login (Dev)
+      </p>
+      <div class="grid grid-cols-2 gap-2">
+        <fwb-button size="xs" color="alternative" @click="quickLogin('admin@admin.com')">
+          Admin
+        </fwb-button>
+        <fwb-button size="xs" color="alternative" @click="quickLogin('agent1@user.com')">
+          Agent 1
+        </fwb-button>
+        <fwb-button size="xs" color="alternative" @click="quickLogin('agent2@user.com')">
+          Agent 2
+        </fwb-button>
+        <fwb-button size="xs" color="alternative" @click="quickLogin('owner1@user.com')">
+          Owner 1
+        </fwb-button>
+        <fwb-button size="xs" color="alternative" @click="quickLogin('owner2@user.com')">
+          Owner 2
+        </fwb-button>
+        <fwb-button size="xs" color="alternative" @click="quickLogin('client1@user.com')">
+          Client 1
+        </fwb-button>
+      </div>
+    </div>
   </fwb-card>
 </template>
 
@@ -66,6 +93,12 @@
 
   const email = ref('');
   const password = ref('');
+
+  const quickLogin = (userEmail: string) => {
+    email.value = userEmail;
+    password.value = 'password';
+    submit();
+  };
 
   const submit = () => {
     emit('submit', { email: email.value, password: password.value });

@@ -1,227 +1,282 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- Header Section -->
     <div
-      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
+      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 transition-colors"
     >
-      <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            {{ t('clientProperties.title') }}
-          </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-            {{ t('clientProperties.subtitle') }}
-          </p>
-        </div>
-        <div class="flex items-center gap-3">
-          <ThemeToggle />
-          <router-link
-            to="/favorites"
-            class="flex items-center gap-2 px-4 py-2 bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 rounded-xl text-sm font-semibold hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors"
-          >
-            ❤️ {{ t('nav.favorites') }}
-          </router-link>
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              {{ t('clientProperties.title') }}
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+              {{ t('clientProperties.subtitle') }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
 
-    <main class="max-w-7xl mx-auto p-6 space-y-8 pb-20">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <!-- Filters Card -->
       <div
-        class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors"
       >
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="col-span-1 md:col-span-2">
-            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-              {{ t('clientProperties.searchTitle') }}
-            </label>
-            <input
-              v-model="filters.title"
-              type="text"
-              :placeholder="t('clientProperties.titlePlaceholder')"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-              {{ t('clientProperties.zoneLabel').replace(':', '') }}
-            </label>
-            <input
-              v-model="filters.zone"
-              type="text"
-              placeholder="Ej: Equipetrol..."
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-              {{ t('common.type') }}
-            </label>
-            <select
-              v-model="filters.type"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">{{ t('clientProperties.allTypeOption') }}</option>
-              <option value="CASA">{{ t('propertyForm.house') }}</option>
-              <option value="APARTAMENTO">{{ t('propertyForm.apartment') }}</option>
-              <option value="LOCAL">{{ t('propertyForm.commercialSpace') }}</option>
-            </select>
-          </div>
-        </div>
-
-        <div
-          class="flex flex-wrap items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 gap-4"
-        >
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
-              <input
-                v-model.number="filters.minPrice"
-                type="number"
-                :placeholder="t('clientProperties.minPrice')"
-                class="w-32 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <div class="p-6 space-y-6">
+          <!-- Filter Fields Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="sm:col-span-2">
+              <fwb-input
+                v-model="filters.title"
+                type="text"
+                :label="t('clientProperties.searchTitle')"
+                :placeholder="t('clientProperties.titlePlaceholder')"
+                class="w-full"
               />
-              <span class="text-gray-400">-</span>
-              <input
-                v-model.number="filters.maxPrice"
-                type="number"
-                :placeholder="t('clientProperties.maxPrice')"
-                class="w-32 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            </div>
+
+            <div>
+              <fwb-input
+                v-model="filters.zone"
+                type="text"
+                :label="t('clientProperties.zoneLabel').replace(':', '')"
+                :placeholder="t('clientProperties.zonePlaceholder', 'Ej: Equipetrol...')"
+                class="w-full"
+              />
+            </div>
+
+            <div>
+              <fwb-select
+                v-model="filters.type"
+                :label="t('common.type')"
+                :options="propertyTypeOptions"
+                class="w-full"
               />
             </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <fwb-button color="alternative" size="sm" @click="clearFilters">
-              {{ t('common.clear') }}
-            </fwb-button>
-            <fwb-button color="blue" size="sm" @click="applyFilters">
-              {{ t('clientProperties.applyFilters') }}
-            </fwb-button>
+          <!-- Price Range and Actions -->
+          <div
+            class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pt-4 border-t border-gray-100 dark:border-gray-700"
+          >
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ t('common.priceRange') }}:
+              </label>
+              <div class="flex items-center gap-2">
+                <fwb-input
+                  v-model.number="filters.minPrice"
+                  type="number"
+                  :placeholder="t('clientProperties.minPrice')"
+                  class="w-32"
+                />
+                <span class="text-gray-400 dark:text-gray-500">—</span>
+                <fwb-input
+                  v-model.number="filters.maxPrice"
+                  type="number"
+                  :placeholder="t('clientProperties.maxPrice')"
+                  class="w-32"
+                />
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <fwb-button
+                color="alternative"
+                size="sm"
+                @click="clearFilters"
+                class="whitespace-nowrap"
+              >
+                {{ t('common.clear') }}
+              </fwb-button>
+              <fwb-button color="blue" size="sm" @click="applyFilters" class="whitespace-nowrap">
+                {{ t('clientProperties.applyFilters') }}
+              </fwb-button>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Loading State -->
       <div v-if="loading" class="flex justify-center py-20">
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent"
-        ></div>
+        <fwb-spinner size="12" />
       </div>
 
-      <div
-        v-else-if="error"
-        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400 text-center"
-      >
+      <!-- Error State -->
+      <fwb-alert v-else-if="error" type="danger" class="text-center" closable @close="error = ''">
         {{ error }}
-      </div>
+      </fwb-alert>
 
-      <div v-else class="space-y-8">
+      <!-- Properties Grid -->
+      <template v-else>
+        <!-- Empty State -->
         <div
           v-if="properties.length === 0"
-          class="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700"
+          class="text-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 transition-colors"
         >
           <p class="text-gray-500 dark:text-gray-400">{{ t('clientProperties.emptyText') }}</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <fwb-card
-            v-for="prop in properties"
-            :key="prop.id"
-            @click="openPropertyModal(prop)"
-            class="flex flex-col h-full overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer group border-gray-200 dark:border-gray-700 relative dark:bg-gray-800"
+        <!-- Properties Cards -->
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="property in properties"
+            :key="property.id"
+            @click="openPropertyModal(property)"
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-700 overflow-hidden group"
           >
-            <div class="absolute top-3 left-3 z-10">
-              <fwb-badge :type="getOpTypeBadge(prop.operationType)">
-                {{ prop.operationType ? t('propertyOperations.' + prop.operationType) : '' }}
-              </fwb-badge>
-            </div>
+            <!-- Image Container -->
+            <div class="relative h-56 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+              <!-- Operation Type Badge -->
+              <div class="absolute top-3 left-3 z-10">
+                <span
+                  :class="{
+                    'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200':
+                      getOpTypeBadge(property.operationType) === 'indigo',
+                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                      getOpTypeBadge(property.operationType) === 'green',
+                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200':
+                      getOpTypeBadge(property.operationType) === 'yellow',
+                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300':
+                      getOpTypeBadge(property.operationType) === 'default',
+                  }"
+                  class="px-2 py-1 text-xs font-semibold rounded-lg"
+                >
+                  {{
+                    property.operationType ? t('propertyOperations.' + property.operationType) : ''
+                  }}
+                </span>
+              </div>
 
-            <div
-              class="h-56 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400"
-            >
+              <!-- Favorite Button -->
+              <button
+                @click.stop="toggleFavorite(property.id)"
+                class="absolute top-3 right-3 z-10 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-blue-500"
+                :aria-label="
+                  isFavorite(property.id) ? t('common.removeFavorite') : t('common.addFavorite')
+                "
+              >
+                <span v-if="isFavorite(property.id)" class="text-red-500 text-xl">❤️</span>
+                <span v-else class="text-gray-400 dark:text-gray-500 text-xl hover:text-red-400">
+                  🤍
+                </span>
+              </button>
+
+              <!-- Property Image -->
               <img
-                v-if="prop.imageUrls?.length"
-                :src="prop.imageUrls[0]"
-                class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                v-if="property.imageUrls?.length"
+                :src="property.imageUrls[0]"
+                :alt="property.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <span v-else>{{ t('common.noImage') }}</span>
+              <div v-else class="w-full h-full flex items-center justify-center">
+                <span class="text-gray-400 dark:text-gray-500">{{ t('common.noImage') }}</span>
+              </div>
             </div>
 
-            <div class="p-6 flex-1 flex flex-col">
-              <div class="flex justify-between items-start mb-2">
-                <h5 class="text-xl font-bold text-gray-900 dark:text-white leading-tight">
-                  {{ prop.title }}
-                </h5>
-                <button
-                  @click.stop="toggleFavorite(prop.id)"
-                  class="text-2xl transition-transform active:scale-125"
+            <!-- Property Content -->
+            <div class="p-5 flex flex-col">
+              <!-- Title -->
+              <div class="flex justify-between items-start gap-2 mb-3">
+                <h3
+                  class="text-xl font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 flex-1"
                 >
-                  <span v-if="isFavorite(prop.id)" class="text-red-500">❤️</span>
-                  <span v-else class="text-gray-300 dark:text-gray-600 hover:text-red-400">🤍</span>
-                </button>
+                  {{ property.title }}
+                </h3>
               </div>
 
-              <div class="mb-4">
-                <p class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                  <span class="text-lg">📍</span>
-                  {{ prop.address }}
-                </p>
-                <p
-                  class="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-1 flex items-center gap-1.5"
+              <!-- Location -->
+              <div class="space-y-1 mb-4">
+                <div class="flex items-start gap-1.5 text-sm text-gray-600 dark:text-gray-400">
+                  <span class="text-base mt-0.5">📍</span>
+                  <span class="line-clamp-2 flex-1">{{ property.address }}</span>
+                </div>
+                <div
+                  v-if="property.zone"
+                  class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500 pl-6"
                 >
-                  <span class="font-bold text-blue-500/80">
-                    {{ t('clientProperties.zoneLabel') }}
+                  <span class="font-medium text-blue-600 dark:text-blue-400">
+                    {{ t('clientProperties.zoneLabel') }}:
                   </span>
-                  {{ prop.zone || t('common.notSpecified') }}
-                </p>
+                  <span>{{ property.zone }}</span>
+                </div>
               </div>
 
+              <!-- Property Specs -->
               <div class="flex flex-wrap gap-2 mb-6">
-                <fwb-badge type="default" size="sm" class="flex items-center gap-1">
-                  🏠 {{ t('propertyTypes.' + prop.type) }}
-                </fwb-badge>
-                <fwb-badge type="default" size="sm" class="flex items-center gap-1">
-                  📐 {{ prop.m2 }} {{ t('common.m2') }}
-                </fwb-badge>
-                <fwb-badge type="default" size="sm" class="flex items-center gap-1">
-                  🛏️ {{ prop.rooms }} {{ t('propertyForm.rooms') }}
-                </fwb-badge>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg"
+                >
+                  <span>🏠</span>
+                  {{ t(`propertyTypes.${property.type}`, property.type) }}
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg"
+                >
+                  <span>📐</span>
+                  {{ property.m2 }} {{ t('common.m2') }}
+                </span>
+                <span
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg"
+                >
+                  <span>🛏️</span>
+                  {{ property.rooms }} {{ t('propertyForm.rooms') }}
+                </span>
               </div>
 
-              <div class="mt-auto flex items-center justify-between">
+              <!-- Price and Action -->
+              <div
+                class="flex items-end justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700"
+              >
                 <div>
                   <p
-                    class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-black tracking-tighter mb-0.5"
+                    class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wide mb-0.5"
                   >
                     {{ t('common.price') }}
                   </p>
-                  <p class="text-3xl font-black text-blue-600 dark:text-blue-500">
-                    ${{ prop.price.toLocaleString() }}
+                  <p class="text-2xl font-bold text-blue-600 dark:text-blue-500">
+                    ${{ property.price.toLocaleString() }}
                   </p>
                 </div>
                 <fwb-button
-                  v-if="prop.status === 'DISPONIBLE'"
-                  @click.stop="openRequestModal(prop)"
-                  class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+                  v-if="property.status === 'DISPONIBLE'"
+                  @click.stop="openRequestModal(property)"
+                  color="blue"
+                  size="sm"
+                  class="shadow-sm"
                 >
                   {{ t('clientProperties.scheduleVisit') }}
                 </fwb-button>
+                <fwb-button
+                  v-else
+                  disabled
+                  color="alternative"
+                  size="sm"
+                  class="opacity-50 cursor-not-allowed"
+                >
+                  {{ t('clientProperties.notAvailable') }}
+                </fwb-button>
               </div>
             </div>
-          </fwb-card>
+          </div>
         </div>
 
-        <Pagination
-          v-if="!loading && totalPages > 1"
-          v-model:current-page="filters.page"
-          v-model:page-size="filters.pageSize"
-          :total-pages="totalPages"
-          :total="totalElements"
-          @change="loadProperties"
-        />
-      </div>
+        <!-- Pagination -->
+        <div v-if="!loading && totalPages > 1" class="pt-4">
+          <Pagination
+            v-model:current-page="filters.page"
+            v-model:page-size="filters.pageSize"
+            :total-pages="totalPages"
+            :total="totalElements"
+            @change="loadProperties"
+          />
+        </div>
+      </template>
     </main>
 
-    <!-- Modals -->
+    <!-- Property Details Modal -->
     <property-details-modal
       v-if="selectedProperty"
       :show="!!selectedProperty"
@@ -231,6 +286,7 @@
       @schedule-visit="handleScheduleVisit"
     />
 
+    <!-- Visit Request Modal -->
     <fwb-modal v-if="showRequestModal" @close="closeRequestModal" size="xl">
       <template #header>
         <div class="flex items-center gap-3">
@@ -238,60 +294,83 @@
             <IconLucideCalendar class="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h3 class="text-lg font-bold dark:text-white">
+            <h3 class="text-lg font-semibold dark:text-white">
               {{ t('clientProperties.visitRequestTitle') }}
             </h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
               {{ requestTarget?.name }} · {{ requestTarget?.agentName }}
             </p>
           </div>
         </div>
       </template>
+
       <template #body>
-        <form @submit.prevent="submitVisitRequest" class="space-y-4">
+        <form @submit.prevent="submitVisitRequest" class="space-y-5">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <fwb-input
               v-model="clientName"
               :label="t('clientProperties.form.name')"
               :placeholder="t('clientProperties.placeholder.name')"
               required
+              :validation-status="errors.clientName ? 'error' : undefined"
+              :validation-message="errors.clientName as string"
             />
             <fwb-input
               v-model="clientEmail"
+              type="email"
               :label="t('clientProperties.form.email')"
               :placeholder="t('clientProperties.placeholder.email')"
               required
+              :validation-status="errors.clientEmail ? 'error' : undefined"
+              :validation-message="errors.clientEmail as string"
             />
           </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <fwb-input
               v-model="clientPhone"
               :label="t('clientProperties.form.phone')"
               :placeholder="t('clientProperties.placeholder.phone')"
+              :validation-status="errors.clientPhone ? 'error' : undefined"
+              :validation-message="errors.clientPhone as string"
             />
             <fwb-input
               v-model="preferredDateTime"
               type="datetime-local"
               :label="t('clientProperties.form.preferredSchedule')"
               required
+              :min="minDatetime"
+              :validation-status="errors.preferredDateTime ? 'error' : undefined"
+              :validation-message="errors.preferredDateTime as string"
             />
           </div>
+
           <fwb-input
             v-model="alternativeDateTime"
             type="datetime-local"
             :label="t('clientProperties.form.alternativeSchedule')"
+            :min="preferredDateTime || minDatetime"
+            :validation-status="errors.alternativeDateTime ? 'error' : undefined"
+            :validation-message="errors.alternativeDateTime as string"
           />
+
           <fwb-textarea
             v-model="message"
             :label="t('clientProperties.form.message')"
             :placeholder="t('clientProperties.placeholder.message')"
             :rows="3"
+            :validation-status="errors.message ? 'error' : undefined"
+            :validation-message="errors.message as string"
           />
-          <p class="text-[10px] text-gray-400 italic">
-            {{ t('clientProperties.submitNote', { agent: requestTarget?.agentName }) }}
-          </p>
+
+          <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+            <p class="text-xs text-blue-700 dark:text-blue-300 italic">
+              💡 {{ t('clientProperties.submitNote', { agent: requestTarget?.agentName }) }}
+            </p>
+          </div>
         </form>
       </template>
+
       <template #footer>
         <div class="flex justify-end gap-3 w-full">
           <fwb-button color="alternative" @click="closeRequestModal">
@@ -308,35 +387,53 @@
       </template>
     </fwb-modal>
 
-    <!-- Alerts/Toasts -->
-    <div v-if="showSuccessAlert" class="fixed bottom-6 right-6 z-50 animate-bounce-in">
-      <fwb-alert type="success" @close="showSuccessAlert = false" closable>
-        {{ successMessage }}
-      </fwb-alert>
-    </div>
+    <!-- Toast Notifications -->
+    <Transition
+      enter-active-class="transform transition duration-300 ease-out"
+      enter-from-class="translate-y-2 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-2 opacity-0"
+    >
+      <div v-if="showSuccessAlert" class="fixed bottom-6 right-6 z-50">
+        <fwb-alert type="success" @close="showSuccessAlert = false" closable class="shadow-lg">
+          {{ successMessage }}
+        </fwb-alert>
+      </div>
+    </Transition>
 
-    <div v-if="showErrorAlert" class="fixed bottom-6 right-6 z-50">
-      <fwb-alert type="danger" @close="showErrorAlert = false" closable>
-        {{ errorMessage }}
-      </fwb-alert>
-    </div>
+    <Transition
+      enter-active-class="transform transition duration-300 ease-out"
+      enter-from-class="translate-y-2 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-2 opacity-0"
+    >
+      <div v-if="showErrorAlert" class="fixed bottom-6 right-6 z-50">
+        <fwb-alert type="danger" @close="showErrorAlert = false" closable class="shadow-lg">
+          {{ errorMessage }}
+        </fwb-alert>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed, watch } from 'vue';
+  import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
   import {
-    FwbCard,
-    FwbBadge,
     FwbButton,
     FwbModal,
     FwbInput,
     FwbTextarea,
     FwbAlert,
+    FwbSpinner,
+    FwbSelect,
   } from 'flowbite-vue';
 
   import IconLucideCalendar from '~icons/lucide/calendar';
@@ -354,58 +451,102 @@
   import type { ClientVisitRequestDTO } from '@/types/visitCalendar';
 
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
-  import ThemeToggle from '@/components/ThemeToggle.vue';
   import Pagination from '@/components/ui/Pagination.vue';
+
+  // Types
+  interface Filters {
+    title: string;
+    type: string;
+    zone: string;
+    operationType: string;
+    status: string;
+    minPrice: number | undefined;
+    maxPrice: number | undefined;
+    sortBy: string;
+    sortOrder: 'ASC' | 'DESC';
+    page: number;
+    pageSize: number;
+  }
+
+  interface RequestTarget {
+    id: string;
+    name: string;
+    agentId: string;
+    agentName: string;
+  }
 
   const { t } = useI18n();
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
 
+  // State
   const properties = ref<Property[]>([]);
-  const loading = ref(true);
-  const error = ref('');
-  const totalElements = ref(0);
-  const totalPages = ref(0);
+  const loading = ref<boolean>(true);
+  const error = ref<string>('');
+  const totalElements = ref<number>(0);
+  const totalPages = ref<number>(0);
   const agentNames = ref<Record<string, string>>({});
+  const favorites = ref<Set<string>>(new Set());
+  const selectedProperty = ref<Property | null>(null);
+  const showRequestModal = ref<boolean>(false);
+  const requestTarget = ref<RequestTarget | null>(null);
+  const requestSubmitting = ref<boolean>(false);
+  const showSuccessAlert = ref<boolean>(false);
+  const showErrorAlert = ref<boolean>(false);
+  const successMessage = ref<string>('');
+  const errorMessage = ref<string>('');
+  let successTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const filters = ref({
+  // Filters
+  const filters = ref<Filters>({
     title: (route.query.title as string) || '',
     type: (route.query.type as string) || '',
     zone: (route.query.zone as string) || '',
     operationType: (route.query.operationType as string) || '',
+    status: (route.query.status as string) || '',
     minPrice: route.query.minPrice ? Number(route.query.minPrice) : undefined,
     maxPrice: route.query.maxPrice ? Number(route.query.maxPrice) : undefined,
     sortBy: (route.query.sortBy as string) || 'price',
     sortOrder: (route.query.sortOrder as 'ASC' | 'DESC') || 'ASC',
     page: route.query.page ? Number(route.query.page) : 0,
-    pageSize: route.query.pageSize ? Number(route.query.pageSize) : 10,
+    pageSize: route.query.pageSize ? Number(route.query.pageSize) : 12,
   });
 
-  const selectedProperty = ref<Property | null>(null);
-  const showRequestModal = ref(false);
-  const requestTarget = ref<{
-    id: string;
-    name: string;
-    agentId: string;
-    agentName: string;
-  } | null>(null);
-  const requestSubmitting = ref(false);
-  const showSuccessAlert = ref(false);
-  const showErrorAlert = ref(false);
-  const successMessage = ref('');
-  const errorMessage = ref('');
-  let successTimer: ReturnType<typeof setTimeout> | null = null;
+  // Computed
+  const myClientId = computed<string>(
+    () => (authStore.user?.sub || authStore.user?.userId || 'ANONYMOUS') as string
+  );
 
-  const myClientId = computed(() => authStore.user?.sub || authStore.user?.userId);
-  const myClientName = computed(() => authStore.user?.fullName || authStore.user?.name);
-  const myClientEmail = computed(() => authStore.user?.email);
+  const myClientName = computed<string>(
+    () => authStore.user?.fullName || authStore.user?.name || ''
+  );
 
+  const myClientEmail = computed<string>(() => authStore.user?.email || '');
+
+  const minDatetime = computed<string>(() => {
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+    date.setMinutes(0);
+    return date.toISOString().slice(0, 16);
+  });
+
+  const propertyTypeOptions = computed(() => [
+    { value: '', name: t('clientProperties.allTypeOption') },
+    { value: 'CASA', name: t('propertyTypes.CASA') },
+    { value: 'DEPARTAMENTO', name: t('propertyTypes.DEPARTAMENTO') },
+    { value: 'LOCAL', name: t('propertyTypes.LOCAL') },
+    { value: 'TERRENO', name: t('propertyTypes.TERRENO') },
+    { value: 'OFICINA', name: t('propertyTypes.OFICINA') },
+  ]);
+
+  // Form setup
   const {
     defineField,
     handleSubmit: onRequestSubmit,
     resetForm,
-  } = useForm({
+    errors,
+  } = useForm<VisitRequestFormValues>({
     validationSchema: toTypedSchema(visitRequestSchema),
   });
 
@@ -416,24 +557,50 @@
   const [alternativeDateTime] = defineField('alternativeDateTime');
   const [message] = defineField('message');
 
-  const favorites = ref<Set<string>>(new Set());
+  // Methods
+  const getOpTypeBadge = (type?: string): string => {
+    if (type === 'VENTA') return 'indigo';
+    if (type === 'ALQUILER') return 'green';
+    if (type === 'ANTICRETICO') return 'yellow';
+    return 'default';
+  };
 
   const getAvailableProperties = async (params: Record<string, unknown>) => {
-    const res = await propertyService.getProperties(params);
+    const response = await propertyService.getProperties(params);
+    const data = response.data || [];
+    const meta = response.meta;
+
     return {
-      data: res.data || [],
-      totalElements: res.meta?.total || 0,
-      totalPages: Math.ceil((res.meta?.total || 0) / (res.meta?.limit || 9)),
+      data,
+      totalElements: meta?.total || data.length || 0,
+      totalPages: Math.ceil(
+        (meta?.total || data.length || 0) / (meta?.limit || (params.pageSize as number) || 12)
+      ),
     };
   };
 
-  const createVisitRequest = async (dto: ClientVisitRequestDTO) => {
-    return await apiCreateVisitRequest(dto);
+  const loadAgentNames = async (props: Property[]): Promise<void> => {
+    const agentIds = [
+      ...new Set(props.map((property) => property.assignedAgentId).filter(Boolean)),
+    ];
+
+    for (const agentId of agentIds) {
+      if (agentId && !agentNames.value[agentId]) {
+        try {
+          const user = await userService.getUserById(agentId);
+          agentNames.value[agentId] =
+            user.data.fullName || user.data.firstName || t('common.advisor');
+        } catch {
+          agentNames.value[agentId] = t('common.advisor');
+        }
+      }
+    }
   };
 
-  async function loadProperties() {
+  const loadProperties = async (): Promise<void> => {
     loading.value = true;
     error.value = '';
+
     try {
       const result = await getAvailableProperties({
         title: filters.value.title || undefined,
@@ -446,35 +613,193 @@
         sortOrder: filters.value.sortOrder,
         page: filters.value.page,
         pageSize: filters.value.pageSize,
-        status: 'DISPONIBLE',
+        status: filters.value.status || undefined,
       });
 
       properties.value = result.data;
       totalElements.value = result.totalElements;
       totalPages.value = result.totalPages;
 
-      loadAgentNames(properties.value);
+      await loadAgentNames(properties.value);
 
-      router.replace({
-        query: {
-          status: 'DISPONIBLE',
-          ...(filters.value.title && { title: filters.value.title }),
-          ...(filters.value.type && { type: filters.value.type }),
-          ...(filters.value.zone && { zone: filters.value.zone }),
-          ...(filters.value.operationType && { operationType: filters.value.operationType }),
-          sortBy: filters.value.sortBy,
-          sortOrder: filters.value.sortOrder,
-          page: String(filters.value.page),
-          pageSize: String(filters.value.pageSize),
-        },
-      });
-    } catch (e: unknown) {
-      error.value = handleApiError(e).message;
+      // Update URL query params without triggering navigation
+      const query: Record<string, string> = {};
+      if (filters.value.status) query.status = filters.value.status;
+      if (filters.value.title) query.title = filters.value.title;
+      if (filters.value.type) query.type = filters.value.type;
+      if (filters.value.zone) query.zone = filters.value.zone;
+      if (filters.value.operationType) query.operationType = filters.value.operationType;
+      if (filters.value.minPrice) query.minPrice = String(filters.value.minPrice);
+      if (filters.value.maxPrice) query.maxPrice = String(filters.value.maxPrice);
+      query.sortBy = filters.value.sortBy;
+      query.sortOrder = filters.value.sortOrder;
+      query.page = String(filters.value.page);
+      query.pageSize = String(filters.value.pageSize);
+
+      router.replace({ query });
+    } catch (err: unknown) {
+      error.value = handleApiError(err).message;
     } finally {
       loading.value = false;
     }
-  }
+  };
 
+  const applyFilters = (): void => {
+    filters.value.page = 0;
+    loadProperties();
+  };
+
+  const clearFilters = (): void => {
+    filters.value = {
+      title: '',
+      type: '',
+      zone: '',
+      operationType: '',
+      status: '',
+      minPrice: undefined,
+      maxPrice: undefined,
+      sortBy: 'price',
+      sortOrder: 'ASC',
+      page: 0,
+      pageSize: 12,
+    };
+    loadProperties();
+  };
+
+  const loadFavorites = async (): Promise<void> => {
+    try {
+      const favoriteIds = await favoriteService.getFavorites();
+      favorites.value = new Set(favoriteIds);
+    } catch (err) {
+      console.error('Error loading favorites:', err);
+    }
+  };
+
+  const isFavorite = (propertyId: string): boolean => favorites.value.has(propertyId);
+
+  const toggleFavorite = async (propertyId: string): Promise<void> => {
+    const wasFavorite = favorites.value.has(propertyId);
+
+    try {
+      if (wasFavorite) {
+        favorites.value.delete(propertyId);
+        await favoriteService.removeFavorite(propertyId);
+        successMessage.value = t('favorites.removedSuccess');
+        showSuccessAlert.value = true;
+        if (successTimer) clearTimeout(successTimer);
+        successTimer = setTimeout(() => {
+          showSuccessAlert.value = false;
+        }, 2000);
+      } else {
+        favorites.value.add(propertyId);
+        await favoriteService.addFavorite(propertyId);
+        successMessage.value = t('favorites.addedSuccess');
+        showSuccessAlert.value = true;
+        if (successTimer) clearTimeout(successTimer);
+        successTimer = setTimeout(() => {
+          showSuccessAlert.value = false;
+        }, 2000);
+      }
+    } catch (err: unknown) {
+      // Revert on error
+      if (wasFavorite) {
+        favorites.value.add(propertyId);
+      } else {
+        favorites.value.delete(propertyId);
+      }
+      errorMessage.value = handleApiError(err).message;
+      showErrorAlert.value = true;
+      setTimeout(() => {
+        showErrorAlert.value = false;
+      }, 3000);
+    }
+  };
+
+  const openPropertyModal = (property: Property): void => {
+    selectedProperty.value = property;
+  };
+
+  const handleScheduleVisit = (): void => {
+    if (selectedProperty.value) {
+      openRequestModal(selectedProperty.value);
+    }
+  };
+
+  const openRequestModal = (property: Property): void => {
+    const agentId = property.assignedAgentId || '';
+    requestTarget.value = {
+      id: property.id,
+      name: property.title,
+      agentId,
+      agentName: agentNames.value[agentId] || property.agentName || t('common.advisor'),
+    };
+    showRequestModal.value = true;
+    selectedProperty.value = null;
+
+    resetForm({
+      values: {
+        propertyId: property.id,
+        clientName: myClientName.value,
+        clientEmail: myClientEmail.value,
+        clientPhone: '',
+        preferredDateTime: '',
+        alternativeDateTime: '',
+        message: '',
+      },
+    });
+  };
+
+  const closeRequestModal = (): void => {
+    showRequestModal.value = false;
+    requestTarget.value = null;
+  };
+
+  const submitVisitRequest = onRequestSubmit(
+    async (values: VisitRequestFormValues): Promise<void> => {
+      if (!requestTarget.value) return;
+
+      requestSubmitting.value = true;
+
+      try {
+        const dto: ClientVisitRequestDTO = {
+          propertyId: requestTarget.value.id,
+          propertyName: requestTarget.value.name,
+          agentId: requestTarget.value.agentId,
+          agentName: requestTarget.value.agentName,
+          clientId: myClientId.value,
+          clientName: values.clientName,
+          clientEmail: values.clientEmail,
+          clientPhone: values.clientPhone || undefined,
+          preferredDateTime: new Date(values.preferredDateTime).toISOString(),
+          alternativeDateTime: values.alternativeDateTime
+            ? new Date(values.alternativeDateTime).toISOString()
+            : undefined,
+          message: values.message || undefined,
+        };
+
+        await apiCreateVisitRequest(dto);
+        closeRequestModal();
+
+        successMessage.value = t('scheduleVisit.successMessage');
+        showSuccessAlert.value = true;
+
+        if (successTimer) clearTimeout(successTimer);
+        successTimer = setTimeout(() => {
+          showSuccessAlert.value = false;
+        }, 4000);
+      } catch (err: unknown) {
+        errorMessage.value = handleApiError(err).message;
+        showErrorAlert.value = true;
+        setTimeout(() => {
+          showErrorAlert.value = false;
+        }, 4000);
+      } finally {
+        requestSubmitting.value = false;
+      }
+    }
+  );
+
+  // Watchers
   watch(
     () => filters.value.pageSize,
     () => {
@@ -483,172 +808,13 @@
     }
   );
 
-  async function loadAgentNames(props: Property[]) {
-    const ids = [...new Set(props.map((p) => p.assignedAgentId).filter(Boolean))];
-    for (const id of ids) {
-      if (id && !agentNames.value[id]) {
-        try {
-          const u = await userService.getUserById(id as string);
-          agentNames.value[id] = u.data.fullName || u.data.firstName;
-        } catch {
-          agentNames.value[id as string] = t('common.advisor');
-        }
-      }
-    }
-  }
-
-  function applyFilters() {
-    filters.value.page = 0;
-    loadProperties();
-  }
-
-  function clearFilters() {
-    filters.value = {
-      title: '',
-      type: '',
-      zone: '',
-      operationType: '',
-      minPrice: undefined,
-      maxPrice: undefined,
-      sortBy: 'price',
-      sortOrder: 'ASC',
-      page: 0,
-      pageSize: 10,
-    };
-    loadProperties();
-  }
-
-  const toggleFavorite = async (propertyId: string) => {
-    try {
-      if (favorites.value.has(propertyId)) {
-        favorites.value.delete(propertyId);
-        await favoriteService.removeFavorite(propertyId);
-      } else {
-        favorites.value.add(propertyId);
-        await favoriteService.addFavorite(propertyId);
-      }
-    } catch (error: unknown) {
-      if (favorites.value.has(propertyId)) favorites.value.delete(propertyId);
-      else favorites.value.add(propertyId);
-      errorMessage.value = handleApiError(error).message;
-      showErrorAlert.value = true;
-    }
-  };
-
-  const loadFavorites = async () => {
-    try {
-      const ids = await favoriteService.getFavorites();
-      favorites.value = new Set(ids);
-    } catch (e) {
-      console.error('Error loading favorites:', e);
-    }
-  };
-
-  const isFavorite = (id: string) => favorites.value.has(id);
-
-  function openPropertyModal(prop: Property) {
-    selectedProperty.value = prop;
-  }
-
-  function handleScheduleVisit() {
-    if (selectedProperty.value) {
-      openRequestModal(selectedProperty.value);
-    }
-  }
-
-  function openRequestModal(prop: Property) {
-    const agentId = prop.assignedAgentId || '';
-    requestTarget.value = {
-      id: prop.id,
-      name: prop.title,
-      agentId: agentId,
-      agentName: agentNames.value[agentId] || prop.agentName || t('common.advisor'),
-    };
-    showRequestModal.value = true;
-    selectedProperty.value = null;
-
-    resetForm({
-      values: {
-        propertyId: prop.id,
-        clientName: myClientName.value as string,
-        clientEmail: myClientEmail.value as string,
-        clientPhone: '',
-        preferredDateTime: '',
-        alternativeDateTime: '',
-        message: '',
-      },
-    });
-  }
-
-  function closeRequestModal() {
-    showRequestModal.value = false;
-    requestTarget.value = null;
-  }
-
-  const submitVisitRequest = onRequestSubmit(async (values: VisitRequestFormValues) => {
-    if (!requestTarget.value) return;
-    requestSubmitting.value = true;
-    try {
-      const dto: ClientVisitRequestDTO = {
-        propertyId: requestTarget.value.id,
-        propertyName: requestTarget.value.name,
-        agentId: requestTarget.value.agentId,
-        agentName: requestTarget.value.agentName,
-        clientId: myClientId.value as string,
-        clientName: values.clientName,
-        clientEmail: values.clientEmail,
-        clientPhone: values.clientPhone || undefined,
-        preferredDateTime: new Date(values.preferredDateTime).toISOString(),
-        alternativeDateTime: values.alternativeDateTime
-          ? new Date(values.alternativeDateTime).toISOString()
-          : undefined,
-        message: values.message || undefined,
-      };
-      await createVisitRequest(dto);
-      closeRequestModal();
-      successMessage.value = t('scheduleVisit.successMessage');
-      showSuccessAlert.value = true;
-      if (successTimer) clearTimeout(successTimer);
-      successTimer = setTimeout(() => (showSuccessAlert.value = false), 3000);
-    } catch (e: unknown) {
-      errorMessage.value = handleApiError(e).message;
-      showErrorAlert.value = true;
-    } finally {
-      requestSubmitting.value = false;
-    }
-  });
-
-  const getOpTypeBadge = (type?: string) => {
-    if (type === 'VENTA') return 'indigo';
-    if (type === 'ALQUILER') return 'green';
-    if (type === 'ANTICRETICO') return 'yellow';
-    return 'default';
-  };
-
+  // Lifecycle
   onMounted(() => {
     loadProperties();
     loadFavorites();
   });
-</script>
 
-<style scoped>
-  .animate-bounce-in {
-    animation: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  @keyframes bounce-in {
-    0% {
-      transform: scale(0.3);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 1;
-    }
-    70% {
-      transform: scale(0.9);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-</style>
+  onUnmounted(() => {
+    if (successTimer) clearTimeout(successTimer);
+  });
+</script>

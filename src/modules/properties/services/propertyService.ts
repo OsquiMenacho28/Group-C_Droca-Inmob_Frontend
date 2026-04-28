@@ -81,7 +81,7 @@ export const propertyService = {
   }) {
     try {
       const response = await api.get('/properties', { params: filters });
-      return response.data.data || [];
+      return response.data; // Return the whole ApiResponse object
     } catch (error) {
       console.error('Error fetching properties:', error);
       throw error;
