@@ -9,6 +9,9 @@ export interface CalendarEventResponse {
   propertyAddress?: string;
   agentId: string;
   agentName: string;
+  vehicleId?: string;
+  travelTimeGo?: number;
+  travelTimeBack?: number;
   startTime: string;
   endTime: string;
   type: EventType;
@@ -46,6 +49,31 @@ export interface CreateVisitRequest {
   startTime: string;
   endTime: string;
   notes?: string;
+}
+
+export type VehicleStatus = 'AVAILABLE' | 'IN_USE' | 'MAINTENANCE';
+
+export interface Vehicle {
+  id: string;
+  licensePlate: string;
+  brand: string;
+  model: string;
+  passengerCapacity: number;
+  status: VehicleStatus;
+}
+
+export interface VehicleAssignmentRequest {
+  vehicleId: string;
+  travelTimeGo: number;
+  travelTimeBack: number;
+}
+
+export interface CreateVehicleRequest {
+  licensePlate: string;
+  brand: string;
+  model: string;
+  passengerCapacity: number;
+  status: VehicleStatus;
 }
 
 export interface ClientVisitRequestDTO {
