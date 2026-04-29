@@ -12,7 +12,7 @@
     </template>
 
     <template #body>
-      <div class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': !isClientView }">
+      <div v-if="property" class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': !isClientView }">
         <div class="space-y-4">
           <div
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
@@ -22,18 +22,18 @@
             </h4>
             <div class="grid grid-cols-2 gap-y-3 text-sm">
               <span class="text-gray-500 font-medium">{{ t('propertyDetails.location') }}</span>
-              <span class="dark:text-white text-right">{{ property?.address }}</span>
+              <span class="dark:text-white text-right">{{ property.address }}</span>
 
               <span class="text-gray-500 font-medium">{{ t('propertyDetails.area') }}</span>
               <span class="dark:text-white text-right">
-                {{ property?.m2 }} {{ t('common.units.m2') }}
+                {{ property.m2 }} {{ t('common.units.m2') }}
               </span>
 
               <span class="text-gray-500 font-medium">{{ t('propertyDetails.bedrooms') }}</span>
-              <span class="dark:text-white text-right">{{ property?.rooms }}</span>
+              <span class="dark:text-white text-right">{{ property.rooms }}</span>
 
               <span class="text-gray-500 font-medium">{{ t('propertyDetails.type') }}</span>
-              <span class="dark:text-white text-right">{{ property?.type }}</span>
+              <span class="dark:text-white text-right">{{ property.type }}</span>
 
               <span class="text-gray-500 font-medium">
                 {{ t('propertyDetails.currentStatus') }}
@@ -43,7 +43,7 @@
                   v-if="!isClientView"
                   v-model="localStatus"
                   @change="handleStatusChange"
-                  :disabled="updatingStatus || property?.status === 'VENDIDO'"
+                  :disabled="updatingStatus || property.status === 'VENDIDO'"
                   class="text-xs font-bold rounded-lg border-gray-300 py-1 px-2 dark:bg-gray-700 dark:text-white"
                   :class="statusColorClass(localStatus)"
                 >
@@ -56,16 +56,16 @@
                 <span
                   v-else
                   class="dark:text-white text-right"
-                  :class="statusTextClass(property?.status)"
+                  :class="statusTextClass(property.status)"
                 >
-                  {{ property?.status ? t('status.' + property.status) : '' }}
+                  {{ property.status ? t('status.' + property.status) : '' }}
                 </span>
               </div>
             </div>
           </div>
 
           <div
-            v-if="property?.imageUrls?.length"
+            v-if="property.imageUrls?.length"
             class="rounded-xl overflow-hidden bg-gray-200 shadow-sm"
           >
             <img
@@ -169,11 +169,11 @@
             </h4>
 
             <div
-              v-if="property?.priceHistory?.length"
+              v-if="property.priceHistory?.length"
               class="space-y-3 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
             >
               <div
-                v-for="(h, i) in property!.priceHistory"
+                v-for="(h, i) in property.priceHistory"
                 :key="i"
                 class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
               >
@@ -218,11 +218,11 @@
             </h4>
 
             <div
-              v-if="property?.assignmentHistory?.length"
+              v-if="property.assignmentHistory?.length"
               class="space-y-3 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
             >
               <div
-                v-for="(ah, i) in property!.assignmentHistory"
+                v-for="(ah, i) in property.assignmentHistory"
                 :key="i"
                 class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
               >
@@ -259,11 +259,11 @@
             </h4>
 
             <div
-              v-if="property?.statusHistory?.length"
+              v-if="property.statusHistory?.length"
               class="space-y-3 max-h-48 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent scrollbar-thumb-rounded-full"
             >
               <div
-                v-for="(h, i) in [...(property!.statusHistory || [])].reverse()"
+                v-for="(h, i) in [...property.statusHistory].reverse()"
                 :key="i"
                 class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
               >
@@ -293,7 +293,32 @@
               {{ t('propertyDetails.noStatusChanges') }}
             </div>
           </div>
+
+          <!-- Retirement reason (visible only if property is RETIRED) -->
+          <div v-if="property.status === 'RETIRADO'" class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                  {{ t('retirement.motivoLabel') }}
+                </p>
+                <p class="text-sm text-gray-800 dark:text-gray-200 font-semibold mt-1">
+                  {{ getMotivoLabel(property.motivoRetiro) }}
+                </p>
+              </div>
+              <div v-if="property.detalleRetiro">
+                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                  {{ t('retirement.detalleLabel') }}
+                </p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                  {{ property.detalleRetiro }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div v-else class="text-center py-8">
+        <p class="text-gray-500">{{ t('common.loading') }}</p>
       </div>
     </template>
     <template #footer>
@@ -446,6 +471,13 @@
       EN_NEGOCIACION: 'text-blue-600',
     };
     return map[status || ''] || '';
+  };
+
+  const getMotivoLabel = (motivo?: string) => {
+    if (!motivo) return '';
+    const key = `retirement.reason${motivo.charAt(0).toUpperCase() + motivo.slice(1).toLowerCase()}`;
+    const translation = t(key);
+    return translation !== key ? translation : motivo;
   };
 
   const formatDate = (dateStr: string) => {
