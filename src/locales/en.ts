@@ -334,12 +334,15 @@ export const en = {
     available: 'Available',
     reserved: 'Reserved',
     sold: 'Sold',
-    negotiating: 'In Negotiation',
+    negotiating: 'Negotiating',
     occupied: 'Occupied',
     DISPONIBLE: 'Available',
     RESERVADO: 'Reserved',
     VENDIDO: 'Sold',
-    EN_NEGOCIACION: 'In Negotiation',
+    EN_NEGOCIACION: 'Negotiating',
+    ELIMINADO: 'Deleted',
+    RETIRADO: 'Withdrawn',
+
     PENDING: 'Pending',
     ACCEPTED: 'Accepted',
     REJECTED: 'Rejected',
@@ -639,6 +642,8 @@ export const en = {
     reincorporateConfirmTitle: 'Reincorporate property?',
     reincorporateConfirmMessage:
       'This action will set the property back to AVAILABLE for the public and record the change in history.',
+    reincorporateSoldConfirmMessage:
+      'This property is SOLD. To reincorporate it, the system will cancel the associated sold operation and then mark it as AVAILABLE. Do you want to cancel the operation and continue?',
     reincorporateSuccess: 'Property successfully reincorporated.',
   },
   clientDetails: {

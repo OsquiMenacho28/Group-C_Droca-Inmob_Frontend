@@ -19,7 +19,7 @@
     <div
       class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
     >
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
             {{ t('adminProperties.searchTitle') }}
@@ -46,19 +46,35 @@
           </select>
         </div>
         <div>
-          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">Estado</label>
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
+            {{ t('common.status') }}
+          </label>
           <select
             v-model="filterStatus"
             @change="resetAndLoad"
+            class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white focus:ring-blue-500"
+          >
+            <option value="">{{ t('auditLogs.actions.all') }}</option>
+            <option value="DISPONIBLE">{{ t('status.DISPONIBLE') }}</option>
+            <option value="RESERVADO">{{ t('status.RESERVADO') }}</option>
+            <option value="VENDIDO">{{ t('status.VENDIDO') }}</option>
+            <option value="EN_NEGOCIACION">{{ t('status.EN_NEGOCIACION') }}</option>
+            <option value="ELIMINADO">{{ t('status.ELIMINADO') }}</option>
+            <option value="RETIRADO">{{ t('status.RETIRADO') }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase tracking-wider">
+            {{ t('adminProperties.itemsPerPage') }}
+          </label>
+          <select
+            v-model="pageSize"
+            @change="resetAndLoad"
             class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white"
           >
-            <option value="">Todos (excepto eliminados)</option>
-            <option value="DISPONIBLE">Disponible</option>
-            <option value="RESERVADO">Reservado</option>
-            <option value="VENDIDO">Vendido</option>
-            <option value="EN_NEGOCIACION">En Negociación</option>
-            <option value="ELIMINADO">Eliminados (ocultos)</option>
-            <option value="RETIRADO">Retirado</option>
+            <option :value="10">{{ t('adminProperties.itemsCount', { n: 10 }) }}</option>
+            <option :value="25">{{ t('adminProperties.itemsCount', { n: 25 }) }}</option>
+            <option :value="50">{{ t('adminProperties.itemsCount', { n: 50 }) }}</option>
           </select>
         </div>
         <div class="flex items-center gap-2">
@@ -77,147 +93,97 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
+      <property-card
         v-for="p in allProperties"
         :key="p.id"
-        class="relative rounded-xl overflow-hidden border-gray-200 dark:border-gray-700 dark:bg-gray-800 shadow-sm transition-all hover:shadow-md"
-        :class="{
-          'opacity-75 bg-gray-100 dark:bg-gray-900':
-            p.status === 'ELIMINADO' || p.status === 'RETIRADO',
-        }"
+        :property="p"
+        :owner-name="getOwnerName(p.ownerId) || undefined"
+        :agent-name="resolveAgentName(p.assignedAgentId)"
+        show-history-button
+        @view-details="viewDetails"
       >
-        <!-- Overlay para propiedades eliminadas/retiradas -->
-        <div
-          v-if="p.status === 'ELIMINADO' || p.status === 'RETIRADO'"
-          class="absolute inset-0 bg-black/50 flex items-center justify-center z-20 rounded-xl backdrop-blur-[1px] pointer-events-none"
-        >
-          <span
-            class="bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold rotate-[-15deg] shadow-lg"
-          >
-            {{ p.status === 'ELIMINADO' ? 'ELIMINADO' : 'RETIRADO' }}
-          </span>
-        </div>
-
-        <fwb-card class="flex flex-col h-full overflow-hidden border-0 relative">
+        <template #actions-top="{ property, statusHelpers }">
           <button
-            @click="viewDetails(p)"
-            class="absolute top-2 left-2 z-30 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:text-blue-600 transition-all hover:scale-110"
-            :title="t('adminProperties.viewHistory')"
+            @click="openEditModal(property)"
+            :disabled="statusHelpers.isSold.value || statusHelpers.isDeleted.value"
+            class="bg-blue-600 text-white rounded-full p-1.5 hover:bg-blue-700 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            :title="t('adminProperties.edit')"
           >
-            <IconLucideClipboardList class="w-5 h-5" />
+            <IconLucidePencil class="w-4 h-4" />
           </button>
-
-          <div class="absolute top-2 left-12 z-10">
-            <fwb-badge :type="getOpTypeBadge(p.operationType)">
-              {{ p.operationType ? t('propertyOperations.' + p.operationType) : t('common.empty') }}
-            </fwb-badge>
-          </div>
-
-          <div class="absolute top-2 right-2 flex space-x-1 z-30">
-            <button
-              @click="openEditModal(p)"
-              :disabled="p.status === 'ELIMINADO'"
-              class="bg-blue-600 text-white rounded-full p-1.5 hover:bg-blue-700 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <IconLucidePencil class="w-4 h-4" />
-            </button>
-
-            <button
-              @click="confirmDelete(p)"
-              :disabled="p.status === 'ELIMINADO'"
-              class="bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <IconLucideTrash class="w-4 h-4" />
-            </button>
-          </div>
-
-          <div
-            class="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 relative"
+          <button
+            @click="confirmDelete(property)"
+            :disabled="statusHelpers.isSold.value || statusHelpers.isDeleted.value"
+            class="bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            :title="t('adminProperties.delete')"
           >
-            <img
-              v-if="p.imageUrls?.length"
-              :src="p.imageUrls[0]"
-              class="h-full w-full object-cover"
-              @error="handleImageError($event)"
-            />
-            <span v-else>{{ t('adminProperties.noImages') }}</span>
-            <div class="absolute bottom-2 right-2">
-              <span
-                :class="getStatusBadgeClass(p.status)"
-                class="text-xs font-medium px-2.5 py-0.5 rounded shadow-sm"
-              >
-                {{ t('status.' + p.status) }}
-              </span>
-            </div>
-          </div>
+            <IconLucideTrash class="w-4 h-4" />
+          </button>
+        </template>
 
-          <div class="p-5 flex-1 flex flex-col">
-            <p class="text-[10px] text-gray-400 uppercase font-bold">
-              {{ t('adminProperties.owner') }}
-              {{ getOwnerName(p.ownerId) || t('adminProperties.notAssigned') }}
-            </p>
-            <h5 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white mb-1">
-              {{ p.title }}
-            </h5>
-            <div class="mb-4">
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ p.address }}</p>
-              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                <span class="font-semibold">{{ t('clientProperties.zoneLabel') }}</span>
-                {{ p.zone || t('common.notSpecified') }}
-              </p>
-            </div>
+        <template #documents="{ property }">
+          <document-upload
+            :property-id="property.id"
+            :agent-id="property.assignedAgentId || undefined"
+          />
+        </template>
 
-            <div class="flex justify-between items-end mt-auto">
-              <div>
-                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
-                  {{ t('adminProperties.price') }}
-                </p>
-                <p class="text-2xl font-black text-blue-600">
-                  ${{ (p.price || 0).toLocaleString(getLocaleString()) }}
-                </p>
-              </div>
-              <div class="text-right">
-                <p class="text-[10px] text-gray-400 uppercase font-bold">
-                  {{ t('adminProperties.advisor') }}
-                </p>
-                <p class="text-sm font-semibold dark:text-gray-200">
-                  {{ resolveAgentName(p.assignedAgentId) }}
-                </p>
-              </div>
+        <template #actions-bottom="{ property, statusHelpers }">
+          <!-- Reincorporate for terminal states -->
+          <fwb-button
+            v-if="statusHelpers.isMinimalInfo.value"
+            size="sm"
+            gradient="green"
+            @click="prepReincorporate(property)"
+            class="w-full shadow-lg"
+          >
+            <div class="flex items-center justify-center gap-2">
+              <IconLucideRefreshCw class="w-4 h-4" />
+              {{ t('propertyDetails.reincorporate') }}
             </div>
+          </fwb-button>
 
-            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <document-upload :property-id="p.id" :agent-id="p.assignedAgentId || undefined" />
-            </div>
-
-            <div
-              class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
+          <!-- Standard Actions -->
+          <template v-else>
+            <fwb-button
+              size="sm"
+              color="alternative"
+              @click="prepPriceUpdate(property)"
+              class="flex-1"
             >
-              <fwb-button
-                v-if="p.status === 'ELIMINADO' || p.status === 'RETIRADO'"
-                size="sm"
-                gradient="green"
-                @click="prepReincorporate(p)"
-                class="col-span-2 shadow-lg"
-              >
-                <div class="flex items-center justify-center gap-2">
-                  <IconLucideRefreshCw class="w-4 h-4" />
-                  {{ t('propertyDetails.reincorporate') }}
-                </div>
-              </fwb-button>
-
-              <fwb-button
-                size="sm"
-                color="alternative"
-                @click="prepPriceUpdate(p)"
-                :disabled="p.status === 'ELIMINADO'"
-              >
-                {{ t('adminProperties.price') }}
-              </fwb-button>
-            </div>
-          </div>
-        </fwb-card>
-      </div>
+              {{ t('adminProperties.price') }}
+            </fwb-button>
+            <fwb-button
+              size="sm"
+              color="alternative"
+              @click="prepOpTypeUpdate(property)"
+              class="flex-1"
+            >
+              {{ t('adminProperties.operation') }}
+            </fwb-button>
+            <fwb-button size="sm" gradient="blue" @click="prepAssignment(property)" class="flex-1">
+              {{ t('adminProperties.agent') }}
+            </fwb-button>
+            <fwb-button
+              size="sm"
+              gradient="purple"
+              @click="prepOwnerAssignment(property)"
+              class="flex-1"
+            >
+              {{ t('adminProperties.ownerLabel') }}
+            </fwb-button>
+            <fwb-button
+              v-if="!statusHelpers.isSold.value"
+              size="sm"
+              gradient="green"
+              @click="prepClosure(property)"
+              class="w-full"
+            >
+              {{ t('adminProperties.registerClosure') }}
+            </fwb-button>
+          </template>
+        </template>
+      </property-card>
     </div>
 
     <div
@@ -368,6 +334,15 @@
       @success="handleClosureSuccess"
     />
 
+    <ConfirmModal
+      :show="showReincorporateConfirm"
+      :title="t('propertyDetails.reincorporateConfirmTitle')"
+      :message="reincorporateConfirmMessage"
+      type="question"
+      @confirm="handleReincorporate"
+      @close="showReincorporateConfirm = false"
+    />
+
     <AppToast
       :show="toast.show"
       :message="toast.message"
@@ -379,24 +354,26 @@
 
 <script setup lang="ts">
   import IconLucidePlus from '~icons/lucide/plus';
-  import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideTrash from '~icons/lucide/trash';
+  import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { ref, onMounted, computed, watch, reactive } from 'vue';
-  import { FwbCard, FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
+  import { FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { userService } from '@/services/userService';
   import { apiClient as api } from '@/api';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
   import AssignAgentModal from '@/components/properties/AssignAgentModal.vue';
   import PropertyForm from '@/components/properties/PropertyForm.vue';
   import Pagination from '@/components/ui/Pagination.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
+  import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+  import PropertyCard from '@/components/properties/PropertyCard.vue';
   import type { Property, PropertyFormPayload } from '@/types/property';
   import AppToast from '@/components/ui/AppToast.vue';
+  import { handleApiError } from '@/api/errorHandler';
 
   const { t } = useI18n();
 
@@ -511,13 +488,6 @@
     resetAndLoad();
   };
 
-  const getOpTypeBadge = (type: string | undefined): 'indigo' | 'green' | 'yellow' | 'dark' => {
-    if (type === 'VENTA') return 'indigo';
-    if (type === 'ALQUILER') return 'green';
-    if (type === 'ANTICRETICO') return 'yellow';
-    return 'dark';
-  };
-
   const viewDetails = (p: Property) => {
     selectedProp.value = { ...p };
     showDetailsModal.value = true;
@@ -626,10 +596,6 @@
     } finally {
       deleting.value = false;
     }
-  };
-
-  const handleImageError = (event: Event) => {
-    (event.target as HTMLImageElement).style.display = 'none';
   };
 
   const prepAssignment = (p: Property) => {
@@ -764,25 +730,6 @@
     await load();
   };
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'DISPONIBLE':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'RESERVADO':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'VENDIDO':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'EN_NEGOCIACION':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
-      case 'ELIMINADO':
-        return 'bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-200';
-      case 'RETIRADO':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
-    }
-  };
-
   const handleLocalLocationUpdate = (updatedProp: Property) => {
     const index = allProperties.value.findIndex((p) => p.id === updatedProp.id);
     if (index !== -1) {
@@ -796,6 +743,12 @@
   // Agrega estas variables y funciones en tu script de AdminProperties.vue
 
   const showReincorporateConfirm = ref(false); // Para controlar el modal de confirmación
+
+  const reincorporateConfirmMessage = computed(() =>
+    selectedProp.value?.status === 'VENDIDO'
+      ? t('propertyDetails.reincorporateSoldConfirmMessage')
+      : t('propertyDetails.reincorporateConfirmMessage')
+  );
 
   const prepReincorporate = (p: Property) => {
     selectedProp.value = p;

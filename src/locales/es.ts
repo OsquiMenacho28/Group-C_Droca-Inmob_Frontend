@@ -340,6 +340,8 @@ export const es = {
     RESERVADO: 'Reservado',
     VENDIDO: 'Vendido',
     EN_NEGOCIACION: 'En Negociación',
+    ELIMINADO: 'Eliminado',
+    RETIRADO: 'Retirado',
     PENDING: 'Pendiente',
     ACCEPTED: 'Aceptada',
     REJECTED: 'Rechazada',
@@ -640,6 +642,8 @@ export const es = {
     reincorporateConfirmTitle: '¿Reincorporar inmueble?',
     reincorporateConfirmMessage:
       'Esta acción volverá a poner el inmueble como DISPONIBLE para el público y registrará el cambio en el historial.',
+    reincorporateSoldConfirmMessage:
+      'Este inmueble está VENDIDO. Para reincorporarlo, el sistema cancelará la operación vendida asociada y luego lo marcará como DISPONIBLE. ¿Deseas cancelar la operación y continuar?',
     reincorporateSuccess: 'Inmueble reincorporado exitosamente.',
   },
   clientDetails: {

@@ -16,36 +16,35 @@
           {{ t('operations.backToList') }}
         </FwbButton>
 
-        <div
-          v-if="canManage && operation && operation.status !== 'CANCELLED'"
-          class="flex gap-2 flex-wrap"
-        >
-          <FwbButton
-            color="red"
-            size="xs"
-            class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
-            @click="triggerCancel('ONLY')"
-            :disabled="cancelling"
-            outline
-          >
-            <template #prefix>
-              <IconLucideBan class="w-3 h-3" />
-            </template>
-            {{ cancelling ? t('common.processing') : t('operations.cancelOperation') }}
-          </FwbButton>
+        <div v-if="operation" class="flex gap-2 flex-wrap">
+          <template v-if="canManage && operation.status !== 'CANCELLED'">
+            <FwbButton
+              color="red"
+              size="xs"
+              class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
+              @click="triggerCancel('ONLY')"
+              :disabled="cancelling"
+              outline
+            >
+              <template #prefix>
+                <IconLucideBan class="w-3 h-3" />
+              </template>
+              {{ cancelling ? t('common.processing') : t('operations.cancelOperation') }}
+            </FwbButton>
 
-          <FwbButton
-            color="red"
-            size="xs"
-            class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
-            @click="triggerCancel('RECREATE')"
-            :disabled="cancelling"
-          >
-            <template #prefix>
-              <IconLucidePlusCircle class="w-3 h-3" />
-            </template>
-            {{ cancelling ? t('common.processing') : t('operations.cancelAndRecreate') }}
-          </FwbButton>
+            <FwbButton
+              color="red"
+              size="xs"
+              class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
+              @click="triggerCancel('RECREATE')"
+              :disabled="cancelling"
+            >
+              <template #prefix>
+                <IconLucidePlusCircle class="w-3 h-3" />
+              </template>
+              {{ cancelling ? t('common.processing') : t('operations.cancelAndRecreate') }}
+            </FwbButton>
+          </template>
         </div>
       </div>
 
@@ -249,6 +248,57 @@
       </template>
     </div>
 
+    <FwbModal v-if="showStatusHistory" size="2xl" @close="showStatusHistory = false">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <IconLucideHistory class="w-5 h-5 text-blue-600" />
+          <h3 class="text-lg font-bold dark:text-white">
+            {{ t('propertyDetails.statusHistory') }}
+          </h3>
+        </div>
+      </template>
+      <template #body>
+        <div v-if="operation?.statusHistory?.length" class="space-y-2">
+          <div
+            v-for="(history, index) in [...operation.statusHistory].reverse()"
+            :key="index"
+            class="flex items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-xs"
+          >
+            <div class="flex items-center gap-2 min-w-0">
+              <FwbBadge
+                v-if="history.oldStatus"
+                :type="statusBadgeTypeFor(history.oldStatus)"
+                size="xs"
+              >
+                {{ history.oldStatus }}
+              </FwbBadge>
+              <span v-else class="text-gray-400 font-medium">-</span>
+              <IconLucideArrowLeft class="w-3 h-3 text-gray-300 rotate-180 shrink-0" />
+              <FwbBadge :type="statusBadgeTypeFor(history.newStatus)" size="xs">
+                {{ history.newStatus }}
+              </FwbBadge>
+            </div>
+            <div class="text-right shrink-0">
+              <p class="text-gray-500 dark:text-gray-300">
+                {{ formatDateTime(history.changedAt) }}
+              </p>
+              <p class="text-gray-400">{{ history.changedBy }}</p>
+            </div>
+          </div>
+        </div>
+        <div v-else class="text-center py-8 text-xs text-gray-400 italic">
+          {{ t('propertyDetails.noStatusChanges') }}
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end w-full">
+          <FwbButton color="alternative" size="sm" @click="showStatusHistory = false">
+            {{ t('common.close') }}
+          </FwbButton>
+        </div>
+      </template>
+    </FwbModal>
+
     <!-- Confirm Cancel Modal -->
     <ConfirmModal
       :show="showConfirmCancel"
@@ -283,9 +333,10 @@
   import IconLucideFileText from '~icons/lucide/file-text';
   import IconLucideBan from '~icons/lucide/ban';
   import IconLucidePlusCircle from '~icons/lucide/plus-circle';
+  import IconLucideHistory from '~icons/lucide/history';
   import { ref, computed, onMounted, reactive } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { FwbBadge, FwbAlert, FwbButton, FwbSpinner } from 'flowbite-vue';
+  import { FwbBadge, FwbAlert, FwbButton, FwbSpinner, FwbModal } from 'flowbite-vue';
   import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
   import { apiClient as api } from '@/api';
   import { handleApiError } from '@/api/errorHandler';
@@ -314,6 +365,7 @@
 
   // UI States
   const showConfirmCancel = ref(false);
+  const showStatusHistory = ref(false);
   const cancelMode = ref<'ONLY' | 'RECREATE'>('ONLY');
   const toast = reactive({
     show: false,
@@ -410,14 +462,18 @@
 
   const statusBadgeType = computed(() => {
     const status = operation.value?.status?.toUpperCase() || '';
+    return statusBadgeTypeFor(status);
+  });
+
+  const statusBadgeTypeFor = (status?: string) => {
     const map: Record<string, 'green' | 'dark' | 'yellow' | 'red'> = {
       ACTIVE: 'green',
       CLOSED: 'dark',
       CANCELLED: 'red',
       PENDING: 'yellow',
     };
-    return map[status] || 'dark';
-  });
+    return map[status?.toUpperCase() || ''] || 'dark';
+  };
 
   const statusDotClass = computed(() => {
     const type = statusBadgeType.value;
@@ -436,6 +492,17 @@
       day: '2-digit',
       month: 'long',
       year: 'numeric',
+    });
+  }
+
+  function formatDateTime(iso?: string): string {
+    if (!iso) return '-';
+    return new Date(iso).toLocaleDateString(getLocaleString(), {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   }
 

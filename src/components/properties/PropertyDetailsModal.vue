@@ -12,7 +12,7 @@
     </template>
 
     <template #body>
-      <div class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': !isClientView }">
+      <div class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': showSidebar }">
         <div class="space-y-4">
           <div
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
@@ -56,6 +56,7 @@
                   <option value="EN_NEGOCIACION">
                     {{ t('propertyDetails.statusNegotiating') }}
                   </option>
+                  <option value="RETIRADO">{{ t('status.RETIRADO') }}</option>
                 </select>
                 <span
                   v-else
@@ -163,8 +164,19 @@
           </div>
         </div>
 
-        <div v-if="!isClientView" class="space-y-6">
-          <div class="relative pl-6 border-l-2 border-yellow-400">
+        <div v-if="showSidebar" class="space-y-6">
+          <!-- Receipts Section (Visible for reserved properties and related users) -->
+          <div
+            v-if="canManageReceipts"
+            class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800"
+          >
+            <OperationReceiptsSection
+              :operation-id="associatedOperation.id!"
+              :can-delete="isAdmin || currentUser?.userId === associatedOperation.agentId"
+            />
+          </div>
+
+          <div v-if="!isClientView" class="relative pl-6 border-l-2 border-yellow-400">
             <div
               class="absolute -left-[9px] top-0 w-4 h-4 bg-yellow-400 rounded-full border-4 border-white dark:border-gray-900"
             ></div>
@@ -213,7 +225,7 @@
             </div>
           </div>
 
-          <div class="relative pl-6 border-l-2 border-blue-500">
+          <div v-if="!isClientView" class="relative pl-6 border-l-2 border-blue-500">
             <div
               class="absolute -left-[9px] top-0 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-900"
             ></div>
@@ -254,7 +266,7 @@
             </div>
           </div>
 
-          <div class="relative pl-6 border-l-2 border-red-500">
+          <div v-if="!isClientView" class="relative pl-6 border-l-2 border-red-500">
             <div
               class="absolute -left-[9px] top-0 w-4 h-4 bg-red-500 rounded-full border-4 border-white dark:border-gray-900"
             ></div>
@@ -303,7 +315,7 @@
     <template #footer>
       <div class="flex justify-end gap-3">
         <fwb-button
-          v-if="isAdmin && ['ELIMINADO', 'RETIRADO', 'VENDIDO'].includes(property?.status)"
+          v-if="isAdmin && ['ELIMINADO', 'RETIRADO', 'VENDIDO'].includes(property?.status ?? '')"
           @click="showReincorporateConfirm = true"
           color="green"
           :disabled="updatingStatus"
@@ -320,6 +332,15 @@
       </div>
     </template>
   </fwb-modal>
+
+  <ConfirmModal
+    :show="showReincorporateConfirm"
+    :title="t('propertyDetails.reincorporateConfirmTitle')"
+    :message="reincorporateConfirmMessage"
+    type="question"
+    @confirm="handleReincorporate"
+    @close="showReincorporateConfirm = false"
+  />
 
   <!-- Global Toast -->
   <AppToast
@@ -349,6 +370,8 @@
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import { handleApiError } from '@/api/errorHandler';
+  import type { OperationData } from '@/types/operation';
+  import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
 
   const { t } = useI18n();
 
@@ -370,12 +393,14 @@
   const emit = defineEmits(['close', 'status-updated']);
 
   const authStore = useAuthStore();
+  const currentUser = computed(() => authStore.user as UserClaims | null);
   const showReincorporateConfirm = ref(false);
 
   const localStatus = ref(props.property?.status || '');
   const updatingStatus = ref(false);
   const owner = ref<PersonOwner | null>(null);
   const loadingOwner = ref(false);
+  const associatedOperation = ref<OperationData | null>(null);
 
   // UI States
   const toast = reactive({
@@ -401,10 +426,56 @@
     }
   };
 
+  const loadOperationInfo = async () => {
+    if (!props.property?.id) return;
+
+    const status = props.property.status;
+    if (status === 'RESERVADO') {
+      try {
+        associatedOperation.value = await propertyService.getOperationByPropertyId(
+          props.property.id
+        );
+      } catch (error) {
+        associatedOperation.value = null;
+      }
+    } else {
+      associatedOperation.value = null;
+    }
+  };
+
   const isAdmin = computed(() => {
     const u = authStore.user as UserClaims | null;
     const roles = (u?.roles as string[]) || [];
     return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+  });
+
+  const isRelatedToOperation = computed(() => {
+    if (!associatedOperation.value || !currentUser.value) return false;
+    const userId = currentUser.value.userId || currentUser.value.sub || currentUser.value.id;
+    return (
+      isAdmin.value ||
+      userId === associatedOperation.value.agentId ||
+      userId === associatedOperation.value.clientId ||
+      userId === associatedOperation.value.ownerId
+    );
+  });
+
+  const canManageReceipts = computed(
+    () =>
+      props.property?.status === 'RESERVADO' &&
+      !!associatedOperation.value &&
+      isRelatedToOperation.value
+  );
+
+  const reincorporateConfirmMessage = computed(() =>
+    props.property?.status === 'VENDIDO'
+      ? t('propertyDetails.reincorporateSoldConfirmMessage')
+      : t('propertyDetails.reincorporateConfirmMessage')
+  );
+
+  const showSidebar = computed(() => {
+    if (!props.isClientView) return true;
+    return canManageReceipts.value;
   });
 
   const handleReincorporate = async () => {
@@ -446,6 +517,7 @@
       if (newProperty) {
         localStatus.value = newProperty.status;
         loadOwnerInfo();
+        loadOperationInfo();
       }
     },
     { immediate: true }
@@ -465,18 +537,32 @@
 
     updatingStatus.value = true;
     try {
-      await propertyService.updateStatus(props.property.id, localStatus.value);
+      let updatedProperty: Property;
+      if (localStatus.value === 'RETIRADO') {
+        updatedProperty = await propertyService.withdrawProperty(props.property.id);
+      } else {
+        updatedProperty = await propertyService.updateStatus(props.property.id, localStatus.value);
+      }
 
+      localStatus.value = updatedProperty.status;
       toast.message = t('propertyDetails.statusUpdated');
       toast.type = 'success';
       toast.show = true;
 
-      emit('status-updated');
+      emit('status-updated', updatedProperty);
+      if (['RESERVADO', 'VENDIDO', 'EN_NEGOCIACION'].includes(updatedProperty.status)) {
+        loadOperationInfo();
+      } else {
+        associatedOperation.value = null;
+      }
     } catch (err: unknown) {
       localStatus.value = props.property.status;
-      const errorObj = err as { response?: { data?: { detail?: string } } };
+      const errorObj = err as { response?: { data?: { message?: string; detail?: string } } };
 
-      toast.message = errorObj.response?.data?.detail || t('propertyDetails.statusUpdateError');
+      toast.message =
+        errorObj.response?.data?.message ||
+        errorObj.response?.data?.detail ||
+        t('propertyDetails.statusUpdateError');
       toast.type = 'error';
       toast.show = true;
     } finally {

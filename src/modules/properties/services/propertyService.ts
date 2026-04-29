@@ -5,6 +5,7 @@ import type {
   AssignAgentPayload,
   OperationType,
 } from '@/types/property';
+import type { OperationData } from '@/types/operation';
 
 export interface DocumentResponse {
   id: string;
@@ -286,6 +287,22 @@ export const propertyService = {
   async reincorporateProperty(id: string): Promise<Property> {
     const response = await api.post(`/properties/${id}/reincorporate`);
     return response.data.data;
+  },
+
+  async withdrawProperty(id: string): Promise<Property> {
+    const response = await api.patch(`/properties/${id}/retirar`);
+    return response.data.data;
+  },
+
+  async getOperationByPropertyId(propertyId: string): Promise<OperationData | null> {
+    try {
+      const response = await api.get('/operations');
+      const operations = (response.data.data || []) as OperationData[];
+      return operations.find((operation) => operation.propertyId === propertyId) || null;
+    } catch (error) {
+      console.warn(`No operation found for property ${propertyId}`, error);
+      return null;
+    }
   },
 };
 
