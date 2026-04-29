@@ -345,14 +345,12 @@ export const en = {
     VENDIDO: 'Sold',
     EN_NEGOCIACION: 'Negotiating',
     ELIMINADO: 'Deleted',
-    RETIRADO: 'Withdrawn',
-
     PENDING: 'Pending',
     ACCEPTED: 'Accepted',
     REJECTED: 'Rejected',
     CANCELLED: 'Cancelled',
     CLOSED: 'Closed',
-    RETIRADO: 'Retired',
+    RETIRADO: 'Withdrawn',
   },
   propertyTypes: {
     CASA: 'House',

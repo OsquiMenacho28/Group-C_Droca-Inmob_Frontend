@@ -345,7 +345,6 @@ export const es = {
     VENDIDO: 'Vendido',
     EN_NEGOCIACION: 'En Negociación',
     ELIMINADO: 'Eliminado',
-    RETIRADO: 'Retirado',
     PENDING: 'Pendiente',
     ACCEPTED: 'Aceptada',
     REJECTED: 'Rechazada',
