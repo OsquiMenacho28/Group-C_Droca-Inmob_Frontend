@@ -338,12 +338,15 @@ export const en = {
     available: 'Available',
     reserved: 'Reserved',
     sold: 'Sold',
-    negotiating: 'In Negotiation',
+    negotiating: 'Negotiating',
     occupied: 'Occupied',
     DISPONIBLE: 'Available',
     RESERVADO: 'Reserved',
     VENDIDO: 'Sold',
-    EN_NEGOCIACION: 'In Negotiation',
+    EN_NEGOCIACION: 'Negotiating',
+    ELIMINADO: 'Deleted',
+    RETIRADO: 'Withdrawn',
+
     PENDING: 'Pending',
     ACCEPTED: 'Accepted',
     REJECTED: 'Rejected',
@@ -436,8 +439,7 @@ export const en = {
     vehiclePlateLabel: 'Plate',
     vehicleBrandLabel: 'Brand',
     vehicleCapacityLabel: 'Capacity',
-    vehicleAssignWarning:
-      'The visit was created, but the selected vehicle could not be assigned.',
+    vehicleAssignWarning: 'The visit was created, but the selected vehicle could not be assigned.',
     notes: 'Additional notes',
     notesPlaceholder: 'E.g.: The client arrives late, keys at reception...',
     dayAgenda: 'Day agenda',
@@ -657,6 +659,13 @@ export const en = {
     statusSold: 'SOLD',
     statusUpdated: 'Status updated successfully',
     statusUpdateError: 'You do not have permission to make this change',
+    reincorporate: 'Reincorporate to inventory',
+    reincorporateConfirmTitle: 'Reincorporate property?',
+    reincorporateConfirmMessage:
+      'This action will set the property back to AVAILABLE for the public and record the change in history.',
+    reincorporateSoldConfirmMessage:
+      'This property is SOLD. To reincorporate it, the system will cancel the associated sold operation and then mark it as AVAILABLE. Do you want to cancel the operation and continue?',
+    reincorporateSuccess: 'Property successfully reincorporated.',
   },
   clientDetails: {
     profileBadge: 'Client Profile',
@@ -1028,8 +1037,7 @@ export const en = {
     statusInUse: 'In use',
     statusMaintenance: 'Maintenance',
     totalVehicles: 'Registered vehicles',
-    availabilityHint:
-      'Vehicles in Available status may appear in the visit scheduling selector.',
+    availabilityHint: 'Vehicles in Available status may appear in the visit scheduling selector.',
   },
   propertyForm: {
     title: 'Title',

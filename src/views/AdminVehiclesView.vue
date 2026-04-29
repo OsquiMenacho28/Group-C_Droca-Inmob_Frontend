@@ -144,7 +144,10 @@
           </fwb-button>
         </div>
 
-        <div v-if="loadingVehicles" class="py-16 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div
+          v-if="loadingVehicles"
+          class="py-16 text-center text-sm text-gray-500 dark:text-gray-400"
+        >
           {{ t('vehicleAdmin.loadingFleet') }}
         </div>
 
@@ -166,25 +169,39 @@
           <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead>
               <tr>
-                <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('vehicleAdmin.plate') }}
                 </th>
-                <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('vehicleAdmin.brand') }}
                 </th>
-                <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('vehicleAdmin.model') }}
                 </th>
-                <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('vehicleAdmin.capacity') }}
                 </th>
-                <th class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                >
                   {{ t('vehicleAdmin.status') }}
                 </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-              <tr v-for="vehicle in vehicles" :key="vehicle.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+              <tr
+                v-for="vehicle in vehicles"
+                :key="vehicle.id"
+                class="hover:bg-gray-50 dark:hover:bg-gray-700/30"
+              >
                 <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white">
                   {{ vehicle.licensePlate }}
                 </td>

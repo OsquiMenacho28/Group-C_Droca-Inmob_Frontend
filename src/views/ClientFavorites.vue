@@ -102,11 +102,13 @@
                 'bg-yellow-500 text-white': prop.status === 'RESERVADO',
                 'bg-red-500 text-white': prop.status === 'VENDIDO',
                 'bg-blue-500 text-white': prop.status === 'EN_NEGOCIACION',
+                'bg-orange-500 text-white': prop.status === 'RETIRADO',
                 'bg-gray-500 text-white': ![
                   'DISPONIBLE',
                   'RESERVADO',
                   'VENDIDO',
                   'EN_NEGOCIACION',
+                  'RETIRADO',
                 ].includes(prop.status),
               }"
             >

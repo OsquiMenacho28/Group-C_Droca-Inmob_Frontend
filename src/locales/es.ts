@@ -344,6 +344,8 @@ export const es = {
     RESERVADO: 'Reservado',
     VENDIDO: 'Vendido',
     EN_NEGOCIACION: 'En Negociación',
+    ELIMINADO: 'Eliminado',
+    RETIRADO: 'Retirado',
     PENDING: 'Pendiente',
     ACCEPTED: 'Aceptada',
     REJECTED: 'Rechazada',
@@ -435,8 +437,7 @@ export const es = {
     vehiclePlateLabel: 'Placa',
     vehicleBrandLabel: 'Marca',
     vehicleCapacityLabel: 'Capacidad',
-    vehicleAssignWarning:
-      'La visita fue creada, pero no se pudo asignar el vehículo seleccionado.',
+    vehicleAssignWarning: 'La visita fue creada, pero no se pudo asignar el vehículo seleccionado.',
     notes: 'Notas adicionales',
     notesPlaceholder: 'Ej: El cliente llega tarde, llaves en recepción...',
     dayAgenda: 'Agenda del día',
@@ -658,6 +659,13 @@ export const es = {
     statusSold: 'VENDIDO',
     statusUpdated: 'Estado actualizado correctamente',
     statusUpdateError: 'No tienes permisos para realizar este cambio',
+    reincorporate: 'Reincorporar al inventario',
+    reincorporateConfirmTitle: '¿Reincorporar inmueble?',
+    reincorporateConfirmMessage:
+      'Esta acción volverá a poner el inmueble como DISPONIBLE para el público y registrará el cambio en el historial.',
+    reincorporateSoldConfirmMessage:
+      'Este inmueble está VENDIDO. Para reincorporarlo, el sistema cancelará la operación vendida asociada y luego lo marcará como DISPONIBLE. ¿Deseas cancelar la operación y continuar?',
+    reincorporateSuccess: 'Inmueble reincorporado exitosamente.',
   },
   clientDetails: {
     profileBadge: 'Perfil de Cliente',

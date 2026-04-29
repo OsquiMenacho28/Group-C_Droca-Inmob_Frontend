@@ -16,7 +16,7 @@
     <div
       class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
     >
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <div>
           <label class="block mb-2 text-xs font-black text-gray-400 uppercase tracking-wider">
             {{ t('agentDashboard.searchTitle') }}
@@ -43,13 +43,30 @@
           </select>
         </div>
         <div>
-          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase tracking-wider">
+            {{ t('common.status') }}
+          </label>
+          <select
+            v-model="filterStatus"
+            @change="resetAndLoad"
+            class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white focus:ring-blue-500"
+          >
+            <option value="">{{ t('auditLogs.actions.all') }}</option>
+            <option value="DISPONIBLE">{{ t('status.DISPONIBLE') }}</option>
+            <option value="RESERVADO">{{ t('status.RESERVADO') }}</option>
+            <option value="VENDIDO">{{ t('status.VENDIDO') }}</option>
+            <option value="EN_NEGOCIACION">{{ t('status.EN_NEGOCIACION') }}</option>
+            <option value="RETIRADO">{{ t('status.RETIRADO') }}</option>
+          </select>
+        </div>
+        <div>
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase tracking-wider">
             {{ t('agentDashboard.show') }}
           </label>
           <select
             v-model="pageSize"
             @change="resetAndLoad"
-            class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white"
+            class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white focus:ring-blue-500"
           >
             <option :value="6">{{ t('agentDashboard.itemsCount', { n: 6 }) }}</option>
             <option :value="12">{{ t('agentDashboard.itemsCount', { n: 12 }) }}</option>
@@ -57,7 +74,7 @@
           </select>
         </div>
         <div class="flex justify-end">
-          <fwb-button color="alternative" size="sm" @click="clearAllFilters">
+          <fwb-button color="alternative" size="sm" @click="clearAllFilters" class="w-full">
             {{ t('agentDashboard.clearFilters') }}
           </fwb-button>
         </div>
@@ -72,23 +89,32 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <fwb-card
+      <property-card
         v-for="p in myProperties"
         :key="p.id"
-        class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative dark:bg-gray-800"
+        :property="p"
+        :agent-name="p.agentName"
+        show-history-button
+        @view-details="viewDetails"
       >
-        <div class="absolute top-2 right-2 z-10 flex gap-1">
+        <template #actions-top="{ property, statusHelpers }">
           <button
-            @click="openEditModal(p)"
-            class="bg-blue-600 text-white rounded-full p-1.5 hover:bg-blue-700 transition-colors shadow-lg"
+            @click="openEditModal(property)"
+            :disabled="statusHelpers.isSold.value"
+            class="bg-blue-600 text-white rounded-full p-1.5 hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             :title="t('agentDashboard.editProperty')"
           >
             <IconLucidePencil class="w-4 h-4" />
           </button>
 
+          <!-- Retirement button (FROM INCOMING) -->
           <button
-            v-if="p.status !== 'RETIRADO' && p.status !== 'VENDIDO' && p.status !== 'ELIMINADO'"
-            @click="openRetirementModal(p)"
+            v-if="
+              property.status !== 'RETIRADO' &&
+              property.status !== 'VENDIDO' &&
+              property.status !== 'ELIMINADO'
+            "
+            @click="openRetirementModal(property)"
             class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 transition-colors shadow-lg"
             :title="t('retirement.title')"
           >
@@ -96,82 +122,48 @@
           </button>
 
           <button
-            @click="viewDetails(p)"
-            class="bg-white/90 dark:bg-gray-800/90 text-gray-600 dark:text-gray-300 rounded-full p-1.5 hover:text-blue-600 shadow-lg transition-all"
-            :title="t('common.viewDetails')"
-          >
-            <IconLucideClipboardList class="w-4 h-4" />
-          </button>
-
-          <button
             v-if="isAdmin"
-            @click="confirmDelete(p)"
-            class="bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors shadow-lg"
+            @click="confirmDelete(property)"
+            :disabled="statusHelpers.isSold.value"
+            class="bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             :title="t('common.delete')"
           >
             <IconLucideTrash class="w-4 h-4" />
           </button>
-        </div>
+        </template>
 
-        <div
-          class="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400"
-        >
-          <img
-            v-if="p.imageUrls?.length"
-            :src="p.imageUrls[0]"
-            class="h-full w-full object-cover"
+        <template #documents="{ property }">
+          <document-upload
+            :property-id="property.id"
+            :agent-id="property.assignedAgentId || undefined"
           />
-          <span v-else>{{ t('agentDashboard.noImages') }}</span>
-          <div class="absolute bottom-2 right-2">
-            <span
-              :class="getStatusBadgeClass(p.status)"
-              class="text-xs font-medium px-2.5 py-0.5 rounded shadow-sm"
-            >
-              {{ t('status.' + p.status) }}
-            </span>
-          </div>
-        </div>
+        </template>
 
-        <div class="p-5 flex-1 flex flex-col">
-          <div class="flex gap-2 mb-3">
-            <fwb-badge :type="getOpTypeBadge(p.operationType)">
-              {{ p.operationType ? t('propertyOperations.' + p.operationType) : '--' }}
-            </fwb-badge>
-            <fwb-badge type="dark">{{ p.type ? t('propertyTypes.' + p.type) : '--' }}</fwb-badge>
-          </div>
-
-          <h5 class="text-xl font-bold dark:text-white mb-1">{{ p.title }}</h5>
-          <div class="mb-4">
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ p.address }}</p>
-            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              <span class="font-semibold">{{ t('clientProperties.zoneLabel') }}</span>
-              {{ p.zone || t('common.notSpecified') }}
-            </p>
-          </div>
-
-          <div class="mt-auto">
-            <p class="text-2xl font-black text-blue-600">
-              ${{ (p.price || 0).toLocaleString(getLocaleString()) }}
-            </p>
-
-            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <document-upload :property-id="p.id" :agent-id="p.assignedAgentId || undefined" />
+        <template #actions-bottom="{ property, statusHelpers }">
+          <!-- Reincorporate button (YOUR FEATURE) -->
+          <fwb-button
+            v-if="statusHelpers.isMinimalInfo.value && isAdmin"
+            size="sm"
+            gradient="green"
+            class="w-full shadow-lg"
+            @click="prepReincorporate(property)"
+          >
+            <div class="flex items-center justify-center gap-2">
+              <IconLucideRefreshCw class="w-4 h-4" />
+              {{ t('propertyDetails.reincorporate') }}
             </div>
-
-            <div class="mt-4">
-              <fwb-button
-                v-if="p.status !== 'VENDIDO'"
-                size="sm"
-                gradient="green"
-                class="w-full"
-                @click="prepClosure(p)"
-              >
-                {{ t('adminProperties.registerClosure') }}
-              </fwb-button>
-            </div>
-          </div>
-        </div>
-      </fwb-card>
+          </fwb-button>
+          <fwb-button
+            v-else-if="!statusHelpers.isSold.value"
+            size="sm"
+            gradient="green"
+            class="w-full"
+            @click="prepClosure(property)"
+          >
+            {{ t('adminProperties.registerClosure') }}
+          </fwb-button>
+        </template>
+      </property-card>
     </div>
 
     <div
@@ -181,37 +173,14 @@
       <p class="text-gray-500">{{ t('agentDashboard.noResults') }}</p>
     </div>
 
-    <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 mt-8 pb-10">
-      <button
-        @click="changePage(currentPage - 1)"
-        :disabled="currentPage === 0"
-        class="px-3 py-2 rounded-lg border dark:border-gray-600 disabled:opacity-30 dark:text-white bg-white dark:bg-gray-800"
-      >
-        {{ t('agentDashboard.previous') }}
-      </button>
-
-      <template v-for="page in totalPages" :key="page">
-        <button
-          @click="changePage(page - 1)"
-          :class="[
-            'px-4 py-2 rounded-lg border transition-colors',
-            currentPage === page - 1
-              ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white hover:bg-gray-100',
-          ]"
-        >
-          {{ page }}
-        </button>
-      </template>
-
-      <button
-        @click="changePage(currentPage + 1)"
-        :disabled="currentPage >= totalPages - 1"
-        class="px-3 py-2 rounded-lg border dark:border-gray-600 disabled:opacity-30 dark:text-white bg-white dark:bg-gray-800"
-      >
-        {{ t('agentDashboard.next') }}
-      </button>
-    </div>
+    <Pagination
+      v-if="!loading && totalPages > 1"
+      v-model:current-page="currentPage"
+      v-model:page-size="pageSize"
+      :total-pages="totalPages"
+      :total="totalItems"
+      @change="load"
+    />
 
     <fwb-modal v-if="showCreateEditModal" @close="closeCreateEditModal" size="2xl">
       <template #header>
@@ -271,12 +240,23 @@
       @success="handleClosureSuccess"
     />
 
+    <!-- Retirement Modal (FROM INCOMING - reason tracking) -->
     <RetirementModal
       :show="showRetirementModal"
       :property-id="propertyToRetire?.id || ''"
       :property-title="propertyToRetire?.title || ''"
       @close="showRetirementModal = false"
       @success="handleRetirementSuccess"
+    />
+
+    <!-- Confirm Modal for Reincorporate (YOUR FEATURE) -->
+    <ConfirmModal
+      :show="showReincorporateConfirm"
+      :title="t('propertyDetails.reincorporateConfirmTitle')"
+      :message="reincorporateConfirmMessage"
+      type="question"
+      @confirm="handleReincorporate"
+      @close="showReincorporateConfirm = false"
     />
 
     <!-- Global Toast -->
@@ -292,11 +272,11 @@
 <script setup lang="ts">
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucidePencil from '~icons/lucide/pencil';
-  import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideTrash from '~icons/lucide/trash';
   import IconLucideArchive from '~icons/lucide/archive';
+  import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { ref, onMounted, computed, reactive } from 'vue';
-  import { FwbCard, FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
+  import { FwbButton, FwbModal, FwbInput } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { apiClient as api } from '@/api';
@@ -307,10 +287,13 @@
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
   import RetirementModal from '@/components/properties/RetirementModal.vue';
+  import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+  import Pagination from '@/components/ui/Pagination.vue';
+  import PropertyCard from '@/components/properties/PropertyCard.vue';
   import type { AxiosError } from 'axios';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
   import AppToast from '@/components/ui/AppToast.vue';
+  import { handleApiError } from '@/api/errorHandler';
 
   interface ApiErrorResponse {
     error?: string;
@@ -327,6 +310,7 @@
   const showDeleteModal = ref(false);
   const showClosureModal = ref(false);
   const showRetirementModal = ref(false);
+  const showReincorporateConfirm = ref(false);
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
   const propertyToDelete = ref<Property | null>(null);
@@ -336,10 +320,12 @@
   const selectedProp = ref<Property | null>(null);
   const currentPage = ref(0);
   const totalPages = ref(0);
+  const totalItems = ref(0);
   const pageSize = ref(6);
 
   const filterTitle = ref('');
   const filterOpType = ref('');
+  const filterStatus = ref('');
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   // UI States
@@ -366,6 +352,7 @@
         params: {
           title: filterTitle.value || undefined,
           operationType: filterOpType.value || undefined,
+          status: filterStatus.value || undefined,
           agentId: agentId,
           page: currentPage.value,
           pageSize: pageSize.value || undefined,
@@ -375,19 +362,14 @@
       myProperties.value = apiRes.data || [];
 
       const meta = apiRes.meta;
-      const total = meta?.total || 0;
+      totalItems.value = meta?.total || 0;
       const limit = meta?.limit || pageSize.value || 1;
-      totalPages.value = Math.ceil(total / limit);
+      totalPages.value = Math.ceil(totalItems.value / limit);
     } catch (e) {
       console.error(t('common.error') + ' ' + t('nav.myInmuebles').toLowerCase() + ':', e);
     } finally {
       loading.value = false;
     }
-  };
-
-  const changePage = (p: number) => {
-    currentPage.value = p;
-    load();
   };
 
   const resetAndLoad = () => {
@@ -405,21 +387,9 @@
   const clearAllFilters = () => {
     filterTitle.value = '';
     filterOpType.value = '';
+    filterStatus.value = '';
     pageSize.value = 6;
     resetAndLoad();
-  };
-
-  const getOpTypeBadge = (type: string) => {
-    switch (type) {
-      case 'VENTA':
-        return 'indigo';
-      case 'ALQUILER':
-        return 'green';
-      case 'ANTICRETICO':
-        return 'yellow';
-      default:
-        return 'dark';
-    }
   };
 
   const openEditModal = (property: Property) => {
@@ -527,23 +497,6 @@
     toast.show = true;
   };
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'DISPONIBLE':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'RESERVADO':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
-      case 'VENDIDO':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      case 'EN_NEGOCIACION':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
-      case 'RETIRADO':
-        return 'bg-gray-500 text-white dark:bg-gray-600 dark:text-gray-200';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
-    }
-  };
-
   const viewDetails = (p: Property) => {
     selectedProp.value = p;
     showDetailsModal.value = true;
@@ -563,6 +516,40 @@
     await load();
   };
 
+  const reincorporateConfirmMessage = computed(() =>
+    selectedProp.value?.status === 'VENDIDO'
+      ? t('propertyDetails.reincorporateSoldConfirmMessage')
+      : t('propertyDetails.reincorporateConfirmMessage')
+  );
+
+  const prepReincorporate = (p: Property) => {
+    selectedProp.value = p;
+    showReincorporateConfirm.value = true;
+  };
+
+  const handleReincorporate = async () => {
+    if (!selectedProp.value) return;
+
+    loading.value = true;
+    showReincorporateConfirm.value = false;
+
+    try {
+      await propertyService.reincorporateProperty(selectedProp.value.id);
+      toast.message = t('propertyDetails.reincorporateSuccess');
+      toast.type = 'success';
+      toast.show = true;
+      await load();
+    } catch (error: unknown) {
+      const appError = handleApiError(error);
+      toast.message = appError.message;
+      toast.type = 'error';
+      toast.show = true;
+    } finally {
+      loading.value = false;
+      selectedProp.value = null;
+    }
+  };
+
   const handleLocalLocationUpdate = (updatedProp: Property) => {
     const index = myProperties.value.findIndex((p) => p.id === updatedProp.id);
     if (index !== -1) {
@@ -572,7 +559,7 @@
       }
     }
   };
-  
+
   onMounted(async () => {
     await load();
 
@@ -583,20 +570,18 @@
 
       editingProperty.value = {
         ...sourceData,
-        id: undefined, // Ensure it's a new property
+        id: undefined,
         title: sourceData.title + ' (COPY)',
-        status: 'DISPONIBLE', // Force reset status
+        status: 'DISPONIBLE',
       };
 
       isEditing.value = false;
       formKey.value++;
 
-      // Small delay to ensure reactivity cycle
       setTimeout(() => {
         showCreateEditModal.value = true;
       }, 100);
 
-      // Clear state to avoid reopening on refresh
       window.history.replaceState({ ...state, cloneProperty: null }, '');
     }
   });
