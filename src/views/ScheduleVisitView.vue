@@ -324,7 +324,7 @@
                 ev.ownEvent,
             }"
           >
-            <div class="text-center min-w-[50px]">
+            <div class="text-center min-w-12.5">
               <p class="text-xs font-bold text-gray-900 dark:text-white">
                 {{ shortTime(ev.startTime) }}
               </p>
@@ -508,7 +508,11 @@
   const loadInitialData = async () => {
     loadingList.value = true;
     try {
-      const data = await propertyService.getProperties();
+      const response = await propertyService.getProperties({
+        status: 'DISPONIBLE',
+        pageSize: 100,
+      });
+      const data = response.data || [];
       allProperties.value = data.filter(
         (p: VisitProperty) => p.status === 'DISPONIBLE'
       ) as VisitProperty[];

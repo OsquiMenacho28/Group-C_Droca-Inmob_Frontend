@@ -48,7 +48,7 @@
         class="flex flex-col h-full overflow-hidden border-gray-200 dark:border-gray-700 relative dark:bg-gray-800"
       >
         <div
-          class="h-32 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center relative"
+          class="h-32 bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center relative"
         >
           <div
             class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl font-black uppercase shadow-inner"

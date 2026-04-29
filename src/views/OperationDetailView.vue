@@ -8,7 +8,7 @@
           to="/dashboard/operations"
           color="light"
           size="xs"
-          class="!px-2.5 !py-1 text-xs dark:bg-gray-800 dark:border-gray-700"
+          class="px-2.5! py-1! text-xs dark:bg-gray-800 dark:border-gray-700"
         >
           <template #prefix>
             <IconLucideArrowLeft class="w-3 h-3" />
@@ -21,7 +21,7 @@
             <FwbButton
               color="red"
               size="xs"
-              class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
+              class="px-2.5! py-1! text-xs font-bold uppercase tracking-tight"
               @click="triggerCancel('ONLY')"
               :disabled="cancelling"
               outline
@@ -35,7 +35,7 @@
             <FwbButton
               color="red"
               size="xs"
-              class="!px-2.5 !py-1 text-xs font-bold uppercase tracking-tight"
+              class="px-2.5! py-1! text-xs font-bold uppercase tracking-tight"
               @click="triggerCancel('RECREATE')"
               :disabled="cancelling"
             >
@@ -181,7 +181,7 @@
                 v-for="(url, idx) in propertyData.imageUrls"
                 :key="idx"
                 :src="url"
-                class="h-16 w-16 object-cover rounded border border-gray-200 dark:border-gray-600 flex-shrink-0"
+                class="h-16 w-16 object-cover rounded border border-gray-200 dark:border-gray-600 shrink-0"
               />
             </div>
           </div>

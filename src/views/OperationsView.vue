@@ -26,7 +26,7 @@
 
       <FwbCard
         v-else-if="operations.length === 0"
-        class="!max-w-none p-12 text-center border-gray-100 dark:border-gray-700 shadow-sm dark:bg-gray-800"
+        class="max-w-none! p-12 text-center border-gray-100 dark:border-gray-700 shadow-sm dark:bg-gray-800"
       >
         <IconLucideClipboardList class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">

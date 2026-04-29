@@ -228,7 +228,7 @@
                   <!-- Sales Count -->
                   <td class="px-6 py-4 text-center">
                     <span
-                      class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 min-w-[40px]"
+                      class="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 min-w-10"
                     >
                       {{ item.closedSales }}
                     </span>
@@ -237,16 +237,14 @@
                   <!-- Percentage -->
                   <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <div
-                        class="flex-1 max-w-[60px] bg-gray-200 dark:bg-gray-700 rounded-full h-1.5"
-                      >
+                      <div class="flex-1 max-w-15 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div
                           class="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full transition-all duration-500"
                           :style="{ width: `${item.percentageOfTotal}%` }"
                         ></div>
                       </div>
                       <span
-                        class="font-mono font-bold text-blue-600 dark:text-blue-400 min-w-[45px]"
+                        class="font-mono font-bold text-blue-600 dark:text-blue-400 min-w-11.25"
                       >
                         {{ item.percentageOfTotal }}%
                       </span>

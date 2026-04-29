@@ -312,7 +312,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-7 min-h-[450px]">
+        <div class="grid grid-cols-7 min-h-112.5">
           <div
             v-for="(day, idx) in weekDays"
             :key="idx"
