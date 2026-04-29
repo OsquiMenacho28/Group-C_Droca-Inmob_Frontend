@@ -112,7 +112,11 @@
             <IconLucidePencil class="w-4 h-4" />
           </button>
           <button
-            v-if="property.status !== 'RETIRADO' && property.status !== 'VENDIDO' && property.status !== 'ELIMINADO'"
+            v-if="
+              property.status !== 'RETIRADO' &&
+              property.status !== 'VENDIDO' &&
+              property.status !== 'ELIMINADO'
+            "
             @click="openRetirementModal(property)"
             class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 shadow-lg transition-colors"
             :title="t('retirement.title')"

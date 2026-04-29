@@ -17,7 +17,9 @@
             {{ t('retirement.motivo') }}
           </label>
           <div v-if="loadingReasons" class="flex items-center gap-2 text-sm text-gray-500">
-            <div class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+            <div
+              class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"
+            ></div>
             {{ t('common.loading') }}
           </div>
           <div v-else-if="reasonsError" class="text-sm text-red-500">
@@ -121,12 +123,12 @@
 
   async function submit() {
     errors.value = { reason: '', detail: '' };
-    
+
     if (!selectedReason.value) {
       errors.value.reason = t('retirement.motivoRequired');
       return;
     }
-    
+
     if (selectedReason.value === 'OTRO' && !detail.value.trim()) {
       errors.value.detail = t('retirement.detalleRequired');
       return;

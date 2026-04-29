@@ -439,8 +439,7 @@ export const en = {
     vehiclePlateLabel: 'Plate',
     vehicleBrandLabel: 'Brand',
     vehicleCapacityLabel: 'Capacity',
-    vehicleAssignWarning:
-      'The visit was created, but the selected vehicle could not be assigned.',
+    vehicleAssignWarning: 'The visit was created, but the selected vehicle could not be assigned.',
     notes: 'Additional notes',
     notesPlaceholder: 'E.g.: The client arrives late, keys at reception...',
     dayAgenda: 'Day agenda',
@@ -1038,8 +1037,7 @@ export const en = {
     statusInUse: 'In use',
     statusMaintenance: 'Maintenance',
     totalVehicles: 'Registered vehicles',
-    availabilityHint:
-      'Vehicles in Available status may appear in the visit scheduling selector.',
+    availabilityHint: 'Vehicles in Available status may appear in the visit scheduling selector.',
   },
   propertyForm: {
     title: 'Title',

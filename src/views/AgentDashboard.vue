@@ -109,7 +109,11 @@
 
           <!-- Retirement button (FROM INCOMING) -->
           <button
-            v-if="property.status !== 'RETIRADO' && property.status !== 'VENDIDO' && property.status !== 'ELIMINADO'"
+            v-if="
+              property.status !== 'RETIRADO' &&
+              property.status !== 'VENDIDO' &&
+              property.status !== 'ELIMINADO'
+            "
             @click="openRetirementModal(property)"
             class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 transition-colors shadow-lg"
             :title="t('retirement.title')"

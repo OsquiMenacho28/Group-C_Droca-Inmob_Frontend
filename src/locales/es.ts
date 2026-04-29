@@ -437,8 +437,7 @@ export const es = {
     vehiclePlateLabel: 'Placa',
     vehicleBrandLabel: 'Marca',
     vehicleCapacityLabel: 'Capacidad',
-    vehicleAssignWarning:
-      'La visita fue creada, pero no se pudo asignar el vehículo seleccionado.',
+    vehicleAssignWarning: 'La visita fue creada, pero no se pudo asignar el vehículo seleccionado.',
     notes: 'Notas adicionales',
     notesPlaceholder: 'Ej: El cliente llega tarde, llaves en recepción...',
     dayAgenda: 'Agenda del día',
