@@ -635,6 +635,11 @@ export const en = {
     statusSold: 'SOLD',
     statusUpdated: 'Status updated successfully',
     statusUpdateError: 'You do not have permission to make this change',
+    reincorporate: 'Reincorporate to inventory',
+    reincorporateConfirmTitle: 'Reincorporate property?',
+    reincorporateConfirmMessage:
+      'This action will set the property back to AVAILABLE for the public and record the change in history.',
+    reincorporateSuccess: 'Property successfully reincorporated.',
   },
   clientDetails: {
     profileBadge: 'Client Profile',

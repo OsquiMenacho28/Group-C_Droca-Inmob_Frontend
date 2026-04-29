@@ -636,6 +636,11 @@ export const es = {
     statusSold: 'VENDIDO',
     statusUpdated: 'Estado actualizado correctamente',
     statusUpdateError: 'No tienes permisos para realizar este cambio',
+    reincorporate: 'Reincorporar al inventario',
+    reincorporateConfirmTitle: '¿Reincorporar inmueble?',
+    reincorporateConfirmMessage:
+      'Esta acción volverá a poner el inmueble como DISPONIBLE para el público y registrará el cambio en el historial.',
+    reincorporateSuccess: 'Inmueble reincorporado exitosamente.',
   },
   clientDetails: {
     profileBadge: 'Perfil de Cliente',

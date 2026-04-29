@@ -282,6 +282,11 @@ export const propertyService = {
     });
     return response.data.data;
   },
+
+  async reincorporateProperty(id: string): Promise<Property> {
+    const response = await api.post(`/properties/${id}/reincorporate`);
+    return response.data.data;
+  },
 };
 
 export { propertyService as default };
