@@ -112,6 +112,14 @@
             <IconLucidePencil class="w-4 h-4" />
           </button>
           <button
+            v-if="property.status !== 'RETIRADO' && property.status !== 'VENDIDO' && property.status !== 'ELIMINADO'"
+            @click="openRetirementModal(property)"
+            class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 shadow-lg transition-colors"
+            :title="t('retirement.title')"
+          >
+            <IconLucideArchive class="w-4 h-4" />
+          </button>
+          <button
             @click="confirmDelete(property)"
             :disabled="statusHelpers.isSold.value || statusHelpers.isDeleted.value"
             class="bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -129,7 +137,7 @@
         </template>
 
         <template #actions-bottom="{ property, statusHelpers }">
-          <!-- Reincorporate for terminal states -->
+          <!-- Reincorporate for terminal states (YOUR FEATURE) -->
           <fwb-button
             v-if="statusHelpers.isMinimalInfo.value"
             size="sm"
@@ -334,6 +342,16 @@
       @success="handleClosureSuccess"
     />
 
+    <!-- Retirement Modal (FROM INCOMING - reason tracking) -->
+    <RetirementModal
+      :show="showRetirementModal"
+      :property-id="propertyToRetire?.id || ''"
+      :property-title="propertyToRetire?.title || ''"
+      @close="showRetirementModal = false"
+      @success="handleRetirementSuccess"
+    />
+
+    <!-- Confirm Modal for Reincorporate (YOUR FEATURE) -->
     <ConfirmModal
       :show="showReincorporateConfirm"
       :title="t('propertyDetails.reincorporateConfirmTitle')"
@@ -356,6 +374,7 @@
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideTrash from '~icons/lucide/trash';
+  import IconLucideArchive from '~icons/lucide/archive';
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { ref, onMounted, computed, watch, reactive } from 'vue';
   import { FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
@@ -369,6 +388,7 @@
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
+  import RetirementModal from '@/components/properties/RetirementModal.vue';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import PropertyCard from '@/components/properties/PropertyCard.vue';
   import type { Property, PropertyFormPayload } from '@/types/property';
@@ -398,7 +418,7 @@
   const deleting = ref(false);
   const filterTitle = ref('');
   const filterOpType = ref('');
-  const filterStatus = ref(''); // NUEVO: filtro por estado
+  const filterStatus = ref('');
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -410,9 +430,13 @@
   const showDeleteModal = ref(false);
   const showDetailsModal = ref(false);
   const showClosureModal = ref(false);
+  const showRetirementModal = ref(false);
+  const showReincorporateConfirm = ref(false);
+
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
   const propertyToDelete = ref<Property | null>(null);
+  const propertyToRetire = ref<Property | null>(null);
   const formKey = ref(0);
   const selectedProp = ref<Property | null>(null);
   const newPrice = ref(0);
@@ -426,6 +450,12 @@
     message: '',
     type: 'success' as 'success' | 'error' | 'info',
   });
+
+  const reincorporateConfirmMessage = computed(() =>
+    selectedProp.value?.status === 'VENDIDO'
+      ? t('propertyDetails.reincorporateSoldConfirmMessage')
+      : t('propertyDetails.reincorporateConfirmMessage')
+  );
 
   const activeAgents = computed(() =>
     allUsers.value.filter(
@@ -443,7 +473,7 @@
       const filters: Record<string, unknown> = {};
       if (filterTitle.value) filters.title = filterTitle.value;
       if (filterOpType.value) filters.operationType = filterOpType.value;
-      if (filterStatus.value) filters.status = filterStatus.value; // NUEVO
+      if (filterStatus.value) filters.status = filterStatus.value;
       filters.page = currentPage.value;
       filters.pageSize = pageSize.value;
 
@@ -483,7 +513,7 @@
   const clearAllFilters = () => {
     filterTitle.value = '';
     filterOpType.value = '';
-    filterStatus.value = ''; // NUEVO
+    filterStatus.value = '';
     pageSize.value = 10;
     resetAndLoad();
   };
@@ -596,6 +626,20 @@
     } finally {
       deleting.value = false;
     }
+  };
+
+  const openRetirementModal = (property: Property) => {
+    propertyToRetire.value = property;
+    showRetirementModal.value = true;
+  };
+
+  const handleRetirementSuccess = async () => {
+    await load();
+    showRetirementModal.value = false;
+    propertyToRetire.value = null;
+    toast.message = t('retirement.success');
+    toast.type = 'success';
+    toast.show = true;
   };
 
   const prepAssignment = (p: Property) => {
@@ -740,16 +784,6 @@
     }
   };
 
-  // Agrega estas variables y funciones en tu script de AdminProperties.vue
-
-  const showReincorporateConfirm = ref(false); // Para controlar el modal de confirmación
-
-  const reincorporateConfirmMessage = computed(() =>
-    selectedProp.value?.status === 'VENDIDO'
-      ? t('propertyDetails.reincorporateSoldConfirmMessage')
-      : t('propertyDetails.reincorporateConfirmMessage')
-  );
-
   const prepReincorporate = (p: Property) => {
     selectedProp.value = p;
     showReincorporateConfirm.value = true;
@@ -758,13 +792,12 @@
   const handleReincorporate = async () => {
     if (!selectedProp.value) return;
 
-    loading.value = true; // Reutilizamos tu ref de carga
+    loading.value = true;
     showReincorporateConfirm.value = false;
 
     try {
       const updatedProperty = await propertyService.reincorporateProperty(selectedProp.value.id);
 
-      // Actualizar la lista localmente para que desaparezca el overlay de inmediato
       const index = allProperties.value.findIndex((p) => p.id === updatedProperty.id);
       if (index !== -1) {
         allProperties.value[index] = updatedProperty;
@@ -774,9 +807,8 @@
       toast.type = 'success';
       toast.show = true;
 
-      // Opcional: Recargar la lista completa para limpiar filtros
       await load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       const appError = handleApiError(error);
       toast.message = appError.message;
       toast.type = 'error';

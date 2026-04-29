@@ -158,9 +158,10 @@
               </label>
               <input
                 v-model="startTimeLocal"
+                @change="onTimeChange"
                 type="datetime-local"
                 class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
-                :min="new Date().toISOString().slice(0, 16)"
+                :min="minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
                 }"
@@ -176,9 +177,10 @@
               </label>
               <input
                 v-model="endTimeLocal"
+                @change="onTimeChange"
                 type="datetime-local"
                 class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
-                :min="startTimeLocal || new Date().toISOString().slice(0, 16)"
+                :min="startTimeLocal || minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
                 }"
@@ -186,6 +188,67 @@
               <p v-if="fieldErrors.endTime" class="text-xs text-red-500 mt-1">
                 {{ fieldErrors.endTime }}
               </p>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ t('scheduleVisit.assignedVehicle') }}
+            </label>
+            <select
+              v-model="selectedVehicleId"
+              :disabled="loadingVehicles || !startTimeLocal || !endTimeLocal"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60 dark:scheme-dark"
+            >
+              <option value="">{{ vehiclePlaceholder }}</option>
+              <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
+                {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
+              </option>
+            </select>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              {{ vehicleHelperText }}
+            </p>
+          </div>
+
+          <div
+            v-if="selectedVehicle"
+            class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-900/20 dark:text-emerald-100"
+          >
+            <div class="flex items-start gap-3">
+              <div class="rounded-lg bg-emerald-100 p-2 dark:bg-emerald-800/60">
+                <IconLucideCarFront class="h-4 w-4" />
+              </div>
+              <div class="flex-1 space-y-2">
+                <p class="font-semibold">
+                  {{ t('scheduleVisit.selectedVehicleInfo') }}
+                </p>
+                <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <div>
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
+                      {{ t('scheduleVisit.vehiclePlateLabel') }}
+                    </p>
+                    <p class="font-medium">{{ selectedVehicle.licensePlate }}</p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
+                      {{ t('scheduleVisit.vehicleBrandLabel') }}
+                    </p>
+                    <p class="font-medium">{{ selectedVehicle.brand }}</p>
+                  </div>
+                  <div>
+                    <p
+                      class="text-[11px] uppercase tracking-wide text-emerald-700 dark:text-emerald-300"
+                    >
+                      {{ t('scheduleVisit.vehicleCapacityLabel') }}
+                    </p>
+                    <p class="font-medium">{{ selectedVehicle.passengerCapacity }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -303,7 +366,7 @@
     <FwbModal v-if="showErrorModal" @close="showErrorModal = false">
       <template #header>
         <div class="flex items-center gap-2">
-          <IconLucideAlertCircle class="w-5 h-5 text-red-600" />
+          <IconLucideAlertCircle class="h-5 w-5 text-red-600" />
           <span>{{ t('common.error') }}</span>
         </div>
       </template>
@@ -330,12 +393,19 @@
   import { visitSchema } from '@/modules/properties/schemas/visitSchema';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { propertyService } from '@/modules/properties';
-  import { checkConflict, createVisit, getDayAgenda } from '@/services/calendarService';
+  import {
+    assignVehicleToVisit,
+    checkConflict,
+    createVisit,
+    getAvailableVehicles,
+    getDayAgenda,
+  } from '@/services/calendarService';
   import ConflictAlert from '@/components/visits/ConflictAlert.vue';
   import type {
     ConflictResponse,
     CalendarEventResponse,
     Property as VisitProperty,
+    Vehicle,
   } from '@/types/visitCalendar';
   import type { Property } from '@/types/property';
   import type { VisitFormValues } from '@/modules/properties/schemas/visitSchema';
@@ -346,10 +416,12 @@
   import IconLucideSearch from '~icons/lucide/search';
   import IconLucideChevronDown from '~icons/lucide/chevron-down';
   import IconLucideMapPin from '~icons/lucide/map-pin';
+  import IconLucideCarFront from '~icons/lucide/car-front';
   import IconLucideCircleCheck from '~icons/lucide/circle-check';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideLoader from '~icons/lucide/loader';
   import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+
   const { t } = useI18n();
 
   const showSuccessModal = ref(false);
@@ -396,14 +468,30 @@
   const checkingConflict = ref(false);
   const submitting = ref(false);
   const dayAgenda = ref<CalendarEventResponse[]>([]);
+  const availableVehicles = ref<Vehicle[]>([]);
+  const loadingVehicles = ref(false);
+  const selectedVehicleId = ref('');
 
   const startTimeLocal = ref('');
   const endTimeLocal = ref('');
 
+  const formatDateTimeLocalInput = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const toApiLocalDateTime = (value: string) => {
+    if (!value) return '';
+    return value.length === 16 ? `${value}:00` : value.slice(0, 19);
+  };
+
   watch(startTimeLocal, (val) => {
     if (val) {
-      startTime.value = new Date(val).toISOString();
-      onTimeChange();
+      startTime.value = toApiLocalDateTime(val);
     } else {
       startTime.value = '';
     }
@@ -411,8 +499,7 @@
 
   watch(endTimeLocal, (val) => {
     if (val) {
-      endTime.value = new Date(val).toISOString();
-      onTimeChange();
+      endTime.value = toApiLocalDateTime(val);
     } else {
       endTime.value = '';
     }
@@ -443,6 +530,42 @@
       .slice(0, 20);
   });
 
+  const vehiclePlaceholder = computed(() => {
+    if (!startTimeLocal.value || !endTimeLocal.value) {
+      return t('scheduleVisit.selectVehicleAfterTime');
+    }
+    if (loadingVehicles.value) {
+      return t('scheduleVisit.loadingVehicles');
+    }
+    if (availableVehicles.value.length === 0) {
+      return t('scheduleVisit.noVehiclesAvailable');
+    }
+    return t('scheduleVisit.selectVehiclePlaceholder');
+  });
+
+  const vehicleHelperText = computed(() => {
+    if (!startTimeLocal.value || !endTimeLocal.value) {
+      return t('scheduleVisit.vehicleDependsOnSchedule');
+    }
+    if (loadingVehicles.value) {
+      return t('scheduleVisit.loadingVehiclesHelp');
+    }
+    if (availableVehicles.value.length === 0) {
+      return t('scheduleVisit.noVehiclesHelp');
+    }
+    return t('scheduleVisit.vehicleOptionalHelp');
+  });
+
+  const selectedVehicle = computed(() => {
+    if (!selectedVehicleId.value) {
+      return null;
+    }
+
+    return (
+      availableVehicles.value.find((vehicle) => vehicle.id === selectedVehicleId.value) ?? null
+    );
+  });
+
   const handleSelect = async (id: string) => {
     showDropdown.value = false;
     searchTerm.value = t('scheduleVisit.loadingDetail');
@@ -462,12 +585,52 @@
   };
 
   let conflictTimer: ReturnType<typeof setTimeout> | null = null;
+  let vehicleTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const loadAvailableVehiclesForSchedule = async () => {
+    const start = startTimeLocal.value;
+    const end = endTimeLocal.value;
+
+    if (!start || !end) {
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
+      return;
+    }
+
+    loadingVehicles.value = true;
+    try {
+      const vehicles = await getAvailableVehicles(toApiLocalDateTime(start));
+      availableVehicles.value = vehicles;
+
+      if (
+        selectedVehicleId.value &&
+        !vehicles.some((vehicle) => vehicle.id === selectedVehicleId.value)
+      ) {
+        selectedVehicleId.value = '';
+      }
+    } catch {
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
+    } finally {
+      loadingVehicles.value = false;
+    }
+  };
+
   const onTimeChange = () => {
     conflictResult.value = null;
     const pid = propertyId.value;
     const start = startTimeLocal.value;
     const end = endTimeLocal.value;
-    if (!pid || !start || !end) return;
+    if (!start || !end) {
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
+      return;
+    }
+
+    if (vehicleTimer) clearTimeout(vehicleTimer);
+    vehicleTimer = setTimeout(loadAvailableVehiclesForSchedule, 250);
+
+    if (!pid) return;
 
     if (conflictTimer) clearTimeout(conflictTimer);
     conflictTimer = setTimeout(async () => {
@@ -475,8 +638,8 @@
       try {
         conflictResult.value = await checkConflict(
           pid,
-          new Date(start).toISOString(),
-          new Date(end).toISOString()
+          toApiLocalDateTime(start),
+          toApiLocalDateTime(end)
         );
       } finally {
         checkingConflict.value = false;
@@ -493,7 +656,7 @@
 
     submitting.value = true;
     try {
-      await createVisit(
+      const createdVisit = await createVisit(
         {
           propertyId: values.propertyId,
           propertyName: propertyInfo.value?.title || '',
@@ -506,6 +669,22 @@
         },
         myAgentId.value as string
       );
+
+      let assignmentWarning = '';
+
+      if (selectedVehicleId.value) {
+        try {
+          await assignVehicleToVisit(createdVisit.id, {
+            vehicleId: selectedVehicleId.value,
+            travelTimeGo: 0,
+            travelTimeBack: 0,
+          });
+        } catch (assignmentError: unknown) {
+          const err = assignmentError as { response?: { data?: { message?: string } } };
+          assignmentWarning =
+            err.response?.data?.message || t('scheduleVisit.vehicleAssignWarning');
+        }
+      }
 
       dayAgenda.value = await getDayAgenda(myAgentId.value as string, values.startTime);
 
@@ -520,14 +699,21 @@
       propertyInfo.value = null;
       searchTerm.value = '';
       conflictResult.value = null;
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
 
-      successMessage.value = t('scheduleVisit.successMessage');
-      showSuccessModal.value = true;
+      if (assignmentWarning) {
+        errorMessage.value = `${t('scheduleVisit.successMessage')} ${assignmentWarning}`;
+        showErrorModal.value = true;
+      } else {
+        successMessage.value = t('scheduleVisit.successMessage');
+        showSuccessModal.value = true;
 
-      if (successTimer) clearTimeout(successTimer);
-      successTimer = setTimeout(() => {
-        showSuccessModal.value = false;
-      }, 3000);
+        if (successTimer) clearTimeout(successTimer);
+        successTimer = setTimeout(() => {
+          showSuccessModal.value = false;
+        }, 3000);
+      }
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } } };
       errorMessage.value = err.response?.data?.message || t('scheduleVisit.errorMessage');
@@ -539,11 +725,11 @@
 
   const applySuggestion = (start?: string, end?: string) => {
     if (start) {
-      startTimeLocal.value = new Date(start).toISOString().slice(0, 16);
+      startTimeLocal.value = start.slice(0, 16);
       startTime.value = start;
     }
     if (end) {
-      endTimeLocal.value = new Date(end).toISOString().slice(0, 16);
+      endTimeLocal.value = end.slice(0, 16);
       endTime.value = end;
     }
     onTimeChange();
@@ -554,6 +740,12 @@
       hour: '2-digit',
       minute: '2-digit',
     });
+
+  const minDatetime = computed(() => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 15);
+    return formatDateTimeLocalInput(now);
+  });
 
   const closeClickOutside = (e: Event) => {
     if (!(e.target instanceof HTMLElement) || !e.target.closest('#property-select-container'))
@@ -567,6 +759,8 @@
 
   onUnmounted(() => {
     window.removeEventListener('click', closeClickOutside);
+    if (vehicleTimer) clearTimeout(vehicleTimer);
+    if (conflictTimer) clearTimeout(conflictTimer);
   });
 </script>
 

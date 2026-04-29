@@ -309,6 +309,31 @@
               {{ t('propertyDetails.noStatusChanges') }}
             </div>
           </div>
+
+          <!-- Retirement reason section (visible only if property is RETIRADO) - FROM INCOMING -->
+          <div
+            v-if="property?.status === 'RETIRADO'"
+            class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4"
+          >
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                  {{ t('retirement.motivoLabel') }}
+                </p>
+                <p class="text-sm text-gray-800 dark:text-gray-200 font-semibold mt-1">
+                  {{ getMotivoLabel(property.motivoRetiro) }}
+                </p>
+              </div>
+              <div v-if="property.detalleRetiro">
+                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                  {{ t('retirement.detalleLabel') }}
+                </p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                  {{ property.detalleRetiro }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -477,6 +502,14 @@
     if (!props.isClientView) return true;
     return canManageReceipts.value;
   });
+
+  // Helper function to get motivo label (FROM INCOMING)
+  const getMotivoLabel = (motivo?: string) => {
+    if (!motivo) return '';
+    const key = `retirement.reason${motivo.charAt(0).toUpperCase() + motivo.slice(1).toLowerCase()}`;
+    const translation = t(key);
+    return translation !== key ? translation : motivo;
+  };
 
   const handleReincorporate = async () => {
     if (!props.property) return;

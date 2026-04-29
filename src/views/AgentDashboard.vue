@@ -106,6 +106,17 @@
           >
             <IconLucidePencil class="w-4 h-4" />
           </button>
+
+          <!-- Retirement button (FROM INCOMING) -->
+          <button
+            v-if="property.status !== 'RETIRADO' && property.status !== 'VENDIDO' && property.status !== 'ELIMINADO'"
+            @click="openRetirementModal(property)"
+            class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 transition-colors shadow-lg"
+            :title="t('retirement.title')"
+          >
+            <IconLucideArchive class="w-4 h-4" />
+          </button>
+
           <button
             v-if="isAdmin"
             @click="confirmDelete(property)"
@@ -125,6 +136,7 @@
         </template>
 
         <template #actions-bottom="{ property, statusHelpers }">
+          <!-- Reincorporate button (YOUR FEATURE) -->
           <fwb-button
             v-if="statusHelpers.isMinimalInfo.value && isAdmin"
             size="sm"
@@ -224,6 +236,16 @@
       @success="handleClosureSuccess"
     />
 
+    <!-- Retirement Modal (FROM INCOMING - reason tracking) -->
+    <RetirementModal
+      :show="showRetirementModal"
+      :property-id="propertyToRetire?.id || ''"
+      :property-title="propertyToRetire?.title || ''"
+      @close="showRetirementModal = false"
+      @success="handleRetirementSuccess"
+    />
+
+    <!-- Confirm Modal for Reincorporate (YOUR FEATURE) -->
     <ConfirmModal
       :show="showReincorporateConfirm"
       :title="t('propertyDetails.reincorporateConfirmTitle')"
@@ -247,6 +269,7 @@
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideTrash from '~icons/lucide/trash';
+  import IconLucideArchive from '~icons/lucide/archive';
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { ref, onMounted, computed, reactive } from 'vue';
   import { FwbButton, FwbModal, FwbInput } from 'flowbite-vue';
@@ -259,6 +282,7 @@
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
+  import RetirementModal from '@/components/properties/RetirementModal.vue';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import Pagination from '@/components/ui/Pagination.vue';
   import PropertyCard from '@/components/properties/PropertyCard.vue';
@@ -281,10 +305,12 @@
   const showCreateEditModal = ref(false);
   const showDeleteModal = ref(false);
   const showClosureModal = ref(false);
+  const showRetirementModal = ref(false);
   const showReincorporateConfirm = ref(false);
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
   const propertyToDelete = ref<Property | null>(null);
+  const propertyToRetire = ref<Property | null>(null);
   const formKey = ref(0);
   const showDetailsModal = ref(false);
   const selectedProp = ref<Property | null>(null);
@@ -453,6 +479,20 @@
     }
   };
 
+  const openRetirementModal = (property: Property) => {
+    propertyToRetire.value = property;
+    showRetirementModal.value = true;
+  };
+
+  const handleRetirementSuccess = async () => {
+    await load();
+    showRetirementModal.value = false;
+    propertyToRetire.value = null;
+    toast.message = t('retirement.success');
+    toast.type = 'success';
+    toast.show = true;
+  };
+
   const viewDetails = (p: Property) => {
     selectedProp.value = p;
     showDetailsModal.value = true;
@@ -495,7 +535,7 @@
       toast.type = 'success';
       toast.show = true;
       await load();
-    } catch (error: any) {
+    } catch (error: unknown) {
       const appError = handleApiError(error);
       toast.message = appError.message;
       toast.type = 'error';
@@ -515,6 +555,7 @@
       }
     }
   };
+
   onMounted(async () => {
     await load();
 
@@ -525,20 +566,18 @@
 
       editingProperty.value = {
         ...sourceData,
-        id: undefined, // Ensure it's a new property
+        id: undefined,
         title: sourceData.title + ' (COPY)',
-        status: 'DISPONIBLE', // Force reset status
+        status: 'DISPONIBLE',
       };
 
       isEditing.value = false;
       formKey.value++;
 
-      // Small delay to ensure reactivity cycle
       setTimeout(() => {
         showCreateEditModal.value = true;
       }, 100);
 
-      // Clear state to avoid reopening on refresh
       window.history.replaceState({ ...state, cloneProperty: null }, '');
     }
   });

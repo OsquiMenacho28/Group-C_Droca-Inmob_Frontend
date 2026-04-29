@@ -5,6 +5,7 @@ import LoginView from '@/views/LoginView.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import UsersView from '@/views/UsersView.vue';
 import AdminProperties from '@/views/AdminProperties.vue';
+import AdminVehiclesView from '@/views/AdminVehiclesView.vue';
 import AgentDashboard from '@/views/AgentDashboard.vue';
 import AgentClients from '@/views/AgentClients.vue';
 import AgentOwners from '@/views/AgentOwners.vue';
@@ -49,6 +50,12 @@ const routes = [
         path: 'admin/properties',
         name: 'AdminProperties',
         component: AdminProperties,
+        meta: { role: 'ADMIN' },
+      },
+      {
+        path: 'admin/vehicles',
+        name: 'AdminVehicles',
+        component: AdminVehiclesView,
         meta: { role: 'ADMIN' },
       },
       {

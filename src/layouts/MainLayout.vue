@@ -27,6 +27,11 @@
               matchPath="properties"
             />
             <NavLink
+              to="/dashboard/admin/vehicles"
+              :label="t('nav.vehicles')"
+              :icon="IconLucideCar"
+            />
+            <NavLink
               to="/dashboard/admin/audit"
               :label="t('nav.audit')"
               :icon="IconLucideShieldCheck"
@@ -179,6 +184,7 @@
   import IconLucideBuilding from '~icons/lucide/building';
   import IconLucideHeart from '~icons/lucide/heart';
   import IconLucideCalendar from '~icons/lucide/calendar';
+  import IconLucideCar from '~icons/lucide/car';
 
   const authStore = useAuthStore();
   const { t } = useI18n();
