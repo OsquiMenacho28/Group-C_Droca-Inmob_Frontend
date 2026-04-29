@@ -44,6 +44,8 @@ export interface Property {
   description?: string;
   latitude?: number;
   longitude?: number;
+  motivoRetiro?: string;
+  detalleRetiro?: string;
 }
 
 export interface PropertyFormPayload {

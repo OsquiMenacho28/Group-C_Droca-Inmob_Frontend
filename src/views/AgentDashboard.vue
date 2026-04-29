@@ -39,7 +39,7 @@
             <option value="">--</option>
             <option value="VENTA">{{ t('agentDashboard.sale') }}</option>
             <option value="ALQUILER">{{ t('agentDashboard.rent') }}</option>
-            <option value="ANTICRETICO">{{ t('agentDashboard.antichretico') }}</option>
+            <option value="ANTICRETICO">{{ t('agentDashboard.anticretic') }}</option>
           </select>
         </div>
         <div>
@@ -84,6 +84,15 @@
             :title="t('agentDashboard.editProperty')"
           >
             <IconLucidePencil class="w-4 h-4" />
+          </button>
+
+          <button
+            v-if="p.status !== 'RETIRADO' && p.status !== 'VENDIDO' && p.status !== 'ELIMINADO'"
+            @click="openRetirementModal(p)"
+            class="bg-orange-600 text-white rounded-full p-1.5 hover:bg-orange-700 transition-colors shadow-lg"
+            :title="t('retirement.title')"
+          >
+            <IconLucideArchive class="w-4 h-4" />
           </button>
 
           <button
@@ -262,6 +271,14 @@
       @success="handleClosureSuccess"
     />
 
+    <RetirementModal
+      :show="showRetirementModal"
+      :property-id="propertyToRetire?.id || ''"
+      :property-title="propertyToRetire?.title || ''"
+      @close="showRetirementModal = false"
+      @success="handleRetirementSuccess"
+    />
+
     <!-- Global Toast -->
     <AppToast
       :show="toast.show"
@@ -277,6 +294,7 @@
   import IconLucidePencil from '~icons/lucide/pencil';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideTrash from '~icons/lucide/trash';
+  import IconLucideArchive from '~icons/lucide/archive';
   import { ref, onMounted, computed, reactive } from 'vue';
   import { FwbCard, FwbButton, FwbModal, FwbInput, FwbBadge } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
@@ -288,6 +306,7 @@
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
+  import RetirementModal from '@/components/properties/RetirementModal.vue';
   import type { AxiosError } from 'axios';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
@@ -307,9 +326,11 @@
   const showCreateEditModal = ref(false);
   const showDeleteModal = ref(false);
   const showClosureModal = ref(false);
+  const showRetirementModal = ref(false);
   const isEditing = ref(false);
   const editingProperty = ref<Record<string, unknown> | null>(null);
   const propertyToDelete = ref<Property | null>(null);
+  const propertyToRetire = ref<Property | null>(null);
   const formKey = ref(0);
   const showDetailsModal = ref(false);
   const selectedProp = ref<Property | null>(null);
@@ -492,6 +513,20 @@
     }
   };
 
+  const openRetirementModal = (property: Property) => {
+    propertyToRetire.value = property;
+    showRetirementModal.value = true;
+  };
+
+  const handleRetirementSuccess = async () => {
+    await load();
+    showRetirementModal.value = false;
+    propertyToRetire.value = null;
+    toast.message = t('retirement.success');
+    toast.type = 'success';
+    toast.show = true;
+  };
+
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'DISPONIBLE':
@@ -502,6 +537,8 @@
         return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
       case 'EN_NEGOCIACION':
         return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400';
+      case 'RETIRADO':
+        return 'bg-gray-500 text-white dark:bg-gray-600 dark:text-gray-200';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
     }
@@ -535,6 +572,7 @@
       }
     }
   };
+  
   onMounted(async () => {
     await load();
 
