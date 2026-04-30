@@ -98,6 +98,10 @@ export interface Visit {
 
   /** Historial de reprogramaciones */
   reschedulingHistory?: ReschedulingHistory[];
+
+  resultado?: 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE';
+  observaciones?: string;
+  fechaRegistroResultado?: string; // ISO string
 }
 
 /**

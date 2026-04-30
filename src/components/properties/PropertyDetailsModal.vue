@@ -162,6 +162,51 @@
               </p>
             </div>
           </div>
+
+          <!-- ── Listado de visitas con resultados (para el propietario) ── -->
+          <div v-if="visits.length > 0" class="mt-6">
+            <h4 class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300">
+              <IconLucideCalendar class="w-4 h-4" />
+              {{ t('propertyDetails.visitsHistory') }}
+            </h4>
+            <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
+              <div
+                v-for="v in visits"
+                :key="v.id"
+                class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600"
+              >
+                <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                      {{ formatFecha(v.startTime) }}
+                    </p>
+                    <p class="text-sm font-semibold dark:text-white">
+                      {{ v.clientName || t('common.notSpecified') }}
+                    </p>
+                  </div>
+                  <span
+                    v-if="v.resultado"
+                    :class="resultadoBadgeClass(v.resultado)"
+                    class="text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap ml-2"
+                  >
+                    {{ getResultadoLabel(v.resultado) }}
+                  </span>
+                  <span
+                    v-else
+                    class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2"
+                  >
+                    {{ t('propertyDetails.noResult') }}
+                  </span>
+                </div>
+                <p v-if="v.observaciones" class="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                  {{ v.observaciones }}
+                </p>
+                <p v-if="v.fechaRegistroResultado" class="text-[10px] text-gray-400 mt-1">
+                  {{ t('visitResult.registeredOn') }} {{ formatFecha(v.fechaRegistroResultado) }}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div v-if="showSidebar" class="space-y-6">
@@ -381,13 +426,16 @@
   import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { personService } from '@/services/personService';
+  import { getVisitsForProperty } from '@/services/visitRequestService';
   import type { Property } from '@/types/property';
+  import type { Visit } from '@/types/reschedule';
   import IconLucideImage from '~icons/lucide/image';
   import IconLucideMail from '~icons/lucide/mail';
   import IconLucidePhone from '~icons/lucide/phone';
   import IconLucideMessageSquare from '~icons/lucide/message-square';
   import IconLucideUser from '~icons/lucide/user';
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
+  import IconLucideCalendar from '~icons/lucide/calendar';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import AppToast from '@/components/ui/AppToast.vue';
@@ -426,6 +474,8 @@
   const owner = ref<PersonOwner | null>(null);
   const loadingOwner = ref(false);
   const associatedOperation = ref<OperationData | null>(null);
+  const visits = ref<Visit[]>([]);
+  const loadingVisits = ref(false);
 
   // UI States
   const toast = reactive({
@@ -468,6 +518,19 @@
     }
   };
 
+  const loadVisits = async () => {
+    if (!props.property?.id) return;
+    loadingVisits.value = true;
+    try {
+      visits.value = await getVisitsForProperty(props.property.id);
+    } catch (error) {
+      console.error('Error loading visits for property:', error);
+      visits.value = [];
+    } finally {
+      loadingVisits.value = false;
+    }
+  };
+
   const isAdmin = computed(() => {
     const u = authStore.user as UserClaims | null;
     const roles = (u?.roles as string[]) || [];
@@ -503,12 +566,31 @@
     return canManageReceipts.value;
   });
 
-  // Helper function to get motivo label (FROM INCOMING)
+  // Helper function to get motivo label
   const getMotivoLabel = (motivo?: string) => {
     if (!motivo) return '';
     const key = `retirement.reason${motivo.charAt(0).toUpperCase() + motivo.slice(1).toLowerCase()}`;
     const translation = t(key);
     return translation !== key ? translation : motivo;
+  };
+
+  // Helper functions for resultado
+  const getResultadoLabel = (resultado: string): string => {
+    const map: Record<string, string> = {
+      INTERESADO: t('visitResult.interesado'),
+      NO_INTERESADO: t('visitResult.noInteresado'),
+      PENDIENTE: t('visitResult.pendiente')
+    };
+    return map[resultado] || resultado;
+  };
+
+  const resultadoBadgeClass = (resultado: string): string => {
+    const map: Record<string, string> = {
+      INTERESADO: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+      NO_INTERESADO: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+      PENDIENTE: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+    };
+    return map[resultado] || 'bg-gray-100 text-gray-800';
   };
 
   const handleReincorporate = async () => {
@@ -551,6 +633,7 @@
         localStatus.value = newProperty.status;
         loadOwnerInfo();
         loadOperationInfo();
+        loadVisits();
       }
     },
     { immediate: true }
@@ -653,6 +736,17 @@
       day: '2-digit',
       month: '2-digit',
       year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const formatFecha = (dateStr: string) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleString(getLocaleString(), {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
     });

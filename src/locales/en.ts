@@ -521,6 +521,19 @@ export const en = {
     visitTypeClientRequest: 'Client Request',
     actions: 'Actions',
   },
+  visitResult: {
+    title: 'Register visit outcome',
+    resultado: 'Outcome',
+    observaciones: 'Observations',
+    observacionesPlaceholder: 'Details about the client interest...',
+    register: 'Register outcome',
+    success: 'Outcome registered successfully',
+    error: 'Error registering outcome',
+    interesado: 'Interested',
+    noInteresado: 'Not interested',
+    pendiente: 'Pending',
+    registeredOn: 'Registered on'
+  },
   conflict: {
     title: 'Schedule conflict detected',
     scheduledVisits: 'Visits already scheduled at that time:',
@@ -664,6 +677,8 @@ export const en = {
     reincorporateSoldConfirmMessage:
       'This property is SOLD. To reincorporate it, the system will cancel the associated sold operation and then mark it as AVAILABLE. Do you want to cancel the operation and continue?',
     reincorporateSuccess: 'Property successfully reincorporated.',
+    visitsHistory: 'Visits History',
+    noResult: 'No outcome',
   },
   clientDetails: {
     profileBadge: 'Client Profile',
