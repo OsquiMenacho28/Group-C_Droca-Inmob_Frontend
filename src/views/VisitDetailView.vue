@@ -237,9 +237,7 @@
               </div>
               <div class="flex justify-end">
                 <FwbButton type="submit" :disabled="submittingResultado" color="blue">
-                  {{
-                    submittingResultado ? t('common.processing') : t('visitResult.register')
-                  }}
+                  {{ submittingResultado ? t('common.processing') : t('visitResult.register') }}
                 </FwbButton>
               </div>
             </div>
@@ -370,7 +368,10 @@
   import { useI18n } from 'vue-i18n';
   import { apiClient as api } from '@/api';
   import { cancelVisit } from '@/services/calendarService';
-  import { registerVisitResult, type RegisterResultadoPayload } from '@/services/visitResultService';
+  import {
+    registerVisitResult,
+    type RegisterResultadoPayload,
+  } from '@/services/visitResultService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { getLocaleString } from '@/locales/i18n';
   import { FwbButton, FwbModal, FwbAlert } from 'flowbite-vue';
@@ -418,7 +419,7 @@
   // ── State for resultado form ──────────────────────────────────────────────
   const resultadoForm = reactive({
     resultado: 'INTERESADO' as 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE',
-    observaciones: ''
+    observaciones: '',
   });
   const submittingResultado = ref(false);
 
@@ -503,7 +504,7 @@
     const map: Record<string, string> = {
       INTERESADO: t('visitResult.interesado'),
       NO_INTERESADO: t('visitResult.noInteresado'),
-      PENDIENTE: t('visitResult.pendiente')
+      PENDIENTE: t('visitResult.pendiente'),
     };
     return map[resultado] || resultado;
   }
