@@ -225,6 +225,7 @@
 
     const result = await reschedule(
       props.visit.id,
+      props.visit.agentId,
       newStartTimeISO,
       newEndTimeISO,
       notes.value.trim() || undefined

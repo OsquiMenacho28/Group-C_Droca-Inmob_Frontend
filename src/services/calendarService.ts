@@ -1,6 +1,7 @@
 import { apiClient as api } from '@/api';
 
 import { getLocaleString } from '@/locales/i18n';
+import type { Visit } from '@/types/reschedule';
 
 import type {
   CalendarResponse,
@@ -77,10 +78,7 @@ export async function getDayAgenda(agentId: string, day: string): Promise<Calend
   return response.data.data;
 }
 
-export async function cancelVisit(
-  visitId: string,
-  agentId: string
-): Promise<CalendarEventResponse> {
+export async function cancelVisit(visitId: string, agentId: string): Promise<Visit> {
   const response = await api.patch(
     `/visits/${visitId}/cancel`,
     {},

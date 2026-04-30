@@ -436,9 +436,8 @@
     loading.value = true;
     fetchError.value = null;
     try {
-      console.log('Visit ID: ' + (await api.get<Visit>(`/visits/${visitId}`)));
-      const { data } = await api.get<Visit>(`/visits/${visitId}`);
-      visit.value = data;
+      const response = await api.get<Visit>(`/visits/${visitId}`);
+      visit.value = response.data.data;
     } catch (e: unknown) {
       const axiosError = e as AxiosError<ApiErrorResponse>;
       fetchError.value = axiosError.response?.data?.error ?? t('visitDetail.loadError');
