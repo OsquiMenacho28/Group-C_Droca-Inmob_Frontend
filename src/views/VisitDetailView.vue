@@ -436,6 +436,7 @@
     loading.value = true;
     fetchError.value = null;
     try {
+      console.log('Visit ID: ' + (await api.get<Visit>(`/visits/${visitId}`)));
       const { data } = await api.get<Visit>(`/visits/${visitId}`);
       visit.value = data;
     } catch (e: unknown) {

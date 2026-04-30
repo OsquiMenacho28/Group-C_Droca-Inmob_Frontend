@@ -18,6 +18,20 @@
 
         <div v-if="operation" class="flex gap-2 flex-wrap">
           <template v-if="canManage && operation.status !== 'CANCELLED'">
+            <!-- Change Status -->
+            <!-- <FwbButton
+              color="light"
+              size="xs"
+              class="px-2.5! py-1! text-xs font-bold uppercase tracking-tight dark:bg-gray-700 dark:border-gray-600"
+              @click="openStatusModal"
+              :disabled="cancelling || updatingStatus"
+            >
+              <template #prefix>
+                <IconLucideRefreshCw class="w-3 h-3" />
+              </template>
+              {{ t('operations.changeOperationStatus') }}
+            </FwbButton> -->
+
             <FwbButton
               color="red"
               size="xs"
@@ -300,6 +314,57 @@
     </FwbModal>
 
     <!-- Confirm Cancel Modal -->
+    <!-- Change Status Modal -->
+    <FwbModal v-if="showStatusModal" @close="showStatusModal = false">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <IconLucideRefreshCw class="w-5 h-5 text-blue-600" />
+          <h3 class="text-base font-bold dark:text-white">
+            {{ t('operations.changeOperationStatus') }}
+          </h3>
+        </div>
+      </template>
+      <template #body>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          {{ t('operations.currentOperationStatus') }}:
+          <FwbBadge :type="statusBadgeType" size="xs" class="ml-1">
+            {{ t('status.' + operation!.status) }}
+          </FwbBadge>
+        </p>
+        <div class="grid grid-cols-1 gap-2">
+          <button
+            v-for="s in availableStatuses"
+            :key="s.value"
+            class="flex items-center gap-3 w-full px-4 py-3 rounded-lg border text-sm font-medium transition-colors text-left"
+            :class="[
+              selectedStatus === s.value
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200',
+            ]"
+            @click="selectedStatus = s.value"
+          >
+            <span :class="['w-2.5 h-2.5 rounded-full shrink-0', s.dot]"></span>
+            {{ t('status.' + s.value) }}
+          </button>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2 w-full">
+          <FwbButton color="alternative" size="sm" @click="showStatusModal = false">
+            {{ t('common.cancel') }}
+          </FwbButton>
+          <FwbButton
+            color="blue"
+            size="sm"
+            :disabled="!selectedStatus || updatingStatus"
+            @click="executeStatusUpdate"
+          >
+            {{ updatingStatus ? t('common.processing') : t('common.confirm') }}
+          </FwbButton>
+        </div>
+      </template>
+    </FwbModal>
+
     <ConfirmModal
       :show="showConfirmCancel"
       :title="t('common.areYouSure')"
@@ -334,6 +399,7 @@
   import IconLucideBan from '~icons/lucide/ban';
   import IconLucidePlusCircle from '~icons/lucide/plus-circle';
   import IconLucideHistory from '~icons/lucide/history';
+  import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { ref, computed, onMounted, reactive } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { FwbBadge, FwbAlert, FwbButton, FwbSpinner, FwbModal } from 'flowbite-vue';
@@ -362,10 +428,13 @@
   const loadingProperty = ref(false);
   const operationError = ref<string | null>(null);
   const cancelling = ref(false);
+  const updatingStatus = ref(false);
 
   // UI States
   const showConfirmCancel = ref(false);
   const showStatusHistory = ref(false);
+  const showStatusModal = ref(false);
+  const selectedStatus = ref<string | null>(null);
   const cancelMode = ref<'ONLY' | 'RECREATE'>('ONLY');
   const toast = reactive({
     show: false,
@@ -420,6 +489,42 @@
   const triggerCancel = (mode: 'ONLY' | 'RECREATE') => {
     cancelMode.value = mode;
     showConfirmCancel.value = true;
+  };
+
+  const ALL_STATUSES = ['ACTIVE', 'PENDING', 'CLOSED'] as const;
+
+  const availableStatuses = computed(() => {
+    const current = operation.value?.status?.toUpperCase() || '';
+    const dotMap: Record<string, string> = {
+      ACTIVE: 'bg-green-500',
+      PENDING: 'bg-yellow-500',
+      CLOSED: 'bg-gray-500',
+    };
+    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({ value: s, dot: dotMap[s] }));
+  });
+
+  const openStatusModal = () => {
+    selectedStatus.value = null;
+    showStatusModal.value = true;
+  };
+
+  const executeStatusUpdate = async () => {
+    if (!selectedStatus.value) return;
+    updatingStatus.value = true;
+    try {
+      await api.patch(`/operations/${operationId}/status`, { status: selectedStatus.value });
+      showStatusModal.value = false;
+      toast.message = t('operations.operationStatusUpdated');
+      toast.type = 'success';
+      toast.show = true;
+      await loadOperation();
+    } catch (err: unknown) {
+      toast.message = handleApiError(err).message;
+      toast.type = 'error';
+      toast.show = true;
+    } finally {
+      updatingStatus.value = false;
+    }
   };
 
   const handleCancelExecution = async () => {

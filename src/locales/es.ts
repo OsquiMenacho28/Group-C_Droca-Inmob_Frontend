@@ -120,6 +120,9 @@ export const es = {
     operationFallback: 'Operación #',
     property: 'Propiedad',
     notSpecified: '—',
+    changeOperationStatus: 'Cambiar Estado de Operación',
+    operationStatusUpdated: 'Estado de Operación actualizado correctamente',
+    currentOperationStatus: 'Estado actual de Operación',
   },
   users: {
     title: 'Gestión de usuarios',

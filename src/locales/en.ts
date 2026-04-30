@@ -120,6 +120,9 @@ export const en = {
     operationFallback: 'Operation #',
     property: 'Property',
     notSpecified: '—',
+    changeOperationStatus: 'Change Operation Status',
+    operationStatusUpdated: 'Operation status updated successfully',
+    currentOperationStatus: 'Current Operation Status',
   },
   users: {
     title: 'User Management',
