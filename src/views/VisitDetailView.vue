@@ -1,14 +1,14 @@
+<!--
+  VisitDetailView.vue
+  Vista de detalle de una visita individual.
+
+  Integrar todos los componentes de reprogramación.
+  Muestra RescheduleButton (solo si CANCELADA) y RescheduledVisitLink.
+  Muestra CancelVisit y ReassignButton (solo si no CANCELADA y es propia).
+
+  Ruta: /visits/:id
+-->
 <template>
-  <!--
-    VisitDetailView.vue
-    Vista de detalle de una visita individual.
-
-    Integrar todos los componentes de reprogramación.
-    Muestra RescheduleButton (solo si CANCELADA) y RescheduledVisitLink.
-    Muestra CancelVisit y ReassignButton (solo si no CANCELADA y es propia).
-
-    Ruta: /visits/:id
-  -->
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 transition-colors duration-300">
     <div class="max-w-3xl mx-auto space-y-6">
       <!-- Back link -->
@@ -200,6 +200,76 @@
           </div>
         </div>
 
+        <!-- ── Registrar resultado (solo para visitas PROGRAMADAS sin resultado) ── -->
+        <div
+          v-if="visit.status === 'SCHEDULED' && !visit.resultado"
+          class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 space-y-4 transition-colors"
+        >
+          <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            {{ t('visitResult.title') }}
+          </h2>
+          <form @submit.prevent="submitResultado">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {{ t('visitResult.resultado') }} *
+                </label>
+                <select
+                  v-model="resultadoForm.resultado"
+                  required
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="INTERESADO">{{ t('visitResult.interesado') }}</option>
+                  <option value="NO_INTERESADO">{{ t('visitResult.noInteresado') }}</option>
+                  <option value="PENDIENTE">{{ t('visitResult.pendiente') }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {{ t('visitResult.observaciones') }}
+                </label>
+                <textarea
+                  v-model="resultadoForm.observaciones"
+                  rows="3"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  :placeholder="t('visitResult.observacionesPlaceholder')"
+                />
+              </div>
+              <div class="flex justify-end">
+                <FwbButton type="submit" :disabled="submittingResultado" color="blue">
+                  {{
+                    submittingResultado ? t('common.processing') : t('visitResult.register')
+                  }}
+                </FwbButton>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- ── Resultado ya registrado (modo lectura) ── -->
+        <div
+          v-if="visit.resultado"
+          class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-2 transition-colors"
+        >
+          <div class="flex items-start gap-3">
+            <IconLucideClipboardCheck class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+            <div class="flex-1">
+              <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                {{ t('visitResult.resultado') }}
+              </p>
+              <p class="text-base font-semibold text-gray-800 dark:text-white">
+                {{ getResultadoLabel(visit.resultado) }}
+              </p>
+              <p v-if="visit.observaciones" class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                {{ visit.observaciones }}
+              </p>
+              <p v-if="visit.fechaRegistroResultado" class="mt-1 text-xs text-gray-400">
+                {{ t('visitResult.registeredOn') }} {{ formatFecha(visit.fechaRegistroResultado) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- ── Origin visit banner (if rescheduled from another) ──────── -->
         <div
           v-if="visit.originVisitId"
@@ -295,11 +365,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { apiClient as api } from '@/api';
   import { cancelVisit } from '@/services/calendarService';
+  import { registerVisitResult, type RegisterResultadoPayload } from '@/services/visitResultService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { getLocaleString } from '@/locales/i18n';
   import { FwbButton, FwbModal, FwbAlert } from 'flowbite-vue';
@@ -319,6 +390,7 @@
   import IconLucideArrowLeft from '~icons/lucide/arrow-left';
   import IconLucideXCircle from '~icons/lucide/x-circle';
   import IconLucideArrowUpDown from '~icons/lucide/arrow-up-down';
+  import IconLucideClipboardCheck from '~icons/lucide/clipboard-check';
 
   const { t } = useI18n();
 
@@ -342,6 +414,13 @@
   const showCancelConfirm = ref(false);
   const alertMessage = ref('');
   const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
+
+  // ── State for resultado form ──────────────────────────────────────────────
+  const resultadoForm = reactive({
+    resultado: 'INTERESADO' as 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE',
+    observaciones: ''
+  });
+  const submittingResultado = ref(false);
 
   interface ApiErrorResponse {
     error?: string;
@@ -395,6 +474,40 @@
     loadVisit();
   }
 
+  // ── Submit resultado ──────────────────────────────────────────────────────
+  async function submitResultado() {
+    if (!visit.value) return;
+    submittingResultado.value = true;
+    try {
+      const updated = await registerVisitResult(
+        visit.value.id,
+        resultadoForm as RegisterResultadoPayload,
+        myAgentId.value
+      );
+      // Actualizar la visita con los nuevos datos
+      visit.value = { ...visit.value, ...updated };
+      // Limpiar formulario
+      resultadoForm.resultado = 'INTERESADO';
+      resultadoForm.observaciones = '';
+      showAlertToast(t('visitResult.success'), 'success');
+    } catch (e) {
+      console.error('Error registering resultado:', e);
+      showAlertToast(t('visitResult.error'), 'danger');
+    } finally {
+      submittingResultado.value = false;
+    }
+  }
+
+  // ── Helper para mostrar etiqueta del resultado ───────────────────────────
+  function getResultadoLabel(resultado: string): string {
+    const map: Record<string, string> = {
+      INTERESADO: t('visitResult.interesado'),
+      NO_INTERESADO: t('visitResult.noInteresado'),
+      PENDIENTE: t('visitResult.pendiente')
+    };
+    return map[resultado] || resultado;
+  }
+
   // ── Alert toast ───────────────────────────────────────────────────────────
   function showAlertToast(msg: string, type: 'success' | 'danger' | 'warning' | 'info' = 'danger') {
     alertMessage.value = msg;
@@ -433,6 +546,17 @@
       weekday: 'long',
       day: '2-digit',
       month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  function formatFecha(iso?: string): string {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString(getLocaleString(), {
+      day: '2-digit',
+      month: 'short',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',

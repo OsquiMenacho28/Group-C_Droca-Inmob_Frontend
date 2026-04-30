@@ -521,6 +521,19 @@ export const es = {
     visitTypeClientRequest: 'Solicitud de Cliente',
     actions: 'Acciones',
   },
+  visitResult: {
+    title: 'Registrar resultado de la visita',
+    resultado: 'Resultado',
+    observaciones: 'Observaciones',
+    observacionesPlaceholder: 'Detalles sobre el interés del cliente...',
+    register: 'Registrar resultado',
+    success: 'Resultado registrado exitosamente',
+    error: 'Error al registrar el resultado',
+    interesado: 'Interesado',
+    noInteresado: 'No interesado',
+    pendiente: 'Pendiente',
+    registeredOn: 'Registrado el'
+  },
   conflict: {
     title: 'Conflicto de horario detectado',
     scheduledVisits: 'Visitas ya programadas en ese horario:',
@@ -665,6 +678,8 @@ export const es = {
     reincorporateSoldConfirmMessage:
       'Este inmueble está VENDIDO. Para reincorporarlo, el sistema cancelará la operación vendida asociada y luego lo marcará como DISPONIBLE. ¿Deseas cancelar la operación y continuar?',
     reincorporateSuccess: 'Inmueble reincorporado exitosamente.',
+    visitsHistory: 'Historial de visitas',
+    noResult: 'Sin resultado',
   },
   clientDetails: {
     profileBadge: 'Perfil de Cliente',
