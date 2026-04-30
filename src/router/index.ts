@@ -154,6 +154,12 @@ const routes = [
         component: VisitDetailView,
         meta: { role: 'AGENT' },
       },
+      {
+        path: 'owner/notifications',
+        name: 'OwnerNotifications',
+        component: () => import('@/views/OwnerNotificationsView.vue'),
+        meta: { role: 'OWNER' },
+      }
     ],
   },
 ];

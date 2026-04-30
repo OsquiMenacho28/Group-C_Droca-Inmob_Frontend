@@ -1279,4 +1279,11 @@ export const en = {
     reasonDecisionPropietario: 'Owner decision',
     reasonOtro: 'Other',
   },
+  ownerNotifications: {
+    title: 'My Notifications',
+    subtitle: 'Notification history',
+    empty: 'No notifications',
+    totalUnread: '{count} unread',
+    markAllRead: 'Mark all as read',
+  }
 };
