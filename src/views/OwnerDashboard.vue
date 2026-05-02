@@ -75,7 +75,6 @@
 
       <fwb-tab name="notifications" :title="t('ownerDashboard.notificationsTab')">
         <div class="mt-6">
-          <!-- Lista de notificaciones -->
           <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
             <div class="flex justify-between items-center mb-4">
               <div class="text-sm text-gray-500 dark:text-gray-400">
@@ -104,19 +103,20 @@
                 :key="notif.id"
                 @click="markAsRead(notif.id)"
                 class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 cursor-pointer transition hover:shadow-md"
-                :class="{ 'opacity-60': isRead(notif.id) }"
+                :class="{ 'opacity-60': notif.leida }"
               >
                 <div class="flex justify-between items-start">
                   <div class="flex-1">
                     <div class="flex items-center gap-2 text-xs text-gray-400 mb-1">
-                      <span>{{ formatDate(notif.createdAt) }}</span>
-                      <span v-if="notif.sentAt" class="text-green-500">✓ {{ t('common.sent') }}</span>
-                      <span v-else-if="notif.status === 'FAILED'" class="text-red-500">✗ {{ t('common.failed') }}</span>
+                      <span>{{ formatDate(notif.fechaEnvio) }}</span>
+                      <span v-if="notif.estado === 'ENVIADA'" class="text-green-500">✓ {{ t('common.sent') }}</span>
+                      <span v-else-if="notif.estado === 'FALLIDA'" class="text-red-500">✗ {{ t('common.failed') }}</span>
+                      <span v-else class="text-yellow-500">⏳ {{ t('common.pending') }}</span>
                     </div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ notif.subject }}</h4>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">{{ notif.content }}</p>
+                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ notif.tipo }}</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">{{ notif.contenido }}</p>
                   </div>
-                  <div v-if="!isRead(notif.id)" class="ml-3">
+                  <div v-if="!notif.leida" class="ml-3">
                     <div class="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></div>
                   </div>
                 </div>
@@ -161,7 +161,7 @@
   import { useI18n } from 'vue-i18n';
   import IconLucideEye from '~icons/lucide/eye';
   import IconLucideImage from '~icons/lucide/image';
-import { getLocaleString } from '@/locales/i18n';
+  import { getLocaleString } from '@/locales/i18n';
 
   const { t } = useI18n();
   const authStore = useAuthStore();
@@ -187,7 +187,6 @@ import { getLocaleString } from '@/locales/i18n';
     markAsRead,
     markAllAsRead,
     fetchNotifications,
-    isRead,
   } = useOwnerNotifications(ownerId.value);
 
   interface PropertyWithVisits extends Property {

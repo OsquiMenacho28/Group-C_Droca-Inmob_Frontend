@@ -2,8 +2,6 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { notificationService } from '@/services/notificationService';
 import type { NotificationHistoryResponse } from '@/types/notification';
 
-const STORAGE_KEY = 'owner_notifications_read';
-
 export function useOwnerNotifications(ownerId: string) {
   const list = ref<NotificationHistoryResponse[]>([]);
   const total = ref(0);
@@ -11,35 +9,9 @@ export function useOwnerNotifications(ownerId: string) {
   const page = ref(0);
   const pageSize = ref(10);
   const totalPages = ref(0);
-  const readIds = ref<Set<string>>(new Set());
 
-  // Cargar IDs leídos desde localStorage
-  const loadReadIds = () => {
-    const stored = localStorage.getItem(`${STORAGE_KEY}_${ownerId}`);
-    if (stored) {
-      readIds.value = new Set(JSON.parse(stored));
-    }
-  };
-
-  const saveReadIds = () => {
-    localStorage.setItem(`${STORAGE_KEY}_${ownerId}`, JSON.stringify([...readIds.value]));
-  };
-
-  const markAsRead = (id: string) => {
-    if (!readIds.value.has(id)) {
-      readIds.value.add(id);
-      saveReadIds();
-    }
-  };
-
-  const markAllAsRead = () => {
-    list.value.forEach(n => readIds.value.add(n.id));
-    saveReadIds();
-  };
-
-  const isRead = (id: string) => readIds.value.has(id);
-
-  const unreadCount = computed(() => list.value.filter(n => !readIds.value.has(n.id)).length);
+  // El contador de no leídas se calcula directamente desde los datos
+  const unreadCount = computed(() => list.value.filter(n => !n.leida).length);
 
   const fetchNotifications = async () => {
     if (!ownerId) return;
@@ -49,27 +21,39 @@ export function useOwnerNotifications(ownerId: string) {
       list.value = res.data;
       total.value = res.total;
       totalPages.value = Math.ceil(total.value / pageSize.value);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     } finally {
       loading.value = false;
     }
   };
 
-  // Sincronizar el contador sin recargar toda la lista (para el badge)
-  const syncUnreadCount = () => {
-    loadReadIds();
-    // El contador se recalculará automáticamente cuando cambie readIds
+  const markAsRead = async (id: string) => {
+    const notif = list.value.find(n => n.id === id);
+    if (!notif || notif.leida) return;
+
+    try {
+      await notificationService.markAsRead(id);
+      // Actualizar estado local
+      notif.leida = true;
+    } catch (error) {
+      console.error('Error marking as read:', error);
+    }
   };
 
-  // Recargar cuando cambie ownerId o paginación
-  watch([() => ownerId, page, pageSize], () => {
-    if (ownerId) {
-      loadReadIds();
-      fetchNotifications();
+  const markAllAsRead = async () => {
+    const unread = list.value.filter(n => !n.leida);
+    for (const n of unread) {
+      await markAsRead(n.id);
     }
-  }, { immediate: true });
+  };
 
-  // También podemos exponer un método para recargar forzadamente
   const refresh = fetchNotifications;
+
+  // Cargar cuando cambia ownerId o paginación
+  watch([() => ownerId, page, pageSize], () => {
+    if (ownerId) fetchNotifications();
+  }, { immediate: true });
 
   return {
     list,
@@ -81,8 +65,6 @@ export function useOwnerNotifications(ownerId: string) {
     unreadCount,
     markAsRead,
     markAllAsRead,
-    isRead,
     fetchNotifications: refresh,
-    syncUnreadCount,   // ← exportar para usarlo en MainLayout
   };
 }

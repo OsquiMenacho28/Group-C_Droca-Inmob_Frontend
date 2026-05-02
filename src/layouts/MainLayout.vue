@@ -212,27 +212,7 @@
   const user = computed(() => authStore.user as UserClaims | null);
   const ownerId = computed(() => (user.value?.userId || user.value?.sub || '') as string);
 
-  const { unreadCount, syncUnreadCount } = useOwnerNotifications(ownerId.value);
-
-  // Forzar sincronización cuando se muestre el badge
-  if (ownerId.value) {
-    syncUnreadCount();
-  }
-
-  // Escuchar cambios en localStorage (para actualizar badge en tiempo real)
-  const handleStorageChange = (e: StorageEvent) => {
-    if (e.key === `owner_notifications_read_${ownerId.value}`) {
-      syncUnreadCount();
-    }
-  };
-
-  onMounted(() => {
-    window.addEventListener('storage', handleStorageChange);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('storage', handleStorageChange);
-  });
+  const { unreadCount } = useOwnerNotifications(ownerId.value);
 
   // Funciones auxiliares
   const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');
