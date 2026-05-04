@@ -109,4 +109,8 @@ export const userService = {
     const response = await apiClientV2.get<ApiResponse<unknown>>('/example-resource');
     return response.data.data;
   },
+
+  async savePreferences(userId: string, payload: any): Promise<ApiResponse<User>> {
+    return (await api.put(`/persons/${userId}/preferencias`, payload)).data;
+  },
 };

@@ -22,6 +22,10 @@ export const baseUserSchema = z.object({
   phone: z.string().min(1, i18n.global.t('validation.phoneRequired')),
   birthDate: z.string().min(1, i18n.global.t('validation.birthDateRequired')),
   userType: z.enum(['ADMIN', 'EMPLOYEE', 'OWNER', 'INTERESTED_CLIENT']),
+  preferredZones: z.array(z.string()).optional(),
+  minRooms: z.number().nullable().optional(),
+  maxRooms: z.number().nullable().optional(),
+  maxPrice: z.number().nullable().optional(),
 });
 
 /**
