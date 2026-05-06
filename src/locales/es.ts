@@ -1293,4 +1293,11 @@ export const es = {
     reasonDecisionPropietario: 'Decisión del propietario',
     reasonOtro: 'Otro',
   },
+  ownerNotifications: {
+    title: 'Mis Notificaciones',
+    subtitle: 'Historial de notificaciones recibidas',
+    empty: 'No hay notificaciones',
+    totalUnread: '{count} no leídas',
+    markAllRead: 'Marcar todas como leídas',
+  }
 };
