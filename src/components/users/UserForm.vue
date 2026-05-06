@@ -200,47 +200,102 @@
       v-if="(!clientOnly && userType === 'INTERESTED_CLIENT') || clientOnly"
       class="space-y-4 border-t pt-4"
     >
-      <h3 class="text-md font-semibold">{{ t('userForm.clientPrefs') }}</h3>
+      <h3 class="text-md font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+        {{ t('clientDetails.searchPreferences') }}
+      </h3>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
+        <div class="col-span-2">
           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            {{ t('users.form.contactMethod') }}
+            {{ t('userForm.preferredZones') || 'Zonas de interés (Presiona Enter para añadir)' }}
           </label>
-          <select
-            v-model="preferredContactMethod"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          >
-            <option value="EMAIL">{{ t('userForm.email') }}</option>
-            <option value="PHONE">{{ t('userForm.phone') }}</option>
-            <option value="WHATSAPP">{{ t('userForm.whatsApp') }}</option>
-          </select>
+          <div class="relative flex gap-2">
+            <div class="flex-1">
+              <fwb-input
+                v-model="newZone"
+                :placeholder="t('userForm.zonePlaceholder') || 'Ej: Equipetrol, Sopocachi...'"
+                @keydown.enter.prevent="addZone"
+              />
+            </div>
+            <fwb-button size="xs" color="alternative" @click="addZone">
+              {{ t('common.add') || 'Añadir' }}
+            </fwb-button>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <fwb-badge
+              v-for="zone in preferredZonesList"
+              :key="zone"
+              type="indigo"
+              class="pl-3 py-1"
+            >
+              {{ zone }}
+              <button @click="removeZone(zone)" class="ml-2 text-indigo-900 hover:text-red-600">
+                ×
+              </button>
+            </fwb-badge>
+          </div>
         </div>
-        <fwb-input v-model="budget" type="number" :label="t('users.view.budget')" />
-        <fwb-input
-          v-model="preferredZone"
-          :label="t('users.view.preferredZone')"
-          :placeholder="t('users.view.preferredZone')"
-        />
+
+        <div>
+          <fwb-input
+            v-model.number="minRooms"
+            type="number"
+            :label="t('userForm.minRooms') || 'Nro. Cuartos Mínimo'"
+            min="0"
+            :class="{ 'border-blue-500 ring-2': isFieldModified('minRooms') }"
+            @blur="handleMinRoomsBlur"
+          />
+          <p v-if="isFieldModified('minRooms')" class="text-xs text-blue-600 mt-1">
+            {{ t('userForm.modifyingPreferences') }}
+          </p>
+        </div>
+
+        <div>
+          <fwb-input
+            v-model.number="maxRooms"
+            type="number"
+            :label="t('userForm.maxRooms') || 'Nro. Cuartos Máximo'"
+            min="0"
+            :class="{ 'border-blue-500 ring-2': isFieldModified('maxRooms') }"
+            @blur="handleMaxRoomsBlur"
+          />
+          <p v-if="isFieldModified('maxRooms')" class="text-xs text-blue-600 mt-1">
+            {{ t('userForm.modifyingPreferences') }}
+          </p>
+        </div>
+
+        <div>
+          <fwb-input
+            v-model="budget"
+            type="number"
+            :label="t('users.view.budget') + ' ($ Max)'"
+            :class="{ 'border-blue-500 ring-2': isFieldModified('budget') }"
+            @blur="handleBudgetBlur"
+          />
+          <p v-if="isFieldModified('budget')" class="text-xs text-blue-600 mt-1">
+            {{ t('userForm.modifyingBudget') }}
+          </p>
+        </div>
+
         <div>
           <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             {{ t('users.form.propertyType') }}
           </label>
           <select
             v-model="preferredPropertyType"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            :class="{ 'border-blue-500 ring-2': isFieldModified('preferredPropertyType') }"
+            @change="handlePropertyTypeChange"
           >
             <option value="">{{ t('userForm.noPreference') }}</option>
             <option value="APARTMENT">{{ t('propertyType.apartment') }}</option>
             <option value="HOUSE">{{ t('propertyType.house') }}</option>
             <option value="COMMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
           </select>
+          <p v-if="isFieldModified('preferredPropertyType')" class="text-xs text-blue-600 mt-1">
+            {{ t('userForm.modifyingPreferences') }}
+          </p>
         </div>
-        <fwb-input
-          v-model="preferredRooms"
-          type="number"
-          :label="t('users.view.rooms')"
-          :placeholder="t('users.view.rooms')"
-        />
       </div>
     </div>
 
@@ -259,7 +314,7 @@
   import { ref, watch, computed, onMounted } from 'vue';
   import { useForm } from 'vee-validate';
   import { toTypedSchema } from '@vee-validate/zod';
-  import { FwbInput, FwbButton } from 'flowbite-vue';
+  import { FwbInput, FwbButton, FwbBadge } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
 
   import type { UserFormPayload, User } from '@/types/user';
@@ -282,6 +337,12 @@
   const authStore = useAuthStore();
   const currentUser = computed(() => authStore.user as UserClaims | null);
   const isAdmin = computed(() => (currentUser.value?.roles as string[])?.includes('ADMIN'));
+
+  // Zonas y rangos
+  const newZone = ref('');
+  const preferredZonesList = ref<string[]>([]);
+  const minRooms = ref<number | null>(null);
+  const maxRooms = ref<number | null>(null);
 
   const allUsers = ref<User[]>([]);
   const activeAgents = computed(() =>
@@ -399,6 +460,19 @@
 
   const originalValues = ref<UserFormValues>(mapInitialData());
 
+  // Sincronizar zonas y rangos desde initialData
+  const syncPreferencesFromInitialData = (data: Record<string, unknown>) => {
+    if (data.preferredZones && Array.isArray(data.preferredZones)) {
+      preferredZonesList.value = [...data.preferredZones];
+    }
+    if (data.minRooms !== undefined && data.minRooms !== null) {
+      minRooms.value = Number(data.minRooms);
+    }
+    if (data.maxRooms !== undefined && data.maxRooms !== null) {
+      maxRooms.value = Number(data.maxRooms);
+    }
+  };
+
   watch(
     () => props.ownerOnly,
     (val) => {
@@ -419,6 +493,20 @@
     { immediate: true }
   );
 
+  const addZone = () => {
+    const val = newZone.value.trim();
+    if (val && !preferredZonesList.value.includes(val)) {
+      preferredZonesList.value.push(val);
+      modifiedFields.value.add('preferredZones');
+      newZone.value = '';
+    }
+  };
+
+  const removeZone = (zone: string) => {
+    preferredZonesList.value = preferredZonesList.value.filter((z) => z !== zone);
+    modifiedFields.value.add('preferredZones');
+  };
+
   const handleFirstNameBlur = () => firstNameAttrs.value.onBlur?.();
   const handleLastNameBlur = () => lastNameAttrs.value.onBlur?.();
   const handlePhoneBlur = () => phoneAttrs.value.onBlur?.();
@@ -426,6 +514,21 @@
   const handleDepartmentBlur = () => departmentAttrs.value.onBlur?.();
   const handlePositionBlur = () => positionAttrs.value.onBlur?.();
   const handleTaxIdBlur = () => taxIdAttrs.value.onBlur?.();
+  const handleMinRoomsBlur = () => {
+    if (minRooms.value !== null && minRooms.value < 0) minRooms.value = 0;
+    modifiedFields.value.add('minRooms');
+  };
+  const handleMaxRoomsBlur = () => {
+    if (maxRooms.value !== null && maxRooms.value < 0) maxRooms.value = 0;
+    modifiedFields.value.add('maxRooms');
+  };
+  const handleBudgetBlur = () => {
+    if (budget.value && Number(budget.value) < 0) budget.value = '0';
+    modifiedFields.value.add('budget');
+  };
+  const handlePropertyTypeChange = () => {
+    modifiedFields.value.add('preferredPropertyType');
+  };
 
   const handleEmailInput = () => {
     const emailValue = email.value || '';
@@ -485,6 +588,9 @@
       resetForm({ values: mapped });
       emailFormatError.value = '';
       emailDuplicateError.value = '';
+
+      // Sincronizar zonas y rangos
+      syncPreferencesFromInitialData(newData);
     },
     { deep: true, immediate: true }
   );
@@ -699,13 +805,30 @@
         payload.assignedAgentId = formValues.assignedAgentId || null;
       }
 
+      // Preferencias del cliente
+      if (modifiedFields.value.has('preferredZones')) {
+        payload.preferredZones = preferredZonesList.value;
+      }
+
+      if (modifiedFields.value.has('minRooms')) {
+        payload.minRooms = minRooms.value;
+      }
+
+      if (modifiedFields.value.has('maxRooms')) {
+        payload.maxRooms = maxRooms.value;
+      }
+
       if (modifiedFields.value.has('preferredContactMethod'))
         payload.preferredContactMethod = formValues.preferredContactMethod;
+
       if (modifiedFields.value.has('budget')) payload.budget = formValues.budget;
+
       if (modifiedFields.value.has('preferredZone'))
         payload.preferredZone = formValues.preferredZone;
+
       if (modifiedFields.value.has('preferredPropertyType'))
         payload.preferredPropertyType = formValues.preferredPropertyType;
+
       if (modifiedFields.value.has('preferredRooms'))
         payload.preferredRooms = formValues.preferredRooms
           ? Number(formValues.preferredRooms)
@@ -729,6 +852,9 @@
       };
 
       if (props.clientOnly) {
+        if (preferredZonesList.value.length > 0) payload.preferredZones = preferredZonesList.value;
+        if (minRooms.value !== null) payload.minRooms = minRooms.value;
+        if (maxRooms.value !== null) payload.maxRooms = maxRooms.value;
         if (formValues.preferredContactMethod)
           payload.preferredContactMethod = formValues.preferredContactMethod;
         if (formValues.budget) payload.budget = formValues.budget;
@@ -744,6 +870,10 @@
         } else if (formValues.userType === 'OWNER') {
           payload.taxId = formValues.taxId?.trim();
         } else if (formValues.userType === 'INTERESTED_CLIENT') {
+          if (preferredZonesList.value.length > 0)
+            payload.preferredZones = preferredZonesList.value;
+          if (minRooms.value !== null) payload.minRooms = minRooms.value;
+          if (maxRooms.value !== null) payload.maxRooms = maxRooms.value;
           if (formValues.preferredContactMethod)
             payload.preferredContactMethod = formValues.preferredContactMethod;
           if (formValues.budget) payload.budget = formValues.budget;
@@ -761,6 +891,7 @@
     }
 
     if (props.isEditing && Object.keys(payload).length === 0) {
+      // No hay cambios
     }
 
     emit('submit', payload);

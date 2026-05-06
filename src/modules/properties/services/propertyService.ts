@@ -304,6 +304,13 @@ export const propertyService = {
       return null;
     }
   },
+
+  async getSuggestedProperties(buscadorId: string): Promise<Property[]> {
+    const response = await api.get(`/properties/filtrar`, {
+      params: { buscador_id: buscadorId },
+    });
+    return response.data.data;
+  },
 };
 
 export { propertyService as default };
