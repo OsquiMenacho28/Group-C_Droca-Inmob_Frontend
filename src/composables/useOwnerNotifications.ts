@@ -11,7 +11,7 @@ export function useOwnerNotifications(ownerId: string) {
   const totalPages = ref(0);
 
   // El contador de no leídas se calcula directamente desde los datos
-  const unreadCount = computed(() => list.value.filter(n => !n.leida).length);
+  const unreadCount = computed(() => list.value.filter((n) => !n.leida).length);
 
   const fetchNotifications = async () => {
     if (!ownerId) return;
@@ -29,7 +29,7 @@ export function useOwnerNotifications(ownerId: string) {
   };
 
   const markAsRead = async (id: string) => {
-    const notif = list.value.find(n => n.id === id);
+    const notif = list.value.find((n) => n.id === id);
     if (!notif || notif.leida) return;
 
     try {
@@ -42,7 +42,7 @@ export function useOwnerNotifications(ownerId: string) {
   };
 
   const markAllAsRead = async () => {
-    const unread = list.value.filter(n => !n.leida);
+    const unread = list.value.filter((n) => !n.leida);
     for (const n of unread) {
       await markAsRead(n.id);
     }
@@ -51,9 +51,13 @@ export function useOwnerNotifications(ownerId: string) {
   const refresh = fetchNotifications;
 
   // Cargar cuando cambia ownerId o paginación
-  watch([() => ownerId, page, pageSize], () => {
-    if (ownerId) fetchNotifications();
-  }, { immediate: true });
+  watch(
+    [() => ownerId, page, pageSize],
+    () => {
+      if (ownerId) fetchNotifications();
+    },
+    { immediate: true }
+  );
 
   return {
     list,

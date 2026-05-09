@@ -11,7 +11,7 @@ export async function registerVisitResult(
   agentId: string
 ) {
   const response = await api.patch(`/visits/${visitId}/resultado`, payload, {
-    headers: { 'X-Agent-Id': agentId }
+    headers: { 'X-Agent-Id': agentId },
   });
   return response.data.data; // Devuelve la visita actualizada
 }

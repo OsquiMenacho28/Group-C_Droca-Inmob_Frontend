@@ -79,7 +79,11 @@
           <!-- Owner Links -->
           <template v-if="isOwner">
             <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
-            <NavLink to="/dashboard/owner/notifications" :label="t('nav.notifications')" :icon="IconLucideBell" />
+            <NavLink
+              to="/dashboard/owner/notifications"
+              :label="t('nav.notifications')"
+              :icon="IconLucideBell"
+            />
           </template>
 
           <!-- Client Links -->
@@ -226,11 +230,16 @@
   const getUserTypeLabel = () => {
     const userType = user.value?.userType;
     switch (userType) {
-      case 'ADMIN': return t('roleTypes.admin');
-      case 'EMPLOYEE': return t('roleTypes.agent');
-      case 'OWNER': return t('roleTypes.owner');
-      case 'INTERESTED_CLIENT': return t('roleTypes.client');
-      default: return userType || t('roleTypes.user');
+      case 'ADMIN':
+        return t('roleTypes.admin');
+      case 'EMPLOYEE':
+        return t('roleTypes.agent');
+      case 'OWNER':
+        return t('roleTypes.owner');
+      case 'INTERESTED_CLIENT':
+        return t('roleTypes.client');
+      default:
+        return userType || t('roleTypes.user');
     }
   };
   const isAdmin = computed(() => {

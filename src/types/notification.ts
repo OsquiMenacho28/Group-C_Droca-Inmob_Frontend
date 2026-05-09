@@ -4,7 +4,7 @@ export interface NotificationHistoryResponse {
   tipo: string;
   contenido: string;
   estado: 'PENDIENTE' | 'ENVIADA' | 'FALLIDA';
-  fechaEnvio: string;        // ← en lugar de sentAt
+  fechaEnvio: string; // ← en lugar de sentAt
   leida: boolean;
   errorMessage?: string;
 }

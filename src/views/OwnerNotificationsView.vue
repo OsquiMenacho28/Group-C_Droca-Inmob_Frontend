@@ -7,7 +7,9 @@
       <p class="text-gray-500 dark:text-gray-400">{{ t('ownerNotifications.subtitle') }}</p>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
+    >
       <div class="flex justify-between items-center mb-6">
         <div class="text-sm text-gray-500 dark:text-gray-400">
           {{ t('ownerNotifications.totalUnread', { count: unreadCount }) }}
@@ -22,7 +24,11 @@
       </div>
 
       <div v-if="loading" class="space-y-4">
-        <div v-for="i in 3" :key="i" class="animate-pulse h-24 bg-gray-100 dark:bg-gray-700 rounded-xl"></div>
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="animate-pulse h-24 bg-gray-100 dark:bg-gray-700 rounded-xl"
+        ></div>
       </div>
 
       <div v-else-if="list.length === 0" class="text-center py-12 text-gray-500">
@@ -41,12 +47,18 @@
             <div class="flex-1">
               <div class="flex items-center gap-2 text-xs text-gray-400 mb-1">
                 <span>{{ formatDate(notif.fechaEnvio) }}</span>
-                <span v-if="notif.estado === 'ENVIADA'" class="text-green-500">✓ {{ t('common.sent') }}</span>
-                <span v-else-if="notif.estado === 'FALLIDA'" class="text-red-500">✗ {{ t('common.failed') }}</span>
+                <span v-if="notif.estado === 'ENVIADA'" class="text-green-500">
+                  ✓ {{ t('common.sent') }}
+                </span>
+                <span v-else-if="notif.estado === 'FALLIDA'" class="text-red-500">
+                  ✗ {{ t('common.failed') }}
+                </span>
                 <span v-else class="text-yellow-500">⏳ {{ t('common.pending') }}</span>
               </div>
               <h4 class="font-semibold text-gray-900 dark:text-white">{{ notif.tipo }}</h4>
-              <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">{{ notif.contenido }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">
+                {{ notif.contenido }}
+              </p>
               <div v-if="notif.errorMessage" class="mt-2 text-xs text-red-500">
                 {{ notif.errorMessage }}
               </div>
@@ -99,8 +111,11 @@
   const formatDate = (iso: string) => {
     if (!iso) return '';
     return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 </script>

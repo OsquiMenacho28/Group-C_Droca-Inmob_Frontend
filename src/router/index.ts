@@ -159,7 +159,7 @@ const routes = [
         name: 'OwnerNotifications',
         component: () => import('@/views/OwnerNotificationsView.vue'),
         meta: { role: 'OWNER' },
-      }
+      },
     ],
   },
 ];

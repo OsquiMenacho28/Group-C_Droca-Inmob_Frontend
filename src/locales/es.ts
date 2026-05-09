@@ -542,7 +542,7 @@ export const es = {
     interesado: 'Interesado',
     noInteresado: 'No interesado',
     pendiente: 'Pendiente',
-    registeredOn: 'Registrado el'
+    registeredOn: 'Registrado el',
   },
   conflict: {
     title: 'Conflicto de horario detectado',
@@ -1299,5 +1299,5 @@ export const es = {
     empty: 'No hay notificaciones',
     totalUnread: '{count} no leídas',
     markAllRead: 'Marcar todas como leídas',
-  }
+  },
 };

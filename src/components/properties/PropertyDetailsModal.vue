@@ -165,7 +165,9 @@
 
           <!-- ── Listado de visitas con resultados (para el propietario) ── -->
           <div v-if="visits.length > 0" class="mt-6">
-            <h4 class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300">
+            <h4
+              class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300"
+            >
               <IconLucideCalendar class="w-4 h-4" />
               {{ t('propertyDetails.visitsHistory') }}
             </h4>
@@ -191,10 +193,7 @@
                   >
                     {{ getResultadoLabel(v.resultado) }}
                   </span>
-                  <span
-                    v-else
-                    class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2"
-                  >
+                  <span v-else class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2">
                     {{ t('propertyDetails.noResult') }}
                   </span>
                 </div>
@@ -579,7 +578,7 @@
     const map: Record<string, string> = {
       INTERESADO: t('visitResult.interesado'),
       NO_INTERESADO: t('visitResult.noInteresado'),
-      PENDIENTE: t('visitResult.pendiente')
+      PENDIENTE: t('visitResult.pendiente'),
     };
     return map[resultado] || resultado;
   };
@@ -588,7 +587,7 @@
     const map: Record<string, string> = {
       INTERESADO: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
       NO_INTERESADO: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-      PENDIENTE: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+      PENDIENTE: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
     };
     return map[resultado] || 'bg-gray-100 text-gray-800';
   };

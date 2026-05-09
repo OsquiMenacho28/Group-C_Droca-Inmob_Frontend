@@ -449,6 +449,12 @@
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import { handleApiError } from '@/api/errorHandler';
+  import {
+    getWeekRangeUtc,
+    isSameLocalDay,
+    formatShortTime,
+    formatDisplayDateTime,
+  } from '@/utils/dateTime';
 
   const { t } = useI18n();
   const router = useRouter();
@@ -464,7 +470,7 @@
   const selectedEvent = ref<CalendarEventResponse | null>(null);
   const selectedEventVehicle = ref<Vehicle | null>(null);
   const showEventModal = ref(false);
-  const currentWeekStart = ref(getMonday(new Date()));
+  const currentWeekStart = ref(new Date());
   const pendingRequests = ref<VisitRequestResponse[]>([]);
   const requestActionLoadingId = ref('');
   const alertMessage = ref('');
@@ -491,21 +497,17 @@
   const filterAgentId = ref('');
   const fleet = ref<Vehicle[] | null>(null);
 
-  function getMonday(d: Date): Date {
-    const day = d.getDay();
-    const diff = day === 0 ? -6 : 1 - day;
-    const m = new Date(d);
-    m.setDate(d.getDate() + diff);
-    m.setHours(0, 0, 0, 0);
-    return m;
-  }
-  const weekDays = computed(() =>
-    Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(currentWeekStart.value);
-      d.setDate(currentWeekStart.value.getDate() + i);
+  const weekRange = computed(() => getWeekRangeUtc(currentWeekStart.value));
+
+  const weekDays = computed(() => {
+    const start = new Date(weekRange.value.from);
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       return d;
-    })
-  );
+    });
+  });
+
   const weekLabel = computed(() => {
     const from = weekDays.value[0];
     const to = weekDays.value[6];
@@ -554,8 +556,7 @@
     loading.value = true;
     error.value = '';
     try {
-      const from = weekDays.value[0].toISOString();
-      const to = new Date(weekDays.value[6]).toISOString().split('T')[0] + 'T23:59:59.999Z';
+      const { from, to } = weekRange.value;
       calendarData.value = await getCalendar(
         from,
         to,
@@ -622,18 +623,10 @@
   }
 
   const eventsForDay = (day: Date) =>
-    calendarData.value?.events.filter(
-      (ev) => new Date(ev.startTime).toDateString() === day.toDateString()
-    ) || [];
+    calendarData.value?.events.filter((ev) => isSameLocalDay(ev.startTime, day)) || [];
   const isToday = (d: Date) => d.toDateString() === new Date().toDateString();
   const dayName = (d: Date) => d.toLocaleString(getLocaleString(), { weekday: 'short' });
-  const shortTime = (iso: string) =>
-    iso
-      ? new Date(iso).toLocaleTimeString(getLocaleString(), {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : '';
+  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
   const teamEvents = computed(
     () => (calendarData.value?.totalEvents ?? 0) - (calendarData.value?.myEvents ?? 0)
   );
@@ -641,14 +634,7 @@
     () => new Set(calendarData.value?.events.map((e) => e.propertyId)).size
   );
 
-  const formatPendingDate = (iso: string) =>
-    new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const formatPendingDate = (iso: string) => formatDisplayDateTime(iso, getLocaleString());
 
   function eventCardClass(ev: CalendarEventResponse) {
     if (ev.status === 'CANCELLED')
@@ -687,7 +673,7 @@
     loadCalendar();
   }
   function goToday() {
-    currentWeekStart.value = getMonday(new Date());
+    currentWeekStart.value = new Date();
     loadCalendar();
   }
 

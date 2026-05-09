@@ -421,6 +421,12 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideLoader from '~icons/lucide/loader';
   import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+  import {
+    localInputToUtcIso,
+    utcIsoToLocalInput,
+    minDatetimeLocal,
+    formatShortTime,
+  } from '@/utils/dateTime';
 
   const { t } = useI18n();
 
@@ -475,23 +481,11 @@
   const startTimeLocal = ref('');
   const endTimeLocal = ref('');
 
-  const formatDateTimeLocalInput = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  };
-
-  const toApiLocalDateTime = (value: string) => {
-    if (!value) return '';
-    return value.length === 16 ? `${value}:00` : value.slice(0, 19);
-  };
+  const minDatetime = computed(() => minDatetimeLocal());
 
   watch(startTimeLocal, (val) => {
     if (val) {
-      startTime.value = toApiLocalDateTime(val);
+      startTime.value = localInputToUtcIso(val);
     } else {
       startTime.value = '';
     }
@@ -499,7 +493,7 @@
 
   watch(endTimeLocal, (val) => {
     if (val) {
-      endTime.value = toApiLocalDateTime(val);
+      endTime.value = localInputToUtcIso(val);
     } else {
       endTime.value = '';
     }
@@ -603,7 +597,7 @@
 
     loadingVehicles.value = true;
     try {
-      const vehicles = await getAvailableVehicles(toApiLocalDateTime(start));
+      const vehicles = await getAvailableVehicles(localInputToUtcIso(start));
       availableVehicles.value = vehicles;
 
       if (
@@ -642,8 +636,8 @@
       try {
         conflictResult.value = await checkConflict(
           pid,
-          toApiLocalDateTime(start),
-          toApiLocalDateTime(end)
+          localInputToUtcIso(start),
+          localInputToUtcIso(end)
         );
       } finally {
         checkingConflict.value = false;
@@ -729,27 +723,17 @@
 
   const applySuggestion = (start?: string, end?: string) => {
     if (start) {
-      startTimeLocal.value = start.slice(0, 16);
+      startTimeLocal.value = utcIsoToLocalInput(start);
       startTime.value = start;
     }
     if (end) {
-      endTimeLocal.value = end.slice(0, 16);
+      endTimeLocal.value = utcIsoToLocalInput(end);
       endTime.value = end;
     }
     onTimeChange();
   };
 
-  const shortTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString(getLocaleString(), {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-  const minDatetime = computed(() => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 15);
-    return formatDateTimeLocalInput(now);
-  });
+  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
 
   const closeClickOutside = (e: Event) => {
     if (!(e.target instanceof HTMLElement) || !e.target.closest('#property-select-container'))

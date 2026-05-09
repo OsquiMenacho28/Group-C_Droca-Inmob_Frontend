@@ -535,7 +535,7 @@ export const en = {
     interesado: 'Interested',
     noInteresado: 'Not interested',
     pendiente: 'Pending',
-    registeredOn: 'Registered on'
+    registeredOn: 'Registered on',
   },
   conflict: {
     title: 'Schedule conflict detected',
@@ -1288,5 +1288,5 @@ export const en = {
     empty: 'No notifications',
     totalUnread: '{count} unread',
     markAllRead: 'Mark all as read',
-  }
+  },
 };

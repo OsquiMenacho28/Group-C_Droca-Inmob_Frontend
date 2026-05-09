@@ -5,7 +5,11 @@ export const notificationService = {
   /**
    * Obtiene las notificaciones de un propietario (paginado)
    */
-  async getNotifications(ownerId: string, page = 0, pageSize = 10): Promise<{ data: NotificationHistoryResponse[]; total: number }> {
+  async getNotifications(
+    ownerId: string,
+    page = 0,
+    pageSize = 10
+  ): Promise<{ data: NotificationHistoryResponse[]; total: number }> {
     const response = await api.get(`/notifications/propietarios/${ownerId}/notificaciones`, {
       params: { page, pageSize },
     });
