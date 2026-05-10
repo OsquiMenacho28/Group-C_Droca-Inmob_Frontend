@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "brand": "InmCore",
+    "users": "Agents & Users",
+    "properties": "Properties",
+    "vehicles": "Vehicles",
+    "myProperties": "My Properties",
+    "myInmuebles": "My Properties",
+    "myClients": "My Clients",
+    "favorites": "Favorites",
+    "reports": "Reports",
+    "inventoryManagement": "Property Management",
+    "audit": "Audit",
+    "propertyAudit": "Property Audit",
+    "userAudit": "User Audit",
+    "myOwners": "My Owners",
+    "calendar": "Calendar",
+    "availableProperties": "Available Properties",
+    "operations": "Operations",
+    "agentRanking": "Agent Ranking",
+    "receivedRequests": "Received Requests",
+    "sentRequests": "My Sent Requests",
+    "notifications": "Notifications",
+    "openUserMenu": "Open user menu",
+    "logout": "Logout"
+  }
+}

@@ -45,7 +45,7 @@
         <div>
           <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ t('retirement.detalle') }}
-            <span class="text-xs text-gray-400 ml-1">({{ t('common.optionalLabel') }})</span>
+            <span class="text-xs text-gray-400 ml-1">{{ t('common.optionalLabel') }}</span>
           </label>
           <textarea
             v-model="detail"

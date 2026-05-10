@@ -1,0 +1,20 @@
+{
+  "reports": {
+    "agentRankingTitle": "Agent Sales Ranking",
+    "agentRankingSubtitle": "Comparative performance based on closed operations",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "department": "Department",
+    "totalClosedSales": "Total Closed Sales",
+    "topAgent": "Top Performing Agent",
+    "noRankingDataTitle": "No ranking data available",
+    "noRankingDataText": "No closed operations found for the selected period and filters.",
+    "columnPosition": "Pos",
+    "columnAgent": "Agent Name",
+    "columnSales": "Closed Sales",
+    "columnPercentage": "% of Total",
+    "rankingLoadError": "Could not load agent ranking. Please try again.",
+    "totalAgents": "Total of Agents",
+    "averageSales": "Average Sales"
+  }
+}
