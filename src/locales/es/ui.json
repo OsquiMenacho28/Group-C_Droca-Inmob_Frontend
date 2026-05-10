@@ -74,7 +74,8 @@
     "add": "Añadir",
     "selectOption": "Selecciona una opción",
     "optionalLabel": "(opcional)",
-    "noValue": "No especificado"
+    "noValue": "No especificado",
+    "date": "Fecha:"
   },
   "status": {
     "pending": "Pendiente",
@@ -88,6 +89,12 @@
     "sold": "Vendido",
     "negotiating": "En Negociación",
     "occupied": "Ocupado",
+    "disponible": "Disponible",
+    "reservado": "Reservado",
+    "vendido": "Vendido",
+    "en_negociacion": "En Negociación",
+    "eliminado": "Eliminado",
+    "retirado": "Retirado",
     "DISPONIBLE": "Disponible",
     "RESERVADO": "Reservado",
     "VENDIDO": "Vendido",
@@ -105,7 +112,6 @@
     "noResults": "No se encontraron resultados",
     "clearFilter": "Limpiar filtro"
   },
-
   "languageSwitcher": {
     "title": "Cambiar idioma",
     "fallback": "Idioma"

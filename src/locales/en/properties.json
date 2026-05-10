@@ -297,6 +297,11 @@
     "propertyCreated": "Property registered successfully"
   },
   "propertyForm": {
+    "mainInfo": "Main Information",
+    "location": "Location",
+    "features": "Features",
+    "ownerSection": "Owner",
+    "mapLocation": "Geographic Location on Map",
     "title": "Title",
     "address": "Exact Address",
     "operationType": "Operation Type *",
@@ -376,7 +381,19 @@
       "pending": "Pending",
       "active": "Active",
       "expired": "Expired",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "disponible": "Available",
+      "reservado": "Reserved",
+      "vendido": "Sold",
+      "en_negociacion": "Negotiating",
+      "eliminado": "Deleted",
+      "retirado": "Withdrawn",
+      "DISPONIBLE": "Available",
+      "RESERVADO": "Reserved",
+      "VENDIDO": "Sold",
+      "EN_NEGOCIACION": "Negotiating",
+      "ELIMINADO": "Deleted",
+      "RETIRADO": "Withdrawn"
     }
   },
   "assignAgent": {

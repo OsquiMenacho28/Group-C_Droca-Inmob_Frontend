@@ -293,9 +293,15 @@
     "save": "Guardar",
     "deleting": "Eliminando...",
     "propertyUpdated": "Propiedad actualizada con éxito",
-    "propertyCreated": "Inmueble registrado con éxito"
+    "propertyCreated": "Inmueble registrado con éxito",
+    "selectAgent": "Seleccione un agente..."
   },
   "propertyForm": {
+    "mainInfo": "Información Principal",
+    "location": "Ubicación",
+    "features": "Características",
+    "ownerSection": "Propietario",
+    "mapLocation": "Ubicación Geográfica en Mapa",
     "title": "Título",
     "address": "Dirección Exacta",
     "operationType": "Tipo de Operación *",
@@ -375,7 +381,19 @@
       "pending": "Pendiente",
       "active": "Activo",
       "expired": "Expirado",
-      "rejected": "Rechazado"
+      "rejected": "Rechazado",
+      "disponible": "Disponible",
+      "reservado": "Reservado",
+      "vendido": "Vendido",
+      "en_negociacion": "En Negociación",
+      "eliminado": "Eliminado",
+      "retirado": "Retirado",
+      "DISPONIBLE": "Disponible",
+      "RESERVADO": "Reservado",
+      "VENDIDO": "Vendido",
+      "EN_NEGOCIACION": "En Negociación",
+      "ELIMINADO": "Eliminado",
+      "RETIRADO": "Retirado"
     }
   },
   "assignAgent": {

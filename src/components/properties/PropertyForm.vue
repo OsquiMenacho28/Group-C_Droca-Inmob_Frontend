@@ -4,7 +4,9 @@
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
     >
-      <h3 class="text-lg font-semibold mb-6 text-primary">Información Principal</h3>
+      <h3 class="text-lg font-semibold mb-6 text-primary">
+        {{ t('propertyForm.mainInfo') }}
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2">
           <fwb-input
@@ -60,7 +62,9 @@
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
     >
-      <h3 class="text-lg font-semibold mb-6 text-primary">Ubicación</h3>
+      <h3 class="text-lg font-semibold mb-6 text-primary">
+        {{ t('propertyForm.location') }}
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2">
           <fwb-input
@@ -85,7 +89,9 @@
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
     >
-      <h3 class="text-lg font-semibold mb-6 text-primary">Características</h3>
+      <h3 class="text-lg font-semibold mb-6 text-primary">
+        {{ t('propertyForm.features') }}
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <fwb-input
           v-model.number="m2Model"
@@ -108,7 +114,9 @@
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
     >
-      <h3 class="text-lg font-semibold mb-6 text-primary">Propietario</h3>
+      <h3 class="text-lg font-semibold mb-6 text-primary">
+        {{ t('propertyForm.ownerSection') }}
+      </h3>
       <div class="grid grid-cols-1 gap-6">
         <fwb-select
           v-model="ownerIdComputed"
@@ -146,7 +154,9 @@
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
     >
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-primary">Ubicación Geográfica en Mapa</h3>
+        <h3 class="text-lg font-semibold text-primary">
+          {{ t('propertyForm.mapLocation') }}
+        </h3>
         <fwb-button
           size="sm"
           gradient="green"
