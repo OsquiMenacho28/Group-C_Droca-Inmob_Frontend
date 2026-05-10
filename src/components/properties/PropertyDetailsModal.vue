@@ -1,10 +1,19 @@
 <template>
-  <fwb-modal v-if="show" @close="$emit('close')" size="4xl">
+  <BaseModal
+    :model-value="show"
+    :title="property?.title"
+    size="2xl"
+    @update:model-value="$emit('close')"
+  >
+    <template #header-icon>
+      <div class="rounded-full bg-blue-100 dark:bg-blue-900/30 p-2">
+        <IconLucideHome class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+      </div>
+    </template>
+
     <template #header>
       <div class="flex items-center space-x-4">
-        <h3 class="text-2xl font-bold dark:text-white">
-          {{ property?.title }}
-        </h3>
+        <span>{{ property?.title }}</span>
         <fwb-badge :color="getStatusColor(property?.status || '')">
           {{ property?.status ? t('status.' + property.status) : '' }}
         </fwb-badge>
@@ -51,8 +60,12 @@
                   class="text-xs font-bold rounded-lg border-gray-300 py-1 px-2 dark:bg-gray-700 dark:text-white"
                   :class="statusColorClass(localStatus)"
                 >
-                  <option value="DISPONIBLE">{{ t('propertyDetails.statusAvailable') }}</option>
-                  <option value="RESERVADO">{{ t('propertyDetails.statusReserved') }}</option>
+                  <option value="DISPONIBLE">
+                    {{ t('propertyDetails.statusAvailable') }}
+                  </option>
+                  <option value="RESERVADO">
+                    {{ t('propertyDetails.statusReserved') }}
+                  </option>
                   <option value="EN_NEGOCIACION">
                     {{ t('propertyDetails.statusNegotiating') }}
                   </option>
@@ -69,26 +82,11 @@
             </div>
           </div>
 
-          <div
-            v-if="property?.imageUrls?.length"
-            class="rounded-xl overflow-hidden bg-gray-200 shadow-sm"
-          >
-            <img
-              :src="property.imageUrls[0]"
-              class="w-full h-64 object-cover"
-              :alt="t('propertyDetails.mainImageAlt')"
+          <div class="rounded-xl overflow-hidden shadow-sm">
+            <ImageGallery
+              :property-id="property?.id"
+              :can-manage="!isClientView && (isAdmin || isAssignedAgent || isRelatedToOperation)"
             />
-          </div>
-          <div
-            v-else
-            class="h-64 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center"
-          >
-            <div class="text-center">
-              <IconLucideImage class="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p class="text-gray-500 dark:text-gray-400 text-sm">
-                {{ t('propertyDetails.noPhotos') }}
-              </p>
-            </div>
           </div>
 
           <div
@@ -201,7 +199,8 @@
                   {{ v.observaciones }}
                 </p>
                 <p v-if="v.fechaRegistroResultado" class="text-[10px] text-gray-400 mt-1">
-                  {{ t('visitResult.registeredOn') }} {{ formatFecha(v.fechaRegistroResultado) }}
+                  {{ t('visitResult.registeredOn') }}
+                  {{ formatFecha(v.fechaRegistroResultado) }}
                 </p>
               </div>
             </div>
@@ -400,7 +399,7 @@
         </fwb-button>
       </div>
     </template>
-  </fwb-modal>
+  </BaseModal>
 
   <ConfirmModal
     :show="showReincorporateConfirm"
@@ -422,7 +421,7 @@
 
 <script setup lang="ts">
   import { ref, watch, reactive, computed } from 'vue';
-  import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
+  import { FwbBadge, FwbButton } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { personService } from '@/services/personService';
   import { getVisitsForProperty } from '@/services/visitRequestService';
@@ -435,6 +434,7 @@
   import IconLucideUser from '~icons/lucide/user';
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
   import IconLucideCalendar from '~icons/lucide/calendar';
+  import IconLucideHome from '~icons/lucide/home';
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import AppToast from '@/components/ui/AppToast.vue';
@@ -444,6 +444,8 @@
   import { handleApiError } from '@/api/errorHandler';
   import type { OperationData } from '@/types/operation';
   import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
+  import ImageGallery from '@/components/properties/ImageGallery.vue';
+  import BaseModal from '@/components/ui/BaseModal.vue';
 
   const { t } = useI18n();
 
@@ -534,6 +536,12 @@
     const u = authStore.user as UserClaims | null;
     const roles = (u?.roles as string[]) || [];
     return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+  });
+
+  const isAssignedAgent = computed(() => {
+    if (!props.property || !currentUser.value) return false;
+    const userId = currentUser.value.userId || currentUser.value.sub || currentUser.value.id;
+    return userId === props.property.assignedAgentId;
   });
 
   const isRelatedToOperation = computed(() => {
@@ -672,7 +680,9 @@
       }
     } catch (err: unknown) {
       localStatus.value = props.property.status;
-      const errorObj = err as { response?: { data?: { message?: string; detail?: string } } };
+      const errorObj = err as {
+        response?: { data?: { message?: string; detail?: string } };
+      };
 
       toast.message =
         errorObj.response?.data?.message ||

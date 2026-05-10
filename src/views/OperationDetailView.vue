@@ -152,7 +152,9 @@
             <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
               {{ formatCurrency(operation.finalPrice, operation.currency) }}
             </p>
-            <p class="text-xs text-gray-500 mt-1">{{ t('common.includingTaxes') }}</p>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ t('common.includingTaxes') }}
+            </p>
           </div>
         </div>
 
@@ -186,16 +188,12 @@
               </span>
             </div>
 
-            <!-- Property Images Thumbnail -->
-            <div
-              v-if="propertyData?.imageUrls?.length"
-              class="mt-4 flex gap-2 overflow-x-auto pb-2"
-            >
-              <img
-                v-for="(url, idx) in propertyData.imageUrls"
-                :key="idx"
-                :src="url"
-                class="h-16 w-16 object-cover rounded border border-gray-200 dark:border-gray-600 shrink-0"
+            <!-- Property Images Gallery -->
+            <div class="mt-4">
+              <ImageGallery
+                v-if="propertyData?.id"
+                :property-id="propertyData.id"
+                :can-manage="canManage"
               />
             </div>
           </div>
@@ -252,7 +250,9 @@
               <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
                 {{ t('adminProperties.notes') }}
               </h3>
-              <p class="text-sm text-gray-700 dark:text-gray-300">{{ operation.notes }}</p>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                {{ operation.notes }}
+              </p>
             </div>
           </div>
         </div>
@@ -414,6 +414,7 @@
   import type { OperationData } from '@/types/operation';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import AppToast from '@/components/ui/AppToast.vue';
+  import ImageGallery from '@/components/properties/ImageGallery.vue';
 
   const { t } = useI18n();
   const route = useRoute();
@@ -500,7 +501,10 @@
       PENDING: 'bg-yellow-500',
       CLOSED: 'bg-gray-500',
     };
-    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({ value: s, dot: dotMap[s] }));
+    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({
+      value: s,
+      dot: dotMap[s],
+    }));
   });
 
   const openStatusModal = () => {
@@ -512,7 +516,9 @@
     if (!selectedStatus.value) return;
     updatingStatus.value = true;
     try {
-      await api.patch(`/operations/${operationId}/status`, { status: selectedStatus.value });
+      await api.patch(`/operations/${operationId}/status`, {
+        status: selectedStatus.value,
+      });
       showStatusModal.value = false;
       toast.message = t('operations.operationStatusUpdated');
       toast.type = 'success';
@@ -530,7 +536,9 @@
   const handleCancelExecution = async () => {
     cancelling.value = true;
     try {
-      await api.patch(`/operations/${operationId}/status`, { status: 'CANCELLED' });
+      await api.patch(`/operations/${operationId}/status`, {
+        status: 'CANCELLED',
+      });
 
       showConfirmCancel.value = false;
 

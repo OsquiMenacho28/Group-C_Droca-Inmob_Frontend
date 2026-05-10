@@ -1105,6 +1105,8 @@ export const es = {
     deleteError: 'Error al eliminar la imagen del servidor',
     saveOrderError: 'Error al guardar el nuevo orden',
     uploadError: 'Error al subir {name}',
+    invalidType: 'El archivo {name} no es un formato de imagen válido.',
+    fileTooLarge: 'El archivo {name} excede el límite de tamaño (10MB).',
   },
   documentUpload: {
     title: 'Documentos',

@@ -101,6 +101,7 @@
         :agent-name="resolveAgentName(p.assignedAgentId)"
         show-history-button
         @view-details="viewDetails"
+        @open-zoom="viewDetails"
       >
         <template #actions-top="{ property, statusHelpers }">
           <button
@@ -224,25 +225,15 @@
       @status-updated="handleStatusUpdated"
     />
 
-    <fwb-modal v-if="showCreateEditModal" @close="closeCreateEditModal" size="2xl">
-      <template #header>
-        <div class="text-lg font-bold dark:text-white">
-          {{
-            isEditing ? t('adminProperties.editProperty') : t('adminProperties.registerProperty')
-          }}
-        </div>
-      </template>
-      <template #body>
-        <property-form
-          :key="formKey"
-          :initial-data="editingProperty || undefined"
-          :property-id="(editingProperty?.id as string) || undefined"
-          @location-updated="handleLocalLocationUpdate"
-          @submit="handleCreateEdit"
-          @cancel="closeCreateEditModal"
-        />
-      </template>
-    </fwb-modal>
+    <PropertyFormModal
+      v-model="showCreateEditModal"
+      :is-editing="isEditing"
+      :initial-data="editingProperty || undefined"
+      :property-id="(editingProperty?.id as string) || undefined"
+      :form-key="formKey"
+      @location-updated="handleLocalLocationUpdate"
+      @submit="handleCreateEdit"
+    />
 
     <assign-agent-modal
       v-if="showAssignModal"
@@ -387,7 +378,7 @@
   import { apiClient as api } from '@/api';
   import { useI18n } from 'vue-i18n';
   import AssignAgentModal from '@/components/properties/AssignAgentModal.vue';
-  import PropertyForm from '@/components/properties/PropertyForm.vue';
+  import PropertyFormModal from '@/components/properties/PropertyFormModal.vue';
   import Pagination from '@/components/ui/Pagination.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';

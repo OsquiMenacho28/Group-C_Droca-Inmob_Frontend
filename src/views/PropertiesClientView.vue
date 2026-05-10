@@ -164,13 +164,44 @@
                 </span>
               </button>
 
-              <!-- Property Image -->
-              <img
-                v-if="property.imageUrls?.length"
-                :src="property.imageUrls[0]"
-                :alt="property.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              <!-- Mini Carousel inside the Card -->
+              <div v-if="property.imageUrls?.length" class="relative w-full h-full group/carousel">
+                <img
+                  :src="property.imageUrls[activeImageIndices[property.id] || 0]"
+                  :alt="property.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <!-- Prev/Next Buttons -->
+                <button
+                  v-if="property.imageUrls.length > 1"
+                  @click.stop="prevCardImage(property.id, property.imageUrls.length)"
+                  class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                >
+                  <IconLucideChevronLeft class="w-5 h-5" />
+                </button>
+                <button
+                  v-if="property.imageUrls.length > 1"
+                  @click.stop="nextCardImage(property.id, property.imageUrls.length)"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                >
+                  <IconLucideChevronRight class="w-5 h-5" />
+                </button>
+
+                <!-- Dots Indicator -->
+                <div
+                  v-if="property.imageUrls.length > 1"
+                  class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20"
+                >
+                  <div
+                    v-for="(_, dotIdx) in property.imageUrls"
+                    :key="dotIdx"
+                    class="w-1.5 h-1.5 rounded-full transition-colors"
+                    :class="
+                      (activeImageIndices[property.id] || 0) === dotIdx ? 'bg-white' : 'bg-white/50'
+                    "
+                  ></div>
+                </div>
+              </div>
               <div v-else class="w-full h-full flex items-center justify-center">
                 <span class="text-gray-400 dark:text-gray-500">{{ t('common.noImage') }}</span>
               </div>
@@ -436,6 +467,11 @@
     FwbSelect,
   } from 'flowbite-vue';
 
+  import IconLucideMapPin from '~icons/lucide/map-pin';
+  import IconLucideFilter from '~icons/lucide/filter';
+  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+  import IconLucideChevronRight from '~icons/lucide/chevron-right';
+  import IconLucideMaximize from '~icons/lucide/maximize';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import { propertyService } from '@/modules/properties';
   import { favoriteService } from '@/services/favoriteService';
@@ -479,6 +515,19 @@
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
+
+  // Carousel State for Cards
+  const activeImageIndices = ref<Record<string, number>>({});
+
+  const nextCardImage = (propertyId: string, length: number) => {
+    const current = activeImageIndices.value[propertyId] || 0;
+    activeImageIndices.value[propertyId] = (current + 1) % length;
+  };
+
+  const prevCardImage = (propertyId: string, length: number) => {
+    const current = activeImageIndices.value[propertyId] || 0;
+    activeImageIndices.value[propertyId] = (current - 1 + length) % length;
+  };
 
   // State
   const properties = ref<Property[]>([]);

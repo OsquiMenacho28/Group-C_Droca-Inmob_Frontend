@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 dark:bg-gray-800 shadow-sm transition-all hover:shadow-md h-full flex flex-col"
+    class="relative rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700"
     :class="{
       'bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600': isMinimalInfo,
     }"
@@ -40,18 +40,47 @@
       <IconLucideClipboardList class="w-5 h-5" />
     </button>
 
-    <!-- Main Image -->
+    <!-- Main Image Carousel / Container -->
     <div
-      class="h-44 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 relative overflow-hidden"
+      class="relative aspect-[4/3] bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 overflow-hidden group/carousel"
       :class="{ 'grayscale opacity-60': isMinimalInfo }"
     >
-      <img
-        v-if="property.imageUrls?.length"
-        :src="property.imageUrls[0]"
-        class="h-full w-full object-cover transition-transform duration-500"
-        :class="{ 'hover:scale-105': !isMinimalInfo }"
-        @error="handleImageError"
-      />
+      <template v-if="property.imageUrls?.length">
+        <img
+          :src="property.imageUrls[activeImageIndex]"
+          class="h-full w-full object-cover transition-transform duration-500"
+          :class="{ 'group-hover/carousel:scale-105': !isMinimalInfo }"
+          @error="handleImageError"
+        />
+        <!-- Navigation Buttons -->
+        <button
+          v-if="property.imageUrls.length > 1 && !isMinimalInfo"
+          @click.stop="prevImage"
+          class="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+        >
+          <IconLucideChevronLeft class="w-4 h-4" />
+        </button>
+        <button
+          v-if="property.imageUrls.length > 1 && !isMinimalInfo"
+          @click.stop="nextImage"
+          class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+        >
+          <IconLucideChevronRight class="w-4 h-4" />
+        </button>
+
+        <!-- Dots -->
+        <div
+          v-if="property.imageUrls.length > 1 && !isMinimalInfo"
+          class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20"
+        >
+          <div
+            v-for="(_, dotIdx) in property.imageUrls"
+            :key="dotIdx"
+            class="w-1.5 h-1.5 rounded-full transition-colors"
+            :class="activeImageIndex === dotIdx ? 'bg-white' : 'bg-white/50'"
+          ></div>
+        </div>
+      </template>
       <div v-else class="flex flex-col items-center gap-2">
         <IconLucideImage class="w-12 h-12 text-gray-300" />
         <span class="text-xs uppercase font-bold tracking-tighter">
@@ -82,73 +111,73 @@
     </div>
 
     <!-- Card Content -->
-    <div class="p-5 flex-1 flex flex-col gap-4" :class="{ 'grayscale-[0.5]': isMinimalInfo }">
-      <div class="space-y-1">
-        <p class="text-[10px] text-gray-400 uppercase font-black tracking-tight">
-          {{ t('adminProperties.owner') }}
-          <span class="text-gray-600 dark:text-gray-300 ml-1">
-            {{ ownerName || t('adminProperties.notAssigned') }}
-          </span>
-        </p>
-        <h5
-          class="text-lg font-bold text-gray-900 dark:text-white line-clamp-1"
-          :class="{ 'text-gray-500': isMinimalInfo }"
-        >
-          {{ property.title }}
-        </h5>
-        <div class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-          <IconLucideMapPin
-            class="w-3.5 h-3.5 flex-shrink-0 text-blue-500"
-            :class="{ 'text-gray-400': isMinimalInfo }"
-          />
-          <span class="line-clamp-1">{{ property.address }}</span>
+    <div class="flex-1 flex flex-col p-5 sm:p-6" :class="{ 'grayscale-[0.5]': isMinimalInfo }">
+      <div class="flex-1 flex flex-col gap-3">
+        <!-- Title with proper typography scale -->
+        <div class="space-y-1">
+          <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+            {{ t('adminProperties.owner') }}:
+            <span class="text-gray-600 dark:text-gray-300 ml-1">
+              {{ ownerName || t('adminProperties.notAssigned') }}
+            </span>
+          </p>
+          <h3
+            class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white line-clamp-1"
+            :class="{ 'text-gray-500': isMinimalInfo }"
+          >
+            {{ property.title }}
+          </h3>
+          <div class="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+            <IconLucideMapPin
+              class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-blue-500"
+              :class="{ 'text-gray-400': isMinimalInfo }"
+            />
+            <span class="line-clamp-1">{{ property.address }}</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Grid Info (Hide or minimize for sold/deleted) -->
-      <div
-        v-if="!isMinimalInfo"
-        class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50 dark:border-gray-700/50"
-      >
-        <div>
-          <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
-            {{ t('adminProperties.price') }}
-          </p>
-          <p class="text-xl font-black text-blue-600">
-            ${{ (property.price || 0).toLocaleString(getLocaleString()) }}
-          </p>
-        </div>
-        <div class="text-right">
-          <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
-            {{ t('adminProperties.advisor') }}
-          </p>
-          <p class="text-xs font-semibold dark:text-gray-200 truncate">
-            {{ agentName }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Simple Info for Sold/Deleted -->
-      <div
-        v-else
-        class="flex justify-between items-center py-2 text-xs border-t border-gray-200 dark:border-gray-700 mt-auto"
-      >
-        <span class="text-gray-400 uppercase font-bold">{{ t('adminProperties.price') }}</span>
-        <span class="font-black text-gray-600 dark:text-gray-400">
-          ${{ (property.price || 0).toLocaleString(getLocaleString()) }}
-        </span>
-      </div>
-
-      <div class="mt-auto space-y-3">
-        <!-- Document Upload (Hidden for terminal states) -->
-        <slot v-if="!isMinimalInfo" name="documents" :property="property"></slot>
-
-        <!-- Action Buttons -->
+        <!-- Stats Grid (Hide or minimize for sold/deleted) -->
         <div
-          class="flex flex-wrap gap-2 pt-2"
-          :class="{ 'border-t border-gray-50 dark:border-gray-700/50': !isMinimalInfo }"
+          v-if="!isMinimalInfo"
+          class="grid grid-cols-2 gap-3 py-3 border-y border-gray-100 dark:border-gray-700"
         >
-          <slot name="actions-bottom" :property="property" :status-helpers="statusHelpers"></slot>
+          <div class="space-y-0.5">
+            <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+              {{ t('common.price') }}
+            </p>
+            <p class="text-xl font-bold text-blue-600 dark:text-blue-400">
+              ${{ (property.price || 0).toLocaleString() }}
+            </p>
+          </div>
+          <div class="text-right space-y-0.5">
+            <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+              {{ t('adminProperties.advisor') }}
+            </p>
+            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate">
+              {{ agentName || t('common.unassigned') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Simple Info for Sold/Deleted -->
+        <div
+          v-else
+          class="flex justify-between items-center py-2 text-xs border-t border-gray-200 dark:border-gray-700 mt-auto"
+        >
+          <span class="text-gray-400 uppercase font-bold">{{ t('adminProperties.price') }}</span>
+          <span class="font-black text-gray-600 dark:text-gray-400">
+            ${{ (property.price || 0).toLocaleString() }}
+          </span>
+        </div>
+
+        <div class="mt-auto space-y-3">
+          <!-- Document Upload (Hidden for terminal states) -->
+          <slot v-if="!isMinimalInfo" name="documents" :property="property"></slot>
+
+          <!-- Action Buttons Section with proper spacing -->
+          <div class="flex flex-wrap gap-2 pt-2">
+            <slot name="actions-bottom" :property="property" :status-helpers="statusHelpers"></slot>
+          </div>
         </div>
       </div>
     </div>
@@ -156,6 +185,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { FwbBadge } from 'flowbite-vue';
   import { getLocaleString } from '@/locales/i18n';
@@ -166,6 +196,9 @@
   import IconLucideImage from '~icons/lucide/image';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideMapPin from '~icons/lucide/map-pin';
+  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+  import IconLucideChevronRight from '~icons/lucide/chevron-right';
+  import IconLucideMaximize from '~icons/lucide/maximize';
 
   const props = defineProps<{
     property: Property;
@@ -174,12 +207,26 @@
     showHistoryButton?: boolean;
   }>();
 
-  defineEmits(['view-details']);
+  defineEmits(['view-details', 'open-zoom']);
 
   const { t } = useI18n();
   const statusHelpers = usePropertyStatus(props.property.status);
   const { statusLabel, statusBadgeClass, isMinimalInfo, isSold, isDeleted, isWithdrawn } =
     statusHelpers;
+
+  const activeImageIndex = ref(0);
+
+  const nextImage = () => {
+    if (!props.property.imageUrls) return;
+    activeImageIndex.value = (activeImageIndex.value + 1) % props.property.imageUrls.length;
+  };
+
+  const prevImage = () => {
+    if (!props.property.imageUrls) return;
+    activeImageIndex.value =
+      (activeImageIndex.value - 1 + props.property.imageUrls.length) %
+      props.property.imageUrls.length;
+  };
 
   const handleImageError = (event: Event) => {
     (event.target as HTMLImageElement).style.display = 'none';

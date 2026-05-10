@@ -21,3 +21,15 @@ body,
 body {
   min-height: 100vh;
 }
+
+/* Fix for flowbite-vue input text color in dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  color: #ffffff !important;
+}
+
+/* Fix for flowbite-vue label color in dark mode */
+.dark label {
+  color: #ffffff !important;
+}

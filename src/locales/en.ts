@@ -1095,6 +1095,8 @@ export const en = {
     deleteError: 'Error deleting image from server',
     saveOrderError: 'Error saving new order',
     uploadError: 'Error uploading {name}',
+    invalidType: 'File {name} is not a valid image format.',
+    fileTooLarge: 'File {name} exceeds the size limit (10MB).',
   },
   documentUpload: {
     title: 'Documents',

@@ -96,6 +96,7 @@
         :agent-name="p.agentName"
         show-history-button
         @view-details="viewDetails"
+        @open-zoom="viewDetails"
       >
         <template #actions-top="{ property, statusHelpers }">
           <button
@@ -182,23 +183,15 @@
       @change="load"
     />
 
-    <fwb-modal v-if="showCreateEditModal" @close="closeCreateEditModal" size="2xl">
-      <template #header>
-        <div class="text-lg font-bold">
-          {{ isEditing ? t('agentDashboard.editProperty') : t('agentDashboard.newProperty') }}
-        </div>
-      </template>
-      <template #body>
-        <property-form
-          :key="formKey"
-          :initial-data="editingProperty || undefined"
-          :property-id="(editingProperty?.id as string) || undefined"
-          @location-updated="handleLocalLocationUpdate"
-          @submit="handleCreateEdit"
-          @cancel="closeCreateEditModal"
-        />
-      </template>
-    </fwb-modal>
+    <PropertyFormModal
+      v-model="showCreateEditModal"
+      :is-editing="isEditing"
+      :initial-data="editingProperty || undefined"
+      :property-id="(editingProperty?.id as string) || undefined"
+      :form-key="formKey"
+      @location-updated="handleLocalLocationUpdate"
+      @submit="handleCreateEdit"
+    />
 
     <fwb-modal v-if="showDeleteModal" @close="showDeleteModal = false">
       <template #header>
@@ -282,7 +275,7 @@
   import { apiClient as api } from '@/api';
   import type { ApiResponse } from '@/api/types';
   import type { Property, PropertyFormPayload, OperationType } from '@/types/property';
-  import PropertyForm from '@/components/properties/PropertyForm.vue';
+  import PropertyFormModal from '@/components/properties/PropertyFormModal.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
   import ClosureModal from '@/components/operations/ClosureModal.vue';
