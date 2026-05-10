@@ -10,18 +10,18 @@
             >
               <IconLucideArrowLeft class="h-5 w-5" />
             </router-link>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('sentRequests.title') }}
             </h1>
           </div>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('sentRequests.subtitle') }}
           </p>
         </div>
         <button
           @click="load"
           :disabled="loading"
-          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm disabled:opacity-50"
+          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover-row shadow-sm disabled:opacity-50"
         >
           <IconLucideRefreshCw class="w-4 h-4" :class="loading ? 'animate-spin' : ''" />
           {{ t('common.refresh') }}
@@ -32,8 +32,8 @@
         <div
           class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center shadow-sm"
         >
-          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.total }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">
+          <p class="text-2xl font-bold text-primary">{{ stats.total }}</p>
+          <p class="text-xs text-secondary uppercase font-medium">
             {{ t('sentRequests.totalSent') }}
           </p>
         </div>
@@ -87,7 +87,7 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('sentRequests.emptyTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('sentRequests.emptyText') }}
         </p>
         <router-link
@@ -135,7 +135,7 @@
                   {{ t('sentRequests.to') }}
                   <span class="font-mono text-xs">{{ r.destinationAgentId }}</span>
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ t('sentRequests.sentOn') }} {{ formatDate(r.requestedAt) }}
                 </p>
               </div>
@@ -164,9 +164,7 @@
           <div class="px-5 py-4 space-y-3">
             <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
-              <span class="text-gray-500 dark:text-gray-400">
-                {{ t('reassignment.visitIdLabel') }}:
-              </span>
+              <span class="text-secondary">{{ t('reassignment.visitIdLabel') }}:</span>
               <span
                 class="font-mono text-xs bg-gray-100 dark:bg-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
               >
@@ -181,9 +179,7 @@
                 'bg-gray-50 dark:bg-gray-700/50': r.status !== 'PENDING',
               }"
             >
-              <p
-                class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide"
-              >
+              <p class="text-xs font-medium text-secondary mb-1 uppercase tracking-wide">
                 {{ t('sentRequests.reasonTitle') }}
               </p>
               <p class="text-sm text-gray-700 dark:text-gray-300">{{ r.reason }}</p>

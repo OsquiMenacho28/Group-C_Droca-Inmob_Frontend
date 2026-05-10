@@ -31,7 +31,7 @@
 
     <div v-if="uploadingImages.size > 0 || uploadedImages.length > 0" class="space-y-3">
       <div class="flex justify-between items-center">
-        <h4 class="font-semibold text-gray-900 dark:text-white">
+        <h4 class="font-semibold text-primary">
           {{ t('imageUpload.images', { n: uploadedImages.length }) }}
         </h4>
         <div v-if="uploadedImages.length > 1 && canReorder" class="flex gap-2">
@@ -190,7 +190,7 @@
 
   const uploadFiles = async (files: File[]) => {
     const invalidFormatFiles = files.filter((f) => !f.type.startsWith('image/'));
-    
+
     if (invalidFormatFiles.length > 0) {
       toast.message = t('imageUpload.invalidType', { name: invalidFormatFiles[0].name });
       toast.type = 'error';
@@ -233,8 +233,8 @@
         });
 
         await loadImages();
-      } catch (err: any) {
-        const backendMessage = err?.message;
+      } catch (err: unknown) {
+        const backendMessage = (err as { message?: string })?.message;
         toast.message = backendMessage || t('imageUpload.uploadError', { name: file.name });
         toast.type = 'error';
         toast.show = true;

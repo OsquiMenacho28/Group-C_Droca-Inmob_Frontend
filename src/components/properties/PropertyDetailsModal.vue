@@ -113,10 +113,10 @@
               </div>
 
               <div class="flex-1 min-w-0">
-                <h5 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                <h5 class="text-sm font-semibold text-primary truncate">
                   {{ owner.firstName }} {{ owner.lastName }}
                 </h5>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                <p class="text-xs text-secondary mb-2">
                   {{ t('propertyDetails.ownerLabel') }}
                 </p>
 
@@ -155,7 +155,7 @@
 
             <div v-else class="text-center py-6">
               <IconLucideUser class="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-secondary">
                 {{ t('propertyDetails.noOwnerAssigned') }}
               </p>
             </div>
@@ -177,7 +177,7 @@
               >
                 <div class="flex justify-between items-start">
                   <div class="flex-1">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                    <p class="text-xs text-secondary">
                       {{ formatFecha(v.startTime) }}
                     </p>
                     <p class="text-sm font-semibold dark:text-white">
@@ -360,7 +360,7 @@
           >
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                <p class="text-xs text-secondary uppercase font-bold">
                   {{ t('retirement.motivoLabel') }}
                 </p>
                 <p class="text-sm text-gray-800 dark:text-gray-200 font-semibold mt-1">
@@ -368,7 +368,7 @@
                 </p>
               </div>
               <div v-if="property.detalleRetiro">
-                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                <p class="text-xs text-secondary uppercase font-bold">
                   {{ t('retirement.detalleLabel') }}
                 </p>
                 <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
@@ -427,7 +427,7 @@
   import { getVisitsForProperty } from '@/services/visitRequestService';
   import type { Property } from '@/types/property';
   import type { Visit } from '@/types/reschedule';
-  import IconLucideImage from '~icons/lucide/image';
+
   import IconLucideMail from '~icons/lucide/mail';
   import IconLucidePhone from '~icons/lucide/phone';
   import IconLucideMessageSquare from '~icons/lucide/message-square';
@@ -511,7 +511,7 @@
         associatedOperation.value = await propertyService.getOperationByPropertyId(
           props.property.id
         );
-      } catch (error) {
+      } catch {
         associatedOperation.value = null;
       }
     } else {

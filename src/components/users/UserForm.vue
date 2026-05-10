@@ -95,7 +95,7 @@
       </div>
 
       <div v-if="isAdmin && userType === 'INTERESTED_CLIENT'">
-        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label class="block mb-2 text-sm font-medium text-primary">
           {{ t('userForm.assignedAgent') }}
         </label>
         <select
@@ -114,7 +114,7 @@
     </div>
 
     <div v-if="!clientOnly && !ownerOnly">
-      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label class="block mb-2 text-sm font-medium text-primary">
         {{ t('users.form.role') }}
       </label>
       <select
@@ -206,7 +206,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-2">
-          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          <label class="block mb-2 text-sm font-medium text-primary">
             {{ t('userForm.preferredZones') || 'Zonas de interés (Presiona Enter para añadir)' }}
           </label>
           <div class="relative flex gap-2">
@@ -278,7 +278,7 @@
         </div>
 
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          <label class="block mb-2 text-sm font-medium text-primary">
             {{ t('users.form.propertyType') }}
           </label>
           <select
@@ -387,27 +387,9 @@
   const [position, positionAttrs] = defineField('position');
   const [hireDate] = defineField('hireDate');
   const [taxId, taxIdAttrs] = defineField('taxId');
-  const [preferredContactMethod] = defineField('preferredContactMethod');
   const [budget] = defineField('budget');
-  const [preferredZone] = defineField('preferredZone');
   const [preferredPropertyType] = defineField('preferredPropertyType');
-  const [preferredRoomsRaw] = defineField('preferredRooms');
   const [assignedAgentId] = defineField('assignedAgentId');
-
-  const preferredRooms = computed({
-    get: () => {
-      const val = preferredRoomsRaw.value;
-      if (val === null || val === undefined) return '';
-      return String(val);
-    },
-    set: (val: string | number) => {
-      if (val === '' || val === null || val === undefined) {
-        preferredRoomsRaw.value = '';
-      } else {
-        preferredRoomsRaw.value = typeof val === 'string' ? val : val;
-      }
-    },
-  });
 
   function mapInitialData(): UserFormValues {
     const d = props.initialData;

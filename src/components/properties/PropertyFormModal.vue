@@ -8,7 +8,9 @@
   >
     <template #body>
       <!-- Scrollable content area for large forms -->
-      <div class="max-h-[calc(100vh-200px)] overflow-y-auto px-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600">
+      <div
+        class="max-h-[calc(100vh-200px)] overflow-y-auto px-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600"
+      >
         <PropertyForm
           v-if="modelValue"
           :key="formKey"
@@ -29,7 +31,7 @@
   import PropertyForm from '@/components/properties/PropertyForm.vue';
   import type { Property, PropertyFormPayload } from '@/types/property';
 
-  const props = defineProps<{
+  defineProps<{
     modelValue: boolean;
     isEditing: boolean;
     initialData?: Property;

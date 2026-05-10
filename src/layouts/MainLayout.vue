@@ -153,7 +153,7 @@
             </template>
             <fwb-list-group>
               <div class="px-4 py-3">
-                <span class="block text-sm text-gray-900 dark:text-white font-medium">
+                <span class="block text-sm text-primary font-medium">
                   {{ getUserDisplayName() }}
                 </span>
                 <span class="block text-sm text-gray-500 truncate dark:text-gray-400">
@@ -191,7 +191,7 @@
   import ThemeToggle from '@/components/ThemeToggle.vue';
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
   import NavLink from '@/components/ui/NavLink.vue';
-  import { computed, onMounted, onUnmounted, ref } from 'vue';
+  import { computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
   import IconLucideFileText from '~icons/lucide/file-text';

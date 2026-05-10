@@ -25,7 +25,7 @@
             >
               <div class="flex items-center gap-3">
                 <slot name="header-icon"></slot>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="modal-title">
+                <h3 class="text-lg font-semibold text-primary" id="modal-title">
                   <slot name="header">{{ title }}</slot>
                 </h3>
               </div>
@@ -41,7 +41,7 @@
             <!-- Body - Standardized spacing -->
             <div class="px-4 py-4 sm:px-6 sm:py-5">
               <slot name="body">
-                <p class="text-gray-500 dark:text-gray-400">{{ message }}</p>
+                <p class="text-secondary">{{ message }}</p>
               </slot>
             </div>
 
@@ -75,6 +75,8 @@
     }>(),
     {
       size: 'md',
+      title: '',
+      message: '',
       showCloseButton: true,
       closeOnBackdrop: true,
     }

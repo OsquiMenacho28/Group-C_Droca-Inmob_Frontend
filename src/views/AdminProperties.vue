@@ -203,7 +203,7 @@
       v-if="!loading && allProperties.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
-      <p class="text-gray-500 dark:text-gray-400">{{ t('adminProperties.noProperties') }}</p>
+      <p class="text-secondary">{{ t('adminProperties.noProperties') }}</p>
     </div>
 
     <Pagination

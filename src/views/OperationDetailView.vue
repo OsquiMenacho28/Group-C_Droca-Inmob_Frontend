@@ -88,7 +88,7 @@
             </FwbBadge>
           </div>
           <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h1 class="text-lg font-bold text-gray-900 dark:text-white">
+            <h1 class="text-lg font-bold text-primary">
               {{ operation.propertyName }}
             </h1>
             <div class="text-xs text-gray-500 font-mono">ID: {{ operationId }}</div>
@@ -108,33 +108,27 @@
               {{ t('common.details') }}
             </h3>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('adminProperties.owner') }}:
-              </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-secondary font-medium">{{ t('adminProperties.owner') }}:</span>
+              <span class="text-primary font-semibold">
                 {{ operation.ownerName || '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('operations.client') }}:
-              </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-secondary font-medium">{{ t('operations.client') }}:</span>
+              <span class="text-primary font-semibold">
                 {{ operation.clientName || '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('adminProperties.advisor') }}:
-              </span>
+              <span class="text-secondary font-medium">{{ t('adminProperties.advisor') }}:</span>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-semibold text-gray-900 dark:text-white">
+                <span class="font-semibold text-primary">
                   {{ operation.agentName || '-' }}
                 </span>
               </div>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.closingDate') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-primary font-semibold">
                 {{ formatDate(operation.closureDate) }}
               </span>
             </div>
@@ -149,7 +143,7 @@
             >
               {{ t('adminProperties.finalPrice') }}
             </p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <p class="text-2xl font-bold text-primary mt-1">
               {{ formatCurrency(operation.finalPrice, operation.currency) }}
             </p>
             <p class="text-xs text-gray-500 mt-1">
@@ -171,17 +165,17 @@
               {{ t('adminProperties.property') }}
             </h3>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.propertyType') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-primary font-semibold">
                 {{ operation.propertyType ? t('propertyTypes.' + operation.propertyType) : '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.operationType') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-primary font-semibold">
                 {{
                   operation.operationType ? t('propertyOperations.' + operation.operationType) : '-'
                 }}
@@ -325,7 +319,7 @@
         </div>
       </template>
       <template #body>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <p class="text-sm text-secondary mb-4">
           {{ t('operations.currentOperationStatus') }}:
           <FwbBadge :type="statusBadgeType" size="xs" class="ml-1">
             {{ t('status.' + operation!.status) }}
@@ -507,10 +501,10 @@
     }));
   });
 
-  const openStatusModal = () => {
-    selectedStatus.value = null;
-    showStatusModal.value = true;
-  };
+  // const openStatusModal = () => {
+  //   selectedStatus.value = null;
+  //   showStatusModal.value = true;
+  // };
 
   const executeStatusUpdate = async () => {
     if (!selectedStatus.value) return;

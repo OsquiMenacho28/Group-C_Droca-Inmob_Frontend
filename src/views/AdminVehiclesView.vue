@@ -2,10 +2,10 @@
   <div class="space-y-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 class="text-3xl font-bold text-primary">
           {{ t('vehicleAdmin.title') }}
         </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-secondary">
           {{ t('vehicleAdmin.subtitle') }}
         </p>
       </div>
@@ -24,10 +24,10 @@
         class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
       >
         <div class="mb-6">
-          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+          <h2 class="text-xl font-semibold text-primary">
             {{ t('vehicleAdmin.createTitle') }}
           </h2>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p class="mt-1 text-sm text-secondary">
             {{ t('vehicleAdmin.createDescription') }}
           </p>
         </div>
@@ -132,10 +132,10 @@
       >
         <div class="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 class="text-xl font-semibold text-primary">
               {{ t('vehicleAdmin.fleetTitle') }}
             </h2>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-1 text-sm text-secondary">
               {{ t('vehicleAdmin.fleetSubtitle') }}
             </p>
           </div>
@@ -144,10 +144,7 @@
           </fwb-button>
         </div>
 
-        <div
-          v-if="loadingVehicles"
-          class="py-16 text-center text-sm text-gray-500 dark:text-gray-400"
-        >
+        <div v-if="loadingVehicles" class="py-16 text-center text-sm text-secondary">
           {{ t('vehicleAdmin.loadingFleet') }}
         </div>
 
@@ -170,27 +167,27 @@
             <thead>
               <tr>
                 <th
-                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary"
                 >
                   {{ t('vehicleAdmin.plate') }}
                 </th>
                 <th
-                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary"
                 >
                   {{ t('vehicleAdmin.brand') }}
                 </th>
                 <th
-                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary"
                 >
                   {{ t('vehicleAdmin.model') }}
                 </th>
                 <th
-                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary"
                 >
                   {{ t('vehicleAdmin.capacity') }}
                 </th>
                 <th
-                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                  class="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-secondary"
                 >
                   {{ t('vehicleAdmin.status') }}
                 </th>
@@ -202,7 +199,7 @@
                 :key="vehicle.id"
                 class="hover:bg-gray-50 dark:hover:bg-gray-700/30"
               >
-                <td class="px-3 py-4 text-sm font-medium text-gray-900 dark:text-white">
+                <td class="px-3 py-4 text-sm font-medium text-primary">
                   {{ vehicle.licensePlate }}
                 </td>
                 <td class="px-3 py-4 text-sm text-gray-700 dark:text-gray-200">

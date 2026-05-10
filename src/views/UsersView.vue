@@ -11,7 +11,7 @@
         <div class="flex-1">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <IconLucideSearch class="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <IconLucideSearch class="w-5 h-5 text-secondary" />
             </div>
             <input
               v-model="searchQuery"
@@ -119,7 +119,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.view.ownerInfo') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.fullName || t('common.notAvailable') }}
               </p>
             </div>
@@ -127,7 +127,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.table.email') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.email || t('common.notAvailable') }}
               </p>
             </div>
@@ -135,7 +135,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.table.phone') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.phone || t('common.notAvailable') }}
               </p>
             </div>
@@ -143,7 +143,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.table.ciNit') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.taxId || t('common.notAvailable') }}
               </p>
             </div>
@@ -151,7 +151,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.table.role') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.userType || t('common.notAvailable') }}
               </p>
             </div>
@@ -159,7 +159,7 @@
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('users.table.status') }}
               </label>
-              <p class="mt-1 text-sm text-gray-900 dark:text-white">
+              <p class="mt-1 text-sm text-primary">
                 {{ selectedUser?.status || t('common.notAvailable') }}
               </p>
             </div>
@@ -172,7 +172,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.address') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{ selectedUser?.address || t('common.notAvailable') }}
                 </p>
               </div>
@@ -180,7 +180,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.properties') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{
                     t('users.view.propertiesCount', { n: selectedUser?.propertyIds?.length || 0 })
                   }}
@@ -196,7 +196,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.budget') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{ selectedUser?.budget ? `$${selectedUser.budget}` : t('common.notAvailable') }}
                 </p>
               </div>
@@ -204,7 +204,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.preferredZone') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{ selectedUser?.preferredZone || t('common.notAvailable') }}
                 </p>
               </div>
@@ -212,7 +212,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.preferredPropertyType') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{ selectedUser?.preferredPropertyType || t('common.notAvailable') }}
                 </p>
               </div>
@@ -220,7 +220,7 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('users.view.rooms') }}
                 </label>
-                <p class="mt-1 text-sm text-gray-900 dark:text-white">
+                <p class="mt-1 text-sm text-primary">
                   {{ selectedUser?.preferredRooms || t('common.notAvailable') }}
                 </p>
               </div>

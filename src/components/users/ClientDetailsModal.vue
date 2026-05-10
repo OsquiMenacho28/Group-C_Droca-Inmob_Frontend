@@ -137,10 +137,10 @@
                   </div>
                 </div>
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
+                  <p class="text-sm font-bold text-primary truncate">
                     {{ prop.title }}
                   </p>
-                  <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{{ prop.zone }}</p>
+                  <p class="text-[11px] text-secondary mt-1">{{ prop.zone }}</p>
                   <div class="flex items-center gap-3 mt-2">
                     <span
                       class="text-[10px] bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded font-bold text-gray-600 dark:text-gray-300"
@@ -202,8 +202,7 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { FwbModal, FwbBadge, FwbButton, FwbSpinner } from 'flowbite-vue';
-  import { propertyService } from '@/modules/properties';
+  import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
   import IconLucideSearch from '~icons/lucide/search';
   import IconLucideBuilding from '~icons/lucide/building';
@@ -215,8 +214,8 @@
   import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
   const { t } = useI18n();
-  const props = defineProps<{ show: boolean; client: any }>();
-  const emit = defineEmits(['close']);
+  defineProps<{ show: boolean; client: Record<string, unknown> }>();
+  defineEmits(['close']);
 
   const suggestions = ref([]);
   const loadingSuggestions = ref(false);
@@ -230,8 +229,8 @@
       const response = await api.get(`/properties/filtrar?buscador_id=${searchId}`);
       suggestions.value = response.data.data || [];
       hasSearched.value = true;
-    } catch (error) {
-      console.error('Error al obtener sugerencias:', error);
+    } catch {
+      console.error('Error al obtener sugerencias:');
     } finally {
       loadingSuggestions.value = false;
     }

@@ -1,4 +1,4 @@
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { notificationService } from '@/services/notificationService';
 import type { NotificationHistoryResponse } from '@/types/notification';
 

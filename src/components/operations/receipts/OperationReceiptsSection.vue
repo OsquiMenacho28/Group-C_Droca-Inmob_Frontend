@@ -9,7 +9,7 @@
             class="w-1.5 h-6 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)]"
           ></div>
           <div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white leading-none">
+            <h2 class="text-xl font-bold text-primary leading-none">
               {{ t('receiptsSection.title') }}
             </h2>
             <div class="mt-2">
@@ -61,7 +61,7 @@
         <div class="bg-green-100 dark:bg-green-900/40 p-1.5 rounded-full">
           <IconLucideCircleCheck class="w-5 h-5 text-green-600 dark:text-green-400" />
         </div>
-        <span class="font-bold text-gray-900 dark:text-white">
+        <span class="font-bold text-primary">
           {{ t('receiptsSection.toastSuccess') }}
         </span>
       </div>
@@ -82,12 +82,12 @@
     >
       <div class="p-8 flex flex-wrap gap-10 justify-between items-center">
         <div class="space-y-2">
-          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest font-black">
+          <p class="text-xs text-secondary uppercase tracking-widest font-black">
             {{ t('receiptsSection.totalLabel') }}
           </p>
-          <div class="flex items-center gap-3 text-gray-900 dark:text-white">
+          <div class="flex items-center gap-3 text-primary">
             <span class="text-2xl font-black">{{ receipts.length }}</span>
-            <span class="text-sm font-bold text-gray-500 dark:text-gray-400 tracking-tight">
+            <span class="text-sm font-bold text-secondary tracking-tight">
               {{ t('common.entries').toUpperCase() }}
             </span>
           </div>
@@ -99,9 +99,7 @@
             :key="currency"
             class="text-right space-y-2 border-r last:border-0 border-gray-200 dark:border-gray-700 pr-10 last:pr-0"
           >
-            <p
-              class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest font-black"
-            >
+            <p class="text-xs text-secondary uppercase tracking-widest font-black">
               {{ currency }}
             </p>
             <p class="text-2xl font-black text-blue-600 dark:text-blue-500 tracking-tighter">

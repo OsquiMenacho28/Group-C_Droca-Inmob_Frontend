@@ -3,17 +3,17 @@
     <div class="max-w-3xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('reassignmentInbox.title') }}
           </h1>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('reassignmentInbox.subtitle') }}
           </p>
         </div>
         <button
           @click="load"
           :disabled="loading"
-          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm"
+          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover-row shadow-sm"
         >
           <IconLucideRefreshCw class="w-4 h-4" :class="loading ? 'animate-spin' : ''" />
           {{ t('reassignmentInbox.refresh') }}
@@ -52,7 +52,7 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('reassignmentInbox.emptyTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('reassignmentInbox.emptyText') }}
         </p>
       </div>
@@ -76,7 +76,7 @@
                 <p class="font-semibold text-gray-800 dark:text-white text-sm">
                   {{ t('reassignmentInbox.agentId') }} {{ r.requestingAgentId }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ t('reassignmentInbox.requestedLabel') }} · {{ formatDate(r.requestedAt) }}
                 </p>
               </div>
@@ -91,7 +91,7 @@
           <div class="px-5 py-4 space-y-3">
             <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
-              <span class="text-gray-500 dark:text-gray-400">
+              <span class="text-secondary">
                 {{ t('reassignmentInbox.visitIdLabel') }}
               </span>
               <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">

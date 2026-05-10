@@ -71,10 +71,10 @@
         </div>
 
         <div class="p-5 flex-1 flex flex-col">
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+          <h5 class="text-xl font-bold text-primary mb-1">
             {{ c.fullName || `${c.firstName} ${c.lastName}` }}
           </h5>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 truncate">{{ c.email }}</p>
+          <p class="text-sm text-secondary mb-4 truncate">{{ c.email }}</p>
 
           <div class="flex justify-between items-end mt-auto">
             <div>
@@ -122,7 +122,7 @@
       v-if="!loading && filteredClients.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
-      <p class="text-gray-500 dark:text-gray-400">{{ t('agentClients.emptyText') }}</p>
+      <p class="text-secondary">{{ t('agentClients.emptyText') }}</p>
     </div>
 
     <client-details-modal

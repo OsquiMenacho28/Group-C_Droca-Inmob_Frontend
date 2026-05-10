@@ -42,7 +42,7 @@
     >
       <div class="text-center">
         <IconLucideImage class="w-12 h-12 text-gray-400 mx-auto mb-2" />
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('propertyDetails.noPhotos') }}
         </p>
       </div>
@@ -134,11 +134,13 @@
         >
           <!-- Controls Overlay -->
           <div class="absolute top-4 right-4 z-20 flex items-center gap-3">
-            <span class="bg-white/80 text-gray-800 border-gray-200 dark:bg-gray-800/80 dark:text-gray-300 dark:border-gray-600 text-xs font-medium inline-flex items-center px-2.5 py-1.5 rounded-lg border shadow-sm backdrop-blur-md transition-colors">
+            <span
+              class="bg-white/80 text-gray-800 border-gray-200 dark:bg-gray-800/80 dark:text-gray-300 dark:border-gray-600 text-xs font-medium inline-flex items-center px-2.5 py-1.5 rounded-lg border shadow-sm backdrop-blur-md transition-colors"
+            >
               <IconLucideMouse class="w-3.5 h-3.5 mr-1.5" />
               Scroll to zoom &middot; Drag to pan
             </span>
-            
+
             <button
               @click="resetZoom"
               type="button"
@@ -185,7 +187,9 @@
             type="button"
             class="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 cursor-pointer group focus:outline-none"
           >
-            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 text-gray-800 border-gray-200 group-hover:bg-white group-focus:ring-4 group-focus:ring-gray-200 dark:bg-gray-800/60 dark:text-white dark:border-gray-600 dark:group-hover:bg-gray-800 dark:group-focus:ring-gray-700 border backdrop-blur-sm transition-all">
+            <span
+              class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 text-gray-800 border-gray-200 group-hover:bg-white group-focus:ring-4 group-focus:ring-gray-200 dark:bg-gray-800/60 dark:text-white dark:border-gray-600 dark:group-hover:bg-gray-800 dark:group-focus:ring-gray-700 border backdrop-blur-sm transition-all"
+            >
               <IconLucideChevronLeft class="w-5 h-5" />
               <span class="sr-only">Previous</span>
             </span>
@@ -197,7 +201,9 @@
             type="button"
             class="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-12 h-12 cursor-pointer group focus:outline-none"
           >
-            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 text-gray-800 border-gray-200 group-hover:bg-white group-focus:ring-4 group-focus:ring-gray-200 dark:bg-gray-800/60 dark:text-white dark:border-gray-600 dark:group-hover:bg-gray-800 dark:group-focus:ring-gray-700 border backdrop-blur-sm transition-all">
+            <span
+              class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/60 text-gray-800 border-gray-200 group-hover:bg-white group-focus:ring-4 group-focus:ring-gray-200 dark:bg-gray-800/60 dark:text-white dark:border-gray-600 dark:group-hover:bg-gray-800 dark:group-focus:ring-gray-700 border backdrop-blur-sm transition-all"
+            >
               <IconLucideChevronRight class="w-5 h-5" />
               <span class="sr-only">Next</span>
             </span>

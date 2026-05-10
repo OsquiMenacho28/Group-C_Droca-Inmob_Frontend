@@ -14,7 +14,7 @@
       <!-- Back link -->
       <RouterLink
         to="/calendar"
-        class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
+        class="inline-flex items-center gap-2 text-sm text-secondary hover:text-gray-800 dark:hover:text-gray-200 transition"
       >
         <IconLucideArrowLeft class="w-4 h-4" />
         {{ t('visitDetail.backToCalendar') }}
@@ -49,7 +49,7 @@
               >
                 {{ statusLabel }}
               </span>
-              <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 class="text-2xl font-bold text-primary">
                 {{ t('visitDetail.title') }}
               </h1>
               <p class="text-gray-400 dark:text-gray-500 text-xs mt-1 font-mono">
@@ -205,7 +205,7 @@
           v-if="visit.status === 'SCHEDULED' && !visit.resultado"
           class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 space-y-4 transition-colors"
         >
-          <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <h2 class="text-sm font-bold text-secondary uppercase tracking-wide">
             {{ t('visitResult.title') }}
           </h2>
           <form @submit.prevent="submitResultado">
@@ -217,7 +217,7 @@
                 <select
                   v-model="resultadoForm.resultado"
                   required
-                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
                 >
                   <option value="INTERESADO">{{ t('visitResult.interesado') }}</option>
                   <option value="NO_INTERESADO">{{ t('visitResult.noInteresado') }}</option>
@@ -231,7 +231,7 @@
                 <textarea
                   v-model="resultadoForm.observaciones"
                   rows="3"
-                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
                   :placeholder="t('visitResult.observacionesPlaceholder')"
                 />
               </div>
@@ -252,7 +252,7 @@
           <div class="flex items-start gap-3">
             <IconLucideClipboardCheck class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
             <div class="flex-1">
-              <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <p class="text-xs text-secondary uppercase tracking-wide">
                 {{ t('visitResult.resultado') }}
               </p>
               <p class="text-base font-semibold text-gray-800 dark:text-white">
@@ -296,7 +296,7 @@
         <div
           class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 space-y-4 transition-colors"
         >
-          <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+          <h2 class="text-sm font-bold text-secondary uppercase tracking-wide">
             {{ t('visitDetail.actions') }}
           </h2>
 

@@ -122,12 +122,12 @@
             </span>
           </p>
           <h3
-            class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white line-clamp-1"
+            class="text-lg sm:text-xl font-bold text-primary line-clamp-1"
             :class="{ 'text-gray-500': isMinimalInfo }"
           >
             {{ property.title }}
           </h3>
-          <div class="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+          <div class="flex items-start gap-1.5 text-xs text-secondary">
             <IconLucideMapPin
               class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-blue-500"
               :class="{ 'text-gray-400': isMinimalInfo }"
@@ -188,7 +188,7 @@
   import { ref } from 'vue';
   import { useI18n } from 'vue-i18n';
   import { FwbBadge } from 'flowbite-vue';
-  import { getLocaleString } from '@/locales/i18n';
+
   import { usePropertyStatus } from '@/composables/usePropertyStatus';
   import type { Property } from '@/types/property';
 
@@ -198,7 +198,6 @@
   import IconLucideMapPin from '~icons/lucide/map-pin';
   import IconLucideChevronLeft from '~icons/lucide/chevron-left';
   import IconLucideChevronRight from '~icons/lucide/chevron-right';
-  import IconLucideMaximize from '~icons/lucide/maximize';
 
   const props = defineProps<{
     property: Property;

@@ -113,7 +113,7 @@
           <div class="px-6 pb-6 flex gap-3 justify-end">
             <FwbButton
               @click="close"
-              class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+              class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover-row"
             >
               {{ t('common.cancel') }}
             </FwbButton>

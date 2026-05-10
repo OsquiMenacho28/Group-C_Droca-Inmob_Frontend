@@ -110,7 +110,10 @@ export const userService = {
     return response.data.data;
   },
 
-  async savePreferences(userId: string, payload: any): Promise<ApiResponse<User>> {
+  async savePreferences(
+    userId: string,
+    payload: Record<string, unknown>
+  ): Promise<ApiResponse<User>> {
     return (await api.put(`/persons/${userId}/preferencias`, payload)).data;
   },
 };

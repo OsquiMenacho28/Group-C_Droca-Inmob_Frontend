@@ -7,10 +7,10 @@
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('clientProperties.title') }}
             </h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p class="text-sm text-secondary mt-0.5">
               {{ t('clientProperties.subtitle') }}
             </p>
           </div>
@@ -21,9 +21,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
       <!-- Filters Card -->
-      <div
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors"
-      >
+      <div class="app-card rounded-xl overflow-hidden transition-colors">
         <div class="p-6 space-y-6">
           <!-- Filter Fields Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -116,7 +114,7 @@
           v-if="properties.length === 0"
           class="text-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 transition-colors"
         >
-          <p class="text-gray-500 dark:text-gray-400">{{ t('clientProperties.emptyText') }}</p>
+          <p class="text-secondary">{{ t('clientProperties.emptyText') }}</p>
         </div>
 
         <!-- Properties Cards -->
@@ -211,9 +209,7 @@
             <div class="p-5 flex flex-col">
               <!-- Title -->
               <div class="flex justify-between items-start gap-2 mb-3">
-                <h3
-                  class="text-xl font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 flex-1"
-                >
+                <h3 class="text-xl font-bold text-primary leading-tight line-clamp-2 flex-1">
                   {{ property.title }}
                 </h3>
               </div>
@@ -262,9 +258,7 @@
                 class="flex items-end justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700"
               >
                 <div>
-                  <p
-                    class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wide mb-0.5"
-                  >
+                  <p class="text-xs text-secondary uppercase font-semibold tracking-wide mb-0.5">
                     {{ t('common.price') }}
                   </p>
                   <p class="text-2xl font-bold text-blue-600 dark:text-blue-500">
@@ -328,7 +322,7 @@
             <h3 class="text-lg font-semibold dark:text-white">
               {{ t('clientProperties.visitRequestTitle') }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-secondary">
               {{ requestTarget?.name }} · {{ requestTarget?.agentName }}
             </p>
           </div>
@@ -467,11 +461,8 @@
     FwbSelect,
   } from 'flowbite-vue';
 
-  import IconLucideMapPin from '~icons/lucide/map-pin';
-  import IconLucideFilter from '~icons/lucide/filter';
   import IconLucideChevronLeft from '~icons/lucide/chevron-left';
   import IconLucideChevronRight from '~icons/lucide/chevron-right';
-  import IconLucideMaximize from '~icons/lucide/maximize';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import { propertyService } from '@/modules/properties';
   import { favoriteService } from '@/services/favoriteService';

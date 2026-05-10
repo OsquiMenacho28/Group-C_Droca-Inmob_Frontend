@@ -1,10 +1,10 @@
 <template>
   <form @submit.prevent="submit" class="space-y-6">
     <!-- Información Principal -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
-        Información Principal
-      </h3>
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-semibold mb-6 text-primary">Información Principal</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2">
           <fwb-input
@@ -57,10 +57,10 @@
     </div>
 
     <!-- Ubicación -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
-        Ubicación
-      </h3>
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-semibold mb-6 text-primary">Ubicación</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="md:col-span-2">
           <fwb-input
@@ -82,10 +82,10 @@
     </div>
 
     <!-- Características -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
-        Características
-      </h3>
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-semibold mb-6 text-primary">Características</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <fwb-input
           v-model.number="m2Model"
@@ -105,10 +105,10 @@
     </div>
 
     <!-- Asignación -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
-        Propietario
-      </h3>
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-semibold mb-6 text-primary">Propietario</h3>
       <div class="grid grid-cols-1 gap-6">
         <fwb-select
           v-model="ownerIdModel"
@@ -119,8 +119,10 @@
     </div>
 
     <!-- Galería de Imágenes -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
+      <h3 class="text-lg font-semibold mb-6 text-primary">
         {{ t('propertyForm.images') }}
       </h3>
       <div v-if="props.propertyId">
@@ -130,15 +132,21 @@
           @images-updated="handleImagesUpdated"
         />
       </div>
-      <div v-else class="text-center py-8 bg-gray-50 dark:bg-gray-900 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+      <div
+        v-else
+        class="text-center py-8 bg-gray-50 dark:bg-gray-900 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600"
+      >
         <p class="text-gray-500">{{ t('propertyForm.imagesLater') }}</p>
       </div>
     </div>
 
     <!-- Ubicación Geográfica -->
-    <div v-if="props.propertyId" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <div
+      v-if="props.propertyId"
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+    >
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ubicación Geográfica en Mapa</h3>
+        <h3 class="text-lg font-semibold text-primary">Ubicación Geográfica en Mapa</h3>
         <fwb-button
           size="sm"
           gradient="green"
@@ -282,9 +290,9 @@
 
   const ownerOptions = computed(() => {
     const defaultOption = { value: '', name: t('propertyForm.noOwnerAssigned') };
-    const userOptions = owners.value.map(owner => ({
+    const userOptions = owners.value.map((owner) => ({
       value: owner.id,
-      name: `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || owner.email
+      name: `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || owner.email,
     }));
     return [defaultOption, ...userOptions];
   });
@@ -396,4 +404,3 @@
     }
   };
 </script>
-

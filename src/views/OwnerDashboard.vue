@@ -76,10 +76,10 @@
                   </div>
                 </div>
                 <div class="p-5">
-                  <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1">
+                  <h5 class="text-xl font-bold text-primary mb-2 line-clamp-1">
                     {{ prop.title }}
                   </h5>
-                  <p class="text-gray-500 dark:text-gray-400 text-sm mb-3 line-clamp-2">
+                  <p class="text-secondary text-sm mb-3 line-clamp-2">
                     {{ prop.address }}
                   </p>
                   <div class="flex justify-between items-center mb-4">
@@ -130,7 +130,7 @@
             class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
           >
             <div class="flex justify-between items-center mb-4">
-              <div class="text-sm text-gray-500 dark:text-gray-400">
+              <div class="text-sm text-secondary">
                 {{ t('ownerNotifications.totalUnread', { count: unreadCount }) }}
               </div>
               <button
@@ -174,7 +174,7 @@
                       </span>
                       <span v-else class="text-yellow-500">⏳ {{ t('common.pending') }}</span>
                     </div>
-                    <h4 class="font-semibold text-gray-900 dark:text-white">{{ notif.tipo }}</h4>
+                    <h4 class="font-semibold text-primary">{{ notif.tipo }}</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">
                       {{ notif.contenido }}
                     </p>
@@ -275,8 +275,8 @@
         })
       );
       properties.value = propsWithVisits;
-    } catch (err: any) {
-      errorProps.value = err.message || t('ownerDashboard.loadError');
+    } catch (err: unknown) {
+      errorProps.value = (err as Error).message || t('ownerDashboard.loadError');
     } finally {
       loadingProps.value = false;
     }

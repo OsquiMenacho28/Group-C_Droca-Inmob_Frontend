@@ -1,17 +1,17 @@
 <template>
   <div class="max-w-4xl mx-auto">
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+      <h1 class="text-2xl font-bold text-primary">
         {{ t('ownerNotifications.title') }}
       </h1>
-      <p class="text-gray-500 dark:text-gray-400">{{ t('ownerNotifications.subtitle') }}</p>
+      <p class="text-secondary">{{ t('ownerNotifications.subtitle') }}</p>
     </div>
 
     <div
       class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
     >
       <div class="flex justify-between items-center mb-6">
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <div class="text-sm text-secondary">
           {{ t('ownerNotifications.totalUnread', { count: unreadCount }) }}
         </div>
         <button
@@ -55,7 +55,7 @@
                 </span>
                 <span v-else class="text-yellow-500">⏳ {{ t('common.pending') }}</span>
               </div>
-              <h4 class="font-semibold text-gray-900 dark:text-white">{{ notif.tipo }}</h4>
+              <h4 class="font-semibold text-primary">{{ notif.tipo }}</h4>
               <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 whitespace-pre-line">
                 {{ notif.contenido }}
               </p>

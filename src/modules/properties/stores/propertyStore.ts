@@ -14,8 +14,8 @@ export const usePropertyStore = defineStore('property', () => {
     error.value = null;
     try {
       images.value = await propertyService.getPropertyImages(propertyId);
-    } catch (err: any) {
-      error.value = err.message || 'Failed to fetch images';
+    } catch (err: unknown) {
+      error.value = (err as Error).message || 'Failed to fetch images';
       console.error(err);
     } finally {
       isLoading.value = false;
@@ -30,7 +30,7 @@ export const usePropertyStore = defineStore('property', () => {
         ...img,
         isPrimary: img.id === imageId,
       }));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error setting primary image:', err);
       throw err;
     }
@@ -40,7 +40,7 @@ export const usePropertyStore = defineStore('property', () => {
     try {
       await propertyService.deleteImage(propertyId, imageId);
       images.value = images.value.filter((img) => img.id !== imageId);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error deleting image:', err);
       throw err;
     }
@@ -49,7 +49,7 @@ export const usePropertyStore = defineStore('property', () => {
   const reorderImages = async (propertyId: string, orderedIds: string[]) => {
     try {
       images.value = await propertyService.reorderImages(propertyId, orderedIds);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error reordering images:', err);
       throw err;
     }

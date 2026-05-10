@@ -39,7 +39,7 @@
             <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
               {{ formatDate(visit.startTime) }} - {{ formatDate(visit.endTime) }}
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-xs text-secondary">
               {{ statusLabel(visit.status) }}
             </p>
           </div>

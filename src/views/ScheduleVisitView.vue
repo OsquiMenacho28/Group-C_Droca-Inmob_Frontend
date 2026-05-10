@@ -11,10 +11,10 @@
           <IconLucideArrowLeft class="h-5 w-5" />
         </router-link>
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('scheduleVisit.title') }}
           </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="text-sm text-secondary">
             {{ t('scheduleVisit.subtitle') }}
           </p>
         </div>
@@ -35,7 +35,7 @@
             <div class="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <IconLucideLoader v-if="loadingList" class="animate-spin h-4 w-4 text-blue-500" />
-                <IconLucideSearch v-else class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <IconLucideSearch v-else class="w-4 h-4 text-secondary" />
               </div>
               <input
                 type="text"
@@ -47,7 +47,7 @@
                     : t('scheduleVisit.searchProperty')
                 "
                 :disabled="loadingList"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-10 py-2.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-colors dark:scheme-dark"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-10 py-2.5 text-sm text-primary app-focus transition-colors dark:scheme-dark"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.propertyId,
                 }"
@@ -80,10 +80,10 @@
                   class="px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer flex justify-between items-center border-b last:border-b-0 border-gray-100 dark:border-gray-700 transition-colors"
                 >
                   <div class="min-w-0">
-                    <p class="font-bold text-gray-900 dark:text-white truncate">
+                    <p class="font-bold text-primary truncate">
                       {{ p.title }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p class="text-xs text-secondary truncate">
                       {{ p.address }}
                     </p>
                   </div>
@@ -160,7 +160,7 @@
                 v-model="startTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus dark:scheme-dark"
                 :min="minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
@@ -179,7 +179,7 @@
                 v-model="endTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
+                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus dark:scheme-dark"
                 :min="startTimeLocal || minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
@@ -198,14 +198,14 @@
             <select
               v-model="selectedVehicleId"
               :disabled="loadingVehicles || !startTimeLocal || !endTimeLocal"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60 dark:scheme-dark"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus disabled:opacity-60 dark:scheme-dark"
             >
               <option value="">{{ vehiclePlaceholder }}</option>
               <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
                 {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
               </option>
             </select>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-xs text-secondary">
               {{ vehicleHelperText }}
             </p>
           </div>
@@ -282,7 +282,7 @@
               v-model="notes"
               rows="2"
               :placeholder="t('scheduleVisit.notesPlaceholder')"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
             />
           </div>
 
@@ -325,7 +325,7 @@
             }"
           >
             <div class="text-center min-w-12.5">
-              <p class="text-xs font-bold text-gray-900 dark:text-white">
+              <p class="text-xs font-bold text-primary">
                 {{ shortTime(ev.startTime) }}
               </p>
               <p class="text-[9px] text-gray-400 uppercase">{{ t('scheduleVisit.start') }}</p>

@@ -9,7 +9,7 @@
       </div>
     </template>
     <template #body>
-      <p class="text-gray-500 dark:text-gray-400">
+      <p class="text-secondary">
         {{ message }}
       </p>
     </template>

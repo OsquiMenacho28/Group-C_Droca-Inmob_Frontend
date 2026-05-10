@@ -38,7 +38,7 @@
           <div
             class="rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 p-4 dark:from-blue-950/30 dark:to-indigo-950/30"
           >
-            <p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <p class="text-xs font-medium uppercase tracking-wide text-secondary">
               {{ t('common.price') }}
             </p>
             <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
@@ -49,34 +49,34 @@
           <!-- Details Grid with consistent spacing -->
           <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
             <div>
-              <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <p class="text-xs font-medium text-secondary">
                 {{ t('propertyDetails.location') }}
               </p>
-              <p class="font-medium text-gray-900 dark:text-white mt-0.5">
+              <p class="font-medium text-primary mt-0.5">
                 {{ property?.address || '—' }}
               </p>
             </div>
             <div>
-              <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <p class="text-xs font-medium text-secondary">
                 {{ t('propertyDetails.area') }}
               </p>
-              <p class="font-medium text-gray-900 dark:text-white mt-0.5">
+              <p class="font-medium text-primary mt-0.5">
                 {{ property?.m2 || property?.area || '—' }} m²
               </p>
             </div>
             <div>
-              <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <p class="text-xs font-medium text-secondary">
                 {{ t('propertyDetails.bedrooms') }}
               </p>
-              <p class="font-medium text-gray-900 dark:text-white mt-0.5">
+              <p class="font-medium text-primary mt-0.5">
                 {{ property?.rooms || property?.bedrooms || '—' }}
               </p>
             </div>
             <div>
-              <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <p class="text-xs font-medium text-secondary">
                 {{ t('propertyDetails.operation') }}
               </p>
-              <p class="font-medium text-gray-900 dark:text-white mt-0.5">
+              <p class="font-medium text-primary mt-0.5">
                 {{ formatOperationType(property?.operationType) }}
               </p>
             </div>
@@ -87,7 +87,7 @@
             v-if="property?.description"
             class="border-t border-gray-100 dark:border-gray-700 pt-4"
           >
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+            <p class="text-xs font-medium text-secondary mb-1">
               {{ t('clientPropertyDetails.description') }}
             </p>
             <p class="text-sm text-gray-600 dark:text-gray-300">
@@ -97,7 +97,7 @@
 
           <!-- Agent Section -->
           <div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-800/50">
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+            <p class="text-xs font-medium text-secondary mb-2">
               {{ t('clientPropertyDetails.responsibleAgent') }}
             </p>
             <div class="flex items-center gap-3">
@@ -107,7 +107,7 @@
                 {{ getAgentInitial() }}
               </div>
               <div>
-                <p class="font-medium text-gray-900 dark:text-white">
+                <p class="font-medium text-primary">
                   {{ property?.agentName || t('clientPropertyDetails.agentAssigned') }}
                 </p>
                 <p class="text-xs text-gray-500">{{ t('clientPropertyDetails.portalContact') }}</p>
@@ -138,10 +138,8 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
-  import { FwbBadge, FwbButton } from 'flowbite-vue';
+  import { computed } from 'vue';
   import type { Property } from '@/types/property';
-  import IconLucideImage from '~icons/lucide/image';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideHome from '~icons/lucide/home';
   import { useI18n } from 'vue-i18n';
@@ -165,21 +163,9 @@
   const statusLabel = computed(() => statusHelpers.value.statusLabel.value);
   const statusBadgeClass = computed(() => statusHelpers.value.statusBadgeClass.value);
 
-  const currentImage = ref('');
-
   const formatOperationType = (type: string | undefined) => {
     if (!type) return t('propertyOperations.VENTA');
     return t(`propertyOperations.${type}`);
-  };
-
-  const operationTypeColor = (type: string | undefined) => {
-    if (!type) return 'text-gray-600';
-    const map: Record<string, string> = {
-      VENTA: 'text-indigo-600 dark:text-indigo-400',
-      ALQUILER: 'text-green-600 dark:text-green-400',
-      ANTICRETICO: 'text-yellow-600 dark:text-yellow-400',
-    };
-    return map[type] || 'text-gray-600';
   };
 
   const getAgentInitial = () => {

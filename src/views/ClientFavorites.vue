@@ -40,7 +40,7 @@
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
       <IconLucideHeart class="w-16 h-16 mx-auto text-gray-400 mb-4" />
-      <p class="text-gray-500 dark:text-gray-400 text-lg font-medium mb-2">
+      <p class="text-secondary text-lg font-medium mb-2">
         {{ t('favorites.emptyTitle') }}
       </p>
       <p class="text-gray-400 dark:text-gray-500 text-sm mb-4">
@@ -136,10 +136,10 @@
             </fwb-badge>
           </div>
 
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1 line-clamp-1">
+          <h5 class="text-xl font-bold text-primary mb-1 line-clamp-1">
             {{ prop.title }}
           </h5>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">
+          <p class="text-sm text-secondary mb-3 line-clamp-2">
             {{ prop.address }}
           </p>
 

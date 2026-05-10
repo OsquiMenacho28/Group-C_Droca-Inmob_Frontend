@@ -33,3 +33,24 @@ body {
 .dark label {
   color: #ffffff !important;
 }
+
+/* Extracted repeated utility patterns */
+@utility app-card {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm;
+}
+
+@utility text-primary {
+  @apply text-gray-900 dark:text-white;
+}
+
+@utility text-secondary {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+@utility app-focus {
+  @apply focus:ring-2 focus:ring-blue-500 outline-none;
+}
+
+@utility hover-row {
+  @apply hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors;
+}

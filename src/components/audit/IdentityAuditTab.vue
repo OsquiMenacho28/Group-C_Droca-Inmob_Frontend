@@ -19,7 +19,7 @@
           </label>
           <select
             v-model="filters.action"
-            class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            class="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-primary text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
           >
             <option value="">{{ t('audit.actions.all') }}</option>
             <option value="USER_LOGIN">LOGIN</option>

@@ -3,10 +3,10 @@
     <div class="max-w-6xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('operations.title') }}
           </h1>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('operations.subtitle') }}
           </p>
         </div>
@@ -14,7 +14,7 @@
 
       <div v-if="loading" class="text-center py-20">
         <FwbSpinner size="6" />
-        <p class="mt-2 text-gray-500 dark:text-gray-400">{{ t('operations.loading') }}</p>
+        <p class="mt-2 text-secondary">{{ t('operations.loading') }}</p>
       </div>
 
       <FwbAlert v-else-if="error" type="danger">
@@ -32,7 +32,7 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('operations.emptyTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">{{ t('operations.emptyText') }}</p>
+        <p class="text-secondary text-sm">{{ t('operations.emptyText') }}</p>
       </FwbCard>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -52,30 +52,30 @@
               </span>
             </div>
             <h3
-              class="text-lg font-bold text-gray-900 dark:text-white mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              class="text-lg font-bold text-primary mt-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
             >
               {{ op.propertyName || t('operations.noName') }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p class="text-sm text-secondary mt-0.5">
               {{ op.clientName || t('operations.noClient') }}
             </p>
           </div>
 
           <div class="p-5 space-y-3">
             <div class="flex justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('operations.agent') }}</span>
+              <span class="text-secondary">{{ t('operations.agent') }}</span>
               <span class="font-medium text-gray-700 dark:text-gray-300">
                 {{ op.agentName || t('common.notSpecified') }}
               </span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('operations.date') }}</span>
+              <span class="text-secondary">{{ t('operations.date') }}</span>
               <span class="font-medium text-gray-700 dark:text-gray-300">
                 {{ formatDate(op.createdAt) }}
               </span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-gray-500 dark:text-gray-400">{{ t('common.status') }}</span>
+              <span class="text-secondary">{{ t('common.status') }}</span>
               <FwbBadge :type="badgeType(op.status)" size="sm">
                 {{ op.status || t('status.pending') }}
               </FwbBadge>

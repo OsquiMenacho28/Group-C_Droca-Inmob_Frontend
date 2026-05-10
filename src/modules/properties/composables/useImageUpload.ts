@@ -85,10 +85,10 @@ export function useImageUpload(propertyId: string) {
 
       fileState.progress = 100;
       fileState.status = 'success';
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Upload failed for', fileState.file.name, err);
       fileState.status = 'error';
-      fileState.error = err.message || 'Upload failed';
+      fileState.error = (err as { message?: string }).message || 'Upload failed';
     }
   };
 

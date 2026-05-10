@@ -14,11 +14,11 @@
             >
               <IconLucideArrowLeft class="h-5 w-5" />
             </router-link>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('calendar.title') }}
             </h1>
           </div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+          <p class="text-sm text-secondary mt-0.5">
             {{ t('calendar.subtitle', { weekLabel }) }}
           </p>
         </div>
@@ -61,19 +61,16 @@
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                <p class="text-sm font-semibold text-primary truncate">
                   {{ request.propertyName }}
                 </p>
                 <p class="text-xs text-gray-600 dark:text-gray-300">
                   {{ t('calendar.client') }} {{ request.clientName }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ formatPendingDate(request.preferredDateTime) }}
                 </p>
-                <p
-                  v-if="request.message"
-                  class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2"
-                >
+                <p v-if="request.message" class="text-xs text-secondary mt-1 line-clamp-2">
                   {{ request.message }}
                 </p>
               </div>
@@ -161,10 +158,10 @@
                   @click="selectProperty(p)"
                   class="px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer border-b last:border-b-0 border-gray-50 dark:border-gray-700 transition-colors"
                 >
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  <p class="text-sm font-bold text-primary">
                     {{ p.title }}
                   </p>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                  <p class="text-[10px] text-secondary truncate">
                     {{ p.address }}
                   </p>
                 </li>
@@ -209,10 +206,10 @@
                   @click="selectAgent(a)"
                   class="px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer border-b last:border-b-0 border-gray-50 dark:border-gray-700 transition-colors"
                 >
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  <p class="text-sm font-bold text-primary">
                     {{ a.fullName }}
                   </p>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400">
+                  <p class="text-[10px] text-secondary">
                     {{ a.email }}
                   </p>
                 </li>
@@ -239,7 +236,7 @@
           class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
         >
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ calendarData?.totalEvents ?? 0 }}
             </p>
             <p class="text-[10px] text-gray-500 uppercase font-black">
@@ -263,10 +260,10 @@
           class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
         >
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ teamEvents }}
             </p>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-black">
+            <p class="text-[10px] text-secondary uppercase font-black">
               {{ t('calendar.team') }}
             </p>
           </div>
@@ -275,10 +272,10 @@
           class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
         >
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ uniqueProperties }}
             </p>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-black">
+            <p class="text-[10px] text-secondary uppercase font-black">
               {{ t('calendar.properties') }}
             </p>
           </div>
@@ -383,10 +380,10 @@
             <template v-if="selectedEvent?.vehicleId && selectedEventVehicle">
               <div class="text-right font-bold dark:text-white">
                 <p>{{ selectedEventVehicle.licensePlate }}</p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p class="text-xs font-medium text-secondary">
                   {{ selectedEventVehicle.brand }} {{ selectedEventVehicle.model }}
                 </p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p class="text-xs font-medium text-secondary">
                   {{
                     t('calendar.vehicleCapacity', {
                       capacity: selectedEventVehicle.passengerCapacity,
@@ -395,7 +392,7 @@
                 </p>
               </div>
             </template>
-            <span v-else class="font-medium text-gray-500 dark:text-gray-400 text-right">
+            <span v-else class="font-medium text-secondary text-right">
               {{ t('calendar.noVehicleAssigned') }}
             </span>
           </div>
