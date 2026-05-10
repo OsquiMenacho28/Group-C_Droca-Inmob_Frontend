@@ -297,7 +297,7 @@
     }
   };
 
-  const handleDrop = (e: DragEvent, index: number) => {
+  const handleDrop = (_e: DragEvent, index: number) => {
     if (dragStartIndex === -1 || dragStartIndex === index) return;
     const draggedItem = reorderList.value[dragStartIndex];
     reorderList.value.splice(dragStartIndex, 1);
@@ -312,7 +312,7 @@
   const saveReorder = async () => {
     try {
       const orderedIds = reorderList.value.map((img) => img.id);
-      await propertyStore.reorderImages(props.propertyId, orderedIds);
+      await propertyStore.reorderImages(props.propertyId!, orderedIds);
       reorderMode.value = false;
     } catch (error) {
       console.error('Failed to save order:', error);

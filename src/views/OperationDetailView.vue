@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="app-page">
     <div class="max-w-5xl mx-auto px-4 py-5">
       <!-- Back button and Actions -->
       <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
@@ -75,9 +75,7 @@
       <!-- Main content -->
       <template v-else-if="operation">
         <!-- Header card -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 shadow-sm"
-        >
+        <div class="app-card p-4 mb-4">
           <div class="flex flex-wrap items-center gap-2 mb-2">
             <FwbBadge type="default" size="xs">{{ t('operations.operationBadge') }}</FwbBadge>
             <FwbBadge :type="statusBadgeType" size="xs">
@@ -98,9 +96,7 @@
         <!-- Details + Price row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <!-- Details card -->
-          <div
-            class="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="md:col-span-2 app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -129,15 +125,13 @@
                 {{ t('adminProperties.closingDate') }}:
               </span>
               <span class="text-primary font-semibold">
-                {{ formatDate(operation.closureDate) }}
+                {{ formatDateLong(operation.closureDate) }}
               </span>
             </div>
           </div>
 
           <!-- Price card -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm flex flex-col justify-center text-center"
-          >
+          <div class="app-card p-4 flex flex-col justify-center text-center">
             <p
               class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide"
             >
@@ -155,9 +149,7 @@
         <!-- Property Info & Documents row -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <!-- Property Basic Info & Images -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -193,9 +185,7 @@
           </div>
 
           <!-- Property Documents -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -234,10 +224,7 @@
         </div>
 
         <!-- Notes -->
-        <div
-          v-if="operation.notes"
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm mb-4"
-        >
+        <div v-if="operation.notes" class="app-card p-4 mb-4">
           <div class="flex gap-2">
             <IconLucideFileText class="w-4 h-4 text-gray-400 mt-0.5" />
             <div>
@@ -409,6 +396,7 @@
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import AppToast from '@/components/ui/AppToast.vue';
   import ImageGallery from '@/components/properties/ImageGallery.vue';
+  import { formatDateLong, formatDateTime } from '@/utils/dateTime';
 
   const { t } = useI18n();
   const route = useRoute();
@@ -592,26 +580,6 @@
     };
     return map[type] || 'bg-gray-500';
   });
-
-  function formatDate(iso?: string): string {
-    if (!iso) return '-';
-    return new Date(iso).toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  }
-
-  function formatDateTime(iso?: string): string {
-    if (!iso) return '-';
-    return new Date(iso).toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
 
   function formatCurrency(amount: number, currency: string) {
     return new Intl.NumberFormat(getLocaleString(), {

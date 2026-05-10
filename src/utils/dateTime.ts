@@ -104,3 +104,39 @@ export function minDatetimeLocal(): string {
 export function isSameLocalDay(utcIso: string, localDate: Date): boolean {
   return parseUtc(utcIso).toDateString() === localDate.toDateString();
 }
+
+/**
+ * Returns a human-readable local-time string (DD MMM YYYY, HH:mm)
+ */
+import { getLocaleString } from '@/locales/i18n';
+
+/**
+ * Returns a human-readable local-time string (DD MMM YYYY, HH:mm)
+ */
+export function formatDate(iso?: string): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleString(getLocaleString(), {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+/**
+ * Returns a human-readable local-time string with long month
+ */
+export function formatDateLong(iso?: string): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString(getLocaleString(), {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Alias for formatDate for consistency in components using "formatDateTime" name
+ */
+export const formatDateTime = formatDate;

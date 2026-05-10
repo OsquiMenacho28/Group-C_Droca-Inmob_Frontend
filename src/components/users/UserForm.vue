@@ -341,8 +341,8 @@
   // Zonas y rangos
   const newZone = ref('');
   const preferredZonesList = ref<string[]>([]);
-  const minRooms = ref<number | null>(null);
-  const maxRooms = ref<number | null>(null);
+  const minRooms = ref<number | undefined>(undefined);
+  const maxRooms = ref<number | undefined>(undefined);
 
   const allUsers = ref<User[]>([]);
   const activeAgents = computed(() =>
@@ -447,10 +447,10 @@
     if (data.preferredZones && Array.isArray(data.preferredZones)) {
       preferredZonesList.value = [...data.preferredZones];
     }
-    if (data.minRooms !== undefined && data.minRooms !== null) {
+    if (data.minRooms != null) {
       minRooms.value = Number(data.minRooms);
     }
-    if (data.maxRooms !== undefined && data.maxRooms !== null) {
+    if (data.maxRooms != null) {
       maxRooms.value = Number(data.maxRooms);
     }
   };
@@ -497,11 +497,11 @@
   const handlePositionBlur = () => positionAttrs.value.onBlur?.();
   const handleTaxIdBlur = () => taxIdAttrs.value.onBlur?.();
   const handleMinRoomsBlur = () => {
-    if (minRooms.value !== null && minRooms.value < 0) minRooms.value = 0;
+    if (minRooms.value !== undefined && minRooms.value < 0) minRooms.value = 0;
     modifiedFields.value.add('minRooms');
   };
   const handleMaxRoomsBlur = () => {
-    if (maxRooms.value !== null && maxRooms.value < 0) maxRooms.value = 0;
+    if (maxRooms.value !== undefined && maxRooms.value < 0) maxRooms.value = 0;
     modifiedFields.value.add('maxRooms');
   };
   const handleBudgetBlur = () => {

@@ -34,7 +34,7 @@
   defineProps<{
     modelValue: boolean;
     isEditing: boolean;
-    initialData?: Property;
+    initialData?: Record<string, unknown>;
     propertyId?: string;
     formKey?: number;
   }>();

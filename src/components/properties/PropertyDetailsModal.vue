@@ -23,9 +23,7 @@
     <template #body>
       <div class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': showSidebar }">
         <div class="space-y-4">
-          <div
-            class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
-          >
+          <div class="app-card p-4 rounded-xl">
             <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">
               {{ t('propertyDetails.technicalSheet') }}
             </h4>
@@ -89,9 +87,7 @@
             />
           </div>
 
-          <div
-            class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
-          >
+          <div class="app-card p-4 rounded-xl shadow-sm">
             <h4 class="text-xs font-black text-green-600 uppercase tracking-widest mb-3">
               {{ t('propertyDetails.responsible') }}
             </h4>
@@ -170,15 +166,11 @@
               {{ t('propertyDetails.visitsHistory') }}
             </h4>
             <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
-              <div
-                v-for="v in visits"
-                :key="v.id"
-                class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600"
-              >
+              <div v-for="v in visits" :key="v.id" class="app-card p-3 rounded-lg">
                 <div class="flex justify-between items-start">
                   <div class="flex-1">
                     <p class="text-xs text-secondary">
-                      {{ formatFecha(v.startTime) }}
+                      {{ formatDateTime(v.startTime) }}
                     </p>
                     <p class="text-sm font-semibold dark:text-white">
                       {{ v.clientName || t('common.notSpecified') }}
@@ -200,7 +192,7 @@
                 </p>
                 <p v-if="v.fechaRegistroResultado" class="text-[10px] text-gray-400 mt-1">
                   {{ t('visitResult.registeredOn') }}
-                  {{ formatFecha(v.fechaRegistroResultado) }}
+                  {{ formatDateTime(v.fechaRegistroResultado) }}
                 </p>
               </div>
             </div>
@@ -210,8 +202,8 @@
         <div v-if="showSidebar" class="space-y-6">
           <!-- Receipts Section (Visible for reserved properties and related users) -->
           <div
-            v-if="canManageReceipts"
-            class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800"
+            v-if="associatedOperation"
+            class="p-4 app-card bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30"
           >
             <OperationReceiptsSection
               :operation-id="associatedOperation.id!"
@@ -234,7 +226,7 @@
               <div
                 v-for="(h, i) in property!.priceHistory"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <div class="flex justify-between items-center mb-1">
                   <div class="flex items-center space-x-2">
@@ -283,7 +275,7 @@
               <div
                 v-for="(ah, i) in property!.assignmentHistory"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <p class="text-xs dark:text-gray-200">
                   {{ t('propertyDetails.previousAgent') }}
@@ -324,7 +316,7 @@
               <div
                 v-for="(h, i) in [...(property!.statusHistory || [])].reverse()"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <div class="flex justify-between items-center mb-1">
                   <div class="flex items-center space-x-1">
@@ -436,7 +428,7 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideHome from '~icons/lucide/home';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+  import { formatDate, formatDateTime } from '@/utils/dateTime';
   import AppToast from '@/components/ui/AppToast.vue';
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
@@ -736,29 +728,6 @@
       RETIRADO: 'text-orange-600',
     };
     return map[status || ''] || '';
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatFecha = (dateStr: string) => {
-    if (!dateStr) return '';
-    return new Date(dateStr).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   const contactViaWhatsApp = () => {

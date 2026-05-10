@@ -90,7 +90,7 @@
                 {{ t('clientDetails.preferredZone') }}
               </p>
               <p class="text-sm font-semibold dark:text-gray-200">
-                {{ c.preferredZone || t('clientDetails.any') }}
+                {{ c.preferredZones?.join(', ') || t('clientDetails.any') }}
               </p>
             </div>
           </div>

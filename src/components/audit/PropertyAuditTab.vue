@@ -1,8 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div
-      class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700"
-    >
+    <div class="app-card p-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SearchableSelect
           v-model="filters.userId"
@@ -27,21 +25,13 @@
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('propertyAudit.from') }}
             </label>
-            <input
-              v-model="filters.from"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.from" type="date" class="app-input" />
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('propertyAudit.to') }}
             </label>
-            <input
-              v-model="filters.to"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.to" type="date" class="app-input" />
           </div>
         </div>
       </div>
@@ -148,10 +138,7 @@
       />
     </div>
 
-    <div
-      v-else
-      class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
-    >
+    <div v-else class="text-center py-12 app-card border-2 border-dashed">
       <p class="text-gray-500 text-sm">{{ t('propertyAudit.noResultsTitle') }}</p>
     </div>
 
@@ -174,9 +161,7 @@
       </template>
       <template #body>
         <div class="space-y-6">
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700"
-          >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 app-card p-4 rounded-xl">
             <div class="space-y-1">
               <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 {{ t('propertyAudit.agente') }}
@@ -218,7 +203,7 @@
               <div
                 v-for="change in selectedLog.changes"
                 :key="change.field"
-                class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-4 rounded-xl shadow-sm"
               >
                 <div class="flex items-center justify-between mb-3">
                   <span
@@ -272,9 +257,7 @@
               </span>
               <div class="h-px flex-1 bg-gray-100 dark:bg-gray-700"></div>
             </div>
-            <div
-              class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700 italic text-sm text-gray-600 dark:text-gray-400"
-            >
+            <div class="app-card p-4 rounded-xl italic text-sm text-gray-600 dark:text-gray-400">
               {{ selectedLog.details }}
             </div>
           </div>
@@ -294,12 +277,13 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+
   import { auditService, type PropertyAuditLog } from '@/services/auditService';
   import { userService } from '@/services/userService';
   import { propertyService } from '@/modules/properties';
   import SearchableSelect, { type SelectItem } from '@/components/common/SearchableSelect.vue';
   import Pagination from '@/components/ui/Pagination.vue';
+  import { formatDateTime } from '@/utils/dateTime';
   import type { User } from '@/types/user';
   import type { Property } from '@/types/property';
   import {
@@ -359,8 +343,6 @@
 
   const getPropertyName = (id?: string) =>
     properties.value.find((p) => p.id === id)?.title || id || '--';
-
-  const formatDateTime = (ts: string) => new Date(ts).toLocaleString(getLocaleString());
 
   const formatAction = (action: string) => {
     const map: Record<string, string> = {

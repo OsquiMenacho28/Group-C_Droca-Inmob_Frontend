@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 space-y-6">
+  <div class="app-page p-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-3xl font-bold dark:text-white">{{ t('ownerDashboard.title') }}</h1>
@@ -7,11 +7,7 @@
       </div>
     </div>
 
-    <fwb-tabs
-      v-model="activeTab"
-      variant="underline"
-      class="bg-white dark:bg-gray-800 rounded-xl shadow-sm"
-    >
+    <fwb-tabs v-model="activeTab" variant="underline" class="app-card">
       <fwb-tab name="properties" :title="t('ownerDashboard.propertiesTab')">
         <div class="mt-6">
           <!-- Contenido original de propiedades -->
@@ -126,9 +122,7 @@
 
       <fwb-tab name="notifications" :title="t('ownerDashboard.notificationsTab')">
         <div class="mt-6">
-          <div
-            class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
-          >
+          <div class="app-card p-6">
             <div class="flex justify-between items-center mb-4">
               <div class="text-sm text-secondary">
                 {{ t('ownerNotifications.totalUnread', { count: unreadCount }) }}
@@ -159,7 +153,7 @@
                 v-for="notif in notificationsList"
                 :key="notif.id"
                 @click="markAsRead(notif.id)"
-                class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 cursor-pointer transition hover:shadow-md"
+                class="app-card p-4 cursor-pointer transition hover:shadow-md"
                 :class="{ 'opacity-60': notif.leida }"
               >
                 <div class="flex justify-between items-start">
@@ -224,7 +218,8 @@
   import { useI18n } from 'vue-i18n';
   import IconLucideEye from '~icons/lucide/eye';
   import IconLucideImage from '~icons/lucide/image';
-  import { getLocaleString } from '@/locales/i18n';
+  import { formatDate } from '@/utils/dateTime';
+  import { statusBadgeClass } from '@/utils/styling';
 
   const { t } = useI18n();
   const authStore = useAuthStore();
@@ -284,32 +279,6 @@
 
   const openDetails = (prop: PropertyWithVisits) => {
     selectedProperty.value = prop as Property;
-  };
-
-  const statusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'DISPONIBLE':
-        return 'bg-green-500 text-white';
-      case 'RESERVADO':
-        return 'bg-yellow-500 text-white';
-      case 'VENDIDO':
-        return 'bg-red-500 text-white';
-      case 'EN_NEGOCIACION':
-        return 'bg-blue-500 text-white';
-      default:
-        return 'bg-gray-500 text-white';
-    }
-  };
-
-  const formatDate = (iso: string) => {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   onMounted(() => {

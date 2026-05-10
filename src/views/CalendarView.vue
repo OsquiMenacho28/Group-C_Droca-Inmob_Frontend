@@ -1,8 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div
-      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
-    >
+  <div class="app-page">
+    <div class="app-card border-t-0 border-x-0 px-6 py-4">
       <div
         class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
       >
@@ -105,9 +103,7 @@
         </div>
       </FwbAlert>
 
-      <div
-        class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors shadow-sm"
-      >
+      <div class="app-card p-4">
         <div class="flex flex-col lg:flex-row gap-4">
           <div class="flex items-center gap-2 shrink-0">
             <FwbButton @click="prevWeek" color="alternative" size="sm">
@@ -143,7 +139,7 @@
             </FwbInput>
             <div
               v-if="showPropertyDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-60 overflow-y-auto"
             >
               <ul class="py-1">
                 <li
@@ -191,7 +187,7 @@
             </FwbInput>
             <div
               v-if="showAgentDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-60 overflow-y-auto"
             >
               <ul class="py-1">
                 <li
@@ -232,9 +228,7 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" v-if="calendarData">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
             <p class="text-2xl font-bold text-primary">
               {{ calendarData?.totalEvents ?? 0 }}
@@ -256,9 +250,7 @@
             </p>
           </div>
         </div>
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
             <p class="text-2xl font-bold text-primary">
               {{ teamEvents }}
@@ -268,9 +260,7 @@
             </p>
           </div>
         </div>
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
             <p class="text-2xl font-bold text-primary">
               {{ uniqueProperties }}
@@ -282,10 +272,7 @@
         </div>
       </div>
 
-      <div
-        v-if="!loading"
-        class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors"
-      >
+      <div v-if="!loading" class="app-card overflow-hidden">
         <div class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
           <div
             v-for="(day, idx) in weekDays"
@@ -508,7 +495,8 @@
   const weekLabel = computed(() => {
     const from = weekDays.value[0];
     const to = weekDays.value[6];
-    return `${from.getDate()} ${from.toLocaleString(getLocaleString(), { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(getLocaleString(), { month: 'short', year: 'numeric' })}`;
+    const locale = getLocaleString();
+    return `${from.getDate()} ${from.toLocaleString(locale, { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(locale, { month: 'short', year: 'numeric' })}`;
   });
 
   const loadFilterData = async () => {

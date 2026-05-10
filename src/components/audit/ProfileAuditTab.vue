@@ -1,8 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div
-      class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700"
-    >
+    <div class="app-card p-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SearchableSelect
           v-model="filters.personId"
@@ -33,21 +31,13 @@
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('audit.filters.from') }}
             </label>
-            <input
-              v-model="filters.from"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.from" type="date" class="app-input" />
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('audit.filters.to') }}
             </label>
-            <input
-              v-model="filters.to"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.to" type="date" class="app-input" />
           </div>
         </div>
       </div>
@@ -121,10 +111,7 @@
       />
     </div>
 
-    <div
-      v-else
-      class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
-    >
+    <div v-else class="text-center py-12 app-card border-2 border-dashed">
       <p class="text-gray-500 text-sm">{{ t('audit.noRecords') }}</p>
     </div>
   </div>
@@ -133,11 +120,12 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+
   import { auditService, type ProfileAuditLog } from '@/services/auditService';
   import { apiClient as api } from '@/api';
   import SearchableSelect, { type SelectItem } from '@/components/common/SearchableSelect.vue';
   import Pagination from '@/components/ui/Pagination.vue';
+  import { formatDateTime } from '@/utils/dateTime';
   import type { User } from '@/types/user';
   import {
     FwbTable,
@@ -184,8 +172,6 @@
     const p = profiles.value.find((p) => p.id === id);
     return p?.firstName ? `${p.firstName} ${p.lastName}` : id;
   };
-
-  const formatDateTime = (ts: string) => new Date(ts).toLocaleString(getLocaleString());
 
   const getActionBadgeClass = (action: string) => {
     if (action === 'CREATED') return 'bg-green-100 text-green-800';

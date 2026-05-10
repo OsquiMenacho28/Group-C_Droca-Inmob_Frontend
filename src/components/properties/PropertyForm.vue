@@ -111,7 +111,7 @@
       <h3 class="text-lg font-semibold mb-6 text-primary">Propietario</h3>
       <div class="grid grid-cols-1 gap-6">
         <fwb-select
-          v-model="ownerIdModel"
+          v-model="ownerIdComputed"
           :options="ownerOptions"
           :label="t('propertyForm.owner')"
         />
@@ -271,6 +271,13 @@
   const [ownerIdModel] = defineField('ownerId');
   const [imageUrlsModel] = defineField('imageUrls');
 
+  const ownerIdComputed = computed({
+    get: () => ownerIdModel.value ?? '',
+    set: (val: string) => {
+      ownerIdModel.value = val;
+    },
+  });
+
   const operationTypeOptions = computed(() => [
     { value: '', name: t('propertyForm.selectOption') },
     { value: 'VENTA', name: t('propertyForm.sale') },
@@ -323,7 +330,7 @@
       operationType: values.operationType as OperationType,
       m2: values.m2,
       rooms: values.rooms,
-      ownerId: values.ownerId || null,
+      ownerId: values.ownerId || undefined,
       imageUrls: values.imageUrls || [],
     };
 

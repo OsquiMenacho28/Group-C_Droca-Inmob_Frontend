@@ -1,8 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div
-      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
-    >
+  <div class="app-page">
+    <div class="app-card border-t-0 border-x-0 border-b px-6 py-4 transition-colors">
       <div class="max-w-2xl mx-auto flex items-center gap-4">
         <router-link
           to="/calendar"
@@ -22,9 +20,7 @@
     </div>
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm transition-colors"
-      >
+      <div class="app-card p-6 transition-colors">
         <form @submit.prevent="handleSubmit" novalidate class="space-y-5">
           <div class="relative" id="property-select-container">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -47,7 +43,7 @@
                     : t('scheduleVisit.searchProperty')
                 "
                 :disabled="loadingList"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-10 py-2.5 text-sm text-primary app-focus transition-colors dark:scheme-dark"
+                class="app-input pl-10 pr-10 py-2.5 dark:scheme-dark"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.propertyId,
                 }"
@@ -64,7 +60,7 @@
 
             <div
               v-if="showDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-72 overflow-y-auto overflow-x-hidden"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-72 overflow-y-auto overflow-x-hidden"
             >
               <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
                 <li
@@ -160,7 +156,7 @@
                 v-model="startTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus dark:scheme-dark"
+                class="app-input dark:scheme-dark"
                 :min="minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
@@ -179,7 +175,7 @@
                 v-model="endTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus dark:scheme-dark"
+                class="app-input dark:scheme-dark"
                 :min="startTimeLocal || minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
@@ -198,7 +194,7 @@
             <select
               v-model="selectedVehicleId"
               :disabled="loadingVehicles || !startTimeLocal || !endTimeLocal"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus disabled:opacity-60 dark:scheme-dark"
+              class="app-input disabled:opacity-60 dark:scheme-dark"
             >
               <option value="">{{ vehiclePlaceholder }}</option>
               <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
@@ -282,7 +278,7 @@
               v-model="notes"
               rows="2"
               :placeholder="t('scheduleVisit.notesPlaceholder')"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
+              class="app-input"
             />
           </div>
 
@@ -304,10 +300,7 @@
         </form>
       </div>
 
-      <div
-        v-if="dayAgenda.length > 0"
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 transition-colors shadow-sm"
-      >
+      <div v-if="dayAgenda.length > 0" class="app-card p-6 transition-colors">
         <h2
           class="text-sm font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2"
         >
@@ -751,17 +744,3 @@
     if (conflictTimer) clearTimeout(conflictTimer);
   });
 </script>
-
-<style scoped>
-  .slide-fade-enter-active {
-    transition: all 0.3s ease-out;
-  }
-  .slide-fade-leave-active {
-    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
-  }
-  .slide-fade-enter-from,
-  .slide-fade-leave-to {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-</style>

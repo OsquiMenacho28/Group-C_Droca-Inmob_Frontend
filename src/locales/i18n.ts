@@ -67,17 +67,20 @@ const i18n = createI18n({
 /** Set language and persist to localStorage */
 export function setLanguage(lang: Language): void {
   localStorage.setItem('language', lang);
-  i18n.global.locale.value = lang;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (i18n.global.locale as any).value = lang;
 }
 
 /** Get the current active language */
 export function getCurrentLanguage(): Language {
-  return i18n.global.locale.value as Language;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (i18n.global.locale as any).value as Language;
 }
 
 /** Get the locale string for toLocaleString() calls in non-component code */
 export function getLocaleString(): string {
-  return i18n.global.locale.value === 'en' ? 'en-US' : 'es-BO';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (i18n.global.locale as any).value === 'en' ? 'en-US' : 'es-BO';
 }
 
 export default i18n;

@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
-  >
+  <div class="app-card overflow-hidden">
     <div
       class="p-4 flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4"
     >

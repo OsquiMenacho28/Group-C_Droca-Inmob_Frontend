@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 h-full flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700"
+    class="relative app-card h-full flex flex-col overflow-hidden"
     :class="{
       'bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600': isMinimalInfo,
     }"

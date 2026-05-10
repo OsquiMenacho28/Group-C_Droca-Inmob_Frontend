@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto">
+  <div class="app-page max-w-4xl mx-auto py-8 px-4">
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-primary">
         {{ t('ownerNotifications.title') }}
@@ -7,9 +7,7 @@
       <p class="text-secondary">{{ t('ownerNotifications.subtitle') }}</p>
     </div>
 
-    <div
-      class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm"
-    >
+    <div class="app-card p-6">
       <div class="flex justify-between items-center mb-6">
         <div class="text-sm text-secondary">
           {{ t('ownerNotifications.totalUnread', { count: unreadCount }) }}
@@ -40,7 +38,7 @@
           v-for="notif in list"
           :key="notif.id"
           @click="markAsRead(notif.id)"
-          class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 cursor-pointer transition hover:shadow-md"
+          class="app-card p-4 cursor-pointer transition hover:shadow-md"
           :class="{ 'opacity-60': notif.leida }"
         >
           <div class="flex justify-between items-start">
@@ -89,7 +87,7 @@
   import { useAuthStore } from '@/modules/auth';
   import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
   import Pagination from '@/components/ui/Pagination.vue';
-  import { getLocaleString } from '@/locales/i18n';
+  import { formatDate } from '@/utils/dateTime';
 
   const { t } = useI18n();
   const authStore = useAuthStore();
@@ -107,15 +105,4 @@
     markAllAsRead,
     fetchNotifications,
   } = useOwnerNotifications(ownerId.value);
-
-  const formatDate = (iso: string) => {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 </script>

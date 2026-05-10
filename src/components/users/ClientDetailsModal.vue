@@ -204,6 +204,7 @@
   import { ref } from 'vue';
   import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
+  import { apiClient as api } from '@/api';
   import IconLucideSearch from '~icons/lucide/search';
   import IconLucideBuilding from '~icons/lucide/building';
   import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
@@ -213,11 +214,43 @@
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
   import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
+  interface SuggestedProperty {
+    id: string;
+    title: string;
+    zone: string;
+    rooms: number;
+    price: number;
+    imageUrls?: string[];
+  }
+
+  interface AuditEntry {
+    changedBy: string;
+    changedAt: string;
+    changes: { field: string; oldValue: string; newValue: string }[];
+  }
+
+  interface ClientData {
+    [key: string]: unknown;
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    id?: string;
+    authUserId?: string;
+    personId?: string;
+    preferredZones?: string[];
+    minRooms?: number;
+    maxRooms?: number;
+    maxPrice?: number;
+    preferredPropertyType?: string;
+    budget?: number;
+    auditLog?: AuditEntry[];
+  }
+
   const { t } = useI18n();
-  defineProps<{ show: boolean; client: Record<string, unknown> }>();
+  const props = defineProps<{ show: boolean; client: ClientData }>();
   defineEmits(['close']);
 
-  const suggestions = ref([]);
+  const suggestions = ref<SuggestedProperty[]>([]);
   const loadingSuggestions = ref(false);
   const hasSearched = ref(false);
 
@@ -235,7 +268,4 @@
       loadingSuggestions.value = false;
     }
   };
-
-  // Necesitamos importar el api client si no se usa el propertyService directamente
-  import { apiClient as api } from '@/api';
 </script>

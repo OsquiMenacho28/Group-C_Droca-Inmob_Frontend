@@ -1,12 +1,10 @@
 <template>
-  <div class="space-y-6">
+  <div class="app-page p-6 space-y-6">
     <div class="flex justify-between items-center">
       <h1 class="text-2xl font-bold dark:text-white">{{ t('users.view.title') }}</h1>
     </div>
 
-    <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4"
-    >
+    <div class="app-card p-4">
       <div class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
           <div class="relative">

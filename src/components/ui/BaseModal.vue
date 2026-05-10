@@ -95,14 +95,3 @@
     full: 'max-w-[90vw]',
   };
 </script>
-
-<style scoped>
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: opacity 0.2s ease;
-  }
-  .modal-enter-from,
-  .modal-leave-to {
-    opacity: 0;
-  }
-</style>
