@@ -110,7 +110,11 @@
     "notSpecified": "No especificado",
     "changeHistory": "Registro Histórico de Cambios",
     "editor": "Editor:",
-    "noChanges": "No se han registrado modificaciones en este perfil."
+    "noChanges": "No se han registrado modificaciones en este perfil.",
+    "viewSuggestions": "Ver Propiedades Sugeridas",
+    "suggestedProperties": "Inmuebles que coinciden",
+    "noSuggestions": "No existen inmuebles que coincidan con estas preferencias.",
+    "adjustFilters": "Intente ajustar los rangos de habitaciones o zonas."
   },
   "ownerDetails": {
     "profileBadge": "Perfil de Propietario",

@@ -73,6 +73,30 @@ export function useUsers() {
   const update = async (id: string, payload: Record<string, unknown>) => {
     try {
       await userService.updateUser(id, payload);
+
+      // Sincronizar preferencias si es un cliente buscador
+      const hasPrefs =
+        payload.preferredZones ||
+        payload.minRooms !== undefined ||
+        payload.maxRooms !== undefined ||
+        payload.budget ||
+        payload.preferredPropertyType;
+
+      if (hasPrefs) {
+        const profile = await personService.getPersonByAuthUserId(id);
+        if (profile?.id && profile.personType === 'INTERESTED_CLIENT') {
+          const prefsPayload = {
+            preferredZones: payload.preferredZones || profile.preferredZones || [],
+            minRooms: payload.minRooms !== undefined ? payload.minRooms : profile.minRooms,
+            maxRooms: payload.maxRooms !== undefined ? payload.maxRooms : profile.maxRooms,
+            maxPrice: Number(payload.budget || profile.budget || 0),
+            preferredPropertyType:
+              payload.preferredPropertyType || profile.preferredPropertyType,
+          };
+          await personService.savePreferences(profile.id as string, prefsPayload);
+        }
+      }
+
       await load();
     } catch (error) {
       console.error('Error en actualización:', error);

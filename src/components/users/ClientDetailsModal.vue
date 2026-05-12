@@ -59,11 +59,7 @@
                   v-else
                   class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
                 ></div>
-                {{
-                  t('retirement.motivoLabel') === 'Reason *'
-                    ? 'View Suggestions'
-                    : 'Ver Propiedades Sugeridas'
-                }}
+                {{ t('clientDetails.viewSuggestions') }}
               </div>
             </fwb-button>
           </div>
@@ -94,11 +90,7 @@
           <div v-if="hasSearched">
             <h4 class="font-bold dark:text-white mb-4 flex items-center gap-2">
               <IconLucideBuilding class="w-5 h-5 text-blue-500" />
-              {{
-                t('retirement.motivoLabel') === 'Reason *'
-                  ? 'Suggested Matches'
-                  : 'Inmuebles que coinciden'
-              }}
+              {{ t('clientDetails.suggestedProperties') }}
             </h4>
 
             <div
@@ -107,14 +99,10 @@
             >
               <IconLucideAlertTriangle class="w-12 h-12 text-yellow-500 mx-auto mb-3" />
               <p class="text-yellow-800 dark:text-yellow-200 font-bold">
-                {{
-                  t('retirement.motivoLabel') === 'Reason *'
-                    ? 'No properties found'
-                    : 'No existen inmuebles que coincidan con estas preferencias.'
-                }}
+                {{ t('clientDetails.noSuggestions') }}
               </p>
               <p class="text-xs text-yellow-600 mt-1">
-                Intente ajustar los rangos de habitaciones o zonas.
+                {{ t('clientDetails.adjustFilters') }}
               </p>
             </div>
 
@@ -257,8 +245,8 @@
   const fetchSuggestions = async () => {
     loadingSuggestions.value = true;
     try {
-      // Usamos el authUserId (ID de identidad) para filtrar
-      const searchId = props.client.authUserId || props.client.id;
+      // Usamos el personId (ID de MongoDB) para obtener sugerencias basadas en preferencias
+      const searchId = props.client.personId || props.client.id;
       const response = await api.get(`/properties/filtrar?buscador_id=${searchId}`);
       suggestions.value = response.data.data || [];
       hasSearched.value = true;

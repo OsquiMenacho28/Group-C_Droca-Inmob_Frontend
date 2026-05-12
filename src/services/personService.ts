@@ -78,4 +78,19 @@ export const personService = {
     const response = await api.put(`/persons/agents/clients/${clientId}`, payload);
     return response.data.data;
   },
+
+  async getPreferences(id: string) {
+    const response = await api.get(`/buscadores/${id}/preferencias`);
+    return response.data.data;
+  },
+
+  async savePreferences(id: string, payload: any) {
+    const response = await api.post(`/buscadores/${id}/preferencias`, payload);
+    return response.data.data;
+  },
+
+  async updatePreferences(id: string, payload: any) {
+    const response = await api.put(`/buscadores/${id}/preferencias`, payload);
+    return response.data.data;
+  },
 };
