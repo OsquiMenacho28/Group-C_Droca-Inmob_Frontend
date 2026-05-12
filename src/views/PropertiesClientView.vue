@@ -36,11 +36,10 @@
             </div>
 
             <div>
-              <fwb-input
+              <fwb-select
                 v-model="filters.zone"
-                type="text"
                 :label="t('clientProperties.zoneLabel').replace(':', '')"
-                :placeholder="t('clientProperties.zonePlaceholder', 'Ej: Equipetrol...')"
+                :options="zoneOptions"
                 class="w-full"
               />
             </div>
@@ -55,44 +54,87 @@
             </div>
           </div>
 
-          <!-- Price Range and Actions -->
-          <div
-            class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pt-4 border-t border-gray-100 dark:border-gray-700"
-          >
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {{ t('common.priceRange') }}:
-              </label>
-              <div class="flex items-center gap-2">
-                <fwb-input
+          <!-- Range Filters (Price & M2) -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <!-- Price Range Slider -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('common.priceRange') }} ($)
+                </label>
+                <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
+                  {{ filters.minPrice?.toLocaleString() || 0 }} — {{ filters.maxPrice?.toLocaleString() || t('clientProperties.noLimit') }}
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <input
+                  type="range"
                   v-model.number="filters.minPrice"
-                  type="number"
-                  :placeholder="t('clientProperties.minPrice')"
-                  class="w-32"
+                  min="0"
+                  max="1000000"
+                  step="5000"
+                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
                 />
-                <span class="text-gray-400 dark:text-gray-500">—</span>
-                <fwb-input
+                <input
+                  type="range"
                   v-model.number="filters.maxPrice"
-                  type="number"
-                  :placeholder="t('clientProperties.maxPrice')"
-                  class="w-32"
+                  min="0"
+                  max="5000000"
+                  step="10000"
+                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
                 />
               </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <fwb-button
-                color="alternative"
-                size="sm"
-                @click="clearFilters"
-                class="whitespace-nowrap"
-              >
-                {{ t('common.clear') }}
-              </fwb-button>
-              <fwb-button color="blue" size="sm" @click="applyFilters" class="whitespace-nowrap">
-                {{ t('clientProperties.applyFilters') }}
-              </fwb-button>
+            <!-- M2 Range -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('clientProperties.areaRange') }} (m²)
+                </label>
+              </div>
+              <div class="flex items-center gap-3">
+                <fwb-input
+                  v-model.number="filters.minM2"
+                  type="number"
+                  :placeholder="t('clientProperties.minM2')"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">Min</span>
+                  </template>
+                </fwb-input>
+                <span class="text-gray-400 dark:text-gray-500">—</span>
+                <fwb-input
+                  v-model.number="filters.maxM2"
+                  type="number"
+                  :placeholder="t('clientProperties.maxM2')"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">Max</span>
+                  </template>
+                </fwb-input>
+              </div>
             </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex justify-end gap-3 pt-4">
+            <fwb-button
+              color="alternative"
+              size="sm"
+              @click="clearFilters"
+              class="whitespace-nowrap"
+            >
+              {{ t('common.clear') }}
+            </fwb-button>
+            <fwb-button color="blue" size="sm" @click="applyFilters" class="whitespace-nowrap">
+              <template #prefix>
+                <span>🔍</span>
+              </template>
+              {{ t('clientProperties.applyFilters') }}
+            </fwb-button>
           </div>
         </div>
       </div>
@@ -489,6 +531,8 @@
     status: string;
     minPrice: number | undefined;
     maxPrice: number | undefined;
+    minM2: number | undefined;
+    maxM2: number | undefined;
     sortBy: string;
     sortOrder: 'ASC' | 'DESC';
     page: number;
@@ -547,6 +591,8 @@
     status: (route.query.status as string) || '',
     minPrice: route.query.minPrice ? Number(route.query.minPrice) : undefined,
     maxPrice: route.query.maxPrice ? Number(route.query.maxPrice) : undefined,
+    minM2: route.query.minM2 ? Number(route.query.minM2) : undefined,
+    maxM2: route.query.maxM2 ? Number(route.query.maxM2) : undefined,
     sortBy: (route.query.sortBy as string) || 'price',
     sortOrder: (route.query.sortOrder as 'ASC' | 'DESC') || 'ASC',
     page: route.query.page ? Number(route.query.page) : 0,
@@ -578,6 +624,18 @@
     { value: 'LOCAL', name: t('propertyTypes.LOCAL') },
     { value: 'TERRENO', name: t('propertyTypes.TERRENO') },
     { value: 'OFICINA', name: t('propertyTypes.OFICINA') },
+  ]);
+
+  const zoneOptions = computed(() => [
+    { value: '', name: t('clientProperties.allZonesOption', 'Todas las zonas') },
+    { value: 'Centro', name: 'Centro' },
+    { value: 'Norte', name: 'Zona Norte' },
+    { value: 'Sur', name: 'Zona Sur' },
+    { value: 'Este', name: 'Zona Este' },
+    { value: 'Oeste', name: 'Zona Oeste' },
+    { value: 'Equipetrol', name: 'Equipetrol' },
+    { value: 'Urbarí', name: 'Urbarí' },
+    { value: 'Las Palmas', name: 'Las Palmas' },
   ]);
 
   // Form setup
@@ -649,6 +707,8 @@
         operationType: filters.value.operationType || undefined,
         minPrice: filters.value.minPrice,
         maxPrice: filters.value.maxPrice,
+        minM2: filters.value.minM2,
+        maxM2: filters.value.maxM2,
         sortBy: filters.value.sortBy,
         sortOrder: filters.value.sortOrder,
         page: filters.value.page,
@@ -671,6 +731,8 @@
       if (filters.value.operationType) query.operationType = filters.value.operationType;
       if (filters.value.minPrice) query.minPrice = String(filters.value.minPrice);
       if (filters.value.maxPrice) query.maxPrice = String(filters.value.maxPrice);
+      if (filters.value.minM2) query.minM2 = String(filters.value.minM2);
+      if (filters.value.maxM2) query.maxM2 = String(filters.value.maxM2);
       query.sortBy = filters.value.sortBy;
       query.sortOrder = filters.value.sortOrder;
       query.page = String(filters.value.page);
@@ -698,6 +760,8 @@
       status: '',
       minPrice: undefined,
       maxPrice: undefined,
+      minM2: undefined,
+      maxM2: undefined,
       sortBy: 'price',
       sortOrder: 'ASC',
       page: 0,

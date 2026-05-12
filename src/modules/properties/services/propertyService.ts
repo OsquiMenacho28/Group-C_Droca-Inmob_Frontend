@@ -82,6 +82,10 @@ export const propertyService = {
     operationType?: string;
     status?: string;
     agentId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    minM2?: number;
+    maxM2?: number;
     page?: number;
     pageSize?: number;
     sortBy?: string;
