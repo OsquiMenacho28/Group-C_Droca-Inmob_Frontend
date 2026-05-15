@@ -191,7 +191,7 @@
             </div>
           </div>
 
-          <div class="space-y-1">
+          <div v-if="isAdmin" class="space-y-1">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
               {{ t('scheduleVisit.assignedVehicle') }}
             </label>
@@ -211,7 +211,14 @@
           </div>
 
           <div
-            v-if="selectedVehicle"
+            v-else
+            class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-800/60 dark:bg-amber-900/20 dark:text-amber-100"
+          >
+            {{ t('scheduleVisit.vehicleAdminOnlyHelp') }}
+          </div>
+
+          <div
+            v-if="isAdmin && selectedVehicle"
             class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-900/20 dark:text-emerald-100"
           >
             <div class="flex items-start gap-3">
@@ -432,6 +439,10 @@
   let successTimer: ReturnType<typeof setTimeout> | null = null;
 
   const authStore = useAuthStore();
+  const currentUser = computed(() => authStore.user as UserClaims | null);
+  const isAdmin = computed(() => {
+    return currentUser.value?.roles?.includes('ADMIN') || currentUser.value?.userType === 'ADMIN';
+  });
 
   const myAgentId = computed(() => {
     const u = authStore.user as UserClaims | null;
@@ -588,6 +599,12 @@
   let vehicleTimer: ReturnType<typeof setTimeout> | null = null;
 
   const loadAvailableVehiclesForSchedule = async () => {
+    if (!isAdmin.value) {
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
+      return;
+    }
+
     const start = startTimeLocal.value;
     const end = endTimeLocal.value;
 
@@ -621,14 +638,22 @@
     const pid = propertyId.value;
     const start = startTimeLocal.value;
     const end = endTimeLocal.value;
+
+    if (!isAdmin.value) {
+      availableVehicles.value = [];
+      selectedVehicleId.value = '';
+    }
+
     if (!start || !end) {
       availableVehicles.value = [];
       selectedVehicleId.value = '';
       return;
     }
 
-    if (vehicleTimer) clearTimeout(vehicleTimer);
-    vehicleTimer = setTimeout(loadAvailableVehiclesForSchedule, 250);
+    if (isAdmin.value) {
+      if (vehicleTimer) clearTimeout(vehicleTimer);
+      vehicleTimer = setTimeout(loadAvailableVehiclesForSchedule, 250);
+    }
 
     if (!pid) return;
 
@@ -672,7 +697,7 @@
 
       let assignmentWarning = '';
 
-      if (selectedVehicleId.value) {
+      if (isAdmin.value && selectedVehicleId.value) {
         try {
           await assignVehicleToVisit(createdVisit.id, {
             vehicleId: selectedVehicleId.value,

@@ -432,6 +432,7 @@ export const en = {
     loadingVehiclesHelp: 'Checking fleet availability for that schedule...',
     noVehiclesHelp: 'Try another time slot or leave the visit without a vehicle.',
     vehicleOptionalHelp: 'Optional. Only vehicles available for that schedule are shown.',
+    vehicleAdminOnlyHelp: 'Vehicle assignment is an administrator-only action.',
     selectedVehicleInfo: 'Selected vehicle summary',
     vehiclePlateLabel: 'Plate',
     vehicleBrandLabel: 'Brand',

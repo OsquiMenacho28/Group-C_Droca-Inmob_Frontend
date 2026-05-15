@@ -431,6 +431,7 @@ export const es = {
     loadingVehiclesHelp: 'Consultando flota disponible para ese horario...',
     noVehiclesHelp: 'Prueba con otro horario o deja la visita sin vehículo asignado.',
     vehicleOptionalHelp: 'Opcional. Solo se muestran vehículos disponibles en ese horario.',
+    vehicleAdminOnlyHelp: 'La asignación de vehículo es una acción exclusiva de administradores.',
     selectedVehicleInfo: 'Resumen del vehículo seleccionado',
     vehiclePlateLabel: 'Placa',
     vehicleBrandLabel: 'Marca',
