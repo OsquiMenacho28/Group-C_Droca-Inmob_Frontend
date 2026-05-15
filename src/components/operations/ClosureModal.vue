@@ -11,9 +11,7 @@
       </div>
       <div v-else class="space-y-6">
         <!-- Property Snapshot -->
-        <div
-          class="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-100 dark:border-gray-600"
-        >
+        <div class="app-card p-3">
           <p class="text-xs text-gray-400 uppercase font-bold">
             {{ t('adminProperties.property') }}
           </p>
@@ -46,6 +44,7 @@
           <fwb-input
             v-model="form.closingDate"
             type="date"
+            class="app-input"
             :label="t('adminProperties.closingDate')"
             required
           />

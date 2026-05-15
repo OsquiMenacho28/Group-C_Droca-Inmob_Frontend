@@ -12,8 +12,14 @@ const rescheduleService = {
    * Returns 409 if the visit is not cancelled (PA3).
    * Returns 422 if the agent or property is unavailable at the new time.
    */
-  async reschedule(visitId: string, payload: RescheduleRequest): Promise<RescheduleResponse> {
-    const { data } = await api.post<RescheduleResponse>(`/visits/${visitId}/reschedule`, payload);
+  async reschedule(
+    visitId: string,
+    payload: RescheduleRequest,
+    agentId: string
+  ): Promise<RescheduleResponse> {
+    const { data } = await api.post<RescheduleResponse>(`/visits/${visitId}/reschedule`, payload, {
+      headers: { 'X-Agent-Id': agentId },
+    });
     return data;
   },
 
@@ -32,8 +38,10 @@ const rescheduleService = {
    * Fetches a single visit by ID.
    * Used to navigate to the newly created rescheduled visit.
    */
-  async getVisitById(visitId: string): Promise<Visit> {
-    const { data } = await api.get<Visit>(`/visits/${visitId}`);
+  async getVisitById(visitId: string, agentId: string): Promise<Visit> {
+    const { data } = await api.get<Visit>(`/visits/${visitId}`, {
+      headers: { 'X-Agent-Id': agentId },
+    });
     return data;
   },
 };

@@ -1,13 +1,13 @@
 <template>
   <fwb-modal v-if="show" @close="close" size="md">
     <template #header>
-      <div class="text-xl font-bold text-gray-900 dark:text-white">
+      <div class="text-xl font-bold text-primary">
         {{ t('retirement.title') }}
       </div>
     </template>
     <template #body>
       <div class="space-y-4">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-secondary">
           {{ t('retirement.subtitle') }}
         </p>
 
@@ -17,7 +17,9 @@
             {{ t('retirement.motivo') }}
           </label>
           <div v-if="loadingReasons" class="flex items-center gap-2 text-sm text-gray-500">
-            <div class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+            <div
+              class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"
+            ></div>
             {{ t('common.loading') }}
           </div>
           <div v-else-if="reasonsError" class="text-sm text-red-500">
@@ -27,7 +29,7 @@
           <select
             v-else
             v-model="selectedReason"
-            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
             :class="{ 'border-red-400 dark:border-red-500': errors.reason }"
             @change="errors.reason = ''"
           >
@@ -43,13 +45,13 @@
         <div>
           <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ t('retirement.detalle') }}
-            <span class="text-xs text-gray-400 ml-1">({{ t('common.optionalLabel') }})</span>
+            <span class="text-xs text-gray-400 ml-1">{{ t('common.optionalLabel') }}</span>
           </label>
           <textarea
             v-model="detail"
             rows="2"
             :placeholder="t('retirement.detallePlaceholder')"
-            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
             :class="{ 'border-red-400 dark:border-red-500': errors.detail }"
             @input="errors.detail = ''"
           />
@@ -110,7 +112,7 @@
     try {
       const response = await api.get('/catalogos/motivos-retiro');
       reasons.value = response.data.data || [];
-    } catch (err) {
+    } catch {
       console.warn('API de catálogo no disponible, usando valores por defecto');
       // Fallback: valores del enum
       reasons.value = ['VENTA_EXTERNA', 'DECISION_PROPIETARIO', 'OTRO'];
@@ -121,12 +123,12 @@
 
   async function submit() {
     errors.value = { reason: '', detail: '' };
-    
+
     if (!selectedReason.value) {
       errors.value.reason = t('retirement.motivoRequired');
       return;
     }
-    
+
     if (selectedReason.value === 'OTRO' && !detail.value.trim()) {
       errors.value.detail = t('retirement.detalleRequired');
       return;

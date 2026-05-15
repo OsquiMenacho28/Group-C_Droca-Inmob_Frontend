@@ -1,6 +1,13 @@
 import { apiClient as api } from '@/api';
 
 import { getLocaleString } from '@/locales/i18n';
+import {
+  getWeekRangeUtc,
+  formatDisplayDateTime,
+  utcIsoToLocalInput,
+  localInputToUtcIso,
+} from '@/utils/dateTime';
+import type { Visit } from '@/types/reschedule';
 
 import type {
   CalendarResponse,
@@ -49,13 +56,9 @@ export async function createVisit(
 }
 
 export async function getAvailableVehicles(dateTimeIso: string): Promise<Vehicle[]> {
-  const date = new Date(dateTimeIso);
-  const dateParam = date.toISOString().slice(0, 10);
-  const timeParam = date.toISOString().slice(11, 16);
   const params = new URLSearchParams({
     available: 'true',
-    date: dateParam,
-    time: timeParam,
+    dateTime: dateTimeIso,
   });
   const response = await api.get(`/vehicles?${params}`);
   return response.data.data;
@@ -77,10 +80,7 @@ export async function getDayAgenda(agentId: string, day: string): Promise<Calend
   return response.data.data;
 }
 
-export async function cancelVisit(
-  visitId: string,
-  agentId: string
-): Promise<CalendarEventResponse> {
+export async function cancelVisit(visitId: string, agentId: string): Promise<Visit> {
   const response = await api.patch(
     `/visits/${visitId}/cancel`,
     {},
@@ -91,37 +91,12 @@ export async function cancelVisit(
   return response.data.data;
 }
 
-export function getWeekRange(date: Date): { from: string; to: string } {
-  const day = date.getDay();
-  const diffToMonday = day === 0 ? -6 : 1 - day;
-  const monday = new Date(date);
-  monday.setDate(date.getDate() + diffToMonday);
-  monday.setHours(0, 0, 0, 0);
-
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  sunday.setHours(23, 59, 59, 999);
-
-  return {
-    from: monday.toISOString(),
-    to: sunday.toISOString(),
-  };
-}
+export { getWeekRangeUtc as getWeekRange };
 
 export function formatEventTime(iso: string): string {
-  return new Date(iso).toLocaleString(getLocaleString(), {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return formatDisplayDateTime(iso, getLocaleString());
 }
 
-export function isoToDatetimeLocal(iso: string): string {
-  return iso.slice(0, 16);
-}
+export { utcIsoToLocalInput as isoToDatetimeLocal };
 
-export function datetimeLocalToIso(val: string): string {
-  return new Date(val).toISOString();
-}
+export { localInputToUtcIso as datetimeLocalToIso };

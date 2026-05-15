@@ -18,7 +18,10 @@ export type User = {
   preferredContactMethod?: string;
   budget?: string;
   assignedAgentId?: string;
-  preferredZone?: string;
+  preferredZones?: string[]; // Cambiado de string a string[]
+  minRooms?: number;
+  maxRooms?: number;
+  maxPrice?: number;
   preferredPropertyType?: string;
 };
 
@@ -34,10 +37,11 @@ export type UserFormPayload = {
   hireDate?: string;
   taxId?: string;
   preferredContactMethod?: string;
-  budget?: string;
-  preferredZone?: string;
+  preferredZones?: string[]; // Plural y Array
+  minRooms?: number | null;
+  maxRooms?: number | null;
+  maxPrice?: number | null;
   preferredPropertyType?: string;
-  preferredRooms?: number | string;
 };
 
 export type LoginPayload = {

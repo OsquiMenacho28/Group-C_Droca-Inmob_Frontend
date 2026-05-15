@@ -1,0 +1,20 @@
+{
+  "reports": {
+    "agentRankingTitle": "Ranking de Ventas por Agente",
+    "agentRankingSubtitle": "Rendimiento comparativo basado en operaciones cerradas",
+    "startDate": "Fecha Inicio",
+    "endDate": "Fecha Fin",
+    "department": "Departamento",
+    "totalClosedSales": "Total Ventas Cerradas",
+    "topAgent": "Agente con Mayor Rendimiento",
+    "noRankingDataTitle": "No hay datos de ranking disponibles",
+    "noRankingDataText": "No se encontraron operaciones cerradas para el período y filtros seleccionados.",
+    "columnPosition": "Pos",
+    "columnAgent": "Nombre del Agente",
+    "columnSales": "Ventas Cerradas",
+    "columnPercentage": "% del Total",
+    "rankingLoadError": "No se pudo cargar el ranking de agentes. Por favor, intente de nuevo.",
+    "totalAgents": "Total de Agentes",
+    "averageSales": "Promedio de Ventas"
+  }
+}

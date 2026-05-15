@@ -27,10 +27,10 @@
         >
           <IconLucideClipboardList class="w-10 h-10 text-gray-300 dark:text-gray-600" />
         </div>
-        <p class="text-xl font-bold text-gray-900 dark:text-white">
+        <p class="text-xl font-bold text-primary">
           {{ t('receipts.emptyTitle') }}
         </p>
-        <p class="text-base text-gray-500 dark:text-gray-400 mt-2 max-w-sm leading-relaxed mx-auto">
+        <p class="text-base text-secondary mt-2 max-w-sm leading-relaxed mx-auto">
           {{ t('receipts.emptySubtext') }}
         </p>
       </div>
@@ -59,7 +59,7 @@
 
           <div class="flex-1 min-w-0">
             <h4
-              class="text-lg font-bold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+              class="text-lg font-bold text-primary truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
               :title="receipt.fileName"
             >
               {{ receipt.fileName || t('receipts.unknownFile') }}
@@ -71,9 +71,7 @@
                 {{ receipt.concept }}
               </span>
               <span class="text-gray-300 dark:text-gray-700 hidden xs:inline">|</span>
-              <div
-                class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5 font-medium"
-              >
+              <div class="text-xs text-secondary flex items-center gap-1.5 font-medium">
                 <IconLucideCalendar class="w-3.5 h-3.5 opacity-70" />
                 <span class="font-bold">{{ t('receipts.paymentDate') }}:</span>
                 {{ formatDate(receipt.paymentDate) }}
@@ -88,7 +86,7 @@
           <div
             class="text-left lg:text-right shrink-0 w-full lg:w-auto pt-6 lg:pt-0 border-t lg:border-t-0 border-gray-100 dark:border-gray-700 flex flex-row lg:flex-col justify-between items-center lg:items-end gap-2"
           >
-            <p class="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
+            <p class="text-2xl font-black text-primary tracking-tight">
               {{ formatAmount(receipt.amount, receipt.currency) }}
             </p>
             <p
@@ -143,7 +141,7 @@
             <IconLucideTrash class="w-6 h-6 text-red-600 dark:text-red-400" />
           </div>
           <div>
-            <h3 class="font-black text-xl text-gray-900 dark:text-white leading-tight">
+            <h3 class="font-black text-xl text-primary leading-tight">
               {{ t('receipts.deleteTitle') }}
             </h3>
             <p
@@ -169,7 +167,7 @@
               >
                 <IconLucideFileText class="w-5 h-5 text-gray-500" />
               </div>
-              <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
+              <p class="text-sm font-bold text-primary truncate">
                 {{ receiptToDelete?.fileName }}
               </p>
             </div>
@@ -217,16 +215,11 @@
 
   const { t } = useI18n();
 
-  const props = withDefaults(
-    defineProps<{
-      receipts: Receipt[];
-      loading: boolean;
-      canDelete?: boolean;
-    }>(),
-    {
-      canDelete: false,
-    }
-  );
+  defineProps<{
+    receipts: Receipt[];
+    loading: boolean;
+    canDelete?: boolean;
+  }>();
 
   const emit = defineEmits<{
     (e: 'delete', receiptId: string): void;

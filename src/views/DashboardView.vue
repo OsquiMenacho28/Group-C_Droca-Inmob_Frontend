@@ -1,6 +1,6 @@
 <template>
   <div class="p-6">
-    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ t('dashboard.title') }}</h1>
+    <h1 class="text-2xl font-bold text-primary">{{ t('dashboard.title') }}</h1>
     <p class="mt-2 text-gray-600 dark:text-gray-400">
       {{ t('dashboard.welcome') }}
     </p>
@@ -9,7 +9,7 @@
       <div
         class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700"
       >
-        <h3 class="font-semibold text-gray-900 dark:text-white">
+        <h3 class="font-semibold text-primary">
           {{ t('dashboard.systemStatus') }}
         </h3>
         <p class="text-sm text-green-500 font-medium mt-1">

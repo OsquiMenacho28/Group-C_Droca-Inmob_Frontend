@@ -31,16 +31,18 @@
 
     <div v-if="uploadingImages.size > 0 || uploadedImages.length > 0" class="space-y-3">
       <div class="flex justify-between items-center">
-        <h4 class="font-semibold text-gray-900 dark:text-white">
+        <h4 class="font-semibold text-primary">
           {{ t('imageUpload.images', { n: uploadedImages.length }) }}
         </h4>
-        <button
-          v-if="uploadedImages.length > 1 && canReorder"
-          @click="toggleReorderMode"
-          class="text-xs text-blue-600 hover:text-blue-700"
-        >
-          {{ reorderMode ? t('imageUpload.cancelReorder') : t('imageUpload.reorder') }}
-        </button>
+        <div v-if="uploadedImages.length > 1 && canReorder" class="flex gap-2">
+          <button
+            v-if="!reorderMode"
+            @click="toggleReorderMode"
+            class="text-xs text-blue-600 hover:text-blue-700 font-medium"
+          >
+            {{ t('imageUpload.reorder') }}
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -184,10 +186,28 @@
     uploadFiles(files);
   };
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
   const uploadFiles = async (files: File[]) => {
+    const invalidFormatFiles = files.filter((f) => !f.type.startsWith('image/'));
+
+    if (invalidFormatFiles.length > 0) {
+      toast.message = t('imageUpload.invalidType', { name: invalidFormatFiles[0].name });
+      toast.type = 'error';
+      toast.show = true;
+      if (files.length === invalidFormatFiles.length) return;
+    }
+
     const imageFiles = files.filter((f) => f.type.startsWith('image/'));
 
     for (const file of imageFiles) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.message = t('imageUpload.fileTooLarge', { name: file.name });
+        toast.type = 'error';
+        toast.show = true;
+        continue;
+      }
+
       uploadingImages.value.set(file, 0);
       try {
         const { uploadUrl, objectKey } = await propertyService.generateImageUploadUrl(
@@ -195,11 +215,15 @@
           file
         );
 
-        await fetch(uploadUrl, {
+        const uploadResponse = await fetch(uploadUrl, {
           method: 'PUT',
           body: file,
           headers: { 'Content-Type': file.type },
         });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Storage upload failed: ${uploadResponse.statusText}`);
+        }
 
         await propertyService.confirmImageUpload(props.propertyId, {
           objectKey,
@@ -209,8 +233,9 @@
         });
 
         await loadImages();
-      } catch {
-        toast.message = t('imageUpload.uploadError', { name: file.name });
+      } catch (err: unknown) {
+        const backendMessage = (err as { message?: string })?.message;
+        toast.message = backendMessage || t('imageUpload.uploadError', { name: file.name });
         toast.type = 'error';
         toast.show = true;
       } finally {

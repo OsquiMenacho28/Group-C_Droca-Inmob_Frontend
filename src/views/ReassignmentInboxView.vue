@@ -1,19 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 transition-colors duration-300">
+  <div class="app-page py-8 px-4">
     <div class="max-w-3xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('reassignmentInbox.title') }}
           </h1>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('reassignmentInbox.subtitle') }}
           </p>
         </div>
         <button
           @click="load"
           :disabled="loading"
-          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm"
+          class="flex items-center gap-2 px-4 py-2 app-card text-sm text-gray-600 dark:text-gray-300 hover-row"
         >
           <IconLucideRefreshCw class="w-4 h-4" :class="loading ? 'animate-spin' : ''" />
           {{ t('reassignmentInbox.refresh') }}
@@ -21,11 +21,7 @@
       </div>
 
       <div v-if="loading" class="space-y-3">
-        <div
-          v-for="i in 3"
-          :key="i"
-          class="bg-white dark:bg-gray-800 rounded-2xl p-5 animate-pulse border border-gray-100 dark:border-gray-700"
-        >
+        <div v-for="i in 3" :key="i" class="app-card p-5 animate-pulse">
           <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-3"></div>
           <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-2"></div>
           <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
@@ -40,10 +36,7 @@
         <p class="text-sm">{{ error }}</p>
       </div>
 
-      <div
-        v-else-if="requests.length === 0"
-        class="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-gray-700"
-      >
+      <div v-else-if="requests.length === 0" class="app-card p-12 text-center">
         <div
           class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
         >
@@ -52,17 +45,13 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('reassignmentInbox.emptyTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('reassignmentInbox.emptyText') }}
         </p>
       </div>
 
       <TransitionGroup name="list" tag="div" class="space-y-4" v-else>
-        <div
-          v-for="r in requests"
-          :key="r.id"
-          class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden"
-        >
+        <div v-for="r in requests" :key="r.id" class="app-card overflow-hidden">
           <div
             class="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-start justify-between gap-3"
           >
@@ -76,7 +65,7 @@
                 <p class="font-semibold text-gray-800 dark:text-white text-sm">
                   {{ t('reassignmentInbox.agentId') }} {{ r.requestingAgentId }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ t('reassignmentInbox.requestedLabel') }} · {{ formatDate(r.requestedAt) }}
                 </p>
               </div>
@@ -91,7 +80,7 @@
           <div class="px-5 py-4 space-y-3">
             <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
-              <span class="text-gray-500 dark:text-gray-400">
+              <span class="text-secondary">
                 {{ t('reassignmentInbox.visitIdLabel') }}
               </span>
               <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
@@ -138,17 +127,12 @@
       @confirmed="handleConfirmed"
     />
 
-    <Teleport to="body">
-      <Transition name="toast">
-        <div
-          v-if="toastVisible"
-          class="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-xl text-sm font-medium"
-        >
-          <IconLucideCircleCheck class="w-5 h-5 text-green-400" />
-          {{ toastMsg }}
-        </div>
-      </Transition>
-    </Teleport>
+    <AppToast
+      :show="toastVisible"
+      :message="toastMsg"
+      type="success"
+      @close="toastVisible = false"
+    />
   </div>
 </template>
 
@@ -160,13 +144,13 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideCheck from '~icons/lucide/check';
   import IconLucideX from '~icons/lucide/x';
-  import IconLucideCircleCheck from '~icons/lucide/circle-check';
   import { ref, onMounted } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
 
   import { useReassignment } from '@/composables/useReassignment';
   import ConfirmResponseModal from '@/components/visits/reassignment/ConfirmResponseModal.vue';
+  import AppToast from '@/components/ui/AppToast.vue';
+  import { formatDate } from '@/utils/dateTime';
   import type { ReassignmentSolicitation } from '@/types/reassignment';
 
   const { t } = useI18n();
@@ -222,37 +206,4 @@
     toastVisible.value = true;
     setTimeout(() => (toastVisible.value = false), 4000);
   }
-
-  function formatDate(iso: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
 </script>
-
-<style scoped>
-  .list-enter-active,
-  .list-leave-active {
-    transition: all 0.3s ease;
-  }
-  .list-enter-from,
-  .list-leave-to {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  .toast-enter-active,
-  .toast-leave-active {
-    transition: all 0.3s ease;
-  }
-  .toast-enter-from,
-  .toast-leave-to {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-</style>

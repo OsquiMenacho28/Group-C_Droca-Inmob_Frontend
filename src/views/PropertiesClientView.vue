@@ -7,10 +7,10 @@
       <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('clientProperties.title') }}
             </h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p class="text-sm text-secondary mt-0.5">
               {{ t('clientProperties.subtitle') }}
             </p>
           </div>
@@ -21,9 +21,7 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
       <!-- Filters Card -->
-      <div
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors"
-      >
+      <div class="app-card rounded-xl overflow-hidden transition-colors">
         <div class="p-6 space-y-6">
           <!-- Filter Fields Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -38,11 +36,10 @@
             </div>
 
             <div>
-              <fwb-input
+              <fwb-select
                 v-model="filters.zone"
-                type="text"
                 :label="t('clientProperties.zoneLabel').replace(':', '')"
-                :placeholder="t('clientProperties.zonePlaceholder', 'Ej: Equipetrol...')"
+                :options="zoneOptions"
                 class="w-full"
               />
             </div>
@@ -57,44 +54,87 @@
             </div>
           </div>
 
-          <!-- Price Range and Actions -->
-          <div
-            class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 pt-4 border-t border-gray-100 dark:border-gray-700"
-          >
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {{ t('common.priceRange') }}:
-              </label>
-              <div class="flex items-center gap-2">
-                <fwb-input
+          <!-- Range Filters (Price & M2) -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100 dark:border-gray-700">
+            <!-- Price Range Slider -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('common.priceRange') }} ($)
+                </label>
+                <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
+                  {{ filters.minPrice?.toLocaleString() || 0 }} — {{ filters.maxPrice?.toLocaleString() || t('clientProperties.noLimit') }}
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <input
+                  type="range"
                   v-model.number="filters.minPrice"
-                  type="number"
-                  :placeholder="t('clientProperties.minPrice')"
-                  class="w-32"
+                  min="0"
+                  max="1000000"
+                  step="5000"
+                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
                 />
-                <span class="text-gray-400 dark:text-gray-500">—</span>
-                <fwb-input
+                <input
+                  type="range"
                   v-model.number="filters.maxPrice"
-                  type="number"
-                  :placeholder="t('clientProperties.maxPrice')"
-                  class="w-32"
+                  min="0"
+                  max="5000000"
+                  step="10000"
+                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
                 />
               </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <fwb-button
-                color="alternative"
-                size="sm"
-                @click="clearFilters"
-                class="whitespace-nowrap"
-              >
-                {{ t('common.clear') }}
-              </fwb-button>
-              <fwb-button color="blue" size="sm" @click="applyFilters" class="whitespace-nowrap">
-                {{ t('clientProperties.applyFilters') }}
-              </fwb-button>
+            <!-- M2 Range -->
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ t('clientProperties.areaRange') }} (m²)
+                </label>
+              </div>
+              <div class="flex items-center gap-3">
+                <fwb-input
+                  v-model.number="filters.minM2"
+                  type="number"
+                  :placeholder="t('clientProperties.minM2')"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">Min</span>
+                  </template>
+                </fwb-input>
+                <span class="text-gray-400 dark:text-gray-500">—</span>
+                <fwb-input
+                  v-model.number="filters.maxM2"
+                  type="number"
+                  :placeholder="t('clientProperties.maxM2')"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">Max</span>
+                  </template>
+                </fwb-input>
+              </div>
             </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex justify-end gap-3 pt-4">
+            <fwb-button
+              color="alternative"
+              size="sm"
+              @click="clearFilters"
+              class="whitespace-nowrap"
+            >
+              {{ t('common.clear') }}
+            </fwb-button>
+            <fwb-button color="blue" size="sm" @click="applyFilters" class="whitespace-nowrap">
+              <template #prefix>
+                <span>🔍</span>
+              </template>
+              {{ t('clientProperties.applyFilters') }}
+            </fwb-button>
           </div>
         </div>
       </div>
@@ -116,7 +156,7 @@
           v-if="properties.length === 0"
           class="text-center py-20 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 transition-colors"
         >
-          <p class="text-gray-500 dark:text-gray-400">{{ t('clientProperties.emptyText') }}</p>
+          <p class="text-secondary">{{ t('clientProperties.emptyText') }}</p>
         </div>
 
         <!-- Properties Cards -->
@@ -164,13 +204,44 @@
                 </span>
               </button>
 
-              <!-- Property Image -->
-              <img
-                v-if="property.imageUrls?.length"
-                :src="property.imageUrls[0]"
-                :alt="property.title"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              <!-- Mini Carousel inside the Card -->
+              <div v-if="property.imageUrls?.length" class="relative w-full h-full group/carousel">
+                <img
+                  :src="property.imageUrls[activeImageIndices[property.id] || 0]"
+                  :alt="property.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <!-- Prev/Next Buttons -->
+                <button
+                  v-if="property.imageUrls.length > 1"
+                  @click.stop="prevCardImage(property.id, property.imageUrls.length)"
+                  class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                >
+                  <IconLucideChevronLeft class="w-5 h-5" />
+                </button>
+                <button
+                  v-if="property.imageUrls.length > 1"
+                  @click.stop="nextCardImage(property.id, property.imageUrls.length)"
+                  class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-black/40 hover:bg-black/60 text-white rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity backdrop-blur-sm z-20"
+                >
+                  <IconLucideChevronRight class="w-5 h-5" />
+                </button>
+
+                <!-- Dots Indicator -->
+                <div
+                  v-if="property.imageUrls.length > 1"
+                  class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-20"
+                >
+                  <div
+                    v-for="(_, dotIdx) in property.imageUrls"
+                    :key="dotIdx"
+                    class="w-1.5 h-1.5 rounded-full transition-colors"
+                    :class="
+                      (activeImageIndices[property.id] || 0) === dotIdx ? 'bg-white' : 'bg-white/50'
+                    "
+                  ></div>
+                </div>
+              </div>
               <div v-else class="w-full h-full flex items-center justify-center">
                 <span class="text-gray-400 dark:text-gray-500">{{ t('common.noImage') }}</span>
               </div>
@@ -180,9 +251,7 @@
             <div class="p-5 flex flex-col">
               <!-- Title -->
               <div class="flex justify-between items-start gap-2 mb-3">
-                <h3
-                  class="text-xl font-bold text-gray-900 dark:text-white leading-tight line-clamp-2 flex-1"
-                >
+                <h3 class="text-xl font-bold text-primary leading-tight line-clamp-2 flex-1">
                   {{ property.title }}
                 </h3>
               </div>
@@ -231,9 +300,7 @@
                 class="flex items-end justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700"
               >
                 <div>
-                  <p
-                    class="text-xs text-gray-500 dark:text-gray-400 uppercase font-semibold tracking-wide mb-0.5"
-                  >
+                  <p class="text-xs text-secondary uppercase font-semibold tracking-wide mb-0.5">
                     {{ t('common.price') }}
                   </p>
                   <p class="text-2xl font-bold text-blue-600 dark:text-blue-500">
@@ -297,7 +364,7 @@
             <h3 class="text-lg font-semibold dark:text-white">
               {{ t('clientProperties.visitRequestTitle') }}
             </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-secondary">
               {{ requestTarget?.name }} · {{ requestTarget?.agentName }}
             </p>
           </div>
@@ -436,6 +503,8 @@
     FwbSelect,
   } from 'flowbite-vue';
 
+  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+  import IconLucideChevronRight from '~icons/lucide/chevron-right';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import { propertyService } from '@/modules/properties';
   import { favoriteService } from '@/services/favoriteService';
@@ -462,6 +531,8 @@
     status: string;
     minPrice: number | undefined;
     maxPrice: number | undefined;
+    minM2: number | undefined;
+    maxM2: number | undefined;
     sortBy: string;
     sortOrder: 'ASC' | 'DESC';
     page: number;
@@ -479,6 +550,19 @@
   const route = useRoute();
   const router = useRouter();
   const authStore = useAuthStore();
+
+  // Carousel State for Cards
+  const activeImageIndices = ref<Record<string, number>>({});
+
+  const nextCardImage = (propertyId: string, length: number) => {
+    const current = activeImageIndices.value[propertyId] || 0;
+    activeImageIndices.value[propertyId] = (current + 1) % length;
+  };
+
+  const prevCardImage = (propertyId: string, length: number) => {
+    const current = activeImageIndices.value[propertyId] || 0;
+    activeImageIndices.value[propertyId] = (current - 1 + length) % length;
+  };
 
   // State
   const properties = ref<Property[]>([]);
@@ -507,6 +591,8 @@
     status: (route.query.status as string) || '',
     minPrice: route.query.minPrice ? Number(route.query.minPrice) : undefined,
     maxPrice: route.query.maxPrice ? Number(route.query.maxPrice) : undefined,
+    minM2: route.query.minM2 ? Number(route.query.minM2) : undefined,
+    maxM2: route.query.maxM2 ? Number(route.query.maxM2) : undefined,
     sortBy: (route.query.sortBy as string) || 'price',
     sortOrder: (route.query.sortOrder as 'ASC' | 'DESC') || 'ASC',
     page: route.query.page ? Number(route.query.page) : 0,
@@ -538,6 +624,18 @@
     { value: 'LOCAL', name: t('propertyTypes.LOCAL') },
     { value: 'TERRENO', name: t('propertyTypes.TERRENO') },
     { value: 'OFICINA', name: t('propertyTypes.OFICINA') },
+  ]);
+
+  const zoneOptions = computed(() => [
+    { value: '', name: t('clientProperties.allZonesOption', 'Todas las zonas') },
+    { value: 'Centro', name: 'Centro' },
+    { value: 'Norte', name: 'Zona Norte' },
+    { value: 'Sur', name: 'Zona Sur' },
+    { value: 'Este', name: 'Zona Este' },
+    { value: 'Oeste', name: 'Zona Oeste' },
+    { value: 'Equipetrol', name: 'Equipetrol' },
+    { value: 'Urbarí', name: 'Urbarí' },
+    { value: 'Las Palmas', name: 'Las Palmas' },
   ]);
 
   // Form setup
@@ -609,6 +707,8 @@
         operationType: filters.value.operationType || undefined,
         minPrice: filters.value.minPrice,
         maxPrice: filters.value.maxPrice,
+        minM2: filters.value.minM2,
+        maxM2: filters.value.maxM2,
         sortBy: filters.value.sortBy,
         sortOrder: filters.value.sortOrder,
         page: filters.value.page,
@@ -631,6 +731,8 @@
       if (filters.value.operationType) query.operationType = filters.value.operationType;
       if (filters.value.minPrice) query.minPrice = String(filters.value.minPrice);
       if (filters.value.maxPrice) query.maxPrice = String(filters.value.maxPrice);
+      if (filters.value.minM2) query.minM2 = String(filters.value.minM2);
+      if (filters.value.maxM2) query.maxM2 = String(filters.value.maxM2);
       query.sortBy = filters.value.sortBy;
       query.sortOrder = filters.value.sortOrder;
       query.page = String(filters.value.page);
@@ -658,6 +760,8 @@
       status: '',
       minPrice: undefined,
       maxPrice: undefined,
+      minM2: undefined,
+      maxM2: undefined,
       sortBy: 'price',
       sortOrder: 'ASC',
       page: 0,

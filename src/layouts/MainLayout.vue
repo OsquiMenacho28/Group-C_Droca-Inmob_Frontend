@@ -79,6 +79,11 @@
           <!-- Owner Links -->
           <template v-if="isOwner">
             <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
+            <NavLink
+              to="/dashboard/owner/notifications"
+              :label="t('nav.notifications')"
+              :icon="IconLucideBell"
+            />
           </template>
 
           <!-- Client Links -->
@@ -114,6 +119,22 @@
       </template>
       <template #right-side>
         <div class="flex items-center md:order-2 space-x-3">
+          <!-- Campana de notificaciones (solo para propietarios) -->
+          <button
+            v-if="isOwner"
+            @click="router.push('/dashboard/owner/notifications')"
+            class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
+            aria-label="Notificaciones"
+          >
+            <IconLucideBell class="w-5 h-5" />
+            <span
+              v-if="unreadCount > 0"
+              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm"
+            >
+              {{ unreadCount > 9 ? '9+' : unreadCount }}
+            </span>
+          </button>
+
           <LanguageSwitcher />
           <theme-toggle />
           <fwb-dropdown align-to-end>
@@ -132,7 +153,7 @@
             </template>
             <fwb-list-group>
               <div class="px-4 py-3">
-                <span class="block text-sm text-gray-900 dark:text-white font-medium">
+                <span class="block text-sm text-primary font-medium">
                   {{ getUserDisplayName() }}
                 </span>
                 <span class="block text-sm text-gray-500 truncate dark:text-gray-400">
@@ -171,6 +192,8 @@
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
   import NavLink from '@/components/ui/NavLink.vue';
   import { computed } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
   import IconLucideFileText from '~icons/lucide/file-text';
   import IconLucideTrophy from '~icons/lucide/trophy';
   import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
@@ -185,34 +208,27 @@
   import IconLucideHeart from '~icons/lucide/heart';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideCar from '~icons/lucide/car';
+  import IconLucideBell from '~icons/lucide/bell';
 
-  const authStore = useAuthStore();
   const { t } = useI18n();
+  const router = useRouter();
+  const authStore = useAuthStore();
+  const user = computed(() => authStore.user as UserClaims | null);
+  const ownerId = computed(() => (user.value?.userId || user.value?.sub || '') as string);
 
-  const getUserEmail = () => {
-    const u = authStore.user as UserClaims | null;
-    return u?.email || u?.sub || t('common.noEmail');
-  };
+  const { unreadCount } = useOwnerNotifications(ownerId.value);
 
+  // Funciones auxiliares
+  const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');
   const getUserDisplayName = () => {
-    const u = authStore.user as UserClaims | null;
-    if (u?.name) return u.name;
-    if (u?.fullName) return u.fullName;
+    if (user.value?.name) return user.value.name;
+    if (user.value?.fullName) return user.value.fullName;
     const email = getUserEmail();
-    if (email && email !== u?.sub) {
-      return String(email).split('@')[0];
-    }
-    return t('common.user');
+    return email !== user.value?.sub ? email.split('@')[0] : t('common.user');
   };
-
-  const getUserInitial = () => {
-    const name = String(getUserDisplayName());
-    return name.charAt(0).toUpperCase();
-  };
-
+  const getUserInitial = () => getUserDisplayName().charAt(0).toUpperCase();
   const getUserTypeLabel = () => {
-    const u = authStore.user as UserClaims | null;
-    const userType = u?.userType;
+    const userType = user.value?.userType;
     switch (userType) {
       case 'ADMIN':
         return t('roleTypes.admin');
@@ -226,29 +242,21 @@
         return userType || t('roleTypes.user');
     }
   };
-
   const isAdmin = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    const roles = (u?.roles || []) as string[];
-    return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+    const roles = (user.value?.roles || []) as string[];
+    return roles.includes('ADMIN') || user.value?.userType === 'ADMIN';
   });
-
   const isAgent = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    const roles = (u?.roles || []) as string[];
-    return roles.includes('AGENT') || u?.userType === 'EMPLOYEE';
+    const roles = (user.value?.roles || []) as string[];
+    return roles.includes('AGENT') || user.value?.userType === 'EMPLOYEE';
   });
-
   const isOwner = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    const roles = (u?.roles || []) as string[];
-    return roles.includes('OWNER') || u?.userType === 'OWNER';
+    const roles = (user.value?.roles || []) as string[];
+    return roles.includes('OWNER') || user.value?.userType === 'OWNER';
   });
-
   const isClient = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    const roles = (u?.roles || []) as string[];
-    return roles.includes('INTERESTED_CLIENT') || u?.userType === 'INTERESTED_CLIENT';
+    const roles = (user.value?.roles || []) as string[];
+    return roles.includes('INTERESTED_CLIENT') || user.value?.userType === 'INTERESTED_CLIENT';
   });
 
   const handleLogout = async () => {

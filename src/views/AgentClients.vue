@@ -71,10 +71,10 @@
         </div>
 
         <div class="p-5 flex-1 flex flex-col">
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+          <h5 class="text-xl font-bold text-primary mb-1">
             {{ c.fullName || `${c.firstName} ${c.lastName}` }}
           </h5>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 truncate">{{ c.email }}</p>
+          <p class="text-sm text-secondary mb-4 truncate">{{ c.email }}</p>
 
           <div class="flex justify-between items-end mt-auto">
             <div>
@@ -90,7 +90,7 @@
                 {{ t('clientDetails.preferredZone') }}
               </p>
               <p class="text-sm font-semibold dark:text-gray-200">
-                {{ c.preferredZone || t('clientDetails.any') }}
+                {{ c.preferredZones?.join(', ') || t('clientDetails.any') }}
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@
       v-if="!loading && filteredClients.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
-      <p class="text-gray-500 dark:text-gray-400">{{ t('agentClients.emptyText') }}</p>
+      <p class="text-secondary">{{ t('agentClients.emptyText') }}</p>
     </div>
 
     <client-details-modal
@@ -150,6 +150,24 @@
         />
       </template>
     </fwb-modal>
+    <div
+      v-if="toast.visible"
+      class="fixed bottom-5 right-5 z-50 flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x divide-gray-200 rounded-lg shadow dark:text-gray-400 dark:divide-gray-700 dark:bg-gray-800"
+      role="alert"
+    >
+      <div
+        :class="[
+          'inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg',
+          toast.type === 'success'
+            ? 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200'
+            : 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200',
+        ]"
+      >
+        <IconLucidePlus v-if="toast.type === 'success'" class="w-5 h-5" />
+        <span v-else class="font-bold">!</span>
+      </div>
+      <div class="ml-3 text-sm font-normal">{{ toast.message }}</div>
+    </div>
   </div>
 </template>
 
@@ -182,6 +200,14 @@
   const selectedClient = ref<Record<string, unknown> | null>(null);
   const formKey = ref(0);
   const searchName = ref('');
+  const toast = ref({ visible: false, message: '', type: 'success' });
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    toast.value = { visible: true, message, type };
+    setTimeout(() => {
+      toast.value.visible = false;
+    }, 5000);
+  };
 
   const currentPage = ref(0);
   const pageSize = ref(10);
@@ -274,6 +300,32 @@
           ...formData,
         };
         await personService.updateClientForAgent(editingClient.value.id as string, payload);
+
+        // Actualizar objeto de preferencias para el motor de sugerencias
+        const hasPrefs =
+          payload.preferredZones ||
+          payload.minRooms !== undefined ||
+          payload.maxRooms !== undefined ||
+          payload.budget ||
+          payload.preferredPropertyType;
+
+        if (hasPrefs) {
+          const idToUse = (editingClient.value.personId as string) || (editingClient.value.id as string);
+          if (idToUse) {
+            const prefsPayload = {
+              preferredZones: payload.preferredZones || editingClient.value.preferredZones || [],
+              minRooms:
+                payload.minRooms !== undefined ? payload.minRooms : editingClient.value.minRooms,
+              maxRooms:
+                payload.maxRooms !== undefined ? payload.maxRooms : editingClient.value.maxRooms,
+              maxPrice: Number(payload.budget || editingClient.value.budget || 0),
+              preferredPropertyType:
+                payload.preferredPropertyType || editingClient.value.preferredPropertyType,
+            };
+            await personService.savePreferences(idToUse, prefsPayload);
+          }
+        }
+        showToast(t('users.view.userUpdated'));
       } else {
         const u = authStore.user as UserClaims | null;
         const agentId = u?.sub || u?.userId;
@@ -282,11 +334,18 @@
           userType: 'INTERESTED_CLIENT',
           assignedAgentId: agentId,
         });
+        showToast(t('users.view.userCreated'));
+        // Note: Preferences will be saved on the next edit when personId is available
       }
       await loadClients();
       closeModal();
     } catch (e) {
-      console.error(handleApiError(e).message);
+      console.error('Error in handleSubmit:', e);
+      // Solo mostrar error si no es un 404 de preferencias (que es común en creación asíncrona)
+      const errorMsg = handleApiError(e).message;
+      if (!errorMsg.includes('not found')) {
+        showToast(errorMsg, 'error');
+      }
     }
   };
 

@@ -26,6 +26,7 @@ export function useReschedule() {
    */
   async function reschedule(
     visitId: string,
+    agentId: string,
     newStartTime: string,
     newEndTime: string,
     notes?: string
@@ -33,11 +34,15 @@ export function useReschedule() {
     loading.value = true;
     error.value = null;
     try {
-      const result = await rescheduleService.reschedule(visitId, {
-        newStartTime,
-        newEndTime,
-        notes,
-      });
+      const result = await rescheduleService.reschedule(
+        visitId,
+        {
+          newStartTime,
+          newEndTime,
+          notes,
+        },
+        agentId
+      );
       return result;
     } catch (e: unknown) {
       const axiosError = e as AxiosError<ApiErrorResponse>;

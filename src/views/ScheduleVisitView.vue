@@ -1,8 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div
-      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
-    >
+  <div class="app-page">
+    <div class="app-card border-t-0 border-x-0 border-b px-6 py-4 transition-colors">
       <div class="max-w-2xl mx-auto flex items-center gap-4">
         <router-link
           to="/calendar"
@@ -11,10 +9,10 @@
           <IconLucideArrowLeft class="h-5 w-5" />
         </router-link>
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('scheduleVisit.title') }}
           </h1>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
+          <p class="text-sm text-secondary">
             {{ t('scheduleVisit.subtitle') }}
           </p>
         </div>
@@ -22,9 +20,7 @@
     </div>
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm transition-colors"
-      >
+      <div class="app-card p-6 transition-colors">
         <form @submit.prevent="handleSubmit" novalidate class="space-y-5">
           <div class="relative" id="property-select-container">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -35,7 +31,7 @@
             <div class="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <IconLucideLoader v-if="loadingList" class="animate-spin h-4 w-4 text-blue-500" />
-                <IconLucideSearch v-else class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <IconLucideSearch v-else class="w-4 h-4 text-secondary" />
               </div>
               <input
                 type="text"
@@ -47,7 +43,7 @@
                     : t('scheduleVisit.searchProperty')
                 "
                 :disabled="loadingList"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 pl-10 pr-10 py-2.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-colors dark:scheme-dark"
+                class="app-input pl-10 pr-10 py-2.5 dark:scheme-dark"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.propertyId,
                 }"
@@ -64,7 +60,7 @@
 
             <div
               v-if="showDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-72 overflow-y-auto overflow-x-hidden"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-72 overflow-y-auto overflow-x-hidden"
             >
               <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
                 <li
@@ -80,10 +76,10 @@
                   class="px-4 py-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer flex justify-between items-center border-b last:border-b-0 border-gray-100 dark:border-gray-700 transition-colors"
                 >
                   <div class="min-w-0">
-                    <p class="font-bold text-gray-900 dark:text-white truncate">
+                    <p class="font-bold text-primary truncate">
                       {{ p.title }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p class="text-xs text-secondary truncate">
                       {{ p.address }}
                     </p>
                   </div>
@@ -160,7 +156,7 @@
                 v-model="startTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
+                class="app-input dark:scheme-dark"
                 :min="minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.startTime,
@@ -179,7 +175,7 @@
                 v-model="endTimeLocal"
                 @change="onTimeChange"
                 type="datetime-local"
-                class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none dark:scheme-dark"
+                class="app-input dark:scheme-dark"
                 :min="startTimeLocal || minDatetime"
                 :class="{
                   'border-red-400 dark:border-red-500': fieldErrors.endTime,
@@ -198,14 +194,14 @@
             <select
               v-model="selectedVehicleId"
               :disabled="loadingVehicles || !startTimeLocal || !endTimeLocal"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60 dark:scheme-dark"
+              class="app-input disabled:opacity-60 dark:scheme-dark"
             >
               <option value="">{{ vehiclePlaceholder }}</option>
               <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
                 {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
               </option>
             </select>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-xs text-secondary">
               {{ vehicleHelperText }}
             </p>
           </div>
@@ -289,7 +285,7 @@
               v-model="notes"
               rows="2"
               :placeholder="t('scheduleVisit.notesPlaceholder')"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+              class="app-input"
             />
           </div>
 
@@ -311,10 +307,7 @@
         </form>
       </div>
 
-      <div
-        v-if="dayAgenda.length > 0"
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 transition-colors shadow-sm"
-      >
+      <div v-if="dayAgenda.length > 0" class="app-card p-6 transition-colors">
         <h2
           class="text-sm font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2"
         >
@@ -331,8 +324,8 @@
                 ev.ownEvent,
             }"
           >
-            <div class="text-center min-w-[50px]">
-              <p class="text-xs font-bold text-gray-900 dark:text-white">
+            <div class="text-center min-w-12.5">
+              <p class="text-xs font-bold text-primary">
                 {{ shortTime(ev.startTime) }}
               </p>
               <p class="text-[9px] text-gray-400 uppercase">{{ t('scheduleVisit.start') }}</p>
@@ -428,6 +421,12 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideLoader from '~icons/lucide/loader';
   import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+  import {
+    localInputToUtcIso,
+    utcIsoToLocalInput,
+    minDatetimeLocal,
+    formatShortTime,
+  } from '@/utils/dateTime';
 
   const { t } = useI18n();
 
@@ -486,23 +485,11 @@
   const startTimeLocal = ref('');
   const endTimeLocal = ref('');
 
-  const formatDateTimeLocalInput = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  };
-
-  const toApiLocalDateTime = (value: string) => {
-    if (!value) return '';
-    return value.length === 16 ? `${value}:00` : value.slice(0, 19);
-  };
+  const minDatetime = computed(() => minDatetimeLocal());
 
   watch(startTimeLocal, (val) => {
     if (val) {
-      startTime.value = toApiLocalDateTime(val);
+      startTime.value = localInputToUtcIso(val);
     } else {
       startTime.value = '';
     }
@@ -510,7 +497,7 @@
 
   watch(endTimeLocal, (val) => {
     if (val) {
-      endTime.value = toApiLocalDateTime(val);
+      endTime.value = localInputToUtcIso(val);
     } else {
       endTime.value = '';
     }
@@ -519,7 +506,11 @@
   const loadInitialData = async () => {
     loadingList.value = true;
     try {
-      const data = await propertyService.getProperties();
+      const response = await propertyService.getProperties({
+        status: 'DISPONIBLE',
+        pageSize: 100,
+      });
+      const data = response.data || [];
       allProperties.value = data.filter(
         (p: VisitProperty) => p.status === 'DISPONIBLE'
       ) as VisitProperty[];
@@ -616,7 +607,7 @@
 
     loadingVehicles.value = true;
     try {
-      const vehicles = await getAvailableVehicles(toApiLocalDateTime(start));
+      const vehicles = await getAvailableVehicles(localInputToUtcIso(start));
       availableVehicles.value = vehicles;
 
       if (
@@ -663,8 +654,8 @@
       try {
         conflictResult.value = await checkConflict(
           pid,
-          toApiLocalDateTime(start),
-          toApiLocalDateTime(end)
+          localInputToUtcIso(start),
+          localInputToUtcIso(end)
         );
       } finally {
         checkingConflict.value = false;
@@ -750,27 +741,17 @@
 
   const applySuggestion = (start?: string, end?: string) => {
     if (start) {
-      startTimeLocal.value = start.slice(0, 16);
+      startTimeLocal.value = utcIsoToLocalInput(start);
       startTime.value = start;
     }
     if (end) {
-      endTimeLocal.value = end.slice(0, 16);
+      endTimeLocal.value = utcIsoToLocalInput(end);
       endTime.value = end;
     }
     onTimeChange();
   };
 
-  const shortTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString(getLocaleString(), {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-  const minDatetime = computed(() => {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 15);
-    return formatDateTimeLocalInput(now);
-  });
+  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
 
   const closeClickOutside = (e: Event) => {
     if (!(e.target instanceof HTMLElement) || !e.target.closest('#property-select-container'))
@@ -788,17 +769,3 @@
     if (conflictTimer) clearTimeout(conflictTimer);
   });
 </script>
-
-<style scoped>
-  .slide-fade-enter-active {
-    transition: all 0.3s ease-out;
-  }
-  .slide-fade-leave-active {
-    transition: all 0.2s cubic-bezier(1, 0.5, 0.8, 1);
-  }
-  .slide-fade-enter-from,
-  .slide-fade-leave-to {
-    transform: translateY(-10px);
-    opacity: 0;
-  }
-</style>

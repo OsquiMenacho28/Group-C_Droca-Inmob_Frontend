@@ -1,6 +1,15 @@
 import type { OperationType } from './property';
 
+export interface OperationStatusHistory {
+  oldStatus?: string | null;
+  newStatus: string;
+  changedAt: string;
+  changedBy: string;
+  notes?: string;
+}
+
 export interface OperationData {
+  id?: string;
   propertyId: string;
   propertyName: string;
   propertyType: string;
@@ -17,6 +26,7 @@ export interface OperationData {
   status: 'CLOSED' | 'CANCELLED' | 'ACTIVE' | 'PENDING' | string;
   notes: string;
   closureDate: string;
+  statusHistory?: OperationStatusHistory[];
 }
 
 export interface ClosureForm {

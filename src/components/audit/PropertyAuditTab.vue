@@ -1,8 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div
-      class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700"
-    >
+    <div class="app-card p-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SearchableSelect
           v-model="filters.userId"
@@ -27,21 +25,13 @@
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('propertyAudit.from') }}
             </label>
-            <input
-              v-model="filters.from"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.from" type="date" class="app-input" />
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               {{ t('propertyAudit.to') }}
             </label>
-            <input
-              v-model="filters.to"
-              type="date"
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm"
-            />
+            <input v-model="filters.to" type="date" class="app-input" />
           </div>
         </div>
       </div>
@@ -67,9 +57,11 @@
     </div>
 
     <div v-else-if="logs.length > 0" class="overflow-x-auto">
-      <fwb-table hoverable>
+      <fwb-table hoverable class="min-w-full">
         <fwb-table-head>
-          <fwb-table-head-cell>{{ t('propertyAudit.table.dateTime') }}</fwb-table-head-cell>
+          <fwb-table-head-cell class="w-40">
+            {{ t('propertyAudit.table.dateTime') }}
+          </fwb-table-head-cell>
           <fwb-table-head-cell>{{ t('propertyAudit.table.agent') }}</fwb-table-head-cell>
           <fwb-table-head-cell>{{ t('propertyAudit.table.action') }}</fwb-table-head-cell>
           <fwb-table-head-cell>{{ t('propertyAudit.table.property') }}</fwb-table-head-cell>
@@ -79,38 +71,58 @@
           </fwb-table-head-cell>
         </fwb-table-head>
         <fwb-table-body>
-          <fwb-table-row v-for="log in logs" :key="log.id">
-            <fwb-table-cell class="whitespace-nowrap text-xs font-mono">
+          <fwb-table-row v-for="log in logs" :key="log.id" class="group">
+            <fwb-table-cell class="whitespace-nowrap text-[11px] font-mono text-gray-500">
               {{ formatDateTime(log.timestamp) }}
             </fwb-table-cell>
             <fwb-table-cell>
-              <span class="text-xs font-medium">{{ getUserName(log.userId) }}</span>
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-700 uppercase"
+                >
+                  {{ getUserName(log.userId).substring(0, 2) }}
+                </div>
+                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  {{ getUserName(log.userId) }}
+                </span>
+              </div>
             </fwb-table-cell>
             <fwb-table-cell>
               <span
                 :class="getActionBadgeClass(log.action)"
-                class="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter shadow-sm"
               >
                 {{ formatAction(log.action) }}
               </span>
             </fwb-table-cell>
             <fwb-table-cell>
-              <span class="text-xs">{{ getPropertyName(log.propertyId) }}</span>
+              <span
+                class="text-xs font-medium text-gray-600 dark:text-gray-400 truncate max-w-[150px] block"
+                :title="getPropertyName(log.propertyId)"
+              >
+                {{ getPropertyName(log.propertyId) }}
+              </span>
             </fwb-table-cell>
             <fwb-table-cell>
-              <div class="flex items-center gap-1 text-[10px]">
-                <span class="text-red-500 line-through truncate max-w-[80px]">
-                  {{ log.previousValue || '--' }}
+              <div class="flex items-center gap-2 text-[10px]">
+                <span
+                  v-if="log.previousValue"
+                  class="text-red-400 line-through opacity-70 truncate max-w-[100px]"
+                >
+                  {{ log.previousValue }}
                 </span>
-                <IconLucideArrowRight class="w-3 h-3 text-gray-400" />
-                <span class="text-green-600 font-bold truncate max-w-[80px]">
-                  {{ log.newValue || '--' }}
+                <IconLucideArrowRight v-if="log.previousValue" class="w-3 h-3 text-gray-300" />
+                <span class="text-green-600 font-black truncate max-w-[120px]">
+                  {{ log.newValue || t('common.noValue') }}
                 </span>
               </div>
             </fwb-table-cell>
             <fwb-table-cell class="text-right">
-              <button @click="openModal(log)" class="text-blue-600 hover:underline text-xs">
-                {{ t('propertyAudit.verDetalles') }}
+              <button
+                @click="openModal(log)"
+                class="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
+              >
+                <IconLucideEye class="w-4 h-4" />
               </button>
             </fwb-table-cell>
           </fwb-table-row>
@@ -126,50 +138,136 @@
       />
     </div>
 
-    <div
-      v-else
-      class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
-    >
+    <div v-else class="text-center py-12 app-card border-2 border-dashed">
       <p class="text-gray-500 text-sm">{{ t('propertyAudit.noResultsTitle') }}</p>
     </div>
 
     <!-- Details Modal -->
-    <fwb-modal v-if="selectedLog" @close="selectedLog = null" size="lg">
+    <fwb-modal v-if="selectedLog" @close="selectedLog = null" size="xl">
       <template #header>
-        <div class="text-lg font-bold">{{ t('propertyAudit.changeDetailTitle') }}</div>
+        <div class="flex items-center gap-3">
+          <div :class="getActionBadgeClass(selectedLog.action)" class="p-2 rounded-lg shadow-sm">
+            <IconLucideHistory class="w-5 h-5" />
+          </div>
+          <div>
+            <h3 class="text-lg font-bold dark:text-white leading-tight">
+              {{ formatAction(selectedLog.action) }}
+            </h3>
+            <p class="text-xs text-gray-500 font-mono">
+              {{ formatDateTime(selectedLog.timestamp) }}
+            </p>
+          </div>
+        </div>
       </template>
       <template #body>
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <span class="text-gray-500 block text-xs">{{ t('propertyAudit.agente') }}</span>
-              <p class="font-semibold">{{ getUserName(selectedLog.userId) }}</p>
+        <div class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 app-card p-4 rounded-xl">
+            <div class="space-y-1">
+              <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                {{ t('propertyAudit.agente') }}
+              </span>
+              <div class="flex items-center gap-2 mt-1">
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold"
+                >
+                  {{ getUserName(selectedLog.userId).charAt(0) }}
+                </div>
+                <p class="text-sm font-bold dark:text-white">
+                  {{ getUserName(selectedLog.userId) }}
+                </p>
+              </div>
             </div>
-            <div>
-              <span class="text-gray-500 block text-xs">{{ t('propertyAudit.propiedad') }}</span>
-              <p class="font-semibold">{{ getPropertyName(selectedLog.propertyId) }}</p>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                {{ t('propertyAudit.propiedad') }}
+              </span>
+              <div class="flex items-center gap-2 mt-1">
+                <IconLucideHome class="w-5 h-5 text-gray-400" />
+                <p class="text-sm font-bold dark:text-white">
+                  {{ getPropertyName(selectedLog.propertyId) }}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div v-if="selectedLog.changes && selectedLog.changes.length > 0" class="border-t pt-4">
-            <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">
-              {{ t('propertyAudit.modifiedFields') }}
-            </h4>
-            <div class="space-y-2">
+          <div v-if="selectedLog.changes && selectedLog.changes.length > 0" class="space-y-4">
+            <div class="flex items-center gap-2">
+              <div class="h-px flex-1 bg-gray-100 dark:bg-gray-700"></div>
+              <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                {{ t('propertyAudit.modifiedFields') }}
+              </h4>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-gray-700"></div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
               <div
                 v-for="change in selectedLog.changes"
                 :key="change.field"
-                class="bg-gray-50 dark:bg-gray-700 p-2 rounded text-sm"
+                class="app-card p-4 rounded-xl shadow-sm"
               >
-                <span class="text-[10px] font-bold text-blue-600">{{ change.field }}</span>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-red-500 line-through">{{ change.oldValue || '--' }}</span>
-                  <IconLucideArrowRight class="w-3 h-3 text-gray-400" />
-                  <span class="text-green-600 font-bold">{{ change.newValue }}</span>
+                <div class="flex items-center justify-between mb-3">
+                  <span
+                    class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black px-2 py-0.5 rounded-full uppercase"
+                  >
+                    {{ change.field }}
+                  </span>
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                  <div
+                    class="flex-1 bg-red-50/50 dark:bg-red-900/10 p-3 rounded-lg border border-red-100 dark:border-red-900/30"
+                  >
+                    <span class="block text-[9px] font-bold text-red-400 uppercase mb-1">
+                      {{ t('auditLogs.oldValue') }}
+                    </span>
+                    <p
+                      class="text-sm text-red-600 font-medium truncate"
+                      :title="String(change.oldValue)"
+                    >
+                      {{ change.oldValue || '--' }}
+                    </p>
+                  </div>
+
+                  <div class="hidden md:flex items-center justify-center">
+                    <IconLucideArrowRight class="w-5 h-5 text-gray-300" />
+                  </div>
+
+                  <div
+                    class="flex-1 bg-green-50/50 dark:bg-green-900/10 p-3 rounded-lg border border-green-100 dark:border-green-900/30"
+                  >
+                    <span class="block text-[9px] font-bold text-green-400 uppercase mb-1">
+                      {{ t('auditLogs.newValue') }}
+                    </span>
+                    <p
+                      class="text-sm text-green-700 font-bold truncate"
+                      :title="String(change.newValue)"
+                    >
+                      {{ change.newValue }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <div v-else-if="selectedLog.details" class="space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="h-px flex-1 bg-gray-100 dark:bg-gray-700"></div>
+              <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                {{ t('audit.table.details') }}
+              </span>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-gray-700"></div>
+            </div>
+            <div class="app-card p-4 rounded-xl italic text-sm text-gray-600 dark:text-gray-400">
+              {{ selectedLog.details }}
+            </div>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex justify-end">
+          <fwb-button @click="selectedLog = null" color="alternative" size="sm">
+            {{ t('common.close') }}
+          </fwb-button>
         </div>
       </template>
     </fwb-modal>
@@ -179,12 +277,13 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+
   import { auditService, type PropertyAuditLog } from '@/services/auditService';
   import { userService } from '@/services/userService';
   import { propertyService } from '@/modules/properties';
   import SearchableSelect, { type SelectItem } from '@/components/common/SearchableSelect.vue';
   import Pagination from '@/components/ui/Pagination.vue';
+  import { formatDateTime } from '@/utils/dateTime';
   import type { User } from '@/types/user';
   import type { Property } from '@/types/property';
   import {
@@ -199,6 +298,9 @@
   } from 'flowbite-vue';
   import IconLucideSearch from '~icons/lucide/search';
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
+  import IconLucideEye from '~icons/lucide/eye';
+  import IconLucideHistory from '~icons/lucide/history';
+  import IconLucideHome from '~icons/lucide/home';
   import { handleApiError } from '@/api/errorHandler';
 
   const { t } = useI18n();
@@ -242,8 +344,6 @@
   const getPropertyName = (id?: string) =>
     properties.value.find((p) => p.id === id)?.title || id || '--';
 
-  const formatDateTime = (ts: string) => new Date(ts).toLocaleString(getLocaleString());
-
   const formatAction = (action: string) => {
     const map: Record<string, string> = {
       STATUS_CHANGE: t('propertyAudit.actions.statusChange'),
@@ -251,15 +351,32 @@
       AGENT_ASSIGN: t('propertyAudit.actions.agentAssign'),
       PROPERTY_CREATE: t('propertyAudit.actions.propertyCreate'),
       PROPERTY_UPDATE: t('propertyAudit.actions.propertyUpdate'),
+      LOCATION_UPDATE: t('propertyAudit.actions.locationUpdate'),
+      OWNER_ASSIGN: t('propertyAudit.actions.ownerAssign'),
+      PROPERTY_DELETE: t('propertyAudit.actions.propertyDelete'),
+      PROPERTY_REINCORPORATE: t('propertyAudit.actions.reincorporate'),
     };
     return map[action] || action;
   };
 
   const getActionBadgeClass = (action: string) => {
-    if (action === 'STATUS_CHANGE') return 'bg-yellow-100 text-yellow-800';
-    if (action === 'PRICE_UPDATE') return 'bg-blue-100 text-blue-800';
-    if (action === 'PROPERTY_CREATE') return 'bg-green-100 text-green-800';
-    return 'bg-gray-100 text-gray-800';
+    switch (action) {
+      case 'STATUS_CHANGE':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'PRICE_UPDATE':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'PROPERTY_CREATE':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'PROPERTY_DELETE':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      case 'PROPERTY_REINCORPORATE':
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400';
+      case 'AGENT_ASSIGN':
+      case 'OWNER_ASSIGN':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
   };
 
   const fetchLogs = async () => {
@@ -300,10 +417,10 @@
     try {
       const [uRes, pList] = await Promise.all([
         userService.getUsers(0, 1000),
-        propertyService.getProperties(),
+        propertyService.getProperties({ pageSize: 1000 }),
       ]);
       users.value = uRes.data || [];
-      properties.value = pList || [];
+      properties.value = pList.data || [];
     } catch (e) {
       console.error(handleApiError(e).message);
     } finally {

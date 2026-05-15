@@ -1,12 +1,10 @@
 <template>
-  <div
-    class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700"
-  >
+  <div class="app-card overflow-hidden">
     <div
       class="p-4 flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0 md:space-x-4"
     >
       <div class="flex-1 flex items-center space-x-2">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+        <h2 class="text-xl font-bold text-primary">
           {{ t('users.directory') }}
         </h2>
         <span
@@ -38,7 +36,7 @@
       <fwb-table-body>
         <fwb-table-row v-for="u in users" :key="u.id" class="group">
           <fwb-table-cell
-            class="font-medium text-gray-900 dark:text-white"
+            class="font-medium text-primary"
             :class="{ 'opacity-60': u.status === 'INACTIVE' }"
           >
             {{ u.fullName || u.name }}

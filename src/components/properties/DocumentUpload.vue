@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between">
-      <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+      <h4 class="text-sm font-semibold text-primary">
         {{ t('documentUpload.title') }}
       </h4>
       <fwb-button
@@ -32,7 +32,7 @@
           <IconLucideFileText class="w-8 h-8 text-red-500 shrink-0" />
 
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+            <p class="text-sm font-medium text-primary truncate">
               {{ doc.originalFileName }}
             </p>
             <div class="flex items-center gap-2 mt-0.5">

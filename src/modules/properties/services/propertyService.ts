@@ -5,6 +5,7 @@ import type {
   AssignAgentPayload,
   OperationType,
 } from '@/types/property';
+import type { OperationData } from '@/types/operation';
 
 export interface DocumentResponse {
   id: string;
@@ -58,6 +59,13 @@ export interface GenerateImageUploadUrlRequest {
   mimeType?: string;
 }
 
+export interface ImageUploadPolicyResponse {
+  url: string;
+  objectKey: string;
+  formData: Record<string, string>;
+  expiresInSeconds: number;
+}
+
 export interface ConfirmImageUploadRequest {
   objectKey: string;
   originalFileName?: string;
@@ -74,6 +82,10 @@ export const propertyService = {
     operationType?: string;
     status?: string;
     agentId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    minM2?: number;
+    maxM2?: number;
     page?: number;
     pageSize?: number;
     sortBy?: string;
@@ -146,6 +158,18 @@ export const propertyService = {
     return response.data.data;
   },
 
+  async generateImageUploadPolicy(
+    propertyId: string,
+    file: File
+  ): Promise<ImageUploadPolicyResponse> {
+    const response = await api.post(`/properties/${propertyId}/images/upload-policy`, {
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+    });
+    return response.data.data;
+  },
+
   async confirmImageUpload(
     propertyId: string,
     payload: ConfirmImageUploadRequest
@@ -165,6 +189,11 @@ export const propertyService = {
 
   async reorderImages(propertyId: string, orderedImageIds: string[]): Promise<ImageResponse[]> {
     const response = await api.post(`/properties/${propertyId}/images/reorder`, orderedImageIds);
+    return response.data.data;
+  },
+
+  async setPrimaryImage(propertyId: string, imageId: string): Promise<ImageResponse> {
+    const response = await api.put(`/properties/${propertyId}/images/${imageId}/primary`);
     return response.data.data;
   },
 
@@ -279,6 +308,34 @@ export const propertyService = {
     const response = await api.patch(`/properties/${propertyId}/location`, {
       latitude,
       longitude,
+    });
+    return response.data.data;
+  },
+
+  async reincorporateProperty(id: string): Promise<Property> {
+    const response = await api.post(`/properties/${id}/reincorporate`);
+    return response.data.data;
+  },
+
+  async withdrawProperty(id: string): Promise<Property> {
+    const response = await api.patch(`/properties/${id}/retirar`);
+    return response.data.data;
+  },
+
+  async getOperationByPropertyId(propertyId: string): Promise<OperationData | null> {
+    try {
+      const response = await api.get('/operations');
+      const operations = (response.data.data || []) as OperationData[];
+      return operations.find((operation) => operation.propertyId === propertyId) || null;
+    } catch (error) {
+      console.warn(`No operation found for property ${propertyId}`, error);
+      return null;
+    }
+  },
+
+  async getSuggestedProperties(buscadorId: string): Promise<Property[]> {
+    const response = await api.get(`/properties/filtrar`, {
+      params: { buscador_id: buscadorId },
     });
     return response.data.data;
   },

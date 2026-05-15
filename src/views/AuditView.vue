@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 space-y-6">
+  <div class="app-page p-6 space-y-6">
     <div class="flex justify-between items-center mb-4">
       <div>
         <h1 class="text-3xl font-bold dark:text-white">{{ t('audit.title') }}</h1>
@@ -10,9 +10,7 @@
       <fwb-badge type="indigo">{{ t('common.adminMode') }}</fwb-badge>
     </div>
 
-    <div
-      class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
-    >
+    <div class="app-card">
       <fwb-tabs v-model="activeTab" variant="underline" class="p-2">
         <fwb-tab name="identity" :title="t('audit.tabs.identity')">
           <IdentityAuditTab />

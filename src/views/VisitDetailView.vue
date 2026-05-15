@@ -1,27 +1,27 @@
+<!--
+  VisitDetailView.vue
+  Vista de detalle de una visita individual.
+
+  Integrar todos los componentes de reprogramación.
+  Muestra RescheduleButton (solo si CANCELADA) y RescheduledVisitLink.
+  Muestra CancelVisit y ReassignButton (solo si no CANCELADA y es propia).
+
+  Ruta: /visits/:id
+-->
 <template>
-  <!--
-    VisitDetailView.vue
-    Vista de detalle de una visita individual.
-
-    Integrar todos los componentes de reprogramación.
-    Muestra RescheduleButton (solo si CANCELADA) y RescheduledVisitLink.
-    Muestra CancelVisit y ReassignButton (solo si no CANCELADA y es propia).
-
-    Ruta: /visits/:id
-  -->
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 transition-colors duration-300">
+  <div class="app-page py-8 px-4">
     <div class="max-w-3xl mx-auto space-y-6">
       <!-- Back link -->
       <RouterLink
         to="/calendar"
-        class="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
+        class="inline-flex items-center gap-2 text-sm text-secondary hover:text-gray-800 dark:hover:text-gray-200 transition"
       >
         <IconLucideArrowLeft class="w-4 h-4" />
         {{ t('visitDetail.backToCalendar') }}
       </RouterLink>
 
       <!-- Loading skeleton -->
-      <div v-if="loading" class="bg-white dark:bg-gray-800 rounded-2xl p-8 animate-pulse space-y-4">
+      <div v-if="loading" class="app-card p-8 animate-pulse space-y-4">
         <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
@@ -37,9 +37,7 @@
 
       <template v-else-if="visit">
         <!-- ── Main visit card ─────────────────────────────────────────── -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 space-y-5 transition-colors"
-        >
+        <div class="app-card p-6 space-y-5 transition-colors">
           <!-- Status badge + title -->
           <div class="flex items-start justify-between gap-4 flex-wrap">
             <div>
@@ -49,7 +47,7 @@
               >
                 {{ statusLabel }}
               </span>
-              <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 class="text-2xl font-bold text-primary">
                 {{ t('visitDetail.title') }}
               </h1>
               <p class="text-gray-400 dark:text-gray-500 text-xs mt-1 font-mono">
@@ -200,6 +198,70 @@
           </div>
         </div>
 
+        <!-- ── Registrar resultado (solo para visitas PROGRAMADAS sin resultado) ── -->
+        <div
+          v-if="visit.status === 'SCHEDULED' && !visit.resultado"
+          class="app-card p-6 space-y-4 transition-colors"
+        >
+          <h2 class="text-sm font-bold text-secondary uppercase tracking-wide">
+            {{ t('visitResult.title') }}
+          </h2>
+          <form @submit.prevent="submitResultado">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {{ t('visitResult.resultado') }} *
+                </label>
+                <select v-model="resultadoForm.resultado" required class="app-input">
+                  <option value="INTERESADO">{{ t('visitResult.interesado') }}</option>
+                  <option value="NO_INTERESADO">{{ t('visitResult.noInteresado') }}</option>
+                  <option value="PENDIENTE">{{ t('visitResult.pendiente') }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {{ t('visitResult.observaciones') }}
+                </label>
+                <textarea
+                  v-model="resultadoForm.observaciones"
+                  rows="3"
+                  class="app-input"
+                  :placeholder="t('visitResult.observacionesPlaceholder')"
+                />
+              </div>
+              <div class="flex justify-end">
+                <FwbButton type="submit" :disabled="submittingResultado" color="blue">
+                  {{ submittingResultado ? t('common.processing') : t('visitResult.register') }}
+                </FwbButton>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- ── Resultado ya registrado (modo lectura) ── -->
+        <div
+          v-if="visit.resultado"
+          class="app-card bg-gray-50/50 dark:bg-gray-800/50 p-5 space-y-2 transition-colors"
+        >
+          <div class="flex items-start gap-3">
+            <IconLucideClipboardCheck class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5" />
+            <div class="flex-1">
+              <p class="text-xs text-secondary uppercase tracking-wide">
+                {{ t('visitResult.resultado') }}
+              </p>
+              <p class="text-base font-semibold text-gray-800 dark:text-white">
+                {{ getResultadoLabel(visit.resultado) }}
+              </p>
+              <p v-if="visit.observaciones" class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                {{ visit.observaciones }}
+              </p>
+              <p v-if="visit.fechaRegistroResultado" class="mt-1 text-xs text-gray-400">
+                {{ t('visitResult.registeredOn') }} {{ formatDate(visit.fechaRegistroResultado) }}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- ── Origin visit banner (if rescheduled from another) ──────── -->
         <div
           v-if="visit.originVisitId"
@@ -225,10 +287,8 @@
         />
 
         <!-- ── Actions card ───────────────────────────────────────────── -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 space-y-4 transition-colors"
-        >
-          <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <div class="app-card p-6 space-y-4 transition-colors">
+          <h2 class="text-sm font-bold text-secondary uppercase tracking-wide">
             {{ t('visitDetail.actions') }}
           </h2>
 
@@ -250,7 +310,7 @@
             <ReassignButton
               v-if="visit.status !== 'CANCELLED'"
               :visit-id="visit.id"
-              :visit-info="`${formatShortTime(visit.startTime)} - ${visit.propertyName || visit.propertyId}`"
+              :visit-info="`${formatShortTime(visit.startTime, getLocaleString())} - ${visit.propertyName || visit.propertyId}`"
               @request-sent="handleReassignmentSent"
             />
 
@@ -295,13 +355,19 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, reactive } from 'vue';
   import { useRoute } from 'vue-router';
   import { useI18n } from 'vue-i18n';
   import { apiClient as api } from '@/api';
   import { cancelVisit } from '@/services/calendarService';
+  import {
+    registerVisitResult,
+    type RegisterResultadoPayload,
+  } from '@/services/visitResultService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
+  import { formatDate, formatShortTime } from '@/utils/dateTime';
   import { getLocaleString } from '@/locales/i18n';
+  import { statusBadgeClass as getStatusBadgeClass } from '@/utils/styling';
   import { FwbButton, FwbModal, FwbAlert } from 'flowbite-vue';
   import type { Visit, RescheduleResponse, EventStatus } from '@/types/reschedule';
   import type { AxiosError } from 'axios';
@@ -319,6 +385,7 @@
   import IconLucideArrowLeft from '~icons/lucide/arrow-left';
   import IconLucideXCircle from '~icons/lucide/x-circle';
   import IconLucideArrowUpDown from '~icons/lucide/arrow-up-down';
+  import IconLucideClipboardCheck from '~icons/lucide/clipboard-check';
 
   const { t } = useI18n();
 
@@ -343,6 +410,13 @@
   const alertMessage = ref('');
   const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
 
+  // ── State for resultado form ──────────────────────────────────────────────
+  const resultadoForm = reactive({
+    resultado: 'INTERESADO' as 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE',
+    observaciones: '',
+  });
+  const submittingResultado = ref(false);
+
   interface ApiErrorResponse {
     error?: string;
     message?: string;
@@ -356,8 +430,8 @@
     loading.value = true;
     fetchError.value = null;
     try {
-      const { data } = await api.get<Visit>(`/visits/${visitId}`);
-      visit.value = data;
+      const response = await api.get(`/visits/${visitId}`);
+      visit.value = response.data.data ?? response.data;
     } catch (e: unknown) {
       const axiosError = e as AxiosError<ApiErrorResponse>;
       fetchError.value = axiosError.response?.data?.error ?? t('visitDetail.loadError');
@@ -395,6 +469,40 @@
     loadVisit();
   }
 
+  // ── Submit resultado ──────────────────────────────────────────────────────
+  async function submitResultado() {
+    if (!visit.value) return;
+    submittingResultado.value = true;
+    try {
+      const updated = await registerVisitResult(
+        visit.value.id,
+        resultadoForm as RegisterResultadoPayload,
+        myAgentId.value
+      );
+      // Actualizar la visita con los nuevos datos
+      visit.value = { ...visit.value, ...updated };
+      // Limpiar formulario
+      resultadoForm.resultado = 'INTERESADO';
+      resultadoForm.observaciones = '';
+      showAlertToast(t('visitResult.success'), 'success');
+    } catch (e) {
+      console.error('Error registering resultado:', e);
+      showAlertToast(t('visitResult.error'), 'danger');
+    } finally {
+      submittingResultado.value = false;
+    }
+  }
+
+  // ── Helper para mostrar etiqueta del resultado ───────────────────────────
+  function getResultadoLabel(resultado: string): string {
+    const map: Record<string, string> = {
+      INTERESADO: t('visitResult.interesado'),
+      NO_INTERESADO: t('visitResult.noInteresado'),
+      PENDIENTE: t('visitResult.pendiente'),
+    };
+    return map[resultado] || resultado;
+  }
+
   // ── Alert toast ───────────────────────────────────────────────────────────
   function showAlertToast(msg: string, type: 'success' | 'danger' | 'warning' | 'info' = 'danger') {
     alertMessage.value = msg;
@@ -415,35 +523,5 @@
     return visit.value ? (map[visit.value.status] ?? visit.value.status) : '';
   });
 
-  const statusBadgeClass = computed(() => {
-    const map: Record<EventStatus, string> = {
-      SCHEDULED: 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300',
-      CANCELLED: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
-      CONFIRMED: 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300',
-      COMPLETED: 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300',
-    };
-    return visit.value
-      ? (map[visit.value.status] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400')
-      : '';
-  });
-
-  function formatDate(iso?: string): string {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
-
-  function formatShortTime(iso?: string): string {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleTimeString(getLocaleString(), {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
+  const statusBadgeClass = computed(() => getStatusBadgeClass(visit.value?.status || ''));
 </script>
