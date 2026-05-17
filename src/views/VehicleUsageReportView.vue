@@ -17,21 +17,33 @@
       </div>
 
       <!-- Filters Card -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700"
+      >
         <div class="p-6">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('reports.startDate') }}
               </label>
-              <fwb-input v-model="filters.startDate" type="date" @change="fetchReport" class="w-full" />
+              <fwb-input
+                v-model="filters.startDate"
+                type="date"
+                @change="fetchReport"
+                class="w-full"
+              />
             </div>
 
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                 {{ t('reports.endDate') }}
               </label>
-              <fwb-input v-model="filters.endDate" type="date" @change="fetchReport" class="w-full" />
+              <fwb-input
+                v-model="filters.endDate"
+                type="date"
+                @change="fetchReport"
+                class="w-full"
+              />
             </div>
 
             <div>
@@ -69,7 +81,9 @@
         v-else-if="!reportData?.vehicles?.length"
         class="bg-white dark:bg-gray-800 rounded-xl p-12 text-center border border-gray-200 dark:border-gray-700 shadow-sm"
       >
-        <div class="bg-gray-100 dark:bg-gray-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div
+          class="bg-gray-100 dark:bg-gray-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
           <span class="text-2xl">🚗</span>
         </div>
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -84,21 +98,23 @@
       <div v-else class="space-y-6">
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700"
+          >
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                   {{ t('vehicleAdmin.totalHours') }}
                 </p>
-                <p class="text-2xl font-bold text-primary mt-2">
-                  {{ totalHours.toFixed(1) }}h
-                </p>
+                <p class="text-2xl font-bold text-primary mt-2">{{ totalHours.toFixed(1) }}h</p>
               </div>
               <div class="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3 text-2xl">⏱️</div>
             </div>
           </div>
 
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700"
+          >
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs font-medium text-secondary uppercase tracking-wider">
@@ -112,15 +128,15 @@
             </div>
           </div>
 
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200 dark:border-gray-700"
+          >
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                   {{ t('vehicleAdmin.totalMileage') }}
                 </p>
-                <p class="text-2xl font-bold text-primary mt-2">
-                  {{ totalMileage.toFixed(1) }} km
-                </p>
+                <p class="text-2xl font-bold text-primary mt-2">{{ totalMileage.toFixed(1) }} km</p>
               </div>
               <div class="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-2xl">🛣️</div>
             </div>
@@ -128,10 +144,14 @@
         </div>
 
         <!-- Report Table -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div
+          class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+        >
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <thead
+                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              >
                 <tr>
                   <th class="px-6 py-3">{{ t('vehicleAdmin.columnVehicle') }}</th>
                   <th class="px-6 py-3 text-center">{{ t('vehicleAdmin.columnTotalHours') }}</th>
@@ -145,31 +165,40 @@
                   <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <td class="px-6 py-4">
                       <div class="font-medium text-primary">{{ vehicle.licensePlate }}</div>
-                      <div class="text-xs text-secondary">{{ vehicle.brand }} {{ vehicle.model }}</div>
+                      <div class="text-xs text-secondary">
+                        {{ vehicle.brand }} {{ vehicle.model }}
+                      </div>
                     </td>
                     <td class="px-6 py-4 text-center">
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                      >
                         {{ vehicle.totalHours.toFixed(1) }}h
                       </span>
                     </td>
                     <td class="px-6 py-4 text-center">
                       {{ vehicle.visitCount }}
                     </td>
-                    <td class="px-6 py-4 text-center">
-                      {{ vehicle.totalMileage.toFixed(1) }} km
-                    </td>
+                    <td class="px-6 py-4 text-center">{{ vehicle.totalMileage.toFixed(1) }} km</td>
                     <td class="px-6 py-4 text-right">
                       <fwb-button
                         size="xs"
                         color="alternative"
                         @click="toggleDetails(vehicle.vehicleId)"
                       >
-                        {{ expandedVehicle === vehicle.vehicleId ? t('common.close') : t('vehicleAdmin.viewDetails') }}
+                        {{
+                          expandedVehicle === vehicle.vehicleId
+                            ? t('common.close')
+                            : t('vehicleAdmin.viewDetails')
+                        }}
                       </fwb-button>
                     </td>
                   </tr>
                   <!-- Details Row -->
-                  <tr v-if="expandedVehicle === vehicle.vehicleId" class="bg-gray-50/50 dark:bg-gray-800/50">
+                  <tr
+                    v-if="expandedVehicle === vehicle.vehicleId"
+                    class="bg-gray-50/50 dark:bg-gray-800/50"
+                  >
                     <td colspan="5" class="px-6 py-4">
                       <div class="space-y-3">
                         <h4 class="text-xs font-semibold uppercase text-secondary tracking-wider">
@@ -185,13 +214,19 @@
                               <span class="text-xs font-medium text-primary">
                                 {{ formatDate(detail.date) }}
                               </span>
-                              <span class="text-[10px] bg-gray-100 dark:bg-gray-600 px-1.5 py-0.5 rounded">
+                              <span
+                                class="text-[10px] bg-gray-100 dark:bg-gray-600 px-1.5 py-0.5 rounded"
+                              >
                                 ID: {{ detail.visitId.slice(-6) }}
                               </span>
                             </div>
                             <div class="flex justify-between text-sm">
-                              <span class="text-secondary">⏱️ {{ detail.durationHours.toFixed(1) }}h</span>
-                              <span class="text-secondary">🛣️ {{ detail.mileage.toFixed(1) }}km</span>
+                              <span class="text-secondary">
+                                ⏱️ {{ detail.durationHours.toFixed(1) }}h
+                              </span>
+                              <span class="text-secondary">
+                                🛣️ {{ detail.mileage.toFixed(1) }}km
+                              </span>
                             </div>
                           </div>
                         </div>

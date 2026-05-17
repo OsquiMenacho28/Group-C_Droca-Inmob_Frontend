@@ -86,7 +86,9 @@
       </div>
 
       <!-- Advanced Filters Row -->
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+      <div
+        class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
+      >
         <div class="md:col-span-2">
           <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
             {{ t('common.priceRange') }} ($)
