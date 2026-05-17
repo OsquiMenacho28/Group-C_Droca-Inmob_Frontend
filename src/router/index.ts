@@ -18,6 +18,7 @@ import ReassignmentInboxView from '@/views/ReassignmentInboxView.vue';
 import OperationDetailView from '@/views/OperationDetailView.vue';
 import SentRequestsView from '@/views/SentRequestsView.vue';
 import VisitDetailView from '@/views/VisitDetailView.vue';
+import ContractVersionsView from '@/views/ContractVersionsView.vue';
 
 const routes = [
   {
@@ -159,6 +160,12 @@ const routes = [
         name: 'OwnerNotifications',
         component: () => import('@/views/OwnerNotificationsView.vue'),
         meta: { role: 'OWNER' },
+      },
+      {
+        path: '/operations/:operationId/contracts',
+        name: 'contract-versions',
+        component: ContractVersionsView,
+        meta: { roles: ['ADMIN', 'AGENT', 'OWNER', 'CLIENT'] },
       },
     ],
   },
