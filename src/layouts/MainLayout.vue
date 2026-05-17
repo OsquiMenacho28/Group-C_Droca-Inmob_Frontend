@@ -27,6 +27,11 @@
               matchPath="properties"
             />
             <NavLink
+              to="/dashboard/admin/inventory-report"
+              :label="'Reporte Inventario'"
+              :icon="IconLucideBarChart"
+            />
+            <NavLink
               to="/dashboard/admin/vehicles"
               :label="t('nav.vehicles')"
               :icon="IconLucideCar"
@@ -209,6 +214,7 @@
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideCar from '~icons/lucide/car';
   import IconLucideBell from '~icons/lucide/bell';
+  import IconLucideBarChart from '~icons/lucide/bar-chart';
 
   const { t } = useI18n();
   const router = useRouter();

@@ -19,6 +19,7 @@ import OperationDetailView from '@/views/OperationDetailView.vue';
 import SentRequestsView from '@/views/SentRequestsView.vue';
 import VisitDetailView from '@/views/VisitDetailView.vue';
 import ContractVersionsView from '@/views/ContractVersionsView.vue';
+import InventoryReportView from '@/views/InventoryReportView.vue';
 
 const routes = [
   {
@@ -51,6 +52,12 @@ const routes = [
         path: 'admin/properties',
         name: 'AdminProperties',
         component: AdminProperties,
+        meta: { role: 'ADMIN' },
+      },
+      {
+        path: 'admin/inventory-report',
+        name: 'InventoryReport',
+        component: InventoryReportView,
         meta: { role: 'ADMIN' },
       },
       {

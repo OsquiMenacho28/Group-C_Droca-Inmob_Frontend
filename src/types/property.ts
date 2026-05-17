@@ -81,3 +81,19 @@ export interface LocationPayload {
   latitude: number;
   longitude: number;
 }
+
+export interface PropertyReportItem {
+  id: string;
+  title: string;
+  status: string;
+  operationType: string;
+  price: number;
+  zone: string;
+  daysInInventory: number;
+}
+
+export interface InventoryReportResponse {
+  totalsByStatus: Record<string, number>;
+  totalsByOperationType: Record<string, number>;
+  properties: PropertyReportItem[];
+}

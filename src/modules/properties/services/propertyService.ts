@@ -4,6 +4,7 @@ import type {
   PropertyFormPayload,
   AssignAgentPayload,
   OperationType,
+  InventoryReportResponse
 } from '@/types/property';
 import type { OperationData } from '@/types/operation';
 
@@ -336,6 +337,13 @@ export const propertyService = {
   async getSuggestedProperties(buscadorId: string): Promise<Property[]> {
     const response = await api.get(`/properties/filtrar`, {
       params: { buscador_id: buscadorId },
+    });
+    return response.data.data;
+  },
+
+  async getInventoryReport(status?: string, operationType?: string): Promise<InventoryReportResponse> {
+    const response = await api.get('/properties/reporte-gerencial', {
+      params: { status, operationType }
     });
     return response.data.data;
   },
