@@ -13,6 +13,9 @@
       </fwb-button>
     </div>
 
+    <!-- Inventory metrics indicator -->
+    <InventoryMetricsCard />
+
     <div
       class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
     >
@@ -265,6 +268,7 @@
 <script setup lang="ts">
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucidePencil from '~icons/lucide/pencil';
+  import InventoryMetricsCard from '@/components/properties/InventoryMetricsCard.vue';
   import IconLucideTrash from '~icons/lucide/trash';
   import IconLucideArchive from '~icons/lucide/archive';
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';

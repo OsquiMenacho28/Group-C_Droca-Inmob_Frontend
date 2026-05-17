@@ -283,7 +283,18 @@
     "deletePermanently": "Delete Permanently",
     "propertyUpdated": "Property updated successfully",
     "propertyCreated": "Property registered successfully",
-    "deleteWarning": "This action will permanently delete the property, its images and associated documents. This cannot be undone."
+    "deleteWarning": "This action will permanently delete the property, its images and associated documents. This cannot be undone.",
+    "inventoryMetricsTitle": "Time in Inventory",
+    "inventoryMetricsSubtitle": "Average days a property spends in inventory before being sold or retired",
+    "inventoryMetricsAll": "All operations",
+    "inventoryMetricsLoading": "Calculating metrics...",
+    "inventoryMetricsError": "Could not load metrics",
+    "inventoryMetricsAvg": "Average (days)",
+    "inventoryMetricsDaysUnit": "avg days",
+    "inventoryMetricsSold": "Sold",
+    "inventoryMetricsRetired": "Retired",
+    "inventoryMetricsActive": "Active",
+    "inventoryMetricsFilteredBy": "Filtered by:"
   },
   "adminProperties": {
     "title": "Inventory Management",
