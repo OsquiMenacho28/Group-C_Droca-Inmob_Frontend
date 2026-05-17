@@ -29,6 +29,19 @@
     "statusInUse": "En uso",
     "statusMaintenance": "Mantenimiento",
     "totalVehicles": "Vehículos registrados",
-    "availabilityHint": "Los vehículos en estado Disponible podrán aparecer en el selector de programación de visitas."
+    "availabilityHint": "Los vehículos en estado Disponible podrán aparecer en el selector de programación de visitas.",
+    "usageReport": "Reporte de Uso",
+    "usageReportSubtitle": "Seguimiento de horas, visitas y kilometraje por vehículo.",
+    "totalHours": "Total Horas",
+    "visitCount": "Visitas",
+    "totalMileage": "Kilometraje Total",
+    "noUsageDataTitle": "No hay registros de uso",
+    "noUsageDataText": "No se encontraron registros de uso para el período seleccionado.",
+    "columnVehicle": "Vehículo",
+    "columnTotalHours": "Horas Totales",
+    "columnVisits": "Total Visitas",
+    "columnMileage": "Km Totales",
+    "viewDetails": "Ver Detalles",
+    "usageDetails": "Detalles de Uso"
   }
 }

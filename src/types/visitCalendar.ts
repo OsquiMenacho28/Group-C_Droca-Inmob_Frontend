@@ -152,8 +152,26 @@ export interface CalendarDay {
   events: CalendarEventResponse[];
 }
 
-export interface WeekRange {
-  from: Date;
-  to: Date;
-  label: string;
+export interface UsageRecordDetailDTO {
+  visitId: string;
+  date: string;
+  durationHours: number;
+  mileage: number;
+}
+
+export interface VehicleUsageSummaryDTO {
+  vehicleId: string;
+  licensePlate: string;
+  brand: string;
+  model: string;
+  totalHours: number;
+  visitCount: number;
+  totalMileage: number;
+  details: UsageRecordDetailDTO[];
+}
+
+export interface VehicleUsageReportResponse {
+  from: string;
+  to: string;
+  vehicles: VehicleUsageSummaryDTO[];
 }

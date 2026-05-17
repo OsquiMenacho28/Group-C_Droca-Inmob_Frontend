@@ -10,6 +10,9 @@
         </p>
       </div>
       <div class="flex items-center gap-3">
+        <fwb-button color="alternative" @click="router.push({ name: 'VehicleUsageReport' })">
+          {{ t('vehicleAdmin.usageReport') }}
+        </fwb-button>
         <fwb-badge type="indigo">{{ t('vehicleAdmin.adminMode') }}</fwb-badge>
         <div
           class="rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 dark:bg-blue-900/30 dark:text-blue-200"
@@ -230,12 +233,14 @@
 
 <script setup lang="ts">
   import { reactive, ref, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { FwbBadge, FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
   import vehicleService from '@/services/vehicleService';
   import type { CreateVehicleRequest, Vehicle, VehicleStatus } from '@/types/visitCalendar';
 
   const { t } = useI18n();
+  const router = useRouter();
 
   const vehicles = ref<Vehicle[]>([]);
   const loadingVehicles = ref(false);
