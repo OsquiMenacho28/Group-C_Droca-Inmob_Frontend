@@ -41,6 +41,11 @@
               :label="t('nav.agentRanking')"
               :icon="IconLucideTrophy"
             />
+            <NavLink
+              to="/dashboard/reports/property-visits"
+              :label="t('nav.propertyVisits')"
+              :icon="IconLucideBarChart2"
+            />
           </template>
 
           <!-- Agent Links -->
@@ -196,6 +201,7 @@
   import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
   import IconLucideFileText from '~icons/lucide/file-text';
   import IconLucideTrophy from '~icons/lucide/trophy';
+  import IconLucideBarChart2 from '~icons/lucide/bar-chart-2';
   import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideUsers from '~icons/lucide/users';

@@ -18,6 +18,7 @@
     "availableProperties": "Available Properties",
     "operations": "Operations",
     "agentRanking": "Agent Ranking",
+    "propertyVisits": "Property Visits",
     "receivedRequests": "Received Requests",
     "sentRequests": "My Sent Requests",
     "notifications": "Notifications",

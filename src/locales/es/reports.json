@@ -15,6 +15,19 @@
     "columnPercentage": "% del Total",
     "rankingLoadError": "No se pudo cargar el ranking de agentes. Por favor, intente de nuevo.",
     "totalAgents": "Total de Agentes",
-    "averageSales": "Promedio de Ventas"
+    "averageSales": "Promedio de Ventas",
+    "propertyVisitReportTitle": "Inmuebles Más Visitados",
+    "propertyVisitReportSubtitle": "Ranking mensual de inmuebles por cantidad de visitas recibidas",
+    "month": "Mes",
+    "year": "Año",
+    "columnPropertyName": "Inmueble",
+    "columnPropertyAddress": "Dirección",
+    "columnVisits": "Visitas",
+    "columnResponsibleAgent": "Agente Responsable",
+    "noVisitDataTitle": "Sin visitas en este período",
+    "noVisitDataText": "No se encontraron visitas registradas para el mes y año seleccionados.",
+    "visitReportLoadError": "No se pudo cargar el reporte. Por favor, intente de nuevo.",
+    "topProperty": "Inmueble Más Visitado",
+    "totalPropertiesWithVisits": "Inmuebles con Visitas"
   }
 }
