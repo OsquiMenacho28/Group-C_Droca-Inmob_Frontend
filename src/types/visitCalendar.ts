@@ -1,5 +1,5 @@
 export type EventType = 'VISIT' | 'CLIENT_REQUEST';
-export type EventStatus = 'SCHEDULED' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+export type EventStatus = 'SCHEDULED' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'REALIZADA';
 export type RequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
 
 export interface CalendarEventResponse {

@@ -198,9 +198,9 @@
           </div>
         </div>
 
-        <!-- ── Registrar resultado (solo para visitas PROGRAMADAS sin resultado) ── -->
+        <!-- ── Registrar resultado (solo para visitas PROGRAMADAS/CONFIRMADAS sin resultado) ── -->
         <div
-          v-if="visit.status === 'SCHEDULED' && !visit.resultado"
+          v-if="!visit.resultado && (visit.status === 'SCHEDULED' || visit.status === 'CONFIRMED')"
           class="app-card p-6 space-y-4 transition-colors"
         >
           <h2 class="text-sm font-bold text-secondary uppercase tracking-wide">
@@ -218,6 +218,25 @@
                   <option value="PENDIENTE">{{ t('visitResult.pendiente') }}</option>
                 </select>
               </div>
+
+              <!-- Mileage field (only if vehicle assigned) -->
+              <div v-if="visit.vehicleId">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  {{ t('vehicleAdmin.totalMileage') }} (Km)
+                </label>
+                <input
+                  v-model.number="resultadoForm.mileage"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  class="app-input"
+                  placeholder="0.0"
+                />
+              </div>
+              <p v-else class="text-xs text-gray-500 italic">
+                {{ t('visitDetail.noVehicleAssigned') }}
+              </p>
+
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ t('visitResult.observaciones') }}
@@ -414,6 +433,7 @@
   const resultadoForm = reactive({
     resultado: 'INTERESADO' as 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE',
     observaciones: '',
+    mileage: 0,
   });
   const submittingResultado = ref(false);
 
@@ -484,6 +504,7 @@
       // Limpiar formulario
       resultadoForm.resultado = 'INTERESADO';
       resultadoForm.observaciones = '';
+      resultadoForm.mileage = 0;
       showAlertToast(t('visitResult.success'), 'success');
     } catch (e) {
       console.error('Error registering resultado:', e);
@@ -519,6 +540,7 @@
       CANCELLED: t('rescheduleVisit.cancelledVisit'),
       CONFIRMED: t('rescheduleVisit.confirmedVisit'),
       COMPLETED: t('rescheduleVisit.completedVisit'),
+      REALIZADA: t('rescheduleVisit.completedVisit'),
     };
     return visit.value ? (map[visit.value.status] ?? visit.value.status) : '';
   });
