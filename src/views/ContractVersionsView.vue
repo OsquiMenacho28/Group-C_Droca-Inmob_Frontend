@@ -142,7 +142,7 @@
             <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
               {{ t('operationContractVersions.versionNumber') }}
             </label>
-            <fwb-input :value="'v' + nextVersionNumber" :disabled="true" type="text" />
+            <fwb-input v-model="contractVersionNumber" :disabled="true" type="text" />
           </div>
 
           <!-- Título -->
@@ -327,6 +327,8 @@
   const nextVersionNumber = computed(() =>
     versions.value.length > 0 ? Math.max(...versions.value.map((v) => v.versionNumber)) + 1 : 1
   );
+
+  const contractVersionNumber = ref('v' + nextVersionNumber.value);
 
   function openCreateModal() {
     form.value = { content: '', title: '', changeDescription: '' };
