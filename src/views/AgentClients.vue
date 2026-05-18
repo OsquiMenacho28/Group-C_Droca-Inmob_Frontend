@@ -310,7 +310,8 @@
           payload.preferredPropertyType;
 
         if (hasPrefs) {
-          const idToUse = (editingClient.value.personId as string) || (editingClient.value.id as string);
+          const idToUse =
+            (editingClient.value.personId as string) || (editingClient.value.id as string);
           if (idToUse) {
             const prefsPayload = {
               preferredZones: payload.preferredZones || editingClient.value.preferredZones || [],

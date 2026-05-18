@@ -67,6 +67,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'admin/vehicles/usage-report',
+        name: 'VehicleUsageReport',
+        component: () => import('@/views/VehicleUsageReportView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: 'agent',
         name: 'AgentDashboard',
         component: AgentDashboard,
@@ -148,6 +154,12 @@ const routes = [
         path: 'reports/agent-ranking',
         name: 'AgentRanking',
         component: () => import('@/views/AgentRankingView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
+        path: 'reports/property-visits',
+        name: 'PropertyVisitReport',
+        component: () => import('@/views/PropertyVisitReportView.vue'),
         meta: { role: 'ADMIN' },
       },
       {

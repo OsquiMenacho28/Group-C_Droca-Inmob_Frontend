@@ -3,6 +3,7 @@ import { apiClient as api } from '@/api';
 export interface RegisterResultadoPayload {
   resultado: 'INTERESADO' | 'NO_INTERESADO' | 'PENDIENTE';
   observaciones?: string;
+  mileage?: number;
 }
 
 export async function registerVisitResult(

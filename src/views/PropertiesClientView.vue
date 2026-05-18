@@ -55,15 +55,20 @@
           </div>
 
           <!-- Range Filters (Price & M2) -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div
+            class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100 dark:border-gray-700"
+          >
             <!-- Price Range Slider -->
             <div class="space-y-3">
               <div class="flex justify-between items-center">
                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('common.priceRange') }} ($)
                 </label>
-                <div class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded">
-                  {{ filters.minPrice?.toLocaleString() || 0 }} — {{ filters.maxPrice?.toLocaleString() || t('clientProperties.noLimit') }}
+                <div
+                  class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded"
+                >
+                  {{ filters.minPrice?.toLocaleString() || 0 }} —
+                  {{ filters.maxPrice?.toLocaleString() || t('clientProperties.noLimit') }}
                 </div>
               </div>
               <div class="flex items-center gap-4">

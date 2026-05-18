@@ -90,8 +90,7 @@ export function useUsers() {
             minRooms: payload.minRooms !== undefined ? payload.minRooms : profile.minRooms,
             maxRooms: payload.maxRooms !== undefined ? payload.maxRooms : profile.maxRooms,
             maxPrice: Number(payload.budget || profile.budget || 0),
-            preferredPropertyType:
-              payload.preferredPropertyType || profile.preferredPropertyType,
+            preferredPropertyType: payload.preferredPropertyType || profile.preferredPropertyType,
           };
           await personService.savePreferences(profile.id as string, prefsPayload);
         }
