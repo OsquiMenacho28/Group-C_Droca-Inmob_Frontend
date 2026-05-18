@@ -1,9 +1,9 @@
 <template>
   <div class="p-6 max-w-6xl mx-auto">
     <!-- Encabezado -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="mb-6">
       <!-- Back button -->
-      <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
+      <div>
         <fwb-button
           tag="router-link"
           :to="`/dashboard/operations/${operationId}`"
@@ -17,26 +17,26 @@
           {{ t('operations.backToOperation') }}
         </fwb-button>
       </div>
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ t('operationContractVersions.title') }}
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          {{ t('operationContractVersions.operation') }}
-          <span class="font-medium text-blue-600 dark:text-blue-400">{{ operationId }}</span>
-        </p>
-      </div>
 
-      <!-- Botón crear nueva versión (solo ADMINISTRADOR) -->
-      <fwb-button
-        v-if="isAdmin"
-        @click="openCreateModal"
-        color="blue"
-        class="flex items-center gap-2"
-      >
-        <IconLucidePlus class="w-4 h-4" />
-        {{ t('operationContractVersions.newVersion') }}
-      </fwb-button>
+      <div class="flex justify-between items-center mt-5 flex-wrap gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            {{ t('operationContractVersions.title') }}
+          </h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {{ t('operationContractVersions.operation') }}
+            <span class="font-medium text-blue-600 dark:text-blue-400">{{ operationId }}</span>
+          </p>
+        </div>
+
+        <!-- Botón crear nueva versión (solo ADMINISTRADOR) -->
+        <fwb-button v-if="isAdmin" @click="openCreateModal" color="green">
+          <template #prefix>
+            <IconLucidePlus class="w-4 h-4" />
+          </template>
+          {{ t('operationContractVersions.newVersion') }}
+        </fwb-button>
+      </div>
     </div>
 
     <!-- Estado de carga -->
@@ -53,7 +53,7 @@
       <p class="text-gray-500 dark:text-gray-400 font-medium">
         {{ t('operationContractVersions.noVersions') }}
       </p>
-      <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
+      <p v-if="isAdmin" class="text-sm text-gray-400 dark:text-gray-500 mt-1">
         {{ t('operationContractVersions.createFirstVersion') }}
       </p>
     </div>
@@ -281,6 +281,7 @@
   import { formatDateTime } from '@/utils/dateTime';
   import { useI18n } from 'vue-i18n';
   import { FwbButton, FwbModal, FwbInput, FwbTextarea, FwbSpinner } from 'flowbite-vue';
+  import { useAuthStore, type UserClaims } from '@/modules/auth';
   import IconLucideArrowLeft from '~icons/lucide/arrow-left';
   import IconLucidePlus from '~icons/lucide/plus';
   import IconLucideFileText from '~icons/lucide/file-text';
@@ -301,20 +302,15 @@
   const selectedVersion = ref<ContractVersionResponse | null>(null);
 
   // ----------------------------------------------------------------
-  // Rol del usuario (extraído del JWT almacenado en localStorage)
+  // Rol del usuario
   // ----------------------------------------------------------------
-  const userRole = computed(() => {
-    try {
-      const token = localStorage.getItem('token') ?? '';
-      if (!token) return '';
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return (payload.role ?? payload.roles?.[0] ?? '').toUpperCase();
-    } catch {
-      return '';
-    }
-  });
+  const authStore = useAuthStore();
+  const user = computed(() => authStore.user as UserClaims | null);
 
-  const isAdmin = computed(() => userRole.value === 'ADMIN');
+  const isAdmin = computed(() => {
+    const roles = (user.value?.roles || []) as string[];
+    return roles.includes('ADMIN') || user.value?.userType === 'ADMIN';
+  });
 
   // ----------------------------------------------------------------
   // Modal de creación
@@ -353,7 +349,10 @@
     try {
       const created = await contractVersionService.createContractVersion(
         operationId.value,
-        form.value
+        form.value,
+        user.value?.id || '',
+        user.value?.roles?.[0] || '',
+        user.value?.name || ''
       );
       versions.value.push(created);
       // Reordenar por número de versión

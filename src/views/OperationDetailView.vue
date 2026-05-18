@@ -192,18 +192,6 @@
               <IconLucideFileText class="w-3.5 h-3.5" />
               {{ t('documentUpload.title') }}
             </h3>
-
-            <FwbButton
-              @click="
-                $router.push({ name: 'contract-versions', params: { operationId: operation.id } })
-              "
-              color="blue"
-              class="inline-flex items-center gap-2"
-            >
-              <IconLucideFileText class="h-4 w-4" />
-              {{ t('operationContractVersions.viewContracts') }}
-            </FwbButton>
-
             <div v-if="loadingProperty" class="flex justify-center py-4">
               <fwb-spinner size="6" />
             </div>
@@ -231,6 +219,20 @@
             </div>
             <div v-else class="text-center py-4 text-xs text-gray-400 italic">
               {{ t('documentUpload.noDocuments') }}
+            </div>
+            <div class="mt-4 flex justify-end">
+              <FwbButton
+                @click="
+                  $router.push({ name: 'contract-versions', params: { operationId: operation.id } })
+                "
+                color="green"
+                class="text-xs font-medium uppercase cursor-pointer"
+              >
+                <template #prefix>
+                  <IconLucideFileText class="h-4 w-4" />
+                </template>
+                {{ t('operationContractVersions.viewContracts') }}
+              </FwbButton>
             </div>
           </div>
         </div>
