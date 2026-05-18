@@ -151,6 +151,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'reports/property-visits',
+        name: 'PropertyVisitReport',
+        component: () => import('@/views/PropertyVisitReportView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: '/reassignments/sent',
         name: 'SentRequests',
         component: SentRequestsView,

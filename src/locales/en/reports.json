@@ -15,6 +15,19 @@
     "columnPercentage": "% of Total",
     "rankingLoadError": "Could not load agent ranking. Please try again.",
     "totalAgents": "Total of Agents",
-    "averageSales": "Average Sales"
+    "averageSales": "Average Sales",
+    "propertyVisitReportTitle": "Most Visited Properties",
+    "propertyVisitReportSubtitle": "Monthly ranking of properties by number of visits received",
+    "month": "Month",
+    "year": "Year",
+    "columnPropertyName": "Property",
+    "columnPropertyAddress": "Address",
+    "columnVisits": "Visits",
+    "columnResponsibleAgent": "Responsible Agent",
+    "noVisitDataTitle": "No visits in this period",
+    "noVisitDataText": "No visits were found for the selected month and year.",
+    "visitReportLoadError": "Could not load the report. Please try again.",
+    "topProperty": "Most Visited Property",
+    "totalPropertiesWithVisits": "Properties with Visits"
   }
 }
