@@ -84,11 +84,6 @@
           <!-- Owner Links -->
           <template v-if="isOwner">
             <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
-            <NavLink
-              to="/dashboard/owner/notifications"
-              :label="t('nav.notifications')"
-              :icon="IconLucideBell"
-            />
           </template>
 
           <!-- Client Links -->
@@ -124,22 +119,8 @@
       </template>
       <template #right-side>
         <div class="flex items-center md:order-2 space-x-3">
-          <!-- Campana de notificaciones (solo para propietarios) -->
-          <button
-            v-if="isOwner"
-            @click="router.push('/dashboard/owner/notifications')"
-            class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
-            aria-label="Notificaciones"
-          >
-            <IconLucideBell class="w-5 h-5" />
-            <span
-              v-if="unreadCount > 0"
-              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm"
-            >
-              {{ unreadCount > 9 ? '9+' : unreadCount }}
-            </span>
-          </button>
-
+          
+          <NotificationBell />
           <LanguageSwitcher />
           <theme-toggle />
           <fwb-dropdown align-to-end>
@@ -197,8 +178,6 @@
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
   import NavLink from '@/components/ui/NavLink.vue';
   import { computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
   import IconLucideFileText from '~icons/lucide/file-text';
   import IconLucideTrophy from '~icons/lucide/trophy';
   import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
@@ -213,16 +192,13 @@
   import IconLucideHeart from '~icons/lucide/heart';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideCar from '~icons/lucide/car';
-  import IconLucideBell from '~icons/lucide/bell';
   import IconLucideBarChart from '~icons/lucide/bar-chart';
+  import NotificationBell from '@/components/notifications/NotificationBell.vue';
 
   const { t } = useI18n();
-  const router = useRouter();
   const authStore = useAuthStore();
   const user = computed(() => authStore.user as UserClaims | null);
-  const ownerId = computed(() => (user.value?.userId || user.value?.sub || '') as string);
 
-  const { unreadCount } = useOwnerNotifications(ownerId.value);
 
   // Funciones auxiliares
   const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');

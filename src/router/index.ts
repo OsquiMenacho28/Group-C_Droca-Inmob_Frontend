@@ -163,10 +163,10 @@ const routes = [
         meta: { role: 'AGENT' },
       },
       {
-        path: 'owner/notifications',
-        name: 'OwnerNotifications',
-        component: () => import('@/views/OwnerNotificationsView.vue'),
-        meta: { role: 'OWNER' },
+        path: 'notifications',
+        name: 'Notifications',
+        component: () => import('@/views/NotificationsView.vue'),
+        meta: { requiresAuth: true },
       },
       {
         path: '/operations/:operationId/contracts',
