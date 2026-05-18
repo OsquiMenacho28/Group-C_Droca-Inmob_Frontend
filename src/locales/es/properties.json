@@ -286,7 +286,18 @@
     "deletePermanently": "Eliminar Permanentemente",
     "propertyUpdated": "Propiedad actualizada con éxito",
     "propertyCreated": "Inmueble registrado con éxito",
-    "deleteWarning": "Esta acción eliminará permanentemente la propiedad, sus imágenes y documentos asociados. No se puede deshacer."
+    "deleteWarning": "Esta acción eliminará permanentemente la propiedad, sus imágenes y documentos asociados. No se puede deshacer.",
+    "inventoryMetricsTitle": "Tiempo en Inventario",
+    "inventoryMetricsSubtitle": "Días promedio que un inmueble pasa en inventario antes de venderse o retirarse",
+    "inventoryMetricsAll": "Todas las operaciones",
+    "inventoryMetricsLoading": "Calculando métricas...",
+    "inventoryMetricsError": "No se pudieron cargar las métricas",
+    "inventoryMetricsAvg": "Promedio (días)",
+    "inventoryMetricsDaysUnit": "días promedio",
+    "inventoryMetricsSold": "Vendidos",
+    "inventoryMetricsRetired": "Retirados",
+    "inventoryMetricsActive": "Activos",
+    "inventoryMetricsFilteredBy": "Filtrado por:"
   },
   "adminProperties": {
     "title": "Gestión de Inventario",
