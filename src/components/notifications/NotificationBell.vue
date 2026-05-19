@@ -27,7 +27,9 @@
         v-if="isOpen"
         class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
       >
-        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+        <div
+          class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center"
+        >
           <h3 class="font-semibold text-primary">Notificaciones</h3>
           <button
             v-if="unreadCount > 0"
@@ -48,7 +50,9 @@
           >
             <div class="flex gap-3">
               <div class="flex-shrink-0 mt-0.5">
-                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center"
+                >
                   <IconLucideBellRing class="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
@@ -87,13 +91,13 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { useNotifications } from '@/composables/useNotifications';
-  import { useRouter } from 'vue-router';
+  import type { InAppNotification } from '@/types/notification';
   import IconLucideBell from '~icons/lucide/bell';
   import IconLucideBellRing from '~icons/lucide/bell-ring';
 
-  const router = useRouter();
   const isOpen = ref(false);
-  const { unreadCount, loadUnreadCount, fetchNotifications, list, markAsRead, markAllAsRead } = useNotifications();
+  const { unreadCount, loadUnreadCount, fetchNotifications, list, markAsRead, markAllAsRead } =
+    useNotifications();
 
   const recentNotifications = computed(() => list.value.slice(0, 5));
 
@@ -104,7 +108,7 @@
     isOpen.value = !isOpen.value;
   };
 
-  const handleNotificationClick = async (notif: any) => {
+  const handleNotificationClick = async (notif: InAppNotification) => {
     if (!notif.readStatus) {
       await markAsRead(notif.id);
       await loadUnreadCount();

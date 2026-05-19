@@ -57,7 +57,7 @@ export function useNotifications() {
   const markAsRead = async (id: string) => {
     try {
       await notificationService.markAsRead(id);
-      const notif = list.value.find(n => n.id === id);
+      const notif = list.value.find((n) => n.id === id);
       if (notif && !notif.readStatus) {
         notif.readStatus = true;
         notif.readAt = new Date().toISOString();
@@ -71,7 +71,7 @@ export function useNotifications() {
   const markAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
-      list.value.forEach(n => {
+      list.value.forEach((n) => {
         n.readStatus = true;
         n.readAt = new Date().toISOString();
       });
@@ -82,9 +82,20 @@ export function useNotifications() {
   };
 
   // Actualizar cuando cambien paginación o filtros
-  watch([page, pageSize, () => filters.readStatus, () => filters.type, () => filters.fromDate, () => filters.toDate], () => {
-    fetchNotifications();
-  }, { immediate: false });
+  watch(
+    [
+      page,
+      pageSize,
+      () => filters.readStatus,
+      () => filters.type,
+      () => filters.fromDate,
+      () => filters.toDate,
+    ],
+    () => {
+      fetchNotifications();
+    },
+    { immediate: false }
+  );
 
   return {
     list,

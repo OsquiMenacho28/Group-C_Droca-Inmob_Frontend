@@ -2,16 +2,16 @@ export type InteractionType = 'AGENT_AGENT' | 'ADMIN_OP' | 'INTERES' | 'PROPIEDA
 
 export interface InAppNotification {
   id: string;
-  type: string;                // ej. "VISIT_PROPIEDAD_MOD"
+  type: string; // ej. "VISIT_PROPIEDAD_MOD"
   interactionType: InteractionType;
   involvedUserIds?: string[];
   subject: string;
   content: string;
   readStatus: boolean;
-  deliveredAt: string;         // ISO timestamp
+  deliveredAt: string; // ISO timestamp
   readAt: string | null;
   details?: Record<string, unknown>;
-  createdAt: string;           // ISO timestamp
+  createdAt: string; // ISO timestamp
 }
 
 export interface NotificationsState {

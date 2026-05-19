@@ -59,7 +59,10 @@
         </div>
       </div>
 
-      <div v-else-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-xl p-4 text-red-700">
+      <div
+        v-else-if="error"
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-xl p-4 text-red-700"
+      >
         {{ error }}
       </div>
 
@@ -78,7 +81,9 @@
         >
           <div class="flex gap-4">
             <div class="flex-shrink-0">
-              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+              <div
+                class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center"
+              >
                 <IconLucideBellRing class="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
@@ -91,7 +96,9 @@
                 {{ notif.content }}
               </p>
               <div class="flex justify-between items-center mt-3">
-                <span class="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600">
+                <span
+                  class="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600"
+                >
                   {{ getInteractionTypeLabel(notif.interactionType) }}
                 </span>
                 <button
@@ -122,15 +129,13 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, watch } from 'vue';
+  import { watch } from 'vue';
   import { useNotifications } from '@/composables/useNotifications';
+  import type { InAppNotification } from '@/types/notification';
   import Pagination from '@/components/ui/Pagination.vue';
   import IconLucideBellOff from '~icons/lucide/bell-off';
   import IconLucideBellRing from '~icons/lucide/bell-ring';
   import { formatDate } from '@/utils/dateTime';
-  import { useI18n } from 'vue-i18n';
-
-  const { t } = useI18n();
 
   const {
     list,
@@ -147,7 +152,7 @@
     markAllAsRead,
   } = useNotifications();
 
-  const handleNotificationClick = async (notif: any) => {
+  const handleNotificationClick = async (notif: InAppNotification) => {
     if (!notif.readStatus) {
       await markAsRead(notif.id);
     }
@@ -171,7 +176,18 @@
   };
 
   // Escuchar cambios en filtros y paginación
-  watch([page, pageSize, () => filters.readStatus, () => filters.type, () => filters.fromDate, () => filters.toDate], () => {
-    fetchNotifications();
-  }, { immediate: true });
+  watch(
+    [
+      page,
+      pageSize,
+      () => filters.readStatus,
+      () => filters.type,
+      () => filters.fromDate,
+      () => filters.toDate,
+    ],
+    () => {
+      fetchNotifications();
+    },
+    { immediate: true }
+  );
 </script>

@@ -58,36 +58,35 @@
           <div
             class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
-            <!-- Price Range Slider -->
+            <!-- Price Range -->
             <div class="space-y-3">
               <div class="flex justify-between items-center">
                 <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {{ t('common.priceRange') }} ($)
                 </label>
-                <div
-                  class="text-xs text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded"
-                >
-                  {{ filters.minPrice?.toLocaleString() || 0 }} —
-                  {{ filters.maxPrice?.toLocaleString() || t('clientProperties.noLimit') }}
-                </div>
               </div>
-              <div class="flex items-center gap-4">
-                <input
-                  type="range"
+              <div class="flex items-center gap-3">
+                <fwb-input
                   v-model.number="filters.minPrice"
-                  min="0"
-                  max="1000000"
-                  step="5000"
-                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
-                />
-                <input
-                  type="range"
+                  type="number"
+                  placeholder="Min"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">$ Min</span>
+                  </template>
+                </fwb-input>
+                <span class="text-gray-400 dark:text-gray-500">—</span>
+                <fwb-input
                   v-model.number="filters.maxPrice"
-                  min="0"
-                  max="5000000"
-                  step="10000"
-                  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600"
-                />
+                  type="number"
+                  placeholder="Max"
+                  class="flex-1"
+                >
+                  <template #prefix>
+                    <span class="text-gray-500 text-xs">$ Max</span>
+                  </template>
+                </fwb-input>
               </div>
             </div>
 

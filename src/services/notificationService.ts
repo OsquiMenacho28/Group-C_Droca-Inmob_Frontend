@@ -22,7 +22,9 @@ export const notificationService = {
   /**
    * Obtiene las notificaciones in-app del usuario autenticado.
    */
-  async getInAppNotifications(params: GetNotificationsParams = {}): Promise<NotificationsPaginatedResponse> {
+  async getInAppNotifications(
+    params: GetNotificationsParams = {}
+  ): Promise<NotificationsPaginatedResponse> {
     const query: Record<string, string | number | boolean | undefined> = {
       readStatus: params.readStatus,
       page: params.page ?? 0,
@@ -54,7 +56,9 @@ export const notificationService = {
    * Marca todas las notificaciones como leídas.
    */
   async markAllAsRead(): Promise<void> {
-    const response = await api.get('/notifications/in-app', { params: { readStatus: false, page: 0, pageSize: 1000 } });
+    const response = await api.get('/notifications/in-app', {
+      params: { readStatus: false, page: 0, pageSize: 1000 },
+    });
     const notifications = response.data.data || [];
     for (const n of notifications) {
       await this.markAsRead(n.id);
@@ -65,7 +69,9 @@ export const notificationService = {
    * Obtiene el conteo de notificaciones no leídas.
    */
   async getUnreadCount(): Promise<number> {
-    const response = await api.get('/notifications/in-app', { params: { readStatus: false, page: 0, pageSize: 1 } });
+    const response = await api.get('/notifications/in-app', {
+      params: { readStatus: false, page: 0, pageSize: 1 },
+    });
     return response.data.meta?.total ?? 0;
   },
 };

@@ -177,7 +177,7 @@
   import IconLucideClock from '~icons/lucide/clock';
   import { ref, computed, onMounted, watch } from 'vue';
   import { FwbButton, FwbBadge, FwbModal, FwbCard } from 'flowbite-vue';
-  import { personService } from '@/services/personService';
+  import { personService, type ClientPayload } from '@/services/personService';
   import { userService } from '@/services/userService';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import { useI18n } from 'vue-i18n';
@@ -292,14 +292,14 @@
   const handleSubmit = async (formData: Record<string, unknown>) => {
     try {
       if (isEditing.value && editingClient.value) {
-        const payload = {
-          firstName:
-            (formData.firstName as string) || (editingClient.value.firstName as string) || '',
-          lastName: (formData.lastName as string) || (editingClient.value.lastName as string) || '',
-          email: (formData.email as string) || (editingClient.value.email as string) || '',
+        const clientVal = editingClient.value as unknown as User & { personId?: string };
+        const payload: ClientPayload = {
+          firstName: (formData.firstName as string) || (clientVal.firstName as string) || '',
+          lastName: (formData.lastName as string) || (clientVal.lastName as string) || '',
+          email: (formData.email as string) || (clientVal.email as string) || '',
           ...formData,
         };
-        await personService.updateClientForAgent(editingClient.value.id as string, payload);
+        await personService.updateClientForAgent(clientVal.id as string, payload);
 
         // Actualizar objeto de preferencias para el motor de sugerencias
         const hasPrefs =
@@ -310,18 +310,15 @@
           payload.preferredPropertyType;
 
         if (hasPrefs) {
-          const idToUse =
-            (editingClient.value.personId as string) || (editingClient.value.id as string);
+          const idToUse = (clientVal.personId as string) || (clientVal.id as string);
           if (idToUse) {
             const prefsPayload = {
-              preferredZones: payload.preferredZones || editingClient.value.preferredZones || [],
-              minRooms:
-                payload.minRooms !== undefined ? payload.minRooms : editingClient.value.minRooms,
-              maxRooms:
-                payload.maxRooms !== undefined ? payload.maxRooms : editingClient.value.maxRooms,
-              maxPrice: Number(payload.budget || editingClient.value.budget || 0),
+              preferredZones: payload.preferredZones || clientVal.preferredZones || [],
+              minRooms: payload.minRooms !== undefined ? payload.minRooms : clientVal.minRooms,
+              maxRooms: payload.maxRooms !== undefined ? payload.maxRooms : clientVal.maxRooms,
+              maxPrice: Number(payload.budget || clientVal.budget || 0),
               preferredPropertyType:
-                payload.preferredPropertyType || editingClient.value.preferredPropertyType,
+                payload.preferredPropertyType || clientVal.preferredPropertyType,
             };
             await personService.savePreferences(idToUse, prefsPayload);
           }

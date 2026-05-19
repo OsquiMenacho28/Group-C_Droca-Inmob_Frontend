@@ -81,9 +81,7 @@
                   <p class="text-xs text-gray-400 uppercase tracking-wider">
                     {{ t('common.price') }}
                   </p>
-                  <p class="text-2xl font-bold text-blue-600">
-                    ${{ prop.price.toLocaleString() }}
-                  </p>
+                  <p class="text-2xl font-bold text-blue-600">${{ prop.price.toLocaleString() }}</p>
                 </div>
                 <div>
                   <p class="text-xs text-gray-400 uppercase tracking-wider">
@@ -160,7 +158,9 @@
     loadingProps.value = true;
     errorProps.value = '';
     try {
-      const props = (await propertyService.getPropertiesByOwner(ownerId.value)) as PropertyWithVisits[];
+      const props = (await propertyService.getPropertiesByOwner(
+        ownerId.value
+      )) as PropertyWithVisits[];
       const propsWithVisits = await Promise.all(
         props.map(async (prop) => {
           try {

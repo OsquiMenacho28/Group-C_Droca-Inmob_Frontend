@@ -110,7 +110,11 @@
     "notSpecified": "Not specified",
     "changeHistory": "Change History Log",
     "editor": "Editor:",
-    "noChanges": "No modifications have been registered to this profile."
+    "noChanges": "No modifications have been registered to this profile.",
+    "viewSuggestions": "View Suggested Properties",
+    "suggestedProperties": "Matching properties",
+    "noSuggestions": "There are no properties matching these preferences.",
+    "adjustFilters": "Try adjusting the room ranges or zones."
   },
   "ownerDetails": {
     "profileBadge": "Owner Profile",

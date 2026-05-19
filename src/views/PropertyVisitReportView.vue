@@ -234,8 +234,7 @@
   const getRowClass = (rank: number): string => {
     if (rank === 1)
       return 'bg-gradient-to-r from-yellow-50/30 to-transparent dark:from-yellow-900/5';
-    if (rank === 2)
-      return 'bg-gradient-to-r from-slate-50/30 to-transparent dark:from-slate-700/5';
+    if (rank === 2) return 'bg-gradient-to-r from-slate-50/30 to-transparent dark:from-slate-700/5';
     if (rank === 3)
       return 'bg-gradient-to-r from-orange-50/30 to-transparent dark:from-orange-900/5';
     return '';

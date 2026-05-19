@@ -124,7 +124,6 @@
       </template>
       <template #right-side>
         <div class="flex items-center md:order-2 space-x-3">
-          
           <NotificationBell />
           <LanguageSwitcher />
           <theme-toggle />
@@ -204,7 +203,6 @@
   const { t } = useI18n();
   const authStore = useAuthStore();
   const user = computed(() => authStore.user as UserClaims | null);
-
 
   // Funciones auxiliares
   const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');

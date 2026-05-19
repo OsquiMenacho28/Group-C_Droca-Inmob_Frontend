@@ -37,10 +37,7 @@
     </div>
 
     <!-- Error -->
-    <div
-      v-else-if="error"
-      class="text-sm text-red-500 dark:text-red-400 py-3 text-center"
-    >
+    <div v-else-if="error" class="text-sm text-red-500 dark:text-red-400 py-3 text-center">
       {{ t('agentDashboard.inventoryMetricsError') }}
     </div>
 
@@ -103,7 +100,9 @@
 
     <!-- Applied filter badge -->
     <div v-if="metrics && selectedOpType" class="mt-3 flex items-center gap-1">
-      <span class="text-xs text-gray-400">{{ t('agentDashboard.inventoryMetricsFilteredBy') }}</span>
+      <span class="text-xs text-gray-400">
+        {{ t('agentDashboard.inventoryMetricsFilteredBy') }}
+      </span>
       <span
         class="text-xs font-semibold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full"
       >
