@@ -102,7 +102,8 @@
     "startTimeRequired": "La fecha y hora de inicio son obligatorias",
     "endTimeRequired": "La fecha y hora de fin son obligatorias",
     "preferredDateTimeRequired": "La fecha y hora preferida es obligatoria",
-    "messageMax500": "El mensaje no puede exceder los 500 caracteres"
+    "messageMax500": "El mensaje no puede exceder los 500 caracteres",
+    "vehicleAdminOnlyHelp": "Solo los agentes y administradores autorizados pueden asignar un vehículo a la visita."
   },
   "rescheduleVisit": {
     "title": "Reprogramar Visita",
@@ -160,7 +161,8 @@
     "vehicle": "Vehículo",
     "visitTypeVisit": "Visita de Agente",
     "visitTypeClientRequest": "Solicitud de Cliente",
-    "actions": "Acciones"
+    "actions": "Acciones",
+    "noVehicleAssigned": "Sin vehículo asignado"
   },
   "visitResult": {
     "title": "Registrar resultado de la visita",

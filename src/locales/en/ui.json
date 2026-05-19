@@ -75,7 +75,8 @@
     "add": "Add",
     "selectOption": "Select an option",
     "optionalLabel": "(optional)",
-    "noValue": "Not specified"
+    "noValue": "Not specified",
+    "all": "All"
   },
   "status": {
     "pending": "Pending",

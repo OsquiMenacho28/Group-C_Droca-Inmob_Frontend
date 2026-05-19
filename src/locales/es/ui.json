@@ -75,7 +75,8 @@
     "selectOption": "Selecciona una opción",
     "optionalLabel": "(opcional)",
     "noValue": "No especificado",
-    "date": "Fecha:"
+    "date": "Fecha:",
+    "all": "Todos"
   },
   "status": {
     "pending": "Pendiente",
