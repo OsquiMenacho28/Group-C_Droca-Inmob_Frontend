@@ -27,85 +27,87 @@
     </template>
 
     <!-- Body -->
-    <div class="space-y-5">
-      <!-- Info banner -->
-      <div
-        class="flex items-start gap-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-xl px-4 py-3"
-      >
-        <IconLucideInfo class="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5" />
-        <p class="text-sm text-indigo-700 dark:text-indigo-300">
-          {{ t('rescheduleVisit.referenceInfo') }}
-        </p>
-      </div>
+    <template #body>
+      <div class="space-y-5">
+        <!-- Info banner -->
+        <div
+          class="flex items-start gap-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded-xl px-4 py-3"
+        >
+          <IconLucideInfo class="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5" />
+          <p class="text-sm text-indigo-700 dark:text-indigo-300">
+            {{ t('rescheduleVisit.referenceInfo') }}
+          </p>
+        </div>
 
-      <!-- Error banner -->
-      <div
-        v-if="error"
-        class="flex items-start gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl px-4 py-3 text-sm"
-      >
-        <IconLucideCircleX class="w-4 h-4 shrink-0 mt-0.5" />
-        {{ error }}
-      </div>
+        <!-- Error banner -->
+        <div
+          v-if="error"
+          class="flex items-start gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-xl px-4 py-3 text-sm"
+        >
+          <IconLucideCircleX class="w-4 h-4 shrink-0 mt-0.5" />
+          {{ error }}
+        </div>
 
-      <!-- New date/time picker -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          {{ t('rescheduleVisit.newStartTime') }}
-          <span class="text-red-500">*</span>
-        </label>
-        <input
-          v-model="newStartTime"
-          type="datetime-local"
-          :min="minDateTime"
-          class="app-input py-3"
-          :class="{ 'border-red-400': dateError }"
-        />
-        <p v-if="dateError" class="text-red-500 text-xs mt-1">{{ dateError }}</p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          {{ t('rescheduleVisit.agentAndPropertyAvailability') }}
-        </p>
-      </div>
+        <!-- New date/time picker -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ t('rescheduleVisit.newStartTime') }}
+            <span class="text-red-500">*</span>
+          </label>
+          <input
+            v-model="newStartTime"
+            type="datetime-local"
+            :min="minDateTime"
+            class="app-input py-3"
+            :class="{ 'border-red-400': dateError }"
+          />
+          <p v-if="dateError" class="text-red-500 text-xs mt-1">{{ dateError }}</p>
+          <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+            {{ t('rescheduleVisit.agentAndPropertyAvailability') }}
+          </p>
+        </div>
 
-      <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-        <p class="text-sm text-amber-800">
-          {{ t('rescheduleVisit.editingVehicleNotAvailable') }}
-        </p>
-      </div>
+        <div
+          class="rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/30 px-4 py-3"
+        >
+          <p class="text-sm text-amber-800 dark:text-amber-300 font-medium">
+            {{ t('rescheduleVisit.editingVehicleNotAvailable') }}
+          </p>
+        </div>
 
-      <!-- Optional notes -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          {{ t('rescheduleVisit.notes') }}
-          <span class="text-gray-400 font-normal">
-            {{ t('rescheduleVisit.optionalLabel') }}
-          </span>
-        </label>
-        <textarea
-          v-model="notes"
-          rows="2"
-          maxlength="500"
-          :placeholder="t('rescheduleVisit.notesPlaceholder')"
-          class="app-input resize-none py-3"
-        />
-        <p class="text-xs text-gray-400 dark:text-gray-500 text-right mt-1">
-          {{ notes.length }}/500
-        </p>
+        <!-- Optional notes -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            {{ t('rescheduleVisit.notes') }}
+            <span class="text-gray-400 font-normal">
+              {{ t('rescheduleVisit.optionalLabel') }}
+            </span>
+          </label>
+          <textarea
+            v-model="notes"
+            rows="2"
+            maxlength="500"
+            :placeholder="t('rescheduleVisit.notesPlaceholder')"
+            class="app-input resize-none py-3"
+          />
+          <p class="text-xs text-gray-400 dark:text-gray-500 text-right mt-1">
+            {{ notes.length }}/500
+          </p>
+        </div>
       </div>
-    </div>
+    </template>
 
     <!-- Footer -->
     <template #footer>
       <div class="flex gap-3 justify-end w-full">
-        <FwbButton
-          @click="close"
-          class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium hover-row"
-        >
+        <FwbButton @click="close" color="alternative">
           {{ t('common.cancel') }}
         </FwbButton>
         <FwbButton
           @click="handleSubmit"
           :disabled="loading"
-          class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+          color="blue"
+          class="flex items-center gap-2"
         >
           <IconLucideLoader2 v-if="loading" class="animate-spin w-4 h-4" />
           <IconLucideCalendar v-else class="w-4 h-4" />
@@ -121,7 +123,7 @@
   import { useReschedule } from '@/composables/useReschedule';
   import type { RescheduleResponse, Visit } from '@/types/reschedule';
   import { FwbButton } from 'flowbite-vue';
-  import { formatDate } from '@/utils/dateTime';
+  import { formatDate, localInputToUtcIso, utcIsoToLocalInput } from '@/utils/dateTime';
   import BaseModal from '@/components/ui/BaseModal.vue';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideInfo from '~icons/lucide/info';
@@ -150,12 +152,11 @@
   const notes = ref('');
   const dateError = ref('');
 
-  // Minimum selectable datetime = now + 30 minutes (rounded to next hour)
+  // Minimum selectable datetime = now + 30 minutes (respecting browser local timezone)
   const minDateTime = computed(() => {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 30);
-    // Format as YYYY-MM-DDTHH:MM for datetime-local input
-    return now.toISOString().slice(0, 16);
+    return utcIsoToLocalInput(now.toISOString());
   });
 
   // Calculate the duration of the original visit
@@ -201,10 +202,10 @@
   async function handleSubmit() {
     if (!validate()) return;
 
-    // Convert datetime-local strings to ISO-8601 (backend expects LocalDateTime format)
-    const newStartTimeISO = new Date(newStartTime.value).toISOString().slice(0, 19);
+    // Convert datetime-local strings to UTC ISO-8601 strings ending in 'Z'
+    const newStartTimeISO = localInputToUtcIso(newStartTime.value);
     const newEndTimeDate = new Date(new Date(newStartTime.value).getTime() + visitDuration.value);
-    const newEndTimeISO = newEndTimeDate.toISOString().slice(0, 19);
+    const newEndTimeISO = newEndTimeDate.toISOString();
 
     const result = await reschedule(
       props.visit.id,
