@@ -42,6 +42,7 @@
     "columnVisits": "Total Visitas",
     "columnMileage": "Km Totales",
     "viewDetails": "Ver Detalles",
-    "usageDetails": "Detalles de Uso"
+    "usageDetails": "Detalles de Uso",
+    "noUsagePeriod": "Sin uso en el período"
   }
 }

@@ -164,7 +164,15 @@
                 <template v-for="vehicle in reportData.vehicles" :key="vehicle.vehicleId">
                   <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                     <td class="px-6 py-4">
-                      <div class="font-medium text-primary">{{ vehicle.licensePlate }}</div>
+                      <div class="flex items-center gap-2">
+                        <div class="font-medium text-primary">{{ vehicle.licensePlate }}</div>
+                        <span
+                          v-if="vehicle.visitCount === 0"
+                          class="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded dark:bg-amber-900/30 dark:text-amber-400"
+                        >
+                          {{ t('vehicleAdmin.noUsagePeriod') }}
+                        </span>
+                      </div>
                       <div class="text-xs text-secondary">
                         {{ vehicle.brand }} {{ vehicle.model }}
                       </div>

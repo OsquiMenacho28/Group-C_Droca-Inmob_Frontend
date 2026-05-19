@@ -42,6 +42,7 @@
     "columnVisits": "Total Visits",
     "columnMileage": "Total Mileage",
     "viewDetails": "View Details",
-    "usageDetails": "Usage Details"
+    "usageDetails": "Usage Details",
+    "noUsagePeriod": "No usage in period"
   }
 }
