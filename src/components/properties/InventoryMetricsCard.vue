@@ -50,9 +50,6 @@
         <span class="text-2xl font-extrabold text-blue-600 dark:text-blue-400">
           {{ Math.round(metrics.averageDaysInInventory) }}
         </span>
-        <span class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-          {{ t('agentDashboard.inventoryMetricsDaysUnit') }}
-        </span>
         <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 mt-1">
           {{ t('agentDashboard.inventoryMetricsAvg') }}
         </span>
