@@ -53,21 +53,15 @@
                   :disabled="
                     updatingStatus ||
                     property?.status === 'VENDIDO' ||
-                    property?.status === 'ELIMINADO'
+                    property?.status === 'ELIMINADO' ||
+                    (!isAdmin && !isAssignedAgent)
                   "
                   class="text-xs font-bold rounded-lg border-gray-300 py-1 px-2 dark:bg-gray-700 dark:text-white"
                   :class="statusColorClass(localStatus)"
                 >
-                  <option value="DISPONIBLE">
-                    {{ t('propertyDetails.statusAvailable') }}
+                  <option v-for="opt in availableStatusOptions" :key="opt.value" :value="opt.value">
+                    {{ opt.label }}
                   </option>
-                  <option value="RESERVADO">
-                    {{ t('propertyDetails.statusReserved') }}
-                  </option>
-                  <option value="EN_NEGOCIACION">
-                    {{ t('propertyDetails.statusNegotiating') }}
-                  </option>
-                  <option value="RETIRADO">{{ t('status.RETIRADO') }}</option>
                 </select>
                 <span
                   v-else
@@ -393,14 +387,27 @@
     </template>
   </BaseModal>
 
-  <ConfirmModal
-    :show="showReincorporateConfirm"
-    :title="t('propertyDetails.reincorporateConfirmTitle')"
-    :message="reincorporateConfirmMessage"
-    type="question"
-    @confirm="handleReincorporate"
-    @close="showReincorporateConfirm = false"
-  />
+  <Teleport to="body">
+    <ConfirmModal
+      :show="showReincorporateConfirm"
+      :title="t('propertyDetails.reincorporateConfirmTitle')"
+      :message="reincorporateConfirmMessage"
+      type="question"
+      @confirm="handleReincorporate"
+      @close="showReincorporateConfirm = false"
+    />
+  </Teleport>
+
+  <Teleport to="body">
+    <RetirementModal
+      v-if="showRetirementModal"
+      :show="showRetirementModal"
+      :property-id="property?.id || ''"
+      :property-title="property?.title || ''"
+      @close="handleRetirementCancel"
+      @success="handleRetirementSuccess"
+    />
+  </Teleport>
 
   <!-- Global Toast -->
   <AppToast
@@ -433,6 +440,7 @@
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+  import RetirementModal from '@/components/properties/RetirementModal.vue';
   import { handleApiError } from '@/api/errorHandler';
   import type { OperationData } from '@/types/operation';
   import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
@@ -461,6 +469,7 @@
   const authStore = useAuthStore();
   const currentUser = computed(() => authStore.user as UserClaims | null);
   const showReincorporateConfirm = ref(false);
+  const showRetirementModal = ref(false);
 
   const localStatus = ref(props.property?.status || '');
   const updatingStatus = ref(false);
@@ -534,6 +543,33 @@
     if (!props.property || !currentUser.value) return false;
     const userId = currentUser.value.userId || currentUser.value.sub || currentUser.value.id;
     return userId === props.property.assignedAgentId;
+  });
+
+  const availableStatusOptions = computed(() => {
+    const options = [
+      { value: 'DISPONIBLE', label: t('propertyDetails.statusAvailable') },
+      { value: 'RETIRADO', label: t('status.RETIRADO') },
+    ];
+
+    if (isAdmin.value) {
+      options.push(
+        { value: 'RESERVADO', label: t('propertyDetails.statusReserved') },
+        { value: 'EN_NEGOCIACION', label: t('propertyDetails.statusNegotiating') }
+      );
+    }
+
+    const current = props.property?.status;
+    if (current && !options.some((opt) => opt.value === current)) {
+      let label = current;
+      if (current === 'RESERVADO') label = t('propertyDetails.statusReserved');
+      else if (current === 'EN_NEGOCIACION') label = t('propertyDetails.statusNegotiating');
+      else if (current === 'VENDIDO') label = t('status.VENDIDO');
+      else if (current === 'ELIMINADO') label = t('status.ELIMINADO');
+
+      options.push({ value: current, label });
+    }
+
+    return options;
   });
 
   const isRelatedToOperation = computed(() => {
@@ -650,14 +686,15 @@
       return;
     }
 
+    if (localStatus.value === 'RETIRADO') {
+      showRetirementModal.value = true;
+      return;
+    }
+
     updatingStatus.value = true;
     try {
       let updatedProperty: Property;
-      if (localStatus.value === 'RETIRADO') {
-        updatedProperty = await propertyService.withdrawProperty(props.property.id);
-      } else {
-        updatedProperty = await propertyService.updateStatus(props.property.id, localStatus.value);
-      }
+      updatedProperty = await propertyService.updateStatus(props.property.id, localStatus.value);
 
       localStatus.value = updatedProperty.status;
       toast.message = t('propertyDetails.statusUpdated');
@@ -685,6 +722,32 @@
     } finally {
       updatingStatus.value = false;
     }
+  };
+
+  const handleRetirementSuccess = async () => {
+    showRetirementModal.value = false;
+    localStatus.value = 'RETIRADO';
+
+    try {
+      const updatedProperty = await propertyService.getPropertyById(props.property!.id);
+      emit('status-updated', updatedProperty);
+
+      toast.message = t('retirement.success');
+      toast.type = 'success';
+      toast.show = true;
+
+      setTimeout(() => {
+        emit('close');
+      }, 1500);
+    } catch {
+      emit('status-updated', { ...props.property, status: 'RETIRADO' });
+      emit('close');
+    }
+  };
+
+  const handleRetirementCancel = () => {
+    showRetirementModal.value = false;
+    localStatus.value = props.property?.status || '';
   };
 
   const getStatusColor = (status: string) => {

@@ -318,8 +318,11 @@ export const propertyService = {
     return response.data.data;
   },
 
-  async withdrawProperty(id: string): Promise<Property> {
-    const response = await api.patch(`/properties/${id}/retirar`);
+  async withdrawProperty(
+    id: string,
+    payload: { motivoRetiro: string; detalleRetiro?: string | null }
+  ): Promise<Property> {
+    const response = await api.post(`/properties/${id}/retirar`, payload);
     return response.data.data;
   },
 
