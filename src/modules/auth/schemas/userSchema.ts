@@ -75,7 +75,7 @@ export const ownerFields = z.object({
  */
 export const clientPreferencesSchema = z.object({
   preferredContactMethod: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']).optional(),
-  budget: z.string().optional(),
+  budget: z.union([z.string(), z.number()]).optional(),
   preferredZone: z.string().optional(),
   preferredPropertyType: z.string().optional(),
   preferredRooms: z
@@ -101,7 +101,7 @@ export const userSchema = baseUserSchema
     hireDate: z.string().optional(),
     taxId: z.string().optional(),
     preferredContactMethod: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']).optional(),
-    budget: z.string().optional(),
+    budget: z.union([z.string(), z.number()]).optional(),
     preferredZone: z.string().optional(),
     preferredPropertyType: z.string().optional(),
     preferredRooms: z.union([z.number(), z.string(), z.null()]).optional(),

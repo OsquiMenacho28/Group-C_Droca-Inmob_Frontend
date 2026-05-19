@@ -217,7 +217,7 @@
                 @keydown.enter.prevent="addZone"
               />
             </div>
-            <fwb-button size="xs" color="alternative" @click="addZone">
+            <fwb-button size="xs" color="alternative" type="button" @click.prevent="addZone">
               {{ t('common.add') || 'Añadir' }}
             </fwb-button>
           </div>
@@ -229,7 +229,11 @@
               class="pl-3 py-1"
             >
               {{ zone }}
-              <button @click="removeZone(zone)" class="ml-2 text-indigo-900 hover:text-red-600">
+              <button
+                type="button"
+                @click.prevent="removeZone(zone)"
+                class="ml-2 text-indigo-900 hover:text-red-600"
+              >
                 ×
               </button>
             </fwb-badge>
@@ -288,9 +292,9 @@
             @change="handlePropertyTypeChange"
           >
             <option value="">{{ t('userForm.noPreference') }}</option>
-            <option value="APARTMENT">{{ t('propertyType.apartment') }}</option>
-            <option value="HOUSE">{{ t('propertyType.house') }}</option>
-            <option value="COMMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
+            <option value="DEPARTAMENTO">{{ t('propertyType.apartment') }}</option>
+            <option value="CASA">{{ t('propertyType.house') }}</option>
+            <option value="COMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
           </select>
           <p v-if="isFieldModified('preferredPropertyType')" class="text-xs text-blue-600 mt-1">
             {{ t('userForm.modifyingPreferences') }}
@@ -300,7 +304,7 @@
     </div>
 
     <div class="flex justify-end space-x-3 pt-4 border-t">
-      <fwb-button color="alternative" @click="$emit('cancel')">
+      <fwb-button color="alternative" type="button" @click="$emit('cancel')">
         {{ t('users.form.cancel') }}
       </fwb-button>
       <fwb-button type="submit" gradient="blue" :disabled="!isFormValid || emailChecking">
@@ -343,6 +347,44 @@
   const preferredZonesList = ref<string[]>([]);
   const minRooms = ref<number | undefined>(undefined);
   const maxRooms = ref<number | undefined>(undefined);
+
+  // Formato robusto para fechas (soporta arrays serialize-deserialized del backend)
+  const toDateString = (val: unknown): string => {
+    if (!val) return '';
+    if (Array.isArray(val)) {
+      const [year, month, day] = val;
+      const y = String(year);
+      const m = String(month).padStart(2, '0');
+      const d = String(day).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    if (typeof val === 'string' && val.includes(',')) {
+      const parts = val.replace(/[\[\]]/g, '').split(',');
+      if (parts.length === 3) {
+        const y = parts[0].trim();
+        const m = parts[1].trim().padStart(2, '0');
+        const d = parts[2].trim().padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+    }
+    return String(val).split('T')[0];
+  };
+
+  watch(
+    preferredZonesList,
+    () => {
+      modifiedFields.value.add('preferredZones');
+    },
+    { deep: true }
+  );
+
+  watch(minRooms, () => {
+    modifiedFields.value.add('minRooms');
+  });
+
+  watch(maxRooms, () => {
+    modifiedFields.value.add('maxRooms');
+  });
 
   const allUsers = ref<User[]>([]);
   const activeAgents = computed(() =>
@@ -409,11 +451,6 @@
         budget: '',
       };
     }
-
-    const toDateString = (val: unknown): string => {
-      if (!val) return '';
-      return String(val).split('T')[0];
-    };
 
     return {
       firstName: String(d.firstName || ''),
@@ -532,11 +569,6 @@
     () => props.initialData,
     (newData) => {
       if (!newData) return;
-
-      const toDateString = (val: unknown): string => {
-        if (!val) return '';
-        return String(val).split('T')[0];
-      };
 
       const resolvedUserType = String(
         newData.userType ||
@@ -683,11 +715,18 @@
 
   const onFormSubmit = (event: Event) => {
     event.preventDefault();
+    console.log('onFormSubmit triggered', { values, errors: errors.value });
 
     try {
-      handleSubmit((formValues, _formActions) => {
-        onSubmit(formValues);
-      })(event);
+      handleSubmit(
+        (formValues, _formActions) => {
+          console.log('handleSubmit validation passed, calling onSubmit', formValues);
+          onSubmit(formValues);
+        },
+        (validationErrors) => {
+          console.error('handleSubmit validation failed:', validationErrors);
+        }
+      )(event);
     } catch (error) {
       console.error('Form submission error:', error);
     }
