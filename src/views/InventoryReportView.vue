@@ -96,12 +96,14 @@
                 <th scope="col" class="px-6 py-3">Operación</th>
                 <th scope="col" class="px-6 py-3 text-right">Precio</th>
                 <th scope="col" class="px-6 py-3">Zona</th>
+                <th scope="col" class="px-6 py-3 text-center">F. Registro</th>
+                <th scope="col" class="px-6 py-3 text-center">F. Salida</th>
                 <th scope="col" class="px-6 py-3 text-center">Días en Inventario</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="reportData.properties.length === 0">
-                <td colspan="6" class="px-6 py-8 text-center">
+                <td colspan="8" class="px-6 py-8 text-center">
                   No hay datos para mostrar con los filtros seleccionados
                 </td>
               </tr>
@@ -123,6 +125,12 @@
                 <td class="px-6 py-4">{{ prop.operationType }}</td>
                 <td class="px-6 py-4 text-right">${{ prop.price.toLocaleString() }}</td>
                 <td class="px-6 py-4">{{ prop.zone }}</td>
+                <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  {{ prop.registrationDate || '--' }}
+                </td>
+                <td class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  {{ prop.exitDate || '--' }}
+                </td>
                 <td
                   class="px-6 py-4 text-center font-bold"
                   :class="{

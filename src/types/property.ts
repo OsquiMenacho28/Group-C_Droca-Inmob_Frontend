@@ -90,6 +90,8 @@ export interface PropertyReportItem {
   price: number;
   zone: string;
   daysInInventory: number;
+  registrationDate: string;
+  exitDate: string;
 }
 
 export interface InventoryReportResponse {
