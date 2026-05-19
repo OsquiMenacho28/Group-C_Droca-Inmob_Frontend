@@ -19,7 +19,7 @@
     <div
       class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
     >
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
         <div>
           <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
             {{ t('adminProperties.searchTitle') }}
@@ -64,18 +64,70 @@
           </select>
         </div>
         <div>
-          <label class="block mb-2 text-xs font-black text-gray-400 uppercase tracking-wider">
-            {{ t('adminProperties.itemsPerPage') }}
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
+            {{ t('clientProperties.zoneLabel') }}
           </label>
           <select
-            v-model="pageSize"
+            v-model="filterZone"
             @change="resetAndLoad"
             class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg p-2.5 dark:bg-gray-700 dark:text-white"
           >
-            <option :value="10">{{ t('adminProperties.itemsCount', { n: 10 }) }}</option>
-            <option :value="25">{{ t('adminProperties.itemsCount', { n: 25 }) }}</option>
-            <option :value="50">{{ t('adminProperties.itemsCount', { n: 50 }) }}</option>
+            <option value="">{{ t('clientProperties.allZonesOption', 'Todas las zonas') }}</option>
+            <option value="Centro">Centro</option>
+            <option value="Norte">Zona Norte</option>
+            <option value="Sur">Zona Sur</option>
+            <option value="Este">Zona Este</option>
+            <option value="Oeste">Zona Oeste</option>
+            <option value="Equipetrol">Equipetrol</option>
+            <option value="Urbarí">Urbarí</option>
+            <option value="Las Palmas">Las Palmas</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Advanced Filters Row -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
+      >
+        <div class="md:col-span-2">
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
+            {{ t('common.priceRange') }} ($)
+          </label>
+          <div class="flex items-center gap-2">
+            <fwb-input
+              v-model.number="filterMinPrice"
+              type="number"
+              placeholder="Min"
+              @input="handleFilterDebounce"
+            />
+            <span class="text-gray-400">—</span>
+            <fwb-input
+              v-model.number="filterMaxPrice"
+              type="number"
+              placeholder="Max"
+              @input="handleFilterDebounce"
+            />
+          </div>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block mb-2 text-xs font-black text-gray-400 uppercase">
+            {{ t('clientProperties.areaRange') }} (m²)
+          </label>
+          <div class="flex items-center gap-2">
+            <fwb-input
+              v-model.number="filterMinM2"
+              type="number"
+              placeholder="Min"
+              @input="handleFilterDebounce"
+            />
+            <span class="text-gray-400">—</span>
+            <fwb-input
+              v-model.number="filterMaxM2"
+              type="number"
+              placeholder="Max"
+              @input="handleFilterDebounce"
+            />
+          </div>
         </div>
         <div class="flex items-center gap-2">
           <fwb-button color="alternative" size="sm" @click="clearAllFilters" class="w-full">
@@ -101,6 +153,7 @@
         :agent-name="resolveAgentName(p.assignedAgentId)"
         show-history-button
         @view-details="viewDetails"
+        @open-zoom="viewDetails"
       >
         <template #actions-top="{ property, statusHelpers }">
           <button
@@ -202,7 +255,7 @@
       v-if="!loading && allProperties.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
-      <p class="text-gray-500 dark:text-gray-400">{{ t('adminProperties.noProperties') }}</p>
+      <p class="text-secondary">{{ t('adminProperties.noProperties') }}</p>
     </div>
 
     <Pagination
@@ -224,25 +277,15 @@
       @status-updated="handleStatusUpdated"
     />
 
-    <fwb-modal v-if="showCreateEditModal" @close="closeCreateEditModal" size="2xl">
-      <template #header>
-        <div class="text-lg font-bold dark:text-white">
-          {{
-            isEditing ? t('adminProperties.editProperty') : t('adminProperties.registerProperty')
-          }}
-        </div>
-      </template>
-      <template #body>
-        <property-form
-          :key="formKey"
-          :initial-data="editingProperty || undefined"
-          :property-id="(editingProperty?.id as string) || undefined"
-          @location-updated="handleLocalLocationUpdate"
-          @submit="handleCreateEdit"
-          @cancel="closeCreateEditModal"
-        />
-      </template>
-    </fwb-modal>
+    <PropertyFormModal
+      v-model="showCreateEditModal"
+      :is-editing="isEditing"
+      :initial-data="editingProperty || undefined"
+      :property-id="(editingProperty?.id as string) || undefined"
+      :form-key="formKey"
+      @location-updated="handleLocalLocationUpdate"
+      @submit="handleCreateEdit"
+    />
 
     <assign-agent-modal
       v-if="showAssignModal"
@@ -387,7 +430,7 @@
   import { apiClient as api } from '@/api';
   import { useI18n } from 'vue-i18n';
   import AssignAgentModal from '@/components/properties/AssignAgentModal.vue';
-  import PropertyForm from '@/components/properties/PropertyForm.vue';
+  import PropertyFormModal from '@/components/properties/PropertyFormModal.vue';
   import Pagination from '@/components/ui/Pagination.vue';
   import DocumentUpload from '@/components/properties/DocumentUpload.vue';
   import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
@@ -423,6 +466,11 @@
   const filterTitle = ref('');
   const filterOpType = ref('');
   const filterStatus = ref('');
+  const filterZone = ref('');
+  const filterMinPrice = ref<number | undefined>(undefined);
+  const filterMaxPrice = ref<number | undefined>(undefined);
+  const filterMinM2 = ref<number | undefined>(undefined);
+  const filterMaxM2 = ref<number | undefined>(undefined);
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -478,6 +526,11 @@
       if (filterTitle.value) filters.title = filterTitle.value;
       if (filterOpType.value) filters.operationType = filterOpType.value;
       if (filterStatus.value) filters.status = filterStatus.value;
+      if (filterZone.value) filters.zone = filterZone.value;
+      if (filterMinPrice.value) filters.minPrice = filterMinPrice.value;
+      if (filterMaxPrice.value) filters.maxPrice = filterMaxPrice.value;
+      if (filterMinM2.value) filters.minM2 = filterMinM2.value;
+      if (filterMaxM2.value) filters.maxM2 = filterMaxM2.value;
       filters.page = currentPage.value;
       filters.pageSize = pageSize.value;
 
@@ -518,6 +571,11 @@
     filterTitle.value = '';
     filterOpType.value = '';
     filterStatus.value = '';
+    filterZone.value = '';
+    filterMinPrice.value = undefined;
+    filterMaxPrice.value = undefined;
+    filterMinM2.value = undefined;
+    filterMaxM2.value = undefined;
     pageSize.value = 10;
     resetAndLoad();
   };

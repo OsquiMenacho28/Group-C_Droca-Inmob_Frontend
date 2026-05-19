@@ -1,15 +1,20 @@
 <template>
-  <fwb-modal v-if="show" @close="$emit('close')" size="md">
-    <template #header>
-      <div class="flex items-center gap-3">
-        <div :class="iconBgClass" class="p-2 rounded-full">
-          <component :is="icon" :class="iconColorClass" class="w-5 h-5" />
-        </div>
-        <h3 class="text-xl font-bold dark:text-white">{{ title }}</h3>
+  <BaseModal
+    v-model="localShow"
+    :size="size"
+    :show-close-button="!loading"
+    @update:modelValue="onModelValueUpdate"
+  >
+    <template #header-icon>
+      <div :class="iconBgClass" class="p-2 rounded-full">
+        <component :is="icon" :class="iconColorClass" class="w-5 h-5" />
       </div>
     </template>
+    <template #header>
+      {{ title }}
+    </template>
     <template #body>
-      <p class="text-gray-500 dark:text-gray-400">
+      <p class="text-secondary">
         {{ message }}
       </p>
     </template>
@@ -26,33 +31,59 @@
         </fwb-button>
       </div>
     </template>
-  </fwb-modal>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { FwbModal, FwbButton, FwbSpinner } from 'flowbite-vue';
+  import { FwbButton, FwbSpinner } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
+  import BaseModal from '@/components/ui/BaseModal.vue';
   import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
   import IconLucideInfo from '~icons/lucide/info';
   import IconLucideHelpCircle from '~icons/lucide/help-circle';
 
   const { t } = useI18n();
 
-  const props = defineProps<{
-    show: boolean;
-    title: string;
-    message: string;
-    confirmText?: string;
-    cancelText?: string;
-    type?: 'warning' | 'danger' | 'info' | 'question';
-    loading?: boolean;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      show: boolean;
+      title: string;
+      message: string;
+      confirmText?: string;
+      cancelText?: string;
+      type?: 'warning' | 'danger' | 'info' | 'question';
+      loading?: boolean;
+      size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+    }>(),
+    {
+      size: 'md',
+      type: 'warning',
+      loading: false,
+      confirmText: '',
+      cancelText: '',
+    }
+  );
 
-  defineEmits<{
+  const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'confirm'): void;
   }>();
+
+  const localShow = computed({
+    get: () => props.show,
+    set: (val) => {
+      if (!val) {
+        emit('close');
+      }
+    },
+  });
+
+  function onModelValueUpdate(val: boolean) {
+    if (!val) {
+      emit('close');
+    }
+  }
 
   const icon = computed(() => {
     switch (props.type) {

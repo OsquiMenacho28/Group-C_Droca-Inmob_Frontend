@@ -1,0 +1,112 @@
+{
+  "auditLogs": {
+    "unidentifiedUser": "Unidentified user",
+    "actions": {
+      "all": "All actions",
+      "creations": "Creations",
+      "edits": "Edits",
+      "deactivations": "Deactivations",
+      "deactivation": "Deactivation",
+      "reactivation": "Reactivation",
+      "deletion": "Deletion",
+      "removals": "Removals",
+      "creation": "Creation",
+      "edit": "Edit",
+      "removal": "Removal",
+      "roleAssignment": "Role Assignment",
+      "passwordChange": "Password Change"
+    },
+    "oldValue": "Old Value",
+    "newValue": "New Value",
+    "by": "by",
+    "performedBy": "Performed by:",
+    "personTypes": {
+      "admin": "Admin",
+      "employee": "Agent",
+      "owner": "Owner",
+      "client": "Client",
+      "user": "User"
+    }
+  },
+  "audit": {
+    "title": "Audit Center",
+    "subtitle": "Supervision of changes in documents, properties, and user profiles.",
+    "tabs": {
+      "identity": "ID Documents",
+      "properties": "Properties",
+      "profiles": "Profiles"
+    },
+    "filters": {
+      "user": "Responsible User",
+      "searchUser": "Search user...",
+      "action": "Action",
+      "from": "From",
+      "to": "To",
+      "profile": "Profile / Person",
+      "searchProfile": "Search profile..."
+    },
+    "actions": {
+      "all": "All actions"
+    },
+    "table": {
+      "dateTime": "Date & Time",
+      "user": "User",
+      "action": "Action",
+      "details": "Details",
+      "profile": "Profile",
+      "changedBy": "Changed by",
+      "changes": "Changes"
+    },
+    "noRecords": "No audit records found."
+  },
+  "propertyAudit": {
+    "agentUserLabel": "Agent / User",
+    "searchAgent": "Search by agent name...",
+    "propertyLabel": "Property",
+    "searchProperty": "Search by title or address...",
+    "from": "From",
+    "to": "To",
+    "filter": "Filter",
+    "clearFilters": "Clear filters",
+    "refresh": "Update",
+    "activeFilters": "Active filters:",
+    "agentLabel": "Agent:",
+    "propertyFilterLabel": "Property:",
+    "table": {
+      "dateTime": "Date and Time",
+      "agent": "Agent",
+      "action": "Action",
+      "property": "Property",
+      "change": "Change",
+      "details": "Details"
+    },
+    "loading": "Loading audit records...",
+    "emptyTitle": "No audit records",
+    "emptyText": "Property status changes will appear here automatically",
+    "noResultsTitle": "No results found",
+    "noResultsText": "Try different filters or clear the search",
+    "verDetalles": "View Details",
+    "cerrar": "Close",
+    "changeDetailTitle": "Change Detail",
+    "agentInfo": "Agent Information",
+    "agente": "Agent:",
+    "propiedad": "Property:",
+    "modifiedFields": "Modified Fields",
+    "vacio": "(empty)",
+    "previousValue": "Previous Value",
+    "newValue": "New Value",
+    "cambioRealizadoPor": "Change made by the agent",
+    "fecha": "Date:",
+    "actions": {
+      "statusChange": "Status Change",
+      "priceUpdate": "Price Update",
+      "agentAssign": "Agent Reassignment",
+      "ownerAssign": "Owner Assignment",
+      "propertyCreate": "Property Registration",
+      "propertyUpdate": "Data Editing",
+      "propertyDelete": "Deletion (Write-off)",
+      "locationUpdate": "Location Update",
+      "reincorporate": "Property Reincorporation"
+    }
+  }
+}

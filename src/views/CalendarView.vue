@@ -1,8 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-    <div
-      class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 transition-colors"
-    >
+  <div class="app-page">
+    <div class="app-card border-t-0 border-x-0 px-6 py-4">
       <div
         class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
       >
@@ -14,11 +12,11 @@
             >
               <IconLucideArrowLeft class="h-5 w-5" />
             </router-link>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('calendar.title') }}
             </h1>
           </div>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+          <p class="text-sm text-secondary mt-0.5">
             {{ t('calendar.subtitle', { weekLabel }) }}
           </p>
         </div>
@@ -61,19 +59,16 @@
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                <p class="text-sm font-semibold text-primary truncate">
                   {{ request.propertyName }}
                 </p>
                 <p class="text-xs text-gray-600 dark:text-gray-300">
                   {{ t('calendar.client') }} {{ request.clientName }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ formatPendingDate(request.preferredDateTime) }}
                 </p>
-                <p
-                  v-if="request.message"
-                  class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2"
-                >
+                <p v-if="request.message" class="text-xs text-secondary mt-1 line-clamp-2">
                   {{ request.message }}
                 </p>
               </div>
@@ -108,9 +103,7 @@
         </div>
       </FwbAlert>
 
-      <div
-        class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 transition-colors shadow-sm"
-      >
+      <div class="app-card p-4">
         <div class="flex flex-col lg:flex-row gap-4">
           <div class="flex items-center gap-2 shrink-0">
             <FwbButton @click="prevWeek" color="alternative" size="sm">
@@ -146,7 +139,7 @@
             </FwbInput>
             <div
               v-if="showPropertyDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-60 overflow-y-auto"
             >
               <ul class="py-1">
                 <li
@@ -161,10 +154,10 @@
                   @click="selectProperty(p)"
                   class="px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer border-b last:border-b-0 border-gray-50 dark:border-gray-700 transition-colors"
                 >
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  <p class="text-sm font-bold text-primary">
                     {{ p.title }}
                   </p>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                  <p class="text-[10px] text-secondary truncate">
                     {{ p.address }}
                   </p>
                 </li>
@@ -194,7 +187,7 @@
             </FwbInput>
             <div
               v-if="showAgentDropdown"
-              class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl max-h-60 overflow-y-auto"
+              class="absolute z-50 w-full mt-1 app-card rounded-lg shadow-xl max-h-60 overflow-y-auto"
             >
               <ul class="py-1">
                 <li
@@ -209,10 +202,10 @@
                   @click="selectAgent(a)"
                   class="px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer border-b last:border-b-0 border-gray-50 dark:border-gray-700 transition-colors"
                 >
-                  <p class="text-sm font-bold text-gray-900 dark:text-white">
+                  <p class="text-sm font-bold text-primary">
                     {{ a.fullName }}
                   </p>
-                  <p class="text-[10px] text-gray-500 dark:text-gray-400">
+                  <p class="text-[10px] text-secondary">
                     {{ a.email }}
                   </p>
                 </li>
@@ -235,11 +228,9 @@
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4" v-if="calendarData">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ calendarData?.totalEvents ?? 0 }}
             </p>
             <p class="text-[10px] text-gray-500 uppercase font-black">
@@ -259,36 +250,29 @@
             </p>
           </div>
         </div>
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ teamEvents }}
             </p>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-black">
+            <p class="text-[10px] text-secondary uppercase font-black">
               {{ t('calendar.team') }}
             </p>
           </div>
         </div>
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-center"
-        >
+        <div class="app-card text-center">
           <div class="p-4">
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">
+            <p class="text-2xl font-bold text-primary">
               {{ uniqueProperties }}
             </p>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-black">
+            <p class="text-[10px] text-secondary uppercase font-black">
               {{ t('calendar.properties') }}
             </p>
           </div>
         </div>
       </div>
 
-      <div
-        v-if="!loading"
-        class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-colors"
-      >
+      <div v-if="!loading" class="app-card overflow-hidden">
         <div class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
           <div
             v-for="(day, idx) in weekDays"
@@ -383,10 +367,10 @@
             <template v-if="selectedEvent?.vehicleId && selectedEventVehicle">
               <div class="text-right font-bold dark:text-white">
                 <p>{{ selectedEventVehicle.licensePlate }}</p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p class="text-xs font-medium text-secondary">
                   {{ selectedEventVehicle.brand }} {{ selectedEventVehicle.model }}
                 </p>
-                <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p class="text-xs font-medium text-secondary">
                   {{
                     t('calendar.vehicleCapacity', {
                       capacity: selectedEventVehicle.passengerCapacity,
@@ -395,7 +379,7 @@
                 </p>
               </div>
             </template>
-            <span v-else class="font-medium text-gray-500 dark:text-gray-400 text-right">
+            <span v-else class="font-medium text-secondary text-right">
               {{ t('calendar.noVehicleAssigned') }}
             </span>
           </div>
@@ -449,6 +433,12 @@
   import { useI18n } from 'vue-i18n';
   import { getLocaleString } from '@/locales/i18n';
   import { handleApiError } from '@/api/errorHandler';
+  import {
+    getWeekRangeUtc,
+    isSameLocalDay,
+    formatShortTime,
+    formatDisplayDateTime,
+  } from '@/utils/dateTime';
 
   const { t } = useI18n();
   const router = useRouter();
@@ -464,7 +454,7 @@
   const selectedEvent = ref<CalendarEventResponse | null>(null);
   const selectedEventVehicle = ref<Vehicle | null>(null);
   const showEventModal = ref(false);
-  const currentWeekStart = ref(getMonday(new Date()));
+  const currentWeekStart = ref(new Date());
   const pendingRequests = ref<VisitRequestResponse[]>([]);
   const requestActionLoadingId = ref('');
   const alertMessage = ref('');
@@ -491,25 +481,22 @@
   const filterAgentId = ref('');
   const fleet = ref<Vehicle[] | null>(null);
 
-  function getMonday(d: Date): Date {
-    const day = d.getDay();
-    const diff = day === 0 ? -6 : 1 - day;
-    const m = new Date(d);
-    m.setDate(d.getDate() + diff);
-    m.setHours(0, 0, 0, 0);
-    return m;
-  }
-  const weekDays = computed(() =>
-    Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(currentWeekStart.value);
-      d.setDate(currentWeekStart.value.getDate() + i);
+  const weekRange = computed(() => getWeekRangeUtc(currentWeekStart.value));
+
+  const weekDays = computed(() => {
+    const start = new Date(weekRange.value.from);
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       return d;
-    })
-  );
+    });
+  });
+
   const weekLabel = computed(() => {
     const from = weekDays.value[0];
     const to = weekDays.value[6];
-    return `${from.getDate()} ${from.toLocaleString(getLocaleString(), { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(getLocaleString(), { month: 'short', year: 'numeric' })}`;
+    const locale = getLocaleString();
+    return `${from.getDate()} ${from.toLocaleString(locale, { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(locale, { month: 'short', year: 'numeric' })}`;
   });
 
   const loadFilterData = async () => {
@@ -554,8 +541,7 @@
     loading.value = true;
     error.value = '';
     try {
-      const from = weekDays.value[0].toISOString();
-      const to = new Date(weekDays.value[6]).toISOString().split('T')[0] + 'T23:59:59.999Z';
+      const { from, to } = weekRange.value;
       calendarData.value = await getCalendar(
         from,
         to,
@@ -622,18 +608,10 @@
   }
 
   const eventsForDay = (day: Date) =>
-    calendarData.value?.events.filter(
-      (ev) => new Date(ev.startTime).toDateString() === day.toDateString()
-    ) || [];
+    calendarData.value?.events.filter((ev) => isSameLocalDay(ev.startTime, day)) || [];
   const isToday = (d: Date) => d.toDateString() === new Date().toDateString();
   const dayName = (d: Date) => d.toLocaleString(getLocaleString(), { weekday: 'short' });
-  const shortTime = (iso: string) =>
-    iso
-      ? new Date(iso).toLocaleTimeString(getLocaleString(), {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      : '';
+  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
   const teamEvents = computed(
     () => (calendarData.value?.totalEvents ?? 0) - (calendarData.value?.myEvents ?? 0)
   );
@@ -641,14 +619,7 @@
     () => new Set(calendarData.value?.events.map((e) => e.propertyId)).size
   );
 
-  const formatPendingDate = (iso: string) =>
-    new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const formatPendingDate = (iso: string) => formatDisplayDateTime(iso, getLocaleString());
 
   function eventCardClass(ev: CalendarEventResponse) {
     if (ev.status === 'CANCELLED')
@@ -687,7 +658,7 @@
     loadCalendar();
   }
   function goToday() {
-    currentWeekStart.value = getMonday(new Date());
+    currentWeekStart.value = new Date();
     loadCalendar();
   }
 

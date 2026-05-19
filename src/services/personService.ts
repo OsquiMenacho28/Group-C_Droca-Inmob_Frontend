@@ -12,7 +12,7 @@ interface CreatePersonPayload {
   [key: string]: unknown;
 }
 
-interface ClientPayload {
+export interface ClientPayload {
   firstName: string;
   lastName: string;
   email: string;
@@ -76,6 +76,21 @@ export const personService = {
 
   async updateClientForAgent(clientId: string, payload: ClientPayload) {
     const response = await api.put(`/persons/agents/clients/${clientId}`, payload);
+    return response.data.data;
+  },
+
+  async getPreferences(id: string) {
+    const response = await api.get(`/buscadores/${id}/preferencias`);
+    return response.data.data;
+  },
+
+  async savePreferences(id: string, payload: Record<string, unknown>) {
+    const response = await api.post(`/buscadores/${id}/preferencias`, payload);
+    return response.data.data;
+  },
+
+  async updatePreferences(id: string, payload: Record<string, unknown>) {
+    const response = await api.put(`/buscadores/${id}/preferencias`, payload);
     return response.data.data;
   },
 };

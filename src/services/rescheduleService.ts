@@ -17,10 +17,14 @@ const rescheduleService = {
     payload: RescheduleRequest,
     agentId: string
   ): Promise<RescheduleResponse> {
-    const { data } = await api.post<RescheduleResponse>(`/visits/${visitId}/reschedule`, payload, {
-      headers: { 'X-Agent-Id': agentId },
-    });
-    return data;
+    const response = await api.post<{ data: RescheduleResponse }>(
+      `/visits/${visitId}/reschedule`,
+      payload,
+      {
+        headers: { 'X-Agent-Id': agentId },
+      }
+    );
+    return response.data.data;
   },
 
   /**

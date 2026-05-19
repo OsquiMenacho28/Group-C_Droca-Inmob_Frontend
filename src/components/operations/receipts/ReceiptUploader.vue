@@ -5,7 +5,7 @@
     <div class="p-8 space-y-8">
       <div class="flex items-center gap-3">
         <div class="w-1.5 h-6 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)]"></div>
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white leading-none">
+        <h3 class="text-xl font-bold text-primary leading-none">
           {{ t('receiptUploader.title') }}
         </h3>
       </div>
@@ -49,7 +49,7 @@
                 {{ t('receiptUploader.browse') }}
               </span>
             </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">
+            <p class="text-sm text-secondary mt-2 font-medium">
               {{ t('receiptUploader.formats') }}
             </p>
           </div>
@@ -66,10 +66,10 @@
             <IconLucideImage v-else class="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-lg font-black text-gray-900 dark:text-white truncate">
+            <p class="text-lg font-black text-primary truncate">
               {{ selectedFile.name }}
             </p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 font-bold mt-1">
+            <p class="text-sm text-secondary font-bold mt-1">
               {{ formatSize(selectedFile.size) }} •
               {{ selectedFile.type.split('/')[1].toUpperCase() }}
             </p>

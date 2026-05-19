@@ -27,6 +27,11 @@
               matchPath="properties"
             />
             <NavLink
+              to="/dashboard/admin/inventory-report"
+              :label="'Reporte Inventario'"
+              :icon="IconLucideBarChart"
+            />
+            <NavLink
               to="/dashboard/admin/vehicles"
               :label="t('nav.vehicles')"
               :icon="IconLucideCar"
@@ -40,6 +45,11 @@
               to="/dashboard/reports/agent-ranking"
               :label="t('nav.agentRanking')"
               :icon="IconLucideTrophy"
+            />
+            <NavLink
+              to="/dashboard/reports/property-visits"
+              :label="t('nav.propertyVisits')"
+              :icon="IconLucideBarChart2"
             />
           </template>
 
@@ -79,7 +89,6 @@
           <!-- Owner Links -->
           <template v-if="isOwner">
             <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
-            <NavLink to="/dashboard/owner/notifications" :label="t('nav.notifications')" :icon="IconLucideBell" />
           </template>
 
           <!-- Client Links -->
@@ -115,22 +124,7 @@
       </template>
       <template #right-side>
         <div class="flex items-center md:order-2 space-x-3">
-          <!-- Campana de notificaciones (solo para propietarios) -->
-          <button
-            v-if="isOwner"
-            @click="router.push('/dashboard/owner/notifications')"
-            class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white transition-colors"
-            aria-label="Notificaciones"
-          >
-            <IconLucideBell class="w-5 h-5" />
-            <span
-              v-if="unreadCount > 0"
-              class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-sm"
-            >
-              {{ unreadCount > 9 ? '9+' : unreadCount }}
-            </span>
-          </button>
-
+          <NotificationBell />
           <LanguageSwitcher />
           <theme-toggle />
           <fwb-dropdown align-to-end>
@@ -149,7 +143,7 @@
             </template>
             <fwb-list-group>
               <div class="px-4 py-3">
-                <span class="block text-sm text-gray-900 dark:text-white font-medium">
+                <span class="block text-sm text-primary font-medium">
                   {{ getUserDisplayName() }}
                 </span>
                 <span class="block text-sm text-gray-500 truncate dark:text-gray-400">
@@ -187,11 +181,10 @@
   import ThemeToggle from '@/components/ThemeToggle.vue';
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
   import NavLink from '@/components/ui/NavLink.vue';
-  import { computed, onMounted, onUnmounted, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useOwnerNotifications } from '@/composables/useOwnerNotifications';
+  import { computed } from 'vue';
   import IconLucideFileText from '~icons/lucide/file-text';
   import IconLucideTrophy from '~icons/lucide/trophy';
+  import IconLucideBarChart2 from '~icons/lucide/bar-chart-2';
   import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
   import IconLucideClipboardList from '~icons/lucide/clipboard-list';
   import IconLucideUsers from '~icons/lucide/users';
@@ -204,15 +197,12 @@
   import IconLucideHeart from '~icons/lucide/heart';
   import IconLucideCalendar from '~icons/lucide/calendar';
   import IconLucideCar from '~icons/lucide/car';
-  import IconLucideBell from '~icons/lucide/bell';
+  import IconLucideBarChart from '~icons/lucide/bar-chart';
+  import NotificationBell from '@/components/notifications/NotificationBell.vue';
 
   const { t } = useI18n();
-  const router = useRouter();
   const authStore = useAuthStore();
   const user = computed(() => authStore.user as UserClaims | null);
-  const ownerId = computed(() => (user.value?.userId || user.value?.sub || '') as string);
-
-  const { unreadCount } = useOwnerNotifications(ownerId.value);
 
   // Funciones auxiliares
   const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');
@@ -226,11 +216,16 @@
   const getUserTypeLabel = () => {
     const userType = user.value?.userType;
     switch (userType) {
-      case 'ADMIN': return t('roleTypes.admin');
-      case 'EMPLOYEE': return t('roleTypes.agent');
-      case 'OWNER': return t('roleTypes.owner');
-      case 'INTERESTED_CLIENT': return t('roleTypes.client');
-      default: return userType || t('roleTypes.user');
+      case 'ADMIN':
+        return t('roleTypes.admin');
+      case 'EMPLOYEE':
+        return t('roleTypes.agent');
+      case 'OWNER':
+        return t('roleTypes.owner');
+      case 'INTERESTED_CLIENT':
+        return t('roleTypes.client');
+      default:
+        return userType || t('roleTypes.user');
     }
   };
   const isAdmin = computed(() => {

@@ -1,10 +1,19 @@
 <template>
-  <fwb-modal v-if="show" @close="$emit('close')" size="4xl">
+  <BaseModal
+    :model-value="show"
+    :title="property?.title"
+    size="2xl"
+    @update:model-value="$emit('close')"
+  >
+    <template #header-icon>
+      <div class="rounded-full bg-blue-100 dark:bg-blue-900/30 p-2">
+        <IconLucideHome class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+      </div>
+    </template>
+
     <template #header>
       <div class="flex items-center space-x-4">
-        <h3 class="text-2xl font-bold dark:text-white">
-          {{ property?.title }}
-        </h3>
+        <span>{{ property?.title }}</span>
         <fwb-badge :color="getStatusColor(property?.status || '')">
           {{ property?.status ? t('status.' + property.status) : '' }}
         </fwb-badge>
@@ -14,9 +23,7 @@
     <template #body>
       <div class="grid grid-cols-1 gap-8" :class="{ 'lg:grid-cols-2': showSidebar }">
         <div class="space-y-4">
-          <div
-            class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
-          >
+          <div class="app-card p-4 rounded-xl">
             <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">
               {{ t('propertyDetails.technicalSheet') }}
             </h4>
@@ -46,17 +53,15 @@
                   :disabled="
                     updatingStatus ||
                     property?.status === 'VENDIDO' ||
-                    property?.status === 'ELIMINADO'
+                    property?.status === 'ELIMINADO' ||
+                    (!isAdmin && !isAssignedAgent)
                   "
                   class="text-xs font-bold rounded-lg border-gray-300 py-1 px-2 dark:bg-gray-700 dark:text-white"
                   :class="statusColorClass(localStatus)"
                 >
-                  <option value="DISPONIBLE">{{ t('propertyDetails.statusAvailable') }}</option>
-                  <option value="RESERVADO">{{ t('propertyDetails.statusReserved') }}</option>
-                  <option value="EN_NEGOCIACION">
-                    {{ t('propertyDetails.statusNegotiating') }}
+                  <option v-for="opt in availableStatusOptions" :key="opt.value" :value="opt.value">
+                    {{ opt.label }}
                   </option>
-                  <option value="RETIRADO">{{ t('status.RETIRADO') }}</option>
                 </select>
                 <span
                   v-else
@@ -69,31 +74,14 @@
             </div>
           </div>
 
-          <div
-            v-if="property?.imageUrls?.length"
-            class="rounded-xl overflow-hidden bg-gray-200 shadow-sm"
-          >
-            <img
-              :src="property.imageUrls[0]"
-              class="w-full h-64 object-cover"
-              :alt="t('propertyDetails.mainImageAlt')"
+          <div class="rounded-xl overflow-hidden shadow-sm">
+            <ImageGallery
+              :property-id="property?.id"
+              :can-manage="!isClientView && (isAdmin || isAssignedAgent || isRelatedToOperation)"
             />
           </div>
-          <div
-            v-else
-            class="h-64 rounded-xl bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center"
-          >
-            <div class="text-center">
-              <IconLucideImage class="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p class="text-gray-500 dark:text-gray-400 text-sm">
-                {{ t('propertyDetails.noPhotos') }}
-              </p>
-            </div>
-          </div>
 
-          <div
-            class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
-          >
+          <div class="app-card p-4 rounded-xl shadow-sm">
             <h4 class="text-xs font-black text-green-600 uppercase tracking-widest mb-3">
               {{ t('propertyDetails.responsible') }}
             </h4>
@@ -115,10 +103,10 @@
               </div>
 
               <div class="flex-1 min-w-0">
-                <h5 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                <h5 class="text-sm font-semibold text-primary truncate">
                   {{ owner.firstName }} {{ owner.lastName }}
                 </h5>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                <p class="text-xs text-secondary mb-2">
                   {{ t('propertyDetails.ownerLabel') }}
                 </p>
 
@@ -157,7 +145,7 @@
 
             <div v-else class="text-center py-6">
               <IconLucideUser class="w-8 h-8 text-gray-300 mx-auto mb-2" />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
+              <p class="text-xs text-secondary">
                 {{ t('propertyDetails.noOwnerAssigned') }}
               </p>
             </div>
@@ -165,20 +153,18 @@
 
           <!-- ── Listado de visitas con resultados (para el propietario) ── -->
           <div v-if="visits.length > 0" class="mt-6">
-            <h4 class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300">
+            <h4
+              class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300"
+            >
               <IconLucideCalendar class="w-4 h-4" />
               {{ t('propertyDetails.visitsHistory') }}
             </h4>
             <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
-              <div
-                v-for="v in visits"
-                :key="v.id"
-                class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-600"
-              >
+              <div v-for="v in visits" :key="v.id" class="app-card p-3 rounded-lg">
                 <div class="flex justify-between items-start">
                   <div class="flex-1">
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                      {{ formatFecha(v.startTime) }}
+                    <p class="text-xs text-secondary">
+                      {{ formatDateTime(v.startTime) }}
                     </p>
                     <p class="text-sm font-semibold dark:text-white">
                       {{ v.clientName || t('common.notSpecified') }}
@@ -191,10 +177,7 @@
                   >
                     {{ getResultadoLabel(v.resultado) }}
                   </span>
-                  <span
-                    v-else
-                    class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2"
-                  >
+                  <span v-else class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2">
                     {{ t('propertyDetails.noResult') }}
                   </span>
                 </div>
@@ -202,7 +185,8 @@
                   {{ v.observaciones }}
                 </p>
                 <p v-if="v.fechaRegistroResultado" class="text-[10px] text-gray-400 mt-1">
-                  {{ t('visitResult.registeredOn') }} {{ formatFecha(v.fechaRegistroResultado) }}
+                  {{ t('visitResult.registeredOn') }}
+                  {{ formatDateTime(v.fechaRegistroResultado) }}
                 </p>
               </div>
             </div>
@@ -212,8 +196,8 @@
         <div v-if="showSidebar" class="space-y-6">
           <!-- Receipts Section (Visible for reserved properties and related users) -->
           <div
-            v-if="canManageReceipts"
-            class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800"
+            v-if="associatedOperation"
+            class="p-4 app-card bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/30"
           >
             <OperationReceiptsSection
               :operation-id="associatedOperation.id!"
@@ -236,7 +220,7 @@
               <div
                 v-for="(h, i) in property!.priceHistory"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <div class="flex justify-between items-center mb-1">
                   <div class="flex items-center space-x-2">
@@ -285,7 +269,7 @@
               <div
                 v-for="(ah, i) in property!.assignmentHistory"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <p class="text-xs dark:text-gray-200">
                   {{ t('propertyDetails.previousAgent') }}
@@ -326,7 +310,7 @@
               <div
                 v-for="(h, i) in [...(property!.statusHistory || [])].reverse()"
                 :key="i"
-                class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm"
+                class="app-card p-3 rounded-lg"
               >
                 <div class="flex justify-between items-center mb-1">
                   <div class="flex items-center space-x-1">
@@ -362,7 +346,7 @@
           >
             <div class="grid grid-cols-1 gap-3">
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                <p class="text-xs text-secondary uppercase font-bold">
                   {{ t('retirement.motivoLabel') }}
                 </p>
                 <p class="text-sm text-gray-800 dark:text-gray-200 font-semibold mt-1">
@@ -370,7 +354,7 @@
                 </p>
               </div>
               <div v-if="property.detalleRetiro">
-                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold">
+                <p class="text-xs text-secondary uppercase font-bold">
                   {{ t('retirement.detalleLabel') }}
                 </p>
                 <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">
@@ -401,16 +385,29 @@
         </fwb-button>
       </div>
     </template>
-  </fwb-modal>
+  </BaseModal>
 
-  <ConfirmModal
-    :show="showReincorporateConfirm"
-    :title="t('propertyDetails.reincorporateConfirmTitle')"
-    :message="reincorporateConfirmMessage"
-    type="question"
-    @confirm="handleReincorporate"
-    @close="showReincorporateConfirm = false"
-  />
+  <Teleport to="body">
+    <ConfirmModal
+      :show="showReincorporateConfirm"
+      :title="t('propertyDetails.reincorporateConfirmTitle')"
+      :message="reincorporateConfirmMessage"
+      type="question"
+      @confirm="handleReincorporate"
+      @close="showReincorporateConfirm = false"
+    />
+  </Teleport>
+
+  <Teleport to="body">
+    <RetirementModal
+      v-if="showRetirementModal"
+      :show="showRetirementModal"
+      :property-id="property?.id || ''"
+      :property-title="property?.title || ''"
+      @close="handleRetirementCancel"
+      @success="handleRetirementSuccess"
+    />
+  </Teleport>
 
   <!-- Global Toast -->
   <AppToast
@@ -423,28 +420,32 @@
 
 <script setup lang="ts">
   import { ref, watch, reactive, computed } from 'vue';
-  import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
+  import { FwbBadge, FwbButton } from 'flowbite-vue';
   import { propertyService } from '@/modules/properties';
   import { personService } from '@/services/personService';
   import { getVisitsForProperty } from '@/services/visitRequestService';
   import type { Property } from '@/types/property';
   import type { Visit } from '@/types/reschedule';
-  import IconLucideImage from '~icons/lucide/image';
+
   import IconLucideMail from '~icons/lucide/mail';
   import IconLucidePhone from '~icons/lucide/phone';
   import IconLucideMessageSquare from '~icons/lucide/message-square';
   import IconLucideUser from '~icons/lucide/user';
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
   import IconLucideCalendar from '~icons/lucide/calendar';
+  import IconLucideHome from '~icons/lucide/home';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+  import { formatDate, formatDateTime } from '@/utils/dateTime';
   import AppToast from '@/components/ui/AppToast.vue';
   import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
   import { useAuthStore, type UserClaims } from '@/modules/auth';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+  import RetirementModal from '@/components/properties/RetirementModal.vue';
   import { handleApiError } from '@/api/errorHandler';
   import type { OperationData } from '@/types/operation';
   import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
+  import ImageGallery from '@/components/properties/ImageGallery.vue';
+  import BaseModal from '@/components/ui/BaseModal.vue';
 
   const { t } = useI18n();
 
@@ -468,6 +469,7 @@
   const authStore = useAuthStore();
   const currentUser = computed(() => authStore.user as UserClaims | null);
   const showReincorporateConfirm = ref(false);
+  const showRetirementModal = ref(false);
 
   const localStatus = ref(props.property?.status || '');
   const updatingStatus = ref(false);
@@ -510,7 +512,7 @@
         associatedOperation.value = await propertyService.getOperationByPropertyId(
           props.property.id
         );
-      } catch (error) {
+      } catch {
         associatedOperation.value = null;
       }
     } else {
@@ -535,6 +537,39 @@
     const u = authStore.user as UserClaims | null;
     const roles = (u?.roles as string[]) || [];
     return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+  });
+
+  const isAssignedAgent = computed(() => {
+    if (!props.property || !currentUser.value) return false;
+    const userId = currentUser.value.userId || currentUser.value.sub || currentUser.value.id;
+    return userId === props.property.assignedAgentId;
+  });
+
+  const availableStatusOptions = computed(() => {
+    const options = [
+      { value: 'DISPONIBLE', label: t('propertyDetails.statusAvailable') },
+      { value: 'RETIRADO', label: t('status.RETIRADO') },
+    ];
+
+    if (isAdmin.value) {
+      options.push(
+        { value: 'RESERVADO', label: t('propertyDetails.statusReserved') },
+        { value: 'EN_NEGOCIACION', label: t('propertyDetails.statusNegotiating') }
+      );
+    }
+
+    const current = props.property?.status;
+    if (current && !options.some((opt) => opt.value === current)) {
+      let label = current;
+      if (current === 'RESERVADO') label = t('propertyDetails.statusReserved');
+      else if (current === 'EN_NEGOCIACION') label = t('propertyDetails.statusNegotiating');
+      else if (current === 'VENDIDO') label = t('status.VENDIDO');
+      else if (current === 'ELIMINADO') label = t('status.ELIMINADO');
+
+      options.push({ value: current, label });
+    }
+
+    return options;
   });
 
   const isRelatedToOperation = computed(() => {
@@ -579,7 +614,7 @@
     const map: Record<string, string> = {
       INTERESADO: t('visitResult.interesado'),
       NO_INTERESADO: t('visitResult.noInteresado'),
-      PENDIENTE: t('visitResult.pendiente')
+      PENDIENTE: t('visitResult.pendiente'),
     };
     return map[resultado] || resultado;
   };
@@ -588,7 +623,7 @@
     const map: Record<string, string> = {
       INTERESADO: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
       NO_INTERESADO: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-      PENDIENTE: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+      PENDIENTE: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
     };
     return map[resultado] || 'bg-gray-100 text-gray-800';
   };
@@ -651,14 +686,15 @@
       return;
     }
 
+    if (localStatus.value === 'RETIRADO') {
+      showRetirementModal.value = true;
+      return;
+    }
+
     updatingStatus.value = true;
     try {
       let updatedProperty: Property;
-      if (localStatus.value === 'RETIRADO') {
-        updatedProperty = await propertyService.withdrawProperty(props.property.id);
-      } else {
-        updatedProperty = await propertyService.updateStatus(props.property.id, localStatus.value);
-      }
+      updatedProperty = await propertyService.updateStatus(props.property.id, localStatus.value);
 
       localStatus.value = updatedProperty.status;
       toast.message = t('propertyDetails.statusUpdated');
@@ -673,7 +709,9 @@
       }
     } catch (err: unknown) {
       localStatus.value = props.property.status;
-      const errorObj = err as { response?: { data?: { message?: string; detail?: string } } };
+      const errorObj = err as {
+        response?: { data?: { message?: string; detail?: string } };
+      };
 
       toast.message =
         errorObj.response?.data?.message ||
@@ -684,6 +722,32 @@
     } finally {
       updatingStatus.value = false;
     }
+  };
+
+  const handleRetirementSuccess = async () => {
+    showRetirementModal.value = false;
+    localStatus.value = 'RETIRADO';
+
+    try {
+      const updatedProperty = await propertyService.getPropertyById(props.property!.id);
+      emit('status-updated', updatedProperty);
+
+      toast.message = t('retirement.success');
+      toast.type = 'success';
+      toast.show = true;
+
+      setTimeout(() => {
+        emit('close');
+      }, 1500);
+    } catch {
+      emit('status-updated', { ...props.property, status: 'RETIRADO' });
+      emit('close');
+    }
+  };
+
+  const handleRetirementCancel = () => {
+    showRetirementModal.value = false;
+    localStatus.value = props.property?.status || '';
   };
 
   const getStatusColor = (status: string) => {
@@ -727,29 +791,6 @@
       RETIRADO: 'text-orange-600',
     };
     return map[status || ''] || '';
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatFecha = (dateStr: string) => {
-    if (!dateStr) return '';
-    return new Date(dateStr).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
   };
 
   const contactViaWhatsApp = () => {

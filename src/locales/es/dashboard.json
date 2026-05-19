@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido al sistema de gestión inmobiliaria.",
+    "systemStatus": "Estado del Sistema",
+    "allServicesOperational": "Todos los servicios operativos"
+  },
+  "clientDashboard": {
+    "title": "Dashboard de Cliente",
+    "welcome": "Bienvenido, Cliente. Aquí podrás buscar inmuebles y ver tus favoritos próximamente."
+  },
+  "ownerNotifications": {
+    "title": "Mis Notificaciones",
+    "subtitle": "Historial de notificaciones recibidas",
+    "empty": "No hay notificaciones",
+    "totalUnread": "{count} no leídas",
+    "markAllRead": "Marcar todas como leídas"
+  },
+  "ownerDashboard": {
+    "propertiesTab": "Mis Propiedades",
+    "notificationsTab": "Notificaciones"
+  }
+}

@@ -1,13 +1,13 @@
 <template>
-  <fwb-modal v-if="show" @close="close" size="md">
-    <template #header>
-      <div class="text-xl font-bold text-gray-900 dark:text-white">
-        {{ t('retirement.title') }}
-      </div>
-    </template>
+  <BaseModal
+    v-model="localShow"
+    :title="t('retirement.title')"
+    size="md"
+    @update:modelValue="onModelValueUpdate"
+  >
     <template #body>
       <div class="space-y-4">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-secondary">
           {{ t('retirement.subtitle') }}
         </p>
 
@@ -29,7 +29,7 @@
           <select
             v-else
             v-model="selectedReason"
-            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
             :class="{ 'border-red-400 dark:border-red-500': errors.reason }"
             @change="errors.reason = ''"
           >
@@ -45,13 +45,13 @@
         <div>
           <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ t('retirement.detalle') }}
-            <span class="text-xs text-gray-400 ml-1">({{ t('common.optionalLabel') }})</span>
+            <span class="text-xs text-gray-400 ml-1">{{ t('common.optionalLabel') }}</span>
           </label>
           <textarea
             v-model="detail"
             rows="2"
             :placeholder="t('retirement.detallePlaceholder')"
-            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-primary app-focus"
             :class="{ 'border-red-400 dark:border-red-500': errors.detail }"
             @input="errors.detail = ''"
           />
@@ -60,7 +60,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-3">
+      <div class="flex justify-end gap-3 w-full">
         <fwb-button color="alternative" @click="close">
           {{ t('retirement.cancel') }}
         </fwb-button>
@@ -69,14 +69,16 @@
         </fwb-button>
       </div>
     </template>
-  </fwb-modal>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
-  import { FwbModal, FwbButton } from 'flowbite-vue';
+  import { ref, watch, computed } from 'vue';
+  import { FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
+  import BaseModal from '@/components/ui/BaseModal.vue';
   import { apiClient as api } from '@/api';
+  import { propertyService } from '@/modules/properties';
   import { handleApiError } from '@/api/errorHandler';
 
   const props = defineProps<{
@@ -100,6 +102,21 @@
   const submitting = ref(false);
   const errors = ref({ reason: '', detail: '' });
 
+  const localShow = computed({
+    get: () => props.show,
+    set: (val) => {
+      if (!val) {
+        close();
+      }
+    },
+  });
+
+  function onModelValueUpdate(val: boolean) {
+    if (!val) {
+      close();
+    }
+  }
+
   function getReasonLabel(reason: string): string {
     const key = `retirement.reason${reason.charAt(0).toUpperCase() + reason.slice(1).toLowerCase()}`;
     const translation = t(key);
@@ -112,9 +129,8 @@
     try {
       const response = await api.get('/catalogos/motivos-retiro');
       reasons.value = response.data.data || [];
-    } catch (err) {
+    } catch {
       console.warn('API de catálogo no disponible, usando valores por defecto');
-      // Fallback: valores del enum
       reasons.value = ['VENTA_EXTERNA', 'DECISION_PROPIETARIO', 'OTRO'];
     } finally {
       loadingReasons.value = false;
@@ -136,7 +152,7 @@
 
     submitting.value = true;
     try {
-      await api.post(`/properties/${props.propertyId}/retirar`, {
+      await propertyService.withdrawProperty(props.propertyId, {
         motivoRetiro: selectedReason.value,
         detalleRetiro: detail.value.trim() || null,
       });
@@ -157,7 +173,6 @@
     errors.value = { reason: '', detail: '' };
   }
 
-  // Cargar motivos cuando el modal se abre
   watch(
     () => props.show,
     (newVal) => {

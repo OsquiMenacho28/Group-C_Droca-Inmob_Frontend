@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="app-page">
     <div class="max-w-5xl mx-auto px-4 py-5">
       <!-- Back button and Actions -->
       <div class="flex justify-between items-center mb-4 flex-wrap gap-3">
@@ -75,9 +75,7 @@
       <!-- Main content -->
       <template v-else-if="operation">
         <!-- Header card -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 shadow-sm"
-        >
+        <div class="app-card p-4 mb-4">
           <div class="flex flex-wrap items-center gap-2 mb-2">
             <FwbBadge type="default" size="xs">{{ t('operations.operationBadge') }}</FwbBadge>
             <FwbBadge :type="statusBadgeType" size="xs">
@@ -88,7 +86,7 @@
             </FwbBadge>
           </div>
           <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h1 class="text-lg font-bold text-gray-900 dark:text-white">
+            <h1 class="text-lg font-bold text-primary">
               {{ operation.propertyName }}
             </h1>
             <div class="text-xs text-gray-500 font-mono">ID: {{ operationId }}</div>
@@ -98,9 +96,7 @@
         <!-- Details + Price row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <!-- Details card -->
-          <div
-            class="md:col-span-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="md:col-span-2 app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -108,60 +104,52 @@
               {{ t('common.details') }}
             </h3>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('adminProperties.owner') }}:
-              </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-secondary font-medium">{{ t('adminProperties.owner') }}:</span>
+              <span class="text-primary font-semibold">
                 {{ operation.ownerName || '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('operations.client') }}:
-              </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-secondary font-medium">{{ t('operations.client') }}:</span>
+              <span class="text-primary font-semibold">
                 {{ operation.clientName || '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
-                {{ t('adminProperties.advisor') }}:
-              </span>
+              <span class="text-secondary font-medium">{{ t('adminProperties.advisor') }}:</span>
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-semibold text-gray-900 dark:text-white">
+                <span class="font-semibold text-primary">
                   {{ operation.agentName || '-' }}
                 </span>
               </div>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.closingDate') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
-                {{ formatDate(operation.closureDate) }}
+              <span class="text-primary font-semibold">
+                {{ formatDateLong(operation.closureDate) }}
               </span>
             </div>
           </div>
 
           <!-- Price card -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm flex flex-col justify-center text-center"
-          >
+          <div class="app-card p-4 flex flex-col justify-center text-center">
             <p
               class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide"
             >
               {{ t('adminProperties.finalPrice') }}
             </p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <p class="text-2xl font-bold text-primary mt-1">
               {{ formatCurrency(operation.finalPrice, operation.currency) }}
             </p>
-            <p class="text-xs text-gray-500 mt-1">{{ t('common.includingTaxes') }}</p>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ t('common.includingTaxes') }}
+            </p>
           </div>
         </div>
 
         <!-- Property Info & Documents row -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <!-- Property Basic Info & Images -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -169,41 +157,35 @@
               {{ t('adminProperties.property') }}
             </h3>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.propertyType') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-primary font-semibold">
                 {{ operation.propertyType ? t('propertyTypes.' + operation.propertyType) : '-' }}
               </span>
 
-              <span class="text-gray-500 dark:text-gray-400 font-medium">
+              <span class="text-secondary font-medium">
                 {{ t('adminProperties.operationType') }}:
               </span>
-              <span class="text-gray-900 dark:text-white font-semibold">
+              <span class="text-primary font-semibold">
                 {{
                   operation.operationType ? t('propertyOperations.' + operation.operationType) : '-'
                 }}
               </span>
             </div>
 
-            <!-- Property Images Thumbnail -->
-            <div
-              v-if="propertyData?.imageUrls?.length"
-              class="mt-4 flex gap-2 overflow-x-auto pb-2"
-            >
-              <img
-                v-for="(url, idx) in propertyData.imageUrls"
-                :key="idx"
-                :src="url"
-                class="h-16 w-16 object-cover rounded border border-gray-200 dark:border-gray-600 shrink-0"
+            <!-- Property Images Gallery -->
+            <div class="mt-4">
+              <ImageGallery
+                v-if="propertyData?.id"
+                :property-id="propertyData.id"
+                :can-manage="canManage"
               />
             </div>
           </div>
 
           <!-- Property Documents -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm"
-          >
+          <div class="app-card p-4">
             <h3
               class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1"
             >
@@ -238,21 +220,34 @@
             <div v-else class="text-center py-4 text-xs text-gray-400 italic">
               {{ t('documentUpload.noDocuments') }}
             </div>
+            <div class="mt-4 flex justify-end">
+              <FwbButton
+                @click="
+                  $router.push({ name: 'contract-versions', params: { operationId: operation.id } })
+                "
+                color="green"
+                class="text-xs font-medium uppercase cursor-pointer"
+              >
+                <template #prefix>
+                  <IconLucideFileText class="h-4 w-4" />
+                </template>
+                {{ t('operationContractVersions.viewContracts') }}
+              </FwbButton>
+            </div>
           </div>
         </div>
 
         <!-- Notes -->
-        <div
-          v-if="operation.notes"
-          class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm mb-4"
-        >
+        <div v-if="operation.notes" class="app-card p-4 mb-4">
           <div class="flex gap-2">
             <IconLucideFileText class="w-4 h-4 text-gray-400 mt-0.5" />
             <div>
               <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
                 {{ t('adminProperties.notes') }}
               </h3>
-              <p class="text-sm text-gray-700 dark:text-gray-300">{{ operation.notes }}</p>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                {{ operation.notes }}
+              </p>
             </div>
           </div>
         </div>
@@ -325,7 +320,7 @@
         </div>
       </template>
       <template #body>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <p class="text-sm text-secondary mb-4">
           {{ t('operations.currentOperationStatus') }}:
           <FwbBadge :type="statusBadgeType" size="xs" class="ml-1">
             {{ t('status.' + operation!.status) }}
@@ -414,6 +409,8 @@
   import type { OperationData } from '@/types/operation';
   import ConfirmModal from '@/components/ui/ConfirmModal.vue';
   import AppToast from '@/components/ui/AppToast.vue';
+  import ImageGallery from '@/components/properties/ImageGallery.vue';
+  import { formatDateLong, formatDateTime } from '@/utils/dateTime';
 
   const { t } = useI18n();
   const route = useRoute();
@@ -500,19 +497,24 @@
       PENDING: 'bg-yellow-500',
       CLOSED: 'bg-gray-500',
     };
-    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({ value: s, dot: dotMap[s] }));
+    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({
+      value: s,
+      dot: dotMap[s],
+    }));
   });
 
-  const openStatusModal = () => {
-    selectedStatus.value = null;
-    showStatusModal.value = true;
-  };
+  // const openStatusModal = () => {
+  //   selectedStatus.value = null;
+  //   showStatusModal.value = true;
+  // };
 
   const executeStatusUpdate = async () => {
     if (!selectedStatus.value) return;
     updatingStatus.value = true;
     try {
-      await api.patch(`/operations/${operationId}/status`, { status: selectedStatus.value });
+      await api.patch(`/operations/${operationId}/status`, {
+        status: selectedStatus.value,
+      });
       showStatusModal.value = false;
       toast.message = t('operations.operationStatusUpdated');
       toast.type = 'success';
@@ -530,7 +532,9 @@
   const handleCancelExecution = async () => {
     cancelling.value = true;
     try {
-      await api.patch(`/operations/${operationId}/status`, { status: 'CANCELLED' });
+      await api.patch(`/operations/${operationId}/status`, {
+        status: 'CANCELLED',
+      });
 
       showConfirmCancel.value = false;
 
@@ -590,26 +594,6 @@
     };
     return map[type] || 'bg-gray-500';
   });
-
-  function formatDate(iso?: string): string {
-    if (!iso) return '-';
-    return new Date(iso).toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  }
-
-  function formatDateTime(iso?: string): string {
-    if (!iso) return '-';
-    return new Date(iso).toLocaleDateString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
 
   function formatCurrency(amount: number, currency: string) {
     return new Intl.NumberFormat(getLocaleString(), {

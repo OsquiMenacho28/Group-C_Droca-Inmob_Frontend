@@ -59,10 +59,10 @@
               @click="selectItem(item)"
               class="px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-900/30 cursor-pointer border-b last:border-b-0 border-gray-50 dark:border-gray-700 transition-colors"
             >
-              <p class="text-sm font-medium text-gray-900 dark:text-white">
+              <p class="text-sm font-medium text-primary">
                 {{ item.label }}
               </p>
-              <p v-if="item.subtitle" class="text-[10px] text-gray-500 dark:text-gray-400">
+              <p v-if="item.subtitle" class="text-[10px] text-secondary">
                 {{ item.subtitle }}
               </p>
             </li>

@@ -1,10 +1,10 @@
 <template>
   <fwb-card class="max-w-md w-full p-6 shadow-xl border-gray-100 dark:border-gray-700">
     <div class="mb-8 text-center">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+      <h1 class="text-3xl font-bold text-primary mb-2">
         {{ t('auth.welcome') }}
       </h1>
-      <p class="text-gray-500 dark:text-gray-400">{{ t('auth.subtitle') }}</p>
+      <p class="text-secondary">{{ t('auth.subtitle') }}</p>
     </div>
 
     <form @submit.prevent="submit" class="space-y-6">
@@ -46,7 +46,7 @@
       </fwb-button>
     </form>
 
-    <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+    <div class="mt-6 text-center text-sm text-secondary">
       {{ t('auth.notRegistered') }}
       <a href="#" class="text-blue-700 hover:underline dark:text-blue-500 text-medium">
         {{ t('auth.createAccount') }}

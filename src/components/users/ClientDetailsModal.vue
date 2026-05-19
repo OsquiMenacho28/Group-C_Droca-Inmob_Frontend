@@ -59,11 +59,7 @@
                   v-else
                   class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
                 ></div>
-                {{
-                  t('retirement.motivoLabel') === 'Reason *'
-                    ? 'View Suggestions'
-                    : 'Ver Propiedades Sugeridas'
-                }}
+                {{ t('clientDetails.viewSuggestions') }}
               </div>
             </fwb-button>
           </div>
@@ -94,11 +90,7 @@
           <div v-if="hasSearched">
             <h4 class="font-bold dark:text-white mb-4 flex items-center gap-2">
               <IconLucideBuilding class="w-5 h-5 text-blue-500" />
-              {{
-                t('retirement.motivoLabel') === 'Reason *'
-                  ? 'Suggested Matches'
-                  : 'Inmuebles que coinciden'
-              }}
+              {{ t('clientDetails.suggestedProperties') }}
             </h4>
 
             <div
@@ -107,14 +99,10 @@
             >
               <IconLucideAlertTriangle class="w-12 h-12 text-yellow-500 mx-auto mb-3" />
               <p class="text-yellow-800 dark:text-yellow-200 font-bold">
-                {{
-                  t('retirement.motivoLabel') === 'Reason *'
-                    ? 'No properties found'
-                    : 'No existen inmuebles que coincidan con estas preferencias.'
-                }}
+                {{ t('clientDetails.noSuggestions') }}
               </p>
               <p class="text-xs text-yellow-600 mt-1">
-                Intente ajustar los rangos de habitaciones o zonas.
+                {{ t('clientDetails.adjustFilters') }}
               </p>
             </div>
 
@@ -137,10 +125,10 @@
                   </div>
                 </div>
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
+                  <p class="text-sm font-bold text-primary truncate">
                     {{ prop.title }}
                   </p>
-                  <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{{ prop.zone }}</p>
+                  <p class="text-[11px] text-secondary mt-1">{{ prop.zone }}</p>
                   <div class="flex items-center gap-3 mt-2">
                     <span
                       class="text-[10px] bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded font-bold text-gray-600 dark:text-gray-300"
@@ -202,9 +190,9 @@
 
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { FwbModal, FwbBadge, FwbButton, FwbSpinner } from 'flowbite-vue';
-  import { propertyService } from '@/modules/properties';
+  import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
+  import { apiClient as api } from '@/api';
   import IconLucideSearch from '~icons/lucide/search';
   import IconLucideBuilding from '~icons/lucide/building';
   import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
@@ -214,29 +202,58 @@
   import IconLucideArrowRight from '~icons/lucide/arrow-right';
   import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
-  const { t } = useI18n();
-  const props = defineProps<{ show: boolean; client: any }>();
-  const emit = defineEmits(['close']);
+  interface SuggestedProperty {
+    id: string;
+    title: string;
+    zone: string;
+    rooms: number;
+    price: number;
+    imageUrls?: string[];
+  }
 
-  const suggestions = ref([]);
+  interface AuditEntry {
+    changedBy: string;
+    changedAt: string;
+    changes: { field: string; oldValue: string; newValue: string }[];
+  }
+
+  interface ClientData {
+    [key: string]: unknown;
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    id?: string;
+    authUserId?: string;
+    personId?: string;
+    preferredZones?: string[];
+    minRooms?: number;
+    maxRooms?: number;
+    maxPrice?: number;
+    preferredPropertyType?: string;
+    budget?: number;
+    auditLog?: AuditEntry[];
+  }
+
+  const { t } = useI18n();
+  const props = defineProps<{ show: boolean; client: ClientData }>();
+  defineEmits(['close']);
+
+  const suggestions = ref<SuggestedProperty[]>([]);
   const loadingSuggestions = ref(false);
   const hasSearched = ref(false);
 
   const fetchSuggestions = async () => {
     loadingSuggestions.value = true;
     try {
-      // Usamos el authUserId (ID de identidad) para filtrar
-      const searchId = props.client.authUserId || props.client.id;
+      // Usamos el personId (ID de MongoDB) para obtener sugerencias basadas en preferencias
+      const searchId = props.client.personId || props.client.id;
       const response = await api.get(`/properties/filtrar?buscador_id=${searchId}`);
       suggestions.value = response.data.data || [];
       hasSearched.value = true;
-    } catch (error) {
-      console.error('Error al obtener sugerencias:', error);
+    } catch {
+      console.error('Error al obtener sugerencias:');
     } finally {
       loadingSuggestions.value = false;
     }
   };
-
-  // Necesitamos importar el api client si no se usa el propertyService directamente
-  import { apiClient as api } from '@/api';
 </script>

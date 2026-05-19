@@ -18,6 +18,8 @@ import ReassignmentInboxView from '@/views/ReassignmentInboxView.vue';
 import OperationDetailView from '@/views/OperationDetailView.vue';
 import SentRequestsView from '@/views/SentRequestsView.vue';
 import VisitDetailView from '@/views/VisitDetailView.vue';
+import ContractVersionsView from '@/views/ContractVersionsView.vue';
+import InventoryReportView from '@/views/InventoryReportView.vue';
 
 const routes = [
   {
@@ -53,9 +55,21 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'admin/inventory-report',
+        name: 'InventoryReport',
+        component: InventoryReportView,
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: 'admin/vehicles',
         name: 'AdminVehicles',
         component: AdminVehiclesView,
+        meta: { role: 'ADMIN' },
+      },
+      {
+        path: 'admin/vehicles/usage-report',
+        name: 'VehicleUsageReport',
+        component: () => import('@/views/VehicleUsageReportView.vue'),
         meta: { role: 'ADMIN' },
       },
       {
@@ -143,6 +157,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'reports/property-visits',
+        name: 'PropertyVisitReport',
+        component: () => import('@/views/PropertyVisitReportView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: '/reassignments/sent',
         name: 'SentRequests',
         component: SentRequestsView,
@@ -155,11 +175,17 @@ const routes = [
         meta: { role: 'AGENT' },
       },
       {
-        path: 'owner/notifications',
-        name: 'OwnerNotifications',
-        component: () => import('@/views/OwnerNotificationsView.vue'),
-        meta: { role: 'OWNER' },
-      }
+        path: 'notifications',
+        name: 'Notifications',
+        component: () => import('@/views/NotificationsView.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: '/operations/:operationId/contracts',
+        name: 'contract-versions',
+        component: ContractVersionsView,
+        meta: { roles: ['ADMIN', 'AGENT', 'OWNER', 'CLIENT'] },
+      },
     ],
   },
 ];

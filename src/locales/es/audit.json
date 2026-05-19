@@ -1,0 +1,112 @@
+{
+  "auditLogs": {
+    "unidentifiedUser": "Usuario no identificado",
+    "actions": {
+      "all": "Todas las acciones",
+      "creations": "Creaciones",
+      "edits": "Ediciones",
+      "deactivations": "Desactivaciones",
+      "deactivation": "Desactivación",
+      "reactivation": "Reactivación",
+      "deletion": "Eliminación",
+      "removals": "Bajas",
+      "creation": "Creación",
+      "edit": "Edición",
+      "removal": "Baja",
+      "roleAssignment": "Asignación de rol",
+      "passwordChange": "Cambio de Contraseña"
+    },
+    "oldValue": "Valor anterior",
+    "newValue": "Valor nuevo",
+    "by": "por",
+    "performedBy": "Realizado por:",
+    "personTypes": {
+      "admin": "Admin",
+      "employee": "Agente",
+      "owner": "Propietario",
+      "client": "Cliente",
+      "user": "Usuario"
+    }
+  },
+  "audit": {
+    "title": "Centro de Auditoría",
+    "subtitle": "Supervisión de cambios en documentos, inmuebles y perfiles de usuario.",
+    "tabs": {
+      "identity": "Documentos CI/NIT",
+      "properties": "Inmuebles",
+      "profiles": "Perfiles"
+    },
+    "filters": {
+      "user": "Usuario Responsable",
+      "searchUser": "Buscar usuario...",
+      "action": "Acción",
+      "from": "Desde",
+      "to": "Hasta",
+      "profile": "Perfil / Persona",
+      "searchProfile": "Buscar perfil..."
+    },
+    "actions": {
+      "all": "Todas las acciones"
+    },
+    "table": {
+      "dateTime": "Fecha y Hora",
+      "user": "Usuario",
+      "action": "Acción",
+      "details": "Detalles",
+      "profile": "Perfil",
+      "changedBy": "Cambiado por",
+      "changes": "Cambios"
+    },
+    "noRecords": "No se encontraron registros de auditoría."
+  },
+  "propertyAudit": {
+    "agentUserLabel": "Agente / Usuario",
+    "searchAgent": "Buscar por nombre del agente...",
+    "propertyLabel": "Propiedad",
+    "searchProperty": "Buscar por título o dirección...",
+    "from": "Desde",
+    "to": "Hasta",
+    "filter": "Filtrar",
+    "clearFilters": "Limpiar filtros",
+    "refresh": "Actualizar",
+    "activeFilters": "Filtros activos:",
+    "agentLabel": "Agente:",
+    "propertyFilterLabel": "Propiedad:",
+    "table": {
+      "dateTime": "Fecha y Hora",
+      "agent": "Agente",
+      "action": "Acción",
+      "property": "Propiedad",
+      "change": "Cambio",
+      "details": "Detalles"
+    },
+    "loading": "Cargando registros de auditoría...",
+    "emptyTitle": "No hay registros de auditoría",
+    "emptyText": "Los cambios de estado en propiedades aparecerán aquí automáticamente",
+    "noResultsTitle": "No se encontraron resultados",
+    "noResultsText": "Prueba con otros filtros o limpia la búsqueda",
+    "verDetalles": "Ver Detalles",
+    "cerrar": "Cerrar",
+    "changeDetailTitle": "Detalle del Cambio",
+    "agentInfo": "Información del Agente",
+    "agente": "Agente:",
+    "propiedad": "Propiedad:",
+    "modifiedFields": "Campos Modificados",
+    "vacio": "(vacío)",
+    "previousValue": "Valor Anterior",
+    "newValue": "Valor Nuevo",
+    "cambioRealizadoPor": "Cambio realizado por el agente",
+    "fecha": "Fecha:",
+    "actions": {
+      "statusChange": "Cambio de Estado",
+      "priceUpdate": "Actualización de Precio",
+      "agentAssign": "Reasignación de Agente",
+      "ownerAssign": "Asignación de Propietario",
+      "propertyCreate": "Registro de Propiedad",
+      "propertyUpdate": "Edición de Datos",
+      "propertyDelete": "Eliminación (Baja)",
+      "locationUpdate": "Actualización de Ubicación",
+      "reincorporate": "Reincorporación de Inmueble"
+    }
+  }
+}

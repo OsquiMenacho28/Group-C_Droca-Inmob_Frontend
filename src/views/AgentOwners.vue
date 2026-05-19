@@ -61,10 +61,10 @@
         </div>
 
         <div class="p-5 flex-1 flex flex-col">
-          <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+          <h5 class="text-xl font-bold text-primary mb-1">
             {{ o.fullName || `${o.firstName} ${o.lastName}` }}
           </h5>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 truncate">{{ o.email }}</p>
+          <p class="text-sm text-secondary mb-2 truncate">{{ o.email }}</p>
           <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
             CI/NIT: {{ o.taxId || t('common.notAvailable') }}
           </p>
@@ -124,7 +124,7 @@
       v-if="!loading && filteredOwners.length === 0"
       class="text-center py-20 bg-gray-50 dark:bg-gray-800 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700"
     >
-      <p class="text-gray-500 dark:text-gray-400">{{ t('agentOwners.emptyText') }}</p>
+      <p class="text-secondary">{{ t('agentOwners.emptyText') }}</p>
     </div>
 
     <fwb-modal v-if="showModal" @close="closeModal">

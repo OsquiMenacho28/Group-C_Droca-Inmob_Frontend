@@ -4,6 +4,7 @@ import type {
   PropertyFormPayload,
   AssignAgentPayload,
   OperationType,
+  InventoryReportResponse,
 } from '@/types/property';
 import type { OperationData } from '@/types/operation';
 
@@ -59,6 +60,13 @@ export interface GenerateImageUploadUrlRequest {
   mimeType?: string;
 }
 
+export interface ImageUploadPolicyResponse {
+  url: string;
+  objectKey: string;
+  formData: Record<string, string>;
+  expiresInSeconds: number;
+}
+
 export interface ConfirmImageUploadRequest {
   objectKey: string;
   originalFileName?: string;
@@ -75,6 +83,10 @@ export const propertyService = {
     operationType?: string;
     status?: string;
     agentId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    minM2?: number;
+    maxM2?: number;
     page?: number;
     pageSize?: number;
     sortBy?: string;
@@ -147,6 +159,18 @@ export const propertyService = {
     return response.data.data;
   },
 
+  async generateImageUploadPolicy(
+    propertyId: string,
+    file: File
+  ): Promise<ImageUploadPolicyResponse> {
+    const response = await api.post(`/properties/${propertyId}/images/upload-policy`, {
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+    });
+    return response.data.data;
+  },
+
   async confirmImageUpload(
     propertyId: string,
     payload: ConfirmImageUploadRequest
@@ -166,6 +190,11 @@ export const propertyService = {
 
   async reorderImages(propertyId: string, orderedImageIds: string[]): Promise<ImageResponse[]> {
     const response = await api.post(`/properties/${propertyId}/images/reorder`, orderedImageIds);
+    return response.data.data;
+  },
+
+  async setPrimaryImage(propertyId: string, imageId: string): Promise<ImageResponse> {
+    const response = await api.put(`/properties/${propertyId}/images/${imageId}/primary`);
     return response.data.data;
   },
 
@@ -289,8 +318,11 @@ export const propertyService = {
     return response.data.data;
   },
 
-  async withdrawProperty(id: string): Promise<Property> {
-    const response = await api.patch(`/properties/${id}/retirar`);
+  async withdrawProperty(
+    id: string,
+    payload: { motivoRetiro: string; detalleRetiro?: string | null }
+  ): Promise<Property> {
+    const response = await api.post(`/properties/${id}/retirar`, payload);
     return response.data.data;
   },
 
@@ -308,6 +340,16 @@ export const propertyService = {
   async getSuggestedProperties(buscadorId: string): Promise<Property[]> {
     const response = await api.get(`/properties/filtrar`, {
       params: { buscador_id: buscadorId },
+    });
+    return response.data.data;
+  },
+
+  async getInventoryReport(
+    status?: string,
+    operationType?: string
+  ): Promise<InventoryReportResponse> {
+    const response = await api.get('/properties/reporte-gerencial', {
+      params: { status, operationType },
     });
     return response.data.data;
   },

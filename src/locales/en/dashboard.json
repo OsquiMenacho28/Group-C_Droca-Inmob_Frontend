@@ -1,0 +1,23 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to the real estate management system.",
+    "systemStatus": "System Status",
+    "allServicesOperational": "All services operational"
+  },
+  "clientDashboard": {
+    "title": "Client Dashboard",
+    "welcome": "Welcome, Client. Here you can search for properties and view your favorites soon."
+  },
+  "ownerNotifications": {
+    "title": "My Notifications",
+    "subtitle": "Notification history",
+    "empty": "No notifications",
+    "totalUnread": "{count} unread",
+    "markAllRead": "Mark all as read"
+  },
+  "ownerDashboard": {
+    "propertiesTab": "My Properties",
+    "notificationsTab": "Notifications"
+  }
+}

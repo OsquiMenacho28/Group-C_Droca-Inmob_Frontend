@@ -7,9 +7,7 @@
         </div>
         <div>
           <h3 class="font-semibold text-lg dark:text-white">{{ t('reassignment.title') }}</h3>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">
-            {{ t('reassignment.visitLabel') }} {{ visitInfo }}
-          </p>
+          <p class="text-secondary text-sm">{{ t('reassignment.visitLabel') }} {{ visitInfo }}</p>
         </div>
       </div>
     </template>
@@ -26,10 +24,7 @@
             <span class="text-red-500">*</span>
           </label>
 
-          <div
-            v-if="loadingAgents"
-            class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm py-2"
-          >
+          <div v-if="loadingAgents" class="flex items-center gap-2 text-secondary text-sm py-2">
             <IconLucideLoader class="animate-spin w-4 h-4" />
             {{ t('reassignment.loadingAgents') }}
           </div>
@@ -67,7 +62,7 @@
                 <p class="font-medium text-gray-800 dark:text-white text-sm truncate">
                   {{ agent.firstName }} {{ agent.lastName }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p class="text-xs text-secondary truncate">
                   {{ agent.email }}
                 </p>
               </div>
@@ -81,7 +76,7 @@
 
             <p
               v-if="!loadingAgents && agents.length === 0"
-              class="text-sm text-gray-500 dark:text-gray-400 text-center py-4"
+              class="text-sm text-secondary text-center py-4"
             >
               {{ t('reassignment.noAgents') }}
             </p>

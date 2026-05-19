@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 transition-colors duration-300">
+  <div class="app-page py-8 px-4">
     <div class="max-w-3xl mx-auto space-y-6">
       <div class="flex items-center justify-between">
         <div>
@@ -10,18 +10,18 @@
             >
               <IconLucideArrowLeft class="h-5 w-5" />
             </router-link>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 class="text-2xl font-bold text-primary">
               {{ t('sentRequests.title') }}
             </h1>
           </div>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('sentRequests.subtitle') }}
           </p>
         </div>
         <button
           @click="load"
           :disabled="loading"
-          class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm disabled:opacity-50"
+          class="flex items-center gap-2 px-4 py-2 app-card text-sm text-gray-600 dark:text-gray-300 hover-row disabled:opacity-50"
         >
           <IconLucideRefreshCw class="w-4 h-4" :class="loading ? 'animate-spin' : ''" />
           {{ t('common.refresh') }}
@@ -29,16 +29,14 @@
       </div>
 
       <div class="grid grid-cols-3 gap-4">
-        <div
-          class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 text-center shadow-sm"
-        >
-          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.total }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">
+        <div class="app-card p-4 text-center">
+          <p class="text-2xl font-bold text-primary">{{ stats.total }}</p>
+          <p class="text-xs text-secondary uppercase font-medium">
             {{ t('sentRequests.totalSent') }}
           </p>
         </div>
         <div
-          class="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800 p-4 text-center shadow-sm"
+          class="bg-yellow-50 dark:bg-yellow-900/20 app-card p-4 text-center shadow-sm border-yellow-200 dark:border-yellow-800"
         >
           <p class="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{{ stats.pending }}</p>
           <p class="text-xs text-yellow-600 dark:text-yellow-500 uppercase font-medium">
@@ -46,7 +44,7 @@
           </p>
         </div>
         <div
-          class="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-4 text-center shadow-sm"
+          class="bg-green-50 dark:bg-green-900/20 app-card p-4 text-center shadow-sm border-green-200 dark:border-green-800"
         >
           <p class="text-2xl font-bold text-green-700 dark:text-green-400">{{ stats.accepted }}</p>
           <p class="text-xs text-green-600 dark:text-green-500 uppercase font-medium">
@@ -56,11 +54,7 @@
       </div>
 
       <div v-if="loading" class="space-y-3">
-        <div
-          v-for="i in 3"
-          :key="i"
-          class="bg-white dark:bg-gray-800 rounded-2xl p-5 animate-pulse border border-gray-100 dark:border-gray-700"
-        >
+        <div v-for="i in 3" :key="i" class="app-card p-5 animate-pulse">
           <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-3"></div>
           <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3 mb-2"></div>
           <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
@@ -75,10 +69,7 @@
         <p class="text-sm">{{ error }}</p>
       </div>
 
-      <div
-        v-else-if="sentRequests.length === 0"
-        class="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-gray-700"
-      >
+      <div v-else-if="sentRequests.length === 0" class="app-card p-12 text-center">
         <div
           class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
         >
@@ -87,7 +78,7 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('sentRequests.emptyTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('sentRequests.emptyText') }}
         </p>
         <router-link
@@ -102,7 +93,7 @@
         <div
           v-for="r in sentRequests"
           :key="r.id"
-          class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
+          class="app-card overflow-hidden hover:shadow-md transition-shadow"
         >
           <div
             class="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-start justify-between gap-3"
@@ -135,7 +126,7 @@
                   {{ t('sentRequests.to') }}
                   <span class="font-mono text-xs">{{ r.destinationAgentId }}</span>
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-xs text-secondary">
                   {{ t('sentRequests.sentOn') }} {{ formatDate(r.requestedAt) }}
                 </p>
               </div>
@@ -164,9 +155,7 @@
           <div class="px-5 py-4 space-y-3">
             <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <IconLucideCalendar class="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
-              <span class="text-gray-500 dark:text-gray-400">
-                {{ t('reassignment.visitIdLabel') }}:
-              </span>
+              <span class="text-secondary">{{ t('reassignment.visitIdLabel') }}:</span>
               <span
                 class="font-mono text-xs bg-gray-100 dark:bg-gray-700 dark:text-gray-300 px-2 py-0.5 rounded"
               >
@@ -181,9 +170,7 @@
                 'bg-gray-50 dark:bg-gray-700/50': r.status !== 'PENDING',
               }"
             >
-              <p
-                class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wide"
-              >
+              <p class="text-xs font-medium text-secondary mb-1 uppercase tracking-wide">
                 {{ t('sentRequests.reasonTitle') }}
               </p>
               <p class="text-sm text-gray-700 dark:text-gray-300">{{ r.reason }}</p>
@@ -290,7 +277,8 @@
   import { ref, computed, onMounted, onUnmounted } from 'vue';
   import { FwbAlert, FwbButton, FwbModal } from 'flowbite-vue';
   import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+  import { formatDate } from '@/utils/dateTime';
+  import { statusBadgeClass } from '@/utils/styling';
 
   const { t } = useI18n();
 
@@ -368,30 +356,6 @@
     pendingCancelId.value = null;
   }
 
-  function statusBadgeClass(status: string): string {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'ACCEPTED':
-        return 'bg-green-100 text-green-800';
-      case 'REJECTED':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  }
-
-  function formatDate(iso: string): string {
-    if (!iso) return '';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
-
   onMounted(() => {
     load();
     intervalId = setInterval(load, 30000);
@@ -401,15 +365,3 @@
     if (intervalId) clearInterval(intervalId);
   });
 </script>
-
-<style scoped>
-  .list-enter-active,
-  .list-leave-active {
-    transition: all 0.3s ease;
-  }
-  .list-enter-from,
-  .list-leave-to {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-</style>

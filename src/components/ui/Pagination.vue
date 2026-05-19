@@ -1,9 +1,7 @@
 <template>
   <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-6">
     <!-- Items per page selector -->
-    <div
-      class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 order-2 md:order-1"
-    >
+    <div class="flex items-center gap-2 text-sm text-secondary order-2 md:order-1">
       <span>{{ t('common.show') }}</span>
       <fwb-select
         :model-value="String(pageSize)"

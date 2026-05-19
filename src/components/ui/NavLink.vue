@@ -14,7 +14,7 @@
           class="w-4 h-4 transition-colors"
           :class="{
             'text-blue-700 dark:text-white': isActive,
-            'text-gray-500 dark:text-gray-400': !isActive,
+            'text-secondary': !isActive,
           }"
         />
         <span class="whitespace-nowrap">{{ label }}</span>

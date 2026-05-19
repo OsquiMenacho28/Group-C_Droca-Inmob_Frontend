@@ -6,19 +6,17 @@
       <!-- Header -->
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 class="text-2xl font-bold text-primary">
             {{ t('reports.agentRankingTitle') }}
           </h1>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p class="text-secondary text-sm mt-1">
             {{ t('reports.agentRankingSubtitle') }}
           </p>
         </div>
       </div>
 
       <!-- Filters Card -->
-      <div
-        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors"
-      >
+      <div class="app-card rounded-xl overflow-hidden transition-colors">
         <div class="p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
             <div>
@@ -51,7 +49,7 @@
       <!-- Loading State -->
       <div v-if="loading" class="flex flex-col items-center justify-center py-20">
         <fwb-spinner size="12" />
-        <p class="mt-4 text-gray-500 dark:text-gray-400">{{ t('common.loading') }}</p>
+        <p class="mt-4 text-secondary">{{ t('common.loading') }}</p>
       </div>
 
       <!-- Error State -->
@@ -68,7 +66,7 @@
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
           {{ t('reports.noRankingDataTitle') }}
         </h3>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">
+        <p class="text-secondary text-sm">
           {{ t('reports.noRankingDataText') }}
         </p>
       </div>
@@ -78,18 +76,14 @@
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Total Closed Sales -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
-          >
+          <div class="app-card rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div class="p-5">
               <div class="flex items-center justify-between">
                 <div>
-                  <p
-                    class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                     {{ t('reports.totalClosedSales') }}
                   </p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+                  <p class="text-2xl font-bold text-primary mt-2">
                     {{ rankingData?.totalClosedSales || 0 }}
                   </p>
                 </div>
@@ -101,18 +95,14 @@
           </div>
 
           <!-- Total Agents -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
-          >
+          <div class="app-card rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div class="p-5">
               <div class="flex items-center justify-between">
                 <div>
-                  <p
-                    class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                     {{ t('reports.totalAgents') }}
                   </p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+                  <p class="text-2xl font-bold text-primary mt-2">
                     {{ rankingData?.ranking?.length || 0 }}
                   </p>
                 </div>
@@ -124,18 +114,14 @@
           </div>
 
           <!-- Top Agent -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
-          >
+          <div class="app-card rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div class="p-5">
               <div class="flex items-center justify-between">
                 <div>
-                  <p
-                    class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                     {{ t('reports.topAgent') }}
                   </p>
-                  <p class="text-base font-bold text-gray-900 dark:text-white mt-2 truncate">
+                  <p class="text-base font-bold text-primary mt-2 truncate">
                     {{ rankingData?.ranking[0]?.agentName || '-' }}
                   </p>
                 </div>
@@ -147,18 +133,14 @@
           </div>
 
           <!-- Average Sales -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow"
-          >
+          <div class="app-card rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div class="p-5">
               <div class="flex items-center justify-between">
                 <div>
-                  <p
-                    class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-                  >
+                  <p class="text-xs font-medium text-secondary uppercase tracking-wider">
                     {{ t('reports.averageSales') }}
                   </p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+                  <p class="text-2xl font-bold text-primary mt-2">
                     {{ averageSales }}
                   </p>
                 </div>
@@ -171,11 +153,9 @@
         </div>
 
         <!-- Ranking Table -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
-        >
+        <div class="app-card rounded-xl overflow-hidden">
           <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <table class="w-full text-sm text-left text-secondary">
               <thead
                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600"
               >
@@ -216,7 +196,7 @@
                   </td>
 
                   <!-- Agent Name -->
-                  <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                  <td class="px-6 py-4 font-medium text-primary">
                     <div class="flex items-center gap-3">
                       <div :class="getAvatarClass(item.position)">
                         {{ getInitials(item.agentName) }}

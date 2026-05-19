@@ -39,7 +39,7 @@
             <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
               {{ formatDate(visit.startTime) }} - {{ formatDate(visit.endTime) }}
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">
               {{ statusLabel(visit.status) }}
             </p>
           </div>
@@ -97,21 +97,23 @@
   }
 
   function statusLabel(status: EventStatus): string {
-    const map: Record<EventStatus, string> = {
+    const map: Partial<Record<EventStatus, string>> = {
       SCHEDULED: t('rescheduleVisit.scheduledVisit'),
       CANCELLED: t('rescheduleVisit.cancelledVisit'),
       CONFIRMED: t('rescheduleVisit.confirmedVisit'),
       COMPLETED: t('rescheduleVisit.completedVisit'),
+      REALIZADA: t('rescheduleVisit.completedVisit'),
     };
     return map[status] ?? status;
   }
 
   function statusDotClass(status: EventStatus): string {
-    const map: Record<EventStatus, string> = {
+    const map: Partial<Record<EventStatus, string>> = {
       SCHEDULED: 'bg-green-500',
       CANCELLED: 'bg-red-400',
       CONFIRMED: 'bg-blue-500',
       COMPLETED: 'bg-gray-400',
+      REALIZADA: 'bg-gray-400',
     };
     return map[status] ?? 'bg-gray-300';
   }

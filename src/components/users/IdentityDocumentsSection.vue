@@ -7,13 +7,11 @@
         <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">
           {{ t('identityDocuments.title') }}
         </h4>
-        <p class="text-xs text-gray-500 dark:text-gray-400">
+        <p class="text-xs text-secondary">
           {{ t('identityDocuments.subtitle') }}
         </p>
       </div>
-      <span
-        class="text-xs font-semibold text-gray-500 dark:text-gray-400 sm:min-w-[88px] sm:pt-1 sm:text-right"
-      >
+      <span class="text-xs font-semibold text-secondary sm:min-w-[88px] sm:pt-1 sm:text-right">
         {{ documents.length }} {{ t('identityDocuments.countLabel') }}
       </span>
     </div>
@@ -56,7 +54,7 @@
       </div>
     </div>
 
-    <p class="text-xs text-gray-500 dark:text-gray-400">
+    <p class="text-xs text-secondary">
       {{ t('identityDocuments.allowedFormats') }}
     </p>
 
@@ -64,13 +62,13 @@
       {{ feedback.message }}
     </div>
 
-    <div v-if="loading" class="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+    <div v-if="loading" class="py-6 text-center text-sm text-secondary">
       {{ t('common.loading') }}
     </div>
 
     <div
       v-else-if="documents.length === 0"
-      class="rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
+      class="rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 px-4 py-8 text-center text-sm text-secondary"
     >
       {{ t('identityDocuments.empty') }}
     </div>
@@ -86,35 +84,29 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0 space-y-2">
             <div>
-              <p
-                class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-              >
+              <p class="text-[11px] font-semibold uppercase tracking-wide text-secondary">
                 {{ t('identityDocuments.fileNameLabel') }}
               </p>
-              <p class="truncate text-sm font-semibold text-gray-900 dark:text-white">
+              <p class="truncate text-sm font-semibold text-primary">
                 {{ resolveFileName(document) }}
               </p>
             </div>
 
             <div class="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
               <div>
-                <p
-                  class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                >
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-secondary">
                   {{ t('identityDocuments.typeLabel') }}
                 </p>
-                <p class="text-gray-900 dark:text-white">
+                <p class="text-primary">
                   {{ resolveTypeLabel(document.documentType) }}
                 </p>
               </div>
 
               <div>
-                <p
-                  class="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                >
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-secondary">
                   {{ t('identityDocuments.uploadDateLabel') }}
                 </p>
-                <p class="text-gray-900 dark:text-white">
+                <p class="text-primary">
                   {{ formatDate(document.uploadDate) }}
                 </p>
               </div>

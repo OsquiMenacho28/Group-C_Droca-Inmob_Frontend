@@ -95,7 +95,7 @@
       </div>
 
       <div v-if="isAdmin && userType === 'INTERESTED_CLIENT'">
-        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        <label class="block mb-2 text-sm font-medium text-primary">
           {{ t('userForm.assignedAgent') }}
         </label>
         <select
@@ -114,7 +114,7 @@
     </div>
 
     <div v-if="!clientOnly && !ownerOnly">
-      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+      <label class="block mb-2 text-sm font-medium text-primary">
         {{ t('users.form.role') }}
       </label>
       <select
@@ -206,7 +206,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-2">
-          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          <label class="block mb-2 text-sm font-medium text-primary">
             {{ t('userForm.preferredZones') || 'Zonas de interés (Presiona Enter para añadir)' }}
           </label>
           <div class="relative flex gap-2">
@@ -217,7 +217,7 @@
                 @keydown.enter.prevent="addZone"
               />
             </div>
-            <fwb-button size="xs" color="alternative" @click="addZone">
+            <fwb-button size="xs" color="alternative" type="button" @click.prevent="addZone">
               {{ t('common.add') || 'Añadir' }}
             </fwb-button>
           </div>
@@ -229,7 +229,11 @@
               class="pl-3 py-1"
             >
               {{ zone }}
-              <button @click="removeZone(zone)" class="ml-2 text-indigo-900 hover:text-red-600">
+              <button
+                type="button"
+                @click.prevent="removeZone(zone)"
+                class="ml-2 text-indigo-900 hover:text-red-600"
+              >
                 ×
               </button>
             </fwb-badge>
@@ -278,7 +282,7 @@
         </div>
 
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          <label class="block mb-2 text-sm font-medium text-primary">
             {{ t('users.form.propertyType') }}
           </label>
           <select
@@ -288,9 +292,9 @@
             @change="handlePropertyTypeChange"
           >
             <option value="">{{ t('userForm.noPreference') }}</option>
-            <option value="APARTMENT">{{ t('propertyType.apartment') }}</option>
-            <option value="HOUSE">{{ t('propertyType.house') }}</option>
-            <option value="COMMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
+            <option value="DEPARTAMENTO">{{ t('propertyType.apartment') }}</option>
+            <option value="CASA">{{ t('propertyType.house') }}</option>
+            <option value="COMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
           </select>
           <p v-if="isFieldModified('preferredPropertyType')" class="text-xs text-blue-600 mt-1">
             {{ t('userForm.modifyingPreferences') }}
@@ -300,7 +304,7 @@
     </div>
 
     <div class="flex justify-end space-x-3 pt-4 border-t">
-      <fwb-button color="alternative" @click="$emit('cancel')">
+      <fwb-button color="alternative" type="button" @click="$emit('cancel')">
         {{ t('users.form.cancel') }}
       </fwb-button>
       <fwb-button type="submit" gradient="blue" :disabled="!isFormValid || emailChecking">
@@ -341,8 +345,46 @@
   // Zonas y rangos
   const newZone = ref('');
   const preferredZonesList = ref<string[]>([]);
-  const minRooms = ref<number | null>(null);
-  const maxRooms = ref<number | null>(null);
+  const minRooms = ref<number | undefined>(undefined);
+  const maxRooms = ref<number | undefined>(undefined);
+
+  // Formato robusto para fechas (soporta arrays serialize-deserialized del backend)
+  const toDateString = (val: unknown): string => {
+    if (!val) return '';
+    if (Array.isArray(val)) {
+      const [year, month, day] = val;
+      const y = String(year);
+      const m = String(month).padStart(2, '0');
+      const d = String(day).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+    if (typeof val === 'string' && val.includes(',')) {
+      const parts = val.replace(/[\[\]]/g, '').split(',');
+      if (parts.length === 3) {
+        const y = parts[0].trim();
+        const m = parts[1].trim().padStart(2, '0');
+        const d = parts[2].trim().padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+    }
+    return String(val).split('T')[0];
+  };
+
+  watch(
+    preferredZonesList,
+    () => {
+      modifiedFields.value.add('preferredZones');
+    },
+    { deep: true }
+  );
+
+  watch(minRooms, () => {
+    modifiedFields.value.add('minRooms');
+  });
+
+  watch(maxRooms, () => {
+    modifiedFields.value.add('maxRooms');
+  });
 
   const allUsers = ref<User[]>([]);
   const activeAgents = computed(() =>
@@ -387,27 +429,9 @@
   const [position, positionAttrs] = defineField('position');
   const [hireDate] = defineField('hireDate');
   const [taxId, taxIdAttrs] = defineField('taxId');
-  const [preferredContactMethod] = defineField('preferredContactMethod');
   const [budget] = defineField('budget');
-  const [preferredZone] = defineField('preferredZone');
   const [preferredPropertyType] = defineField('preferredPropertyType');
-  const [preferredRoomsRaw] = defineField('preferredRooms');
   const [assignedAgentId] = defineField('assignedAgentId');
-
-  const preferredRooms = computed({
-    get: () => {
-      const val = preferredRoomsRaw.value;
-      if (val === null || val === undefined) return '';
-      return String(val);
-    },
-    set: (val: string | number) => {
-      if (val === '' || val === null || val === undefined) {
-        preferredRoomsRaw.value = '';
-      } else {
-        preferredRoomsRaw.value = typeof val === 'string' ? val : val;
-      }
-    },
-  });
 
   function mapInitialData(): UserFormValues {
     const d = props.initialData;
@@ -427,11 +451,6 @@
         budget: '',
       };
     }
-
-    const toDateString = (val: unknown): string => {
-      if (!val) return '';
-      return String(val).split('T')[0];
-    };
 
     return {
       firstName: String(d.firstName || ''),
@@ -465,10 +484,10 @@
     if (data.preferredZones && Array.isArray(data.preferredZones)) {
       preferredZonesList.value = [...data.preferredZones];
     }
-    if (data.minRooms !== undefined && data.minRooms !== null) {
+    if (data.minRooms != null) {
       minRooms.value = Number(data.minRooms);
     }
-    if (data.maxRooms !== undefined && data.maxRooms !== null) {
+    if (data.maxRooms != null) {
       maxRooms.value = Number(data.maxRooms);
     }
   };
@@ -515,11 +534,11 @@
   const handlePositionBlur = () => positionAttrs.value.onBlur?.();
   const handleTaxIdBlur = () => taxIdAttrs.value.onBlur?.();
   const handleMinRoomsBlur = () => {
-    if (minRooms.value !== null && minRooms.value < 0) minRooms.value = 0;
+    if (minRooms.value !== undefined && minRooms.value < 0) minRooms.value = 0;
     modifiedFields.value.add('minRooms');
   };
   const handleMaxRoomsBlur = () => {
-    if (maxRooms.value !== null && maxRooms.value < 0) maxRooms.value = 0;
+    if (maxRooms.value !== undefined && maxRooms.value < 0) maxRooms.value = 0;
     modifiedFields.value.add('maxRooms');
   };
   const handleBudgetBlur = () => {
@@ -550,11 +569,6 @@
     () => props.initialData,
     (newData) => {
       if (!newData) return;
-
-      const toDateString = (val: unknown): string => {
-        if (!val) return '';
-        return String(val).split('T')[0];
-      };
 
       const resolvedUserType = String(
         newData.userType ||
@@ -701,11 +715,18 @@
 
   const onFormSubmit = (event: Event) => {
     event.preventDefault();
+    console.log('onFormSubmit triggered', { values, errors: errors.value });
 
     try {
-      handleSubmit((formValues, _formActions) => {
-        onSubmit(formValues);
-      })(event);
+      handleSubmit(
+        (formValues, _formActions) => {
+          console.log('handleSubmit validation passed, calling onSubmit', formValues);
+          onSubmit(formValues);
+        },
+        (validationErrors) => {
+          console.error('handleSubmit validation failed:', validationErrors);
+        }
+      )(event);
     } catch (error) {
       console.error('Form submission error:', error);
     }
