@@ -17,15 +17,21 @@ const receiptService = {
     formData.append('paymentDate', payload.paymentDate);
     formData.append('concept', payload.concept);
 
-    const response = await api.post(`${BASE}/${operationId}/receipts`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress: onProgress
-        ? (event) => {
-            const percent = event.total ? Math.round((event.loaded * 100) / event.total) : 0;
-            onProgress(percent);
-          }
-        : undefined,
-    });
+    const response = await api.post(
+      `${BASE}/${operationId}/receipts`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: onProgress
+          ? (event) => {
+              const percent = event.total
+                ? Math.round((event.loaded * 100) / event.total)
+                : 0;
+              onProgress(percent);
+            }
+          : undefined,
+      }
+    );
     return response.data.data;
   },
 

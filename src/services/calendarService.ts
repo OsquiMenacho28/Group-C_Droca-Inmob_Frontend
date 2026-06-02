@@ -55,7 +55,9 @@ export async function createVisit(
   return response.data.data;
 }
 
-export async function getAvailableVehicles(dateTimeIso: string): Promise<Vehicle[]> {
+export async function getAvailableVehicles(
+  dateTimeIso: string
+): Promise<Vehicle[]> {
   const params = new URLSearchParams({
     available: 'true',
     dateTime: dateTimeIso,
@@ -72,7 +74,10 @@ export async function assignVehicleToVisit(
   return response.data.data;
 }
 
-export async function getDayAgenda(agentId: string, day: string): Promise<CalendarEventResponse[]> {
+export async function getDayAgenda(
+  agentId: string,
+  day: string
+): Promise<CalendarEventResponse[]> {
   const params = new URLSearchParams({ agentId, day });
   const response = await api.get(`/visits/agenda?${params}`, {
     headers: { 'X-Agent-Id': agentId },
@@ -80,7 +85,10 @@ export async function getDayAgenda(agentId: string, day: string): Promise<Calend
   return response.data.data;
 }
 
-export async function cancelVisit(visitId: string, agentId: string): Promise<Visit> {
+export async function cancelVisit(
+  visitId: string,
+  agentId: string
+): Promise<Visit> {
   const response = await api.patch(
     `/visits/${visitId}/cancel`,
     {},

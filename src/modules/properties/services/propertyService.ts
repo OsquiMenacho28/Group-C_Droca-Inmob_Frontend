@@ -122,24 +122,35 @@ export const propertyService = {
   },
 
   async updatePrice(propertyId: string, newPrice: number) {
-    const response = await api.patch(`/properties/${propertyId}/price`, { newPrice });
+    const response = await api.patch(`/properties/${propertyId}/price`, {
+      newPrice,
+    });
     return response.data.data;
   },
 
   async assignAgent(propertyId: string, payload: AssignAgentPayload) {
-    const response = await api.patch(`/properties/${propertyId}/assign-agent`, payload);
+    const response = await api.patch(
+      `/properties/${propertyId}/assign-agent`,
+      payload
+    );
     return response.data.data;
   },
 
   async assignOwner(propertyId: string, payload: { ownerId: string }) {
-    const response = await api.patch(`/properties/${propertyId}/assign-owner`, payload);
+    const response = await api.patch(
+      `/properties/${propertyId}/assign-owner`,
+      payload
+    );
     return response.data.data;
   },
 
   async updateOperationType(propertyId: string, operationType: OperationType) {
-    const response = await api.patch(`/properties/${propertyId}/operation-type`, {
-      operationType,
-    });
+    const response = await api.patch(
+      `/properties/${propertyId}/operation-type`,
+      {
+        operationType,
+      }
+    );
     return response.data.data;
   },
 
@@ -151,11 +162,14 @@ export const propertyService = {
     propertyId: string,
     file: File
   ): Promise<{ uploadUrl: string; publicUrl: string; objectKey: string }> {
-    const response = await api.post(`/properties/${propertyId}/images/upload-url`, {
-      fileName: file.name,
-      fileSize: file.size,
-      mimeType: file.type,
-    });
+    const response = await api.post(
+      `/properties/${propertyId}/images/upload-url`,
+      {
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+      }
+    );
     return response.data.data;
   },
 
@@ -163,11 +177,14 @@ export const propertyService = {
     propertyId: string,
     file: File
   ): Promise<ImageUploadPolicyResponse> {
-    const response = await api.post(`/properties/${propertyId}/images/upload-policy`, {
-      fileName: file.name,
-      fileSize: file.size,
-      mimeType: file.type,
-    });
+    const response = await api.post(
+      `/properties/${propertyId}/images/upload-policy`,
+      {
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+      }
+    );
     return response.data.data;
   },
 
@@ -175,7 +192,10 @@ export const propertyService = {
     propertyId: string,
     payload: ConfirmImageUploadRequest
   ): Promise<Property> {
-    const response = await api.post(`/properties/${propertyId}/images/confirm`, payload);
+    const response = await api.post(
+      `/properties/${propertyId}/images/confirm`,
+      payload
+    );
     return response.data.data;
   },
 
@@ -188,13 +208,24 @@ export const propertyService = {
     await api.delete(`/properties/${propertyId}/images/${imageId}`);
   },
 
-  async reorderImages(propertyId: string, orderedImageIds: string[]): Promise<ImageResponse[]> {
-    const response = await api.post(`/properties/${propertyId}/images/reorder`, orderedImageIds);
+  async reorderImages(
+    propertyId: string,
+    orderedImageIds: string[]
+  ): Promise<ImageResponse[]> {
+    const response = await api.post(
+      `/properties/${propertyId}/images/reorder`,
+      orderedImageIds
+    );
     return response.data.data;
   },
 
-  async setPrimaryImage(propertyId: string, imageId: string): Promise<ImageResponse> {
-    const response = await api.put(`/properties/${propertyId}/images/${imageId}/primary`);
+  async setPrimaryImage(
+    propertyId: string,
+    imageId: string
+  ): Promise<ImageResponse> {
+    const response = await api.put(
+      `/properties/${propertyId}/images/${imageId}/primary`
+    );
     return response.data.data;
   },
 
@@ -266,17 +297,29 @@ export const propertyService = {
     await api.delete(`/documents/${documentId}`);
   },
 
-  async updateProperty(propertyId: string, payload: Partial<PropertyFormPayload>) {
+  async updateProperty(
+    propertyId: string,
+    payload: Partial<PropertyFormPayload>
+  ) {
     const response = await api.put(`/properties/${propertyId}`, payload);
     return response.data.data;
   },
 
-  async updatePropertyAsAgent(propertyId: string, payload: Partial<PropertyFormPayload>) {
-    const response = await api.patch(`/properties/${propertyId}/agent-update`, payload);
+  async updatePropertyAsAgent(
+    propertyId: string,
+    payload: Partial<PropertyFormPayload>
+  ) {
+    const response = await api.patch(
+      `/properties/${propertyId}/agent-update`,
+      payload
+    );
     return response.data.data;
   },
 
-  async uploadExclusivityContract(propertyId: string, file: File): Promise<DocumentResponse> {
+  async uploadExclusivityContract(
+    propertyId: string,
+    file: File
+  ): Promise<DocumentResponse> {
     const { uploadUrl, objectKey } = await this.generateDocumentUploadUrl({
       propertyId,
       documentType: 'EXCLUSIVITY_CONTRACT',
@@ -292,7 +335,9 @@ export const propertyService = {
     });
 
     if (!uploadResponse.ok) {
-      throw new Error(`Error al subir el archivo: ${uploadResponse.statusText}`);
+      throw new Error(
+        `Error al subir el archivo: ${uploadResponse.statusText}`
+      );
     }
 
     return await this.confirmDocumentUpload(
@@ -305,7 +350,11 @@ export const propertyService = {
     );
   },
 
-  async updateLocation(propertyId: string, latitude: number, longitude: number) {
+  async updateLocation(
+    propertyId: string,
+    latitude: number,
+    longitude: number
+  ) {
     const response = await api.patch(`/properties/${propertyId}/location`, {
       latitude,
       longitude,
@@ -326,11 +375,16 @@ export const propertyService = {
     return response.data.data;
   },
 
-  async getOperationByPropertyId(propertyId: string): Promise<OperationData | null> {
+  async getOperationByPropertyId(
+    propertyId: string
+  ): Promise<OperationData | null> {
     try {
       const response = await api.get('/operations');
       const operations = (response.data.data || []) as OperationData[];
-      return operations.find((operation) => operation.propertyId === propertyId) || null;
+      return (
+        operations.find((operation) => operation.propertyId === propertyId) ||
+        null
+      );
     } catch (error) {
       console.warn(`No operation found for property ${propertyId}`, error);
       return null;

@@ -10,11 +10,15 @@
           :validation-status="errors.firstName ? 'error' : undefined"
           :validation-message="errors.firstName"
           :class="{
-            'border-blue-500 ring-2 ring-blue-200': isFieldModified('firstName'),
+            'border-blue-500 ring-2 ring-blue-200':
+              isFieldModified('firstName'),
           }"
           @blur="handleFirstNameBlur"
         />
-        <p v-if="isFieldModified('firstName')" class="text-xs text-blue-600 mt-1">
+        <p
+          v-if="isFieldModified('firstName')"
+          class="text-xs text-blue-600 mt-1"
+        >
           {{ t('userForm.modifyingName') }}
         </p>
       </div>
@@ -32,7 +36,10 @@
           }"
           @blur="handleLastNameBlur"
         />
-        <p v-if="isFieldModified('lastName')" class="text-xs text-blue-600 mt-1">
+        <p
+          v-if="isFieldModified('lastName')"
+          class="text-xs text-blue-600 mt-1"
+        >
           {{ t('userForm.modifyingLastName') }}
         </p>
       </div>
@@ -50,7 +57,10 @@
           @input="handleEmailInput"
           @blur="handleEmailBlur"
         />
-        <p v-if="isFieldModified('email') && !isEditing" class="text-xs text-blue-600 mt-1">
+        <p
+          v-if="isFieldModified('email') && !isEditing"
+          class="text-xs text-blue-600 mt-1"
+        >
           {{ t('userForm.modifyingEmail') }}
         </p>
         <p v-if="emailChecking" class="text-xs text-gray-500 mt-1">
@@ -85,11 +95,15 @@
           :validation-status="errors.birthDate ? 'error' : undefined"
           :validation-message="errors.birthDate"
           :class="{
-            'border-blue-500 ring-2 ring-blue-200': isFieldModified('birthDate'),
+            'border-blue-500 ring-2 ring-blue-200':
+              isFieldModified('birthDate'),
           }"
           @blur="handleBirthDateBlur"
         />
-        <p v-if="isFieldModified('birthDate')" class="text-xs text-blue-600 mt-1">
+        <p
+          v-if="isFieldModified('birthDate')"
+          class="text-xs text-blue-600 mt-1"
+        >
           {{ t('userForm.modifyingName') }}
         </p>
       </div>
@@ -103,11 +117,18 @@
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         >
           <option :value="null">{{ t('adminProperties.notAssigned') }}</option>
-          <option v-for="agent in activeAgents" :key="agent.id" :value="agent.id">
+          <option
+            v-for="agent in activeAgents"
+            :key="agent.id"
+            :value="agent.id"
+          >
             {{ agent.fullName }}
           </option>
         </select>
-        <p v-if="isFieldModified('assignedAgentId')" class="text-xs text-blue-600 mt-1">
+        <p
+          v-if="isFieldModified('assignedAgentId')"
+          class="text-xs text-blue-600 mt-1"
+        >
           {{ t('userForm.modifyingRole') }}
         </p>
       </div>
@@ -123,13 +144,20 @@
         :disabled="isEditing"
         required
       >
-        <option v-for="option in availableUserTypes" :key="option.value" :value="option.value">
+        <option
+          v-for="option in availableUserTypes"
+          :key="option.value"
+          :value="option.value"
+        >
           {{ option.label }}
         </option>
       </select>
     </div>
 
-    <div v-if="!clientOnly && userType === 'EMPLOYEE'" class="space-y-4 border-t pt-4">
+    <div
+      v-if="!clientOnly && userType === 'EMPLOYEE'"
+      class="space-y-4 border-t pt-4"
+    >
       <h3 class="text-md font-semibold">{{ t('userForm.workInfo') }}</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -174,8 +202,13 @@
       </div>
     </div>
 
-    <div v-if="ownerOnly || (!clientOnly && userType === 'OWNER')" class="space-y-4 border-t pt-4">
-      <h3 class="text-md font-semibold dark:text-white">{{ t('userForm.fiscalInfo') }}</h3>
+    <div
+      v-if="ownerOnly || (!clientOnly && userType === 'OWNER')"
+      class="space-y-4 border-t pt-4"
+    >
+      <h3 class="text-md font-semibold dark:text-white">
+        {{ t('userForm.fiscalInfo') }}
+      </h3>
       <div>
         <fwb-input
           v-model="taxId"
@@ -200,24 +233,37 @@
       v-if="(!clientOnly && userType === 'INTERESTED_CLIENT') || clientOnly"
       class="space-y-4 border-t pt-4"
     >
-      <h3 class="text-md font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+      <h3
+        class="text-md font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider"
+      >
         {{ t('clientDetails.searchPreferences') }}
       </h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="col-span-2">
           <label class="block mb-2 text-sm font-medium text-primary">
-            {{ t('userForm.preferredZones') || 'Zonas de interés (Presiona Enter para añadir)' }}
+            {{
+              t('userForm.preferredZones') ||
+              'Zonas de interés (Presiona Enter para añadir)'
+            }}
           </label>
           <div class="relative flex gap-2">
             <div class="flex-1">
               <fwb-input
                 v-model="newZone"
-                :placeholder="t('userForm.zonePlaceholder') || 'Ej: Equipetrol, Sopocachi...'"
+                :placeholder="
+                  t('userForm.zonePlaceholder') ||
+                  'Ej: Equipetrol, Sopocachi...'
+                "
                 @keydown.enter.prevent="addZone"
               />
             </div>
-            <fwb-button size="xs" color="alternative" type="button" @click.prevent="addZone">
+            <fwb-button
+              size="xs"
+              color="alternative"
+              type="button"
+              @click.prevent="addZone"
+            >
               {{ t('common.add') || 'Añadir' }}
             </fwb-button>
           </div>
@@ -249,7 +295,10 @@
             :class="{ 'border-blue-500 ring-2': isFieldModified('minRooms') }"
             @blur="handleMinRoomsBlur"
           />
-          <p v-if="isFieldModified('minRooms')" class="text-xs text-blue-600 mt-1">
+          <p
+            v-if="isFieldModified('minRooms')"
+            class="text-xs text-blue-600 mt-1"
+          >
             {{ t('userForm.modifyingPreferences') }}
           </p>
         </div>
@@ -263,7 +312,10 @@
             :class="{ 'border-blue-500 ring-2': isFieldModified('maxRooms') }"
             @blur="handleMaxRoomsBlur"
           />
-          <p v-if="isFieldModified('maxRooms')" class="text-xs text-blue-600 mt-1">
+          <p
+            v-if="isFieldModified('maxRooms')"
+            class="text-xs text-blue-600 mt-1"
+          >
             {{ t('userForm.modifyingPreferences') }}
           </p>
         </div>
@@ -276,7 +328,10 @@
             :class="{ 'border-blue-500 ring-2': isFieldModified('budget') }"
             @blur="handleBudgetBlur"
           />
-          <p v-if="isFieldModified('budget')" class="text-xs text-blue-600 mt-1">
+          <p
+            v-if="isFieldModified('budget')"
+            class="text-xs text-blue-600 mt-1"
+          >
             {{ t('userForm.modifyingBudget') }}
           </p>
         </div>
@@ -288,15 +343,26 @@
           <select
             v-model="preferredPropertyType"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            :class="{ 'border-blue-500 ring-2': isFieldModified('preferredPropertyType') }"
+            :class="{
+              'border-blue-500 ring-2': isFieldModified(
+                'preferredPropertyType'
+              ),
+            }"
             @change="handlePropertyTypeChange"
           >
             <option value="">{{ t('userForm.noPreference') }}</option>
-            <option value="DEPARTAMENTO">{{ t('propertyType.apartment') }}</option>
+            <option value="DEPARTAMENTO">
+              {{ t('propertyType.apartment') }}
+            </option>
             <option value="CASA">{{ t('propertyType.house') }}</option>
-            <option value="COMERCIAL">{{ t('propertyType.commercialSpace') }}</option>
+            <option value="COMERCIAL">
+              {{ t('propertyType.commercialSpace') }}
+            </option>
           </select>
-          <p v-if="isFieldModified('preferredPropertyType')" class="text-xs text-blue-600 mt-1">
+          <p
+            v-if="isFieldModified('preferredPropertyType')"
+            class="text-xs text-blue-600 mt-1"
+          >
             {{ t('userForm.modifyingPreferences') }}
           </p>
         </div>
@@ -307,7 +373,11 @@
       <fwb-button color="alternative" type="button" @click="$emit('cancel')">
         {{ t('users.form.cancel') }}
       </fwb-button>
-      <fwb-button type="submit" gradient="blue" :disabled="!isFormValid || emailChecking">
+      <fwb-button
+        type="submit"
+        gradient="blue"
+        :disabled="!isFormValid || emailChecking"
+      >
         {{ isEditing ? t('users.form.update') : t('users.form.create') }}
       </fwb-button>
     </div>
@@ -315,606 +385,654 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed, onMounted } from 'vue';
-  import { useForm } from 'vee-validate';
-  import { toTypedSchema } from '@vee-validate/zod';
-  import { FwbInput, FwbButton, FwbBadge } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
+import { ref, watch, computed, onMounted } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { FwbInput, FwbButton, FwbBadge } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
 
-  import type { UserFormPayload, User } from '@/types/user';
-  import { userSchema } from '@/modules/auth/schemas/userSchema';
-  import type { UserFormValues } from '@/modules/auth/schemas/userSchema';
-  import { useEmailValidation } from '@/composables/useEmailValidation';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
+import type { UserFormPayload, User } from '@/types/user';
+import { userSchema } from '@/modules/auth/schemas/userSchema';
+import type { UserFormValues } from '@/modules/auth/schemas/userSchema';
+import { useEmailValidation } from '@/composables/useEmailValidation';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const props = defineProps<{
-    initialData?: Record<string, unknown>;
-    isEditing?: boolean;
-    clientOnly?: boolean;
-    ownerOnly?: boolean;
-  }>();
+const props = defineProps<{
+  initialData?: Record<string, unknown>;
+  isEditing?: boolean;
+  clientOnly?: boolean;
+  ownerOnly?: boolean;
+}>();
 
-  const emit = defineEmits(['submit', 'cancel']);
-  const modifiedFields = ref<Set<string>>(new Set());
-  const authStore = useAuthStore();
-  const currentUser = computed(() => authStore.user as UserClaims | null);
-  const isAdmin = computed(() => (currentUser.value?.roles as string[])?.includes('ADMIN'));
+const emit = defineEmits(['submit', 'cancel']);
+const modifiedFields = ref<Set<string>>(new Set());
+const authStore = useAuthStore();
+const currentUser = computed(() => authStore.user as UserClaims | null);
+const isAdmin = computed(() =>
+  (currentUser.value?.roles as string[])?.includes('ADMIN')
+);
 
-  // Zonas y rangos
-  const newZone = ref('');
-  const preferredZonesList = ref<string[]>([]);
-  const minRooms = ref<number | undefined>(undefined);
-  const maxRooms = ref<number | undefined>(undefined);
+// Zonas y rangos
+const newZone = ref('');
+const preferredZonesList = ref<string[]>([]);
+const minRooms = ref<number | undefined>(undefined);
+const maxRooms = ref<number | undefined>(undefined);
 
-  // Formato robusto para fechas (soporta arrays serialize-deserialized del backend)
-  const toDateString = (val: unknown): string => {
-    if (!val) return '';
-    if (Array.isArray(val)) {
-      const [year, month, day] = val;
-      const y = String(year);
-      const m = String(month).padStart(2, '0');
-      const d = String(day).padStart(2, '0');
+// Formato robusto para fechas (soporta arrays serialize-deserialized del backend)
+const toDateString = (val: unknown): string => {
+  if (!val) return '';
+  if (Array.isArray(val)) {
+    const [year, month, day] = val;
+    const y = String(year);
+    const m = String(month).padStart(2, '0');
+    const d = String(day).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  if (typeof val === 'string' && val.includes(',')) {
+    const parts = val.replace(/[\[\]]/g, '').split(',');
+    if (parts.length === 3) {
+      const y = parts[0].trim();
+      const m = parts[1].trim().padStart(2, '0');
+      const d = parts[2].trim().padStart(2, '0');
       return `${y}-${m}-${d}`;
     }
-    if (typeof val === 'string' && val.includes(',')) {
-      const parts = val.replace(/[\[\]]/g, '').split(',');
-      if (parts.length === 3) {
-        const y = parts[0].trim();
-        const m = parts[1].trim().padStart(2, '0');
-        const d = parts[2].trim().padStart(2, '0');
-        return `${y}-${m}-${d}`;
-      }
-    }
-    return String(val).split('T')[0];
-  };
+  }
+  return String(val).split('T')[0];
+};
 
-  watch(
-    preferredZonesList,
-    () => {
-      modifiedFields.value.add('preferredZones');
-    },
-    { deep: true }
-  );
+watch(
+  preferredZonesList,
+  () => {
+    modifiedFields.value.add('preferredZones');
+  },
+  { deep: true }
+);
 
-  watch(minRooms, () => {
-    modifiedFields.value.add('minRooms');
-  });
+watch(minRooms, () => {
+  modifiedFields.value.add('minRooms');
+});
 
-  watch(maxRooms, () => {
-    modifiedFields.value.add('maxRooms');
-  });
+watch(maxRooms, () => {
+  modifiedFields.value.add('maxRooms');
+});
 
-  const allUsers = ref<User[]>([]);
-  const activeAgents = computed(() =>
-    allUsers.value.filter(
-      (u) => (u.userType === 'EMPLOYEE' || u.userType === 'ADMIN') && u.status === 'ACTIVE'
-    )
-  );
+const allUsers = ref<User[]>([]);
+const activeAgents = computed(() =>
+  allUsers.value.filter(
+    (u) =>
+      (u.userType === 'EMPLOYEE' || u.userType === 'ADMIN') &&
+      u.status === 'ACTIVE'
+  )
+);
 
-  const {
-    emailFormatError,
-    emailDuplicateError,
-    emailChecking,
-    validateEmailFormat,
-    validateEmailUniqueness,
-    onEmailInput,
-  } = useEmailValidation();
+const {
+  emailFormatError,
+  emailDuplicateError,
+  emailChecking,
+  validateEmailFormat,
+  validateEmailUniqueness,
+  onEmailInput,
+} = useEmailValidation();
 
-  const { defineField, handleSubmit, values, setValues, errors, resetForm } = useForm({
+const { defineField, handleSubmit, values, setValues, errors, resetForm } =
+  useForm({
     validationSchema: toTypedSchema(userSchema),
     initialValues: mapInitialData(),
   });
 
-  onMounted(async () => {
-    if (isAdmin.value) {
-      try {
-        const { userService } = await import('@/services/userService');
-        const res = await userService.getUsers(0, 1000);
-        allUsers.value = res.data || [];
-      } catch (e) {
-        console.error('Failed to load agents for UserForm:', e);
-      }
-    }
-  });
-
-  const [firstName, firstNameAttrs] = defineField('firstName');
-  const [lastName, lastNameAttrs] = defineField('lastName');
-  const [email] = defineField('email');
-  const [phone, phoneAttrs] = defineField('phone');
-  const [birthDate, birthDateAttrs] = defineField('birthDate');
-  const [userType] = defineField('userType');
-  const [department, departmentAttrs] = defineField('department');
-  const [position, positionAttrs] = defineField('position');
-  const [hireDate] = defineField('hireDate');
-  const [taxId, taxIdAttrs] = defineField('taxId');
-  const [budget] = defineField('budget');
-  const [preferredPropertyType] = defineField('preferredPropertyType');
-  const [assignedAgentId] = defineField('assignedAgentId');
-
-  function mapInitialData(): UserFormValues {
-    const d = props.initialData;
-    if (!d) {
-      return {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        userType: props.ownerOnly ? 'OWNER' : props.clientOnly ? 'INTERESTED_CLIENT' : 'EMPLOYEE',
-        birthDate: '',
-        department: '',
-        position: '',
-        hireDate: '',
-        taxId: '',
-        preferredContactMethod: undefined,
-        budget: '',
-      };
-    }
-
-    return {
-      firstName: String(d.firstName || ''),
-      lastName: String(d.lastName || ''),
-      email: String(d.email || ''),
-      phone: String(d.phone || ''),
-      userType: String(
-        d.userType ||
-          d.personType ||
-          (props.ownerOnly ? 'OWNER' : props.clientOnly ? 'INTERESTED_CLIENT' : 'EMPLOYEE')
-      ) as UserFormValues['userType'],
-      birthDate: toDateString(d.birthDate),
-      department: String(d.department || ''),
-      position: String(d.position || ''),
-      hireDate: toDateString(d.hireDate),
-      taxId: String(d.taxId || d.nit || ''),
-      preferredContactMethod:
-        (d.preferredContactMethod as 'EMAIL' | 'PHONE' | 'WHATSAPP' | undefined) || undefined,
-      budget: String(d.budget || ''),
-      preferredZone: String(d.preferredZone || ''),
-      preferredPropertyType: String(d.preferredPropertyType || ''),
-      preferredRooms: (d.preferredRooms as number | string) || '',
-      assignedAgentId: String(d.assignedAgentId || ''),
-    };
-  }
-
-  const originalValues = ref<UserFormValues>(mapInitialData());
-
-  // Sincronizar zonas y rangos desde initialData
-  const syncPreferencesFromInitialData = (data: Record<string, unknown>) => {
-    if (data.preferredZones && Array.isArray(data.preferredZones)) {
-      preferredZonesList.value = [...data.preferredZones];
-    }
-    if (data.minRooms != null) {
-      minRooms.value = Number(data.minRooms);
-    }
-    if (data.maxRooms != null) {
-      maxRooms.value = Number(data.maxRooms);
-    }
-  };
-
-  watch(
-    () => props.ownerOnly,
-    (val) => {
-      if (val) {
-        userType.value = 'OWNER';
-      }
-    },
-    { immediate: true }
-  );
-
-  watch(
-    () => props.clientOnly,
-    (val) => {
-      if (val) {
-        userType.value = 'INTERESTED_CLIENT';
-      }
-    },
-    { immediate: true }
-  );
-
-  const addZone = () => {
-    const val = newZone.value.trim();
-    if (val && !preferredZonesList.value.includes(val)) {
-      preferredZonesList.value.push(val);
-      modifiedFields.value.add('preferredZones');
-      newZone.value = '';
-    }
-  };
-
-  const removeZone = (zone: string) => {
-    preferredZonesList.value = preferredZonesList.value.filter((z) => z !== zone);
-    modifiedFields.value.add('preferredZones');
-  };
-
-  const handleFirstNameBlur = () => firstNameAttrs.value.onBlur?.();
-  const handleLastNameBlur = () => lastNameAttrs.value.onBlur?.();
-  const handlePhoneBlur = () => phoneAttrs.value.onBlur?.();
-  const handleBirthDateBlur = () => birthDateAttrs.value.onBlur?.();
-  const handleDepartmentBlur = () => departmentAttrs.value.onBlur?.();
-  const handlePositionBlur = () => positionAttrs.value.onBlur?.();
-  const handleTaxIdBlur = () => taxIdAttrs.value.onBlur?.();
-  const handleMinRoomsBlur = () => {
-    if (minRooms.value !== undefined && minRooms.value < 0) minRooms.value = 0;
-    modifiedFields.value.add('minRooms');
-  };
-  const handleMaxRoomsBlur = () => {
-    if (maxRooms.value !== undefined && maxRooms.value < 0) maxRooms.value = 0;
-    modifiedFields.value.add('maxRooms');
-  };
-  const handleBudgetBlur = () => {
-    if (budget.value && Number(budget.value) < 0) budget.value = '0';
-    modifiedFields.value.add('budget');
-  };
-  const handlePropertyTypeChange = () => {
-    modifiedFields.value.add('preferredPropertyType');
-  };
-
-  const handleEmailInput = () => {
-    const emailValue = email.value || '';
-    validateEmailFormat(emailValue);
-    emailDuplicateError.value = '';
-
-    onEmailInput(emailValue);
-  };
-
-  const handleEmailBlur = async () => {
-    const emailValue = email.value || '';
-    if (emailValue) {
-      const originalEmail = String(props.initialData?.email || '').toLowerCase();
-      await validateEmailUniqueness(emailValue, undefined, originalEmail);
-    }
-  };
-
-  watch(
-    () => props.initialData,
-    (newData) => {
-      if (!newData) return;
-
-      const resolvedUserType = String(
-        newData.userType ||
-          newData.personType ||
-          (props.ownerOnly ? 'OWNER' : props.clientOnly ? 'INTERESTED_CLIENT' : 'EMPLOYEE')
-      ) as UserFormValues['userType'];
-
-      const mapped: UserFormValues = {
-        firstName: String(newData.firstName || ''),
-        lastName: String(newData.lastName || ''),
-        email: String(newData.email || ''),
-        phone: String(newData.phone || ''),
-        userType: resolvedUserType,
-        birthDate: toDateString(newData.birthDate),
-        department: String(newData.department || ''),
-        position: String(newData.position || ''),
-        hireDate: toDateString(newData.hireDate),
-        taxId: String(newData.taxId || (newData.nit as string) || ''),
-        preferredContactMethod:
-          (newData.preferredContactMethod as 'EMAIL' | 'PHONE' | 'WHATSAPP' | undefined) ||
-          undefined,
-        budget: String(newData.budget || ''),
-        preferredZone: String(newData.preferredZone || ''),
-        preferredPropertyType: String(newData.preferredPropertyType || ''),
-        preferredRooms: (newData.preferredRooms as number | string) || '',
-      };
-
-      setValues(mapped);
-      originalValues.value = { ...mapped };
-      modifiedFields.value.clear();
-      resetForm({ values: mapped });
-      emailFormatError.value = '';
-      emailDuplicateError.value = '';
-
-      // Sincronizar zonas y rangos
-      syncPreferencesFromInitialData(newData);
-    },
-    { deep: true, immediate: true }
-  );
-
-  const isFieldModified = (field: string) => modifiedFields.value.has(field);
-
-  watch(
-    values,
-    (currentValues) => {
-      const original = originalValues.value;
-
-      (Object.keys(currentValues) as (keyof UserFormPayload)[]).forEach((k) => {
-        const key = k as keyof UserFormPayload;
-        if (String(currentValues[key]) !== String(original[key])) {
-          modifiedFields.value.add(key);
-        } else {
-          modifiedFields.value.delete(key);
-        }
-      });
-    },
-    { deep: true }
-  );
-
-  const emailValidationStatus = computed(() => {
-    if (emailFormatError.value) return 'error';
-    if (emailDuplicateError.value) return 'error';
-    return undefined;
-  });
-
-  const emailErrorMessage = computed(() => {
-    if (emailFormatError.value) return emailFormatError.value;
-    if (emailDuplicateError.value) return emailDuplicateError.value;
-    return '';
-  });
-
-  const isFormValid = computed(() => {
-    const hasFirstName = values.firstName?.trim() && values.firstName.trim().length >= 2;
-    const hasLastName = values.lastName?.trim() && values.lastName.trim().length >= 2;
-    const hasPhone = values.phone?.trim();
-    const hasBirthDate = values.birthDate;
-
-    const isEmailValid =
-      !emailFormatError.value && !emailDuplicateError.value && values.email?.includes('@');
-
-    let isEmployeeValid = true;
-    let isOwnerValid = true;
-
-    if (!props.clientOnly) {
-      if (values.userType === 'EMPLOYEE') {
-        isEmployeeValid = Boolean(
-          values.department?.trim() &&
-          values.department.trim().length >= 2 &&
-          values.position?.trim() &&
-          values.position.trim().length >= 2
-        );
-      }
-
-      if (values.userType === 'OWNER') {
-        isOwnerValid = Boolean(
-          values.taxId?.trim() &&
-          values.taxId.trim().length >= 7 &&
-          /^\d{7,10}$/.test(values.taxId.trim())
-        );
-      }
-    }
-
-    return (
-      hasFirstName &&
-      hasLastName &&
-      hasPhone &&
-      hasBirthDate &&
-      isEmailValid &&
-      isEmployeeValid &&
-      isOwnerValid &&
-      !emailChecking.value
-    );
-  });
-
-  const getRoleIdByUserType = (userTypeVal: string): string => {
-    const roles: Record<string, string> = {
-      ADMIN: 'rol_admin',
-      EMPLOYEE: 'rol_agent',
-      OWNER: 'rol_owner',
-      INTERESTED_CLIENT: 'rol_interested_client',
-    };
-    return roles[userTypeVal] || 'rol_interested_client';
-  };
-
-  const availableUserTypes = computed(() => {
-    const u = currentUser.value;
-    const roles = (u?.roles as string[]) || [];
-    const isAgent = roles.includes('AGENT') && !roles.includes('ADMIN');
-
-    if (isAgent) {
-      return [
-        { value: 'OWNER', label: t('users.roles.owner') },
-        { value: 'INTERESTED_CLIENT', label: t('users.roles.client') },
-      ];
-    }
-
-    return [
-      { value: 'ADMIN', label: t('users.roles.admin') },
-      { value: 'EMPLOYEE', label: t('users.roles.agent') },
-      { value: 'OWNER', label: t('users.roles.owner') },
-      { value: 'INTERESTED_CLIENT', label: t('users.roles.client') },
-    ];
-  });
-
-  const onFormSubmit = (event: Event) => {
-    event.preventDefault();
-    console.log('onFormSubmit triggered', { values, errors: errors.value });
-
+onMounted(async () => {
+  if (isAdmin.value) {
     try {
-      handleSubmit(
-        (formValues, _formActions) => {
-          console.log('handleSubmit validation passed, calling onSubmit', formValues);
-          onSubmit(formValues);
-        },
-        (validationErrors) => {
-          console.error('handleSubmit validation failed:', validationErrors);
-        }
-      )(event);
-    } catch (error) {
-      console.error('Form submission error:', error);
+      const { userService } = await import('@/services/userService');
+      const res = await userService.getUsers(0, 1000);
+      allUsers.value = res.data || [];
+    } catch (e) {
+      console.error('Failed to load agents for UserForm:', e);
     }
-  };
+  }
+});
 
-  const onSubmit = async (formValues: UserFormValues) => {
-    const originalEmail = String(props.initialData?.email || '').toLowerCase();
-    const isEmailUnique = await validateEmailUniqueness(
-      formValues.email || '',
-      undefined,
-      originalEmail
-    );
+const [firstName, firstNameAttrs] = defineField('firstName');
+const [lastName, lastNameAttrs] = defineField('lastName');
+const [email] = defineField('email');
+const [phone, phoneAttrs] = defineField('phone');
+const [birthDate, birthDateAttrs] = defineField('birthDate');
+const [userType] = defineField('userType');
+const [department, departmentAttrs] = defineField('department');
+const [position, positionAttrs] = defineField('position');
+const [hireDate] = defineField('hireDate');
+const [taxId, taxIdAttrs] = defineField('taxId');
+const [budget] = defineField('budget');
+const [preferredPropertyType] = defineField('preferredPropertyType');
+const [assignedAgentId] = defineField('assignedAgentId');
 
-    if (!isEmailUnique || emailFormatError.value || emailDuplicateError.value) {
-      return;
-    }
-
-    let payload: Record<string, unknown> = {};
-
-    if (props.isEditing) {
-      if (modifiedFields.value.has('firstName')) {
-        if (!formValues.firstName?.trim() || formValues.firstName.trim().length < 2) {
-          return;
-        }
-        payload.firstName = formValues.firstName.trim();
-      }
-
-      if (modifiedFields.value.has('lastName')) {
-        if (!formValues.lastName?.trim() || formValues.lastName.trim().length < 2) {
-          return;
-        }
-        payload.lastName = formValues.lastName.trim();
-      }
-
-      if (!props.clientOnly && modifiedFields.value.has('userType')) {
-        const ut = formValues.userType || 'INTERESTED_CLIENT';
-        payload.userType = ut;
-        payload.roleIds = [getRoleIdByUserType(ut)];
-      }
-
-      if (modifiedFields.value.has('phone')) {
-        if (!formValues.phone?.trim()) {
-          return;
-        }
-        payload.phone = formValues.phone.trim();
-      }
-
-      if (modifiedFields.value.has('birthDate')) {
-        if (!formValues.birthDate) {
-          return;
-        }
-        payload.birthDate = formValues.birthDate;
-      }
-
-      if (!props.clientOnly && modifiedFields.value.has('department')) {
-        if (formValues.userType === 'EMPLOYEE') {
-          if (!formValues.department?.trim() || formValues.department.trim().length < 2) {
-            return;
-          }
-        }
-        payload.department = formValues.department?.trim();
-      }
-
-      if (!props.clientOnly && modifiedFields.value.has('position')) {
-        if (formValues.userType === 'EMPLOYEE') {
-          if (!formValues.position?.trim() || formValues.position.trim().length < 2) {
-            return;
-          }
-        }
-        payload.position = formValues.position?.trim();
-      }
-
-      if (!props.clientOnly && modifiedFields.value.has('hireDate')) {
-        if (formValues.userType === 'EMPLOYEE' && formValues.hireDate) {
-          const hireDate = new Date(formValues.hireDate);
-          const today = new Date();
-          if (hireDate > today) {
-            return;
-          }
-        }
-        payload.hireDate = formValues.hireDate;
-      }
-
-      if (modifiedFields.value.has('taxId')) {
-        if (formValues.userType === 'OWNER') {
-          if (!formValues.taxId?.trim() || formValues.taxId.trim().length < 7) {
-            return;
-          }
-          if (!/^\d{7,10}$/.test(formValues.taxId.trim())) {
-            return;
-          }
-        }
-        payload.taxId = formValues.taxId?.trim();
-      }
-
-      if (modifiedFields.value.has('assignedAgentId')) {
-        payload.assignedAgentId = formValues.assignedAgentId || null;
-      }
-
-      // Preferencias del cliente
-      if (modifiedFields.value.has('preferredZones')) {
-        payload.preferredZones = preferredZonesList.value;
-      }
-
-      if (modifiedFields.value.has('minRooms')) {
-        payload.minRooms = minRooms.value;
-      }
-
-      if (modifiedFields.value.has('maxRooms')) {
-        payload.maxRooms = maxRooms.value;
-      }
-
-      if (modifiedFields.value.has('preferredContactMethod'))
-        payload.preferredContactMethod = formValues.preferredContactMethod;
-
-      if (modifiedFields.value.has('budget')) payload.budget = formValues.budget;
-
-      if (modifiedFields.value.has('preferredZone'))
-        payload.preferredZone = formValues.preferredZone;
-
-      if (modifiedFields.value.has('preferredPropertyType'))
-        payload.preferredPropertyType = formValues.preferredPropertyType;
-
-      if (modifiedFields.value.has('preferredRooms'))
-        payload.preferredRooms = formValues.preferredRooms
-          ? Number(formValues.preferredRooms)
-          : null;
-    } else {
-      const resolvedUserType = props.ownerOnly
+function mapInitialData(): UserFormValues {
+  const d = props.initialData;
+  if (!d) {
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      userType: props.ownerOnly
         ? 'OWNER'
         : props.clientOnly
           ? 'INTERESTED_CLIENT'
-          : formValues.userType || 'INTERESTED_CLIENT';
+          : 'EMPLOYEE',
+      birthDate: '',
+      department: '',
+      position: '',
+      hireDate: '',
+      taxId: '',
+      preferredContactMethod: undefined,
+      budget: '',
+    };
+  }
 
-      payload = {
-        firstName: (formValues.firstName || '').trim(),
-        lastName: (formValues.lastName || '').trim(),
-        email: (formValues.email || '').trim().toLowerCase(),
-        userType: resolvedUserType,
-        roleIds: [getRoleIdByUserType(resolvedUserType)],
-        birthDate: formValues.birthDate,
-        phone: (formValues.phone || '').trim(),
-        sendTemporaryCredentials: true,
-      };
+  return {
+    firstName: String(d.firstName || ''),
+    lastName: String(d.lastName || ''),
+    email: String(d.email || ''),
+    phone: String(d.phone || ''),
+    userType: String(
+      d.userType ||
+        d.personType ||
+        (props.ownerOnly
+          ? 'OWNER'
+          : props.clientOnly
+            ? 'INTERESTED_CLIENT'
+            : 'EMPLOYEE')
+    ) as UserFormValues['userType'],
+    birthDate: toDateString(d.birthDate),
+    department: String(d.department || ''),
+    position: String(d.position || ''),
+    hireDate: toDateString(d.hireDate),
+    taxId: String(d.taxId || d.nit || ''),
+    preferredContactMethod:
+      (d.preferredContactMethod as
+        | 'EMAIL'
+        | 'PHONE'
+        | 'WHATSAPP'
+        | undefined) || undefined,
+    budget: String(d.budget || ''),
+    preferredZone: String(d.preferredZone || ''),
+    preferredPropertyType: String(d.preferredPropertyType || ''),
+    preferredRooms: (d.preferredRooms as number | string) || '',
+    assignedAgentId: String(d.assignedAgentId || ''),
+  };
+}
 
-      if (props.clientOnly) {
-        if (preferredZonesList.value.length > 0) payload.preferredZones = preferredZonesList.value;
+const originalValues = ref<UserFormValues>(mapInitialData());
+
+// Sincronizar zonas y rangos desde initialData
+const syncPreferencesFromInitialData = (data: Record<string, unknown>) => {
+  if (data.preferredZones && Array.isArray(data.preferredZones)) {
+    preferredZonesList.value = [...data.preferredZones];
+  }
+  if (data.minRooms != null) {
+    minRooms.value = Number(data.minRooms);
+  }
+  if (data.maxRooms != null) {
+    maxRooms.value = Number(data.maxRooms);
+  }
+};
+
+watch(
+  () => props.ownerOnly,
+  (val) => {
+    if (val) {
+      userType.value = 'OWNER';
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.clientOnly,
+  (val) => {
+    if (val) {
+      userType.value = 'INTERESTED_CLIENT';
+    }
+  },
+  { immediate: true }
+);
+
+const addZone = () => {
+  const val = newZone.value.trim();
+  if (val && !preferredZonesList.value.includes(val)) {
+    preferredZonesList.value.push(val);
+    modifiedFields.value.add('preferredZones');
+    newZone.value = '';
+  }
+};
+
+const removeZone = (zone: string) => {
+  preferredZonesList.value = preferredZonesList.value.filter((z) => z !== zone);
+  modifiedFields.value.add('preferredZones');
+};
+
+const handleFirstNameBlur = () => firstNameAttrs.value.onBlur?.();
+const handleLastNameBlur = () => lastNameAttrs.value.onBlur?.();
+const handlePhoneBlur = () => phoneAttrs.value.onBlur?.();
+const handleBirthDateBlur = () => birthDateAttrs.value.onBlur?.();
+const handleDepartmentBlur = () => departmentAttrs.value.onBlur?.();
+const handlePositionBlur = () => positionAttrs.value.onBlur?.();
+const handleTaxIdBlur = () => taxIdAttrs.value.onBlur?.();
+const handleMinRoomsBlur = () => {
+  if (minRooms.value !== undefined && minRooms.value < 0) minRooms.value = 0;
+  modifiedFields.value.add('minRooms');
+};
+const handleMaxRoomsBlur = () => {
+  if (maxRooms.value !== undefined && maxRooms.value < 0) maxRooms.value = 0;
+  modifiedFields.value.add('maxRooms');
+};
+const handleBudgetBlur = () => {
+  if (budget.value && Number(budget.value) < 0) budget.value = '0';
+  modifiedFields.value.add('budget');
+};
+const handlePropertyTypeChange = () => {
+  modifiedFields.value.add('preferredPropertyType');
+};
+
+const handleEmailInput = () => {
+  const emailValue = email.value || '';
+  validateEmailFormat(emailValue);
+  emailDuplicateError.value = '';
+
+  onEmailInput(emailValue);
+};
+
+const handleEmailBlur = async () => {
+  const emailValue = email.value || '';
+  if (emailValue) {
+    const originalEmail = String(props.initialData?.email || '').toLowerCase();
+    await validateEmailUniqueness(emailValue, undefined, originalEmail);
+  }
+};
+
+watch(
+  () => props.initialData,
+  (newData) => {
+    if (!newData) return;
+
+    const resolvedUserType = String(
+      newData.userType ||
+        newData.personType ||
+        (props.ownerOnly
+          ? 'OWNER'
+          : props.clientOnly
+            ? 'INTERESTED_CLIENT'
+            : 'EMPLOYEE')
+    ) as UserFormValues['userType'];
+
+    const mapped: UserFormValues = {
+      firstName: String(newData.firstName || ''),
+      lastName: String(newData.lastName || ''),
+      email: String(newData.email || ''),
+      phone: String(newData.phone || ''),
+      userType: resolvedUserType,
+      birthDate: toDateString(newData.birthDate),
+      department: String(newData.department || ''),
+      position: String(newData.position || ''),
+      hireDate: toDateString(newData.hireDate),
+      taxId: String(newData.taxId || (newData.nit as string) || ''),
+      preferredContactMethod:
+        (newData.preferredContactMethod as
+          | 'EMAIL'
+          | 'PHONE'
+          | 'WHATSAPP'
+          | undefined) || undefined,
+      budget: String(newData.budget || ''),
+      preferredZone: String(newData.preferredZone || ''),
+      preferredPropertyType: String(newData.preferredPropertyType || ''),
+      preferredRooms: (newData.preferredRooms as number | string) || '',
+    };
+
+    setValues(mapped);
+    originalValues.value = { ...mapped };
+    modifiedFields.value.clear();
+    resetForm({ values: mapped });
+    emailFormatError.value = '';
+    emailDuplicateError.value = '';
+
+    // Sincronizar zonas y rangos
+    syncPreferencesFromInitialData(newData);
+  },
+  { deep: true, immediate: true }
+);
+
+const isFieldModified = (field: string) => modifiedFields.value.has(field);
+
+watch(
+  values,
+  (currentValues) => {
+    const original = originalValues.value;
+
+    (Object.keys(currentValues) as (keyof UserFormPayload)[]).forEach((k) => {
+      const key = k as keyof UserFormPayload;
+      if (String(currentValues[key]) !== String(original[key])) {
+        modifiedFields.value.add(key);
+      } else {
+        modifiedFields.value.delete(key);
+      }
+    });
+  },
+  { deep: true }
+);
+
+const emailValidationStatus = computed(() => {
+  if (emailFormatError.value) return 'error';
+  if (emailDuplicateError.value) return 'error';
+  return undefined;
+});
+
+const emailErrorMessage = computed(() => {
+  if (emailFormatError.value) return emailFormatError.value;
+  if (emailDuplicateError.value) return emailDuplicateError.value;
+  return '';
+});
+
+const isFormValid = computed(() => {
+  const hasFirstName =
+    values.firstName?.trim() && values.firstName.trim().length >= 2;
+  const hasLastName =
+    values.lastName?.trim() && values.lastName.trim().length >= 2;
+  const hasPhone = values.phone?.trim();
+  const hasBirthDate = values.birthDate;
+
+  const isEmailValid =
+    !emailFormatError.value &&
+    !emailDuplicateError.value &&
+    values.email?.includes('@');
+
+  let isEmployeeValid = true;
+  let isOwnerValid = true;
+
+  if (!props.clientOnly) {
+    if (values.userType === 'EMPLOYEE') {
+      isEmployeeValid = Boolean(
+        values.department?.trim() &&
+        values.department.trim().length >= 2 &&
+        values.position?.trim() &&
+        values.position.trim().length >= 2
+      );
+    }
+
+    if (values.userType === 'OWNER') {
+      isOwnerValid = Boolean(
+        values.taxId?.trim() &&
+        values.taxId.trim().length >= 7 &&
+        /^\d{7,10}$/.test(values.taxId.trim())
+      );
+    }
+  }
+
+  return (
+    hasFirstName &&
+    hasLastName &&
+    hasPhone &&
+    hasBirthDate &&
+    isEmailValid &&
+    isEmployeeValid &&
+    isOwnerValid &&
+    !emailChecking.value
+  );
+});
+
+const getRoleIdByUserType = (userTypeVal: string): string => {
+  const roles: Record<string, string> = {
+    ADMIN: 'rol_admin',
+    EMPLOYEE: 'rol_agent',
+    OWNER: 'rol_owner',
+    INTERESTED_CLIENT: 'rol_interested_client',
+  };
+  return roles[userTypeVal] || 'rol_interested_client';
+};
+
+const availableUserTypes = computed(() => {
+  const u = currentUser.value;
+  const roles = (u?.roles as string[]) || [];
+  const isAgent = roles.includes('AGENT') && !roles.includes('ADMIN');
+
+  if (isAgent) {
+    return [
+      { value: 'OWNER', label: t('users.roles.owner') },
+      { value: 'INTERESTED_CLIENT', label: t('users.roles.client') },
+    ];
+  }
+
+  return [
+    { value: 'ADMIN', label: t('users.roles.admin') },
+    { value: 'EMPLOYEE', label: t('users.roles.agent') },
+    { value: 'OWNER', label: t('users.roles.owner') },
+    { value: 'INTERESTED_CLIENT', label: t('users.roles.client') },
+  ];
+});
+
+const onFormSubmit = (event: Event) => {
+  event.preventDefault();
+  console.log('onFormSubmit triggered', { values, errors: errors.value });
+
+  try {
+    handleSubmit(
+      (formValues, _formActions) => {
+        console.log(
+          'handleSubmit validation passed, calling onSubmit',
+          formValues
+        );
+        onSubmit(formValues);
+      },
+      (validationErrors) => {
+        console.error('handleSubmit validation failed:', validationErrors);
+      }
+    )(event);
+  } catch (error) {
+    console.error('Form submission error:', error);
+  }
+};
+
+const onSubmit = async (formValues: UserFormValues) => {
+  const originalEmail = String(props.initialData?.email || '').toLowerCase();
+  const isEmailUnique = await validateEmailUniqueness(
+    formValues.email || '',
+    undefined,
+    originalEmail
+  );
+
+  if (!isEmailUnique || emailFormatError.value || emailDuplicateError.value) {
+    return;
+  }
+
+  let payload: Record<string, unknown> = {};
+
+  if (props.isEditing) {
+    if (modifiedFields.value.has('firstName')) {
+      if (
+        !formValues.firstName?.trim() ||
+        formValues.firstName.trim().length < 2
+      ) {
+        return;
+      }
+      payload.firstName = formValues.firstName.trim();
+    }
+
+    if (modifiedFields.value.has('lastName')) {
+      if (
+        !formValues.lastName?.trim() ||
+        formValues.lastName.trim().length < 2
+      ) {
+        return;
+      }
+      payload.lastName = formValues.lastName.trim();
+    }
+
+    if (!props.clientOnly && modifiedFields.value.has('userType')) {
+      const ut = formValues.userType || 'INTERESTED_CLIENT';
+      payload.userType = ut;
+      payload.roleIds = [getRoleIdByUserType(ut)];
+    }
+
+    if (modifiedFields.value.has('phone')) {
+      if (!formValues.phone?.trim()) {
+        return;
+      }
+      payload.phone = formValues.phone.trim();
+    }
+
+    if (modifiedFields.value.has('birthDate')) {
+      if (!formValues.birthDate) {
+        return;
+      }
+      payload.birthDate = formValues.birthDate;
+    }
+
+    if (!props.clientOnly && modifiedFields.value.has('department')) {
+      if (formValues.userType === 'EMPLOYEE') {
+        if (
+          !formValues.department?.trim() ||
+          formValues.department.trim().length < 2
+        ) {
+          return;
+        }
+      }
+      payload.department = formValues.department?.trim();
+    }
+
+    if (!props.clientOnly && modifiedFields.value.has('position')) {
+      if (formValues.userType === 'EMPLOYEE') {
+        if (
+          !formValues.position?.trim() ||
+          formValues.position.trim().length < 2
+        ) {
+          return;
+        }
+      }
+      payload.position = formValues.position?.trim();
+    }
+
+    if (!props.clientOnly && modifiedFields.value.has('hireDate')) {
+      if (formValues.userType === 'EMPLOYEE' && formValues.hireDate) {
+        const hireDate = new Date(formValues.hireDate);
+        const today = new Date();
+        if (hireDate > today) {
+          return;
+        }
+      }
+      payload.hireDate = formValues.hireDate;
+    }
+
+    if (modifiedFields.value.has('taxId')) {
+      if (formValues.userType === 'OWNER') {
+        if (!formValues.taxId?.trim() || formValues.taxId.trim().length < 7) {
+          return;
+        }
+        if (!/^\d{7,10}$/.test(formValues.taxId.trim())) {
+          return;
+        }
+      }
+      payload.taxId = formValues.taxId?.trim();
+    }
+
+    if (modifiedFields.value.has('assignedAgentId')) {
+      payload.assignedAgentId = formValues.assignedAgentId || null;
+    }
+
+    // Preferencias del cliente
+    if (modifiedFields.value.has('preferredZones')) {
+      payload.preferredZones = preferredZonesList.value;
+    }
+
+    if (modifiedFields.value.has('minRooms')) {
+      payload.minRooms = minRooms.value;
+    }
+
+    if (modifiedFields.value.has('maxRooms')) {
+      payload.maxRooms = maxRooms.value;
+    }
+
+    if (modifiedFields.value.has('preferredContactMethod'))
+      payload.preferredContactMethod = formValues.preferredContactMethod;
+
+    if (modifiedFields.value.has('budget')) payload.budget = formValues.budget;
+
+    if (modifiedFields.value.has('preferredZone'))
+      payload.preferredZone = formValues.preferredZone;
+
+    if (modifiedFields.value.has('preferredPropertyType'))
+      payload.preferredPropertyType = formValues.preferredPropertyType;
+
+    if (modifiedFields.value.has('preferredRooms'))
+      payload.preferredRooms = formValues.preferredRooms
+        ? Number(formValues.preferredRooms)
+        : null;
+  } else {
+    const resolvedUserType = props.ownerOnly
+      ? 'OWNER'
+      : props.clientOnly
+        ? 'INTERESTED_CLIENT'
+        : formValues.userType || 'INTERESTED_CLIENT';
+
+    payload = {
+      firstName: (formValues.firstName || '').trim(),
+      lastName: (formValues.lastName || '').trim(),
+      email: (formValues.email || '').trim().toLowerCase(),
+      userType: resolvedUserType,
+      roleIds: [getRoleIdByUserType(resolvedUserType)],
+      birthDate: formValues.birthDate,
+      phone: (formValues.phone || '').trim(),
+      sendTemporaryCredentials: true,
+    };
+
+    if (props.clientOnly) {
+      if (preferredZonesList.value.length > 0)
+        payload.preferredZones = preferredZonesList.value;
+      if (minRooms.value !== null) payload.minRooms = minRooms.value;
+      if (maxRooms.value !== null) payload.maxRooms = maxRooms.value;
+      if (formValues.preferredContactMethod)
+        payload.preferredContactMethod = formValues.preferredContactMethod;
+      if (formValues.budget) payload.budget = formValues.budget;
+      if (formValues.preferredZone)
+        payload.preferredZone = formValues.preferredZone;
+      if (formValues.preferredPropertyType)
+        payload.preferredPropertyType = formValues.preferredPropertyType;
+      if (formValues.preferredRooms)
+        payload.preferredRooms = Number(formValues.preferredRooms);
+    } else {
+      if (formValues.userType === 'EMPLOYEE') {
+        payload.department = formValues.department?.trim();
+        payload.position = formValues.position?.trim();
+        if (formValues.hireDate) payload.hireDate = formValues.hireDate;
+      } else if (formValues.userType === 'OWNER') {
+        payload.taxId = formValues.taxId?.trim();
+      } else if (formValues.userType === 'INTERESTED_CLIENT') {
+        if (preferredZonesList.value.length > 0)
+          payload.preferredZones = preferredZonesList.value;
         if (minRooms.value !== null) payload.minRooms = minRooms.value;
         if (maxRooms.value !== null) payload.maxRooms = maxRooms.value;
         if (formValues.preferredContactMethod)
           payload.preferredContactMethod = formValues.preferredContactMethod;
         if (formValues.budget) payload.budget = formValues.budget;
-        if (formValues.preferredZone) payload.preferredZone = formValues.preferredZone;
+        if (formValues.preferredZone)
+          payload.preferredZone = formValues.preferredZone;
         if (formValues.preferredPropertyType)
           payload.preferredPropertyType = formValues.preferredPropertyType;
-        if (formValues.preferredRooms) payload.preferredRooms = Number(formValues.preferredRooms);
-      } else {
-        if (formValues.userType === 'EMPLOYEE') {
-          payload.department = formValues.department?.trim();
-          payload.position = formValues.position?.trim();
-          if (formValues.hireDate) payload.hireDate = formValues.hireDate;
-        } else if (formValues.userType === 'OWNER') {
-          payload.taxId = formValues.taxId?.trim();
-        } else if (formValues.userType === 'INTERESTED_CLIENT') {
-          if (preferredZonesList.value.length > 0)
-            payload.preferredZones = preferredZonesList.value;
-          if (minRooms.value !== null) payload.minRooms = minRooms.value;
-          if (maxRooms.value !== null) payload.maxRooms = maxRooms.value;
-          if (formValues.preferredContactMethod)
-            payload.preferredContactMethod = formValues.preferredContactMethod;
-          if (formValues.budget) payload.budget = formValues.budget;
-          if (formValues.preferredZone) payload.preferredZone = formValues.preferredZone;
-          if (formValues.preferredPropertyType)
-            payload.preferredPropertyType = formValues.preferredPropertyType;
-          if (formValues.preferredRooms) payload.preferredRooms = Number(formValues.preferredRooms);
-        }
+        if (formValues.preferredRooms)
+          payload.preferredRooms = Number(formValues.preferredRooms);
       }
     }
+  }
 
-    if (props.ownerOnly) {
-      payload.userType = 'OWNER';
-      payload.roleIds = ['rol_owner'];
-    }
+  if (props.ownerOnly) {
+    payload.userType = 'OWNER';
+    payload.roleIds = ['rol_owner'];
+  }
 
-    if (props.isEditing && Object.keys(payload).length === 0) {
-      // No hay cambios
-    }
+  if (props.isEditing && Object.keys(payload).length === 0) {
+    // No hay cambios
+  }
 
-    emit('submit', payload);
-  };
+  emit('submit', payload);
+};
 </script>

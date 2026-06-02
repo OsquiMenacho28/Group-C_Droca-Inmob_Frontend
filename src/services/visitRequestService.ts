@@ -4,7 +4,11 @@ import i18n from '@/locales/i18n';
 
 const { t } = i18n.global;
 
-import type { ClientVisitRequestDTO, VisitRequestResponse, Property } from '@/types/visitCalendar';
+import type {
+  ClientVisitRequestDTO,
+  VisitRequestResponse,
+  Property,
+} from '@/types/visitCalendar';
 
 export async function getAvailableProperties(filters?: {
   title?: string;
@@ -25,9 +29,12 @@ export async function getAvailableProperties(filters?: {
   const params = new URLSearchParams({ status: 'DISPONIBLE' });
   if (filters?.title) params.append('title', filters.title);
   if (filters?.type) params.append('type', filters.type);
-  if (filters?.operationType) params.append('operationType', filters.operationType);
-  if (filters?.minPrice !== undefined) params.append('minPrice', String(filters.minPrice));
-  if (filters?.maxPrice !== undefined) params.append('maxPrice', String(filters.maxPrice));
+  if (filters?.operationType)
+    params.append('operationType', filters.operationType);
+  if (filters?.minPrice !== undefined)
+    params.append('minPrice', String(filters.minPrice));
+  if (filters?.maxPrice !== undefined)
+    params.append('maxPrice', String(filters.maxPrice));
   if (filters?.sortBy) params.append('sortBy', filters.sortBy);
   if (filters?.sortOrder) params.append('sortOrder', filters.sortOrder);
   if (filters?.page !== undefined) params.append('page', String(filters.page));
@@ -48,8 +55,12 @@ export async function getAvailableProperties(filters?: {
   };
 }
 
-export async function getVisitCountForProperty(propertyId: string): Promise<number> {
-  const response = await api.get(`/visit-requests/count/property/${propertyId}`);
+export async function getVisitCountForProperty(
+  propertyId: string
+): Promise<number> {
+  const response = await api.get(
+    `/visit-requests/count/property/${propertyId}`
+  );
   return response.data.data;
 }
 
@@ -65,12 +76,16 @@ export async function createVisitRequest(
   return response.data.data;
 }
 
-export async function getMyVisitRequests(clientId: string): Promise<VisitRequestResponse[]> {
+export async function getMyVisitRequests(
+  clientId: string
+): Promise<VisitRequestResponse[]> {
   const response = await api.get(`/visit-requests/client/${clientId}`);
   return response.data.data;
 }
 
-export async function getPendingRequestsForAgent(agentId: string): Promise<VisitRequestResponse[]> {
+export async function getPendingRequestsForAgent(
+  agentId: string
+): Promise<VisitRequestResponse[]> {
   const response = await api.get(`/visit-requests/agent/${agentId}`);
   return response.data.data;
 }

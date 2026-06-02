@@ -49,7 +49,9 @@ export function useUsers() {
     }
   };
 
-  const fetchUserProfile = async (authUserId: string): Promise<Record<string, unknown> | null> => {
+  const fetchUserProfile = async (
+    authUserId: string
+  ): Promise<Record<string, unknown> | null> => {
     try {
       const profile = await personService.getPersonByAuthUserId(authUserId);
       return profile;
@@ -86,13 +88,24 @@ export function useUsers() {
         const profile = await personService.getPersonByAuthUserId(id);
         if (profile?.id && profile.personType === 'INTERESTED_CLIENT') {
           const prefsPayload = {
-            preferredZones: payload.preferredZones || profile.preferredZones || [],
-            minRooms: payload.minRooms !== undefined ? payload.minRooms : profile.minRooms,
-            maxRooms: payload.maxRooms !== undefined ? payload.maxRooms : profile.maxRooms,
+            preferredZones:
+              payload.preferredZones || profile.preferredZones || [],
+            minRooms:
+              payload.minRooms !== undefined
+                ? payload.minRooms
+                : profile.minRooms,
+            maxRooms:
+              payload.maxRooms !== undefined
+                ? payload.maxRooms
+                : profile.maxRooms,
             maxPrice: Number(payload.budget || profile.budget || 0),
-            preferredPropertyType: payload.preferredPropertyType || profile.preferredPropertyType,
+            preferredPropertyType:
+              payload.preferredPropertyType || profile.preferredPropertyType,
           };
-          await personService.savePreferences(profile.id as string, prefsPayload);
+          await personService.savePreferences(
+            profile.id as string,
+            prefsPayload
+          );
         }
       }
 

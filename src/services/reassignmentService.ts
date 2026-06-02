@@ -11,7 +11,10 @@ const reassignmentService = {
     visitId: string,
     payload: ReassignmentRequest
   ): Promise<ReassignmentSolicitation> {
-    const response = await api.post(`/reassignments/visits/${visitId}/reassignment`, payload);
+    const response = await api.post(
+      `/reassignments/visits/${visitId}/reassignment`,
+      payload
+    );
     return response.data.data;
   },
 
@@ -19,7 +22,10 @@ const reassignmentService = {
     requestId: string,
     payload: ReassignmentResponseRequest
   ): Promise<ReassignmentSolicitation> {
-    const response = await api.put(`/reassignments/${requestId}/reply`, payload);
+    const response = await api.put(
+      `/reassignments/${requestId}/reply`,
+      payload
+    );
     return response.data.data;
   },
 

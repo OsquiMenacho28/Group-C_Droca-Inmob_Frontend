@@ -1,7 +1,11 @@
 <template>
-  <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-6">
+  <div
+    class="flex flex-col md:flex-row justify-between items-center gap-4 py-6"
+  >
     <!-- Items per page selector -->
-    <div class="flex items-center gap-2 text-sm text-secondary order-2 md:order-1">
+    <div
+      class="flex items-center gap-2 text-sm text-secondary order-2 md:order-1"
+    >
       <span>{{ t('common.show') }}</span>
       <fwb-select
         :model-value="String(pageSize)"
@@ -87,74 +91,74 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import { FwbSelect, FwbInput } from 'flowbite-vue';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { FwbSelect, FwbInput } from 'flowbite-vue';
 
-  const props = defineProps<{
-    currentPage: number;
-    pageSize: number;
-    totalPages: number;
-    total: number;
-    sizeOptions?: number[];
-  }>();
+const props = defineProps<{
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  total: number;
+  sizeOptions?: number[];
+}>();
 
-  const emit = defineEmits<{
-    (e: 'update:currentPage', value: number): void;
-    (e: 'update:pageSize', value: number): void;
-    (e: 'change'): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'update:currentPage', value: number): void;
+  (e: 'update:pageSize', value: number): void;
+  (e: 'change'): void;
+}>();
 
-  const { t } = useI18n();
-  const jumpPage = ref<number | string>('');
-  const sizeOptions = computed(() => props.sizeOptions || [5, 10, 20, 50, 100]);
-  const sizeOptionsMapped = computed(() =>
-    sizeOptions.value.map((s) => ({ value: String(s), name: String(s) }))
-  );
+const { t } = useI18n();
+const jumpPage = ref<number | string>('');
+const sizeOptions = computed(() => props.sizeOptions || [5, 10, 20, 50, 100]);
+const sizeOptionsMapped = computed(() =>
+  sizeOptions.value.map((s) => ({ value: String(s), name: String(s) }))
+);
 
-  const visiblePages = computed(() => {
-    const pages: number[] = [];
-    const total = props.totalPages;
-    const current = props.currentPage;
+const visiblePages = computed(() => {
+  const pages: number[] = [];
+  const total = props.totalPages;
+  const current = props.currentPage;
 
-    if (total <= 7) {
-      for (let i = 0; i < total; i++) pages.push(i);
-    } else {
-      pages.push(0);
-      if (current > 3) pages.push(-1); // ellipsis
+  if (total <= 7) {
+    for (let i = 0; i < total; i++) pages.push(i);
+  } else {
+    pages.push(0);
+    if (current > 3) pages.push(-1); // ellipsis
 
-      const start = Math.max(1, current - 1);
-      const end = Math.min(total - 2, current + 1);
+    const start = Math.max(1, current - 1);
+    const end = Math.min(total - 2, current + 1);
 
-      for (let i = start; i <= end; i++) {
-        if (!pages.includes(i)) pages.push(i);
-      }
-
-      if (current < total - 4) pages.push(-1); // ellipsis
-      if (!pages.includes(total - 1)) pages.push(total - 1);
+    for (let i = start; i <= end; i++) {
+      if (!pages.includes(i)) pages.push(i);
     }
-    return pages;
-  });
 
-  const onPageChange = (page: number) => {
-    if (page >= 0 && page < props.totalPages) {
-      emit('update:currentPage', page);
-      emit('change');
-    }
-  };
+    if (current < total - 4) pages.push(-1); // ellipsis
+    if (!pages.includes(total - 1)) pages.push(total - 1);
+  }
+  return pages;
+});
 
-  const onPageSizeChange = (val: string) => {
-    const newSize = parseInt(val);
-    emit('update:pageSize', newSize);
-    emit('update:currentPage', 0);
+const onPageChange = (page: number) => {
+  if (page >= 0 && page < props.totalPages) {
+    emit('update:currentPage', page);
     emit('change');
-  };
+  }
+};
 
-  const handleJump = () => {
-    const pageNum = parseInt(jumpPage.value.toString());
-    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= props.totalPages) {
-      onPageChange(pageNum - 1);
-      jumpPage.value = '';
-    }
-  };
+const onPageSizeChange = (val: string) => {
+  const newSize = parseInt(val);
+  emit('update:pageSize', newSize);
+  emit('update:currentPage', 0);
+  emit('change');
+};
+
+const handleJump = () => {
+  const pageNum = parseInt(jumpPage.value.toString());
+  if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= props.totalPages) {
+    onPageChange(pageNum - 1);
+    jumpPage.value = '';
+  }
+};
 </script>

@@ -9,10 +9,15 @@
         <div
           class="rounded-full p-2.5"
           :class="
-            isAccepting ? 'bg-green-100 dark:bg-green-900/40' : 'bg-red-100 dark:bg-red-900/40'
+            isAccepting
+              ? 'bg-green-100 dark:bg-green-900/40'
+              : 'bg-red-100 dark:bg-red-900/40'
           "
         >
-          <IconLucideCheck v-if="isAccepting" class="w-5 h-5 text-green-600 dark:text-green-400" />
+          <IconLucideCheck
+            v-if="isAccepting"
+            class="w-5 h-5 text-green-600 dark:text-green-400"
+          />
           <IconLucideX v-else class="w-5 h-5 text-red-600 dark:text-red-400" />
         </div>
         <div>
@@ -53,12 +58,16 @@
           <span class="text-gray-400 dark:text-gray-500 w-28 shrink-0">
             {{ t('confirmResponseModal.reasonLabel') }}
           </span>
-          <span class="text-gray-700 dark:text-gray-300">{{ request?.reason }}</span>
+          <span class="text-gray-700 dark:text-gray-300">{{
+            request?.reason
+          }}</span>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+        >
           {{ t('confirmResponseModal.commentLabel') }}
           <span class="text-gray-400 dark:text-gray-500 font-normal">
             {{ t('confirmResponseModal.optionalLabel') }}
@@ -89,7 +98,11 @@
         <button
           @click="confirm"
           class="px-5 py-2.5 rounded-xl text-white text-sm font-medium transition"
-          :class="isAccepting ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
+          :class="
+            isAccepting
+              ? 'bg-green-600 hover:bg-green-700'
+              : 'bg-red-600 hover:bg-red-700'
+          "
         >
           {{
             isAccepting
@@ -103,39 +116,39 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue';
-  import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-  import IconLucideCheck from '~icons/lucide/check';
-  import IconLucideX from '~icons/lucide/x';
-  import BaseModal from '@/components/ui/BaseModal.vue';
-  import type { ReassignmentSolicitation } from '@/types/reassignment';
+import IconLucideCheck from '~icons/lucide/check';
+import IconLucideX from '~icons/lucide/x';
+import BaseModal from '@/components/ui/BaseModal.vue';
+import type { ReassignmentSolicitation } from '@/types/reassignment';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const props = defineProps<{
-    modelValue: boolean;
-    request: ReassignmentSolicitation | null;
-    decision: 'ACCEPTED' | 'REJECTED';
-  }>();
+const props = defineProps<{
+  modelValue: boolean;
+  request: ReassignmentSolicitation | null;
+  decision: 'ACCEPTED' | 'REJECTED';
+}>();
 
-  const emit = defineEmits<{
-    (e: 'update:modelValue', val: boolean): void;
-    (e: 'confirmed', payload: { comment?: string }): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'update:modelValue', val: boolean): void;
+  (e: 'confirmed', payload: { comment?: string }): void;
+}>();
 
-  const comment = ref('');
-  const isAccepting = computed(() => props.decision === 'ACCEPTED');
+const comment = ref('');
+const isAccepting = computed(() => props.decision === 'ACCEPTED');
 
-  watch(
-    () => props.modelValue,
-    (open) => {
-      if (open) comment.value = '';
-    }
-  );
-
-  function confirm() {
-    emit('confirmed', { comment: comment.value.trim() || undefined });
-    emit('update:modelValue', false);
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open) comment.value = '';
   }
+);
+
+function confirm() {
+  emit('confirmed', { comment: comment.value.trim() || undefined });
+  emit('update:modelValue', false);
+}
 </script>

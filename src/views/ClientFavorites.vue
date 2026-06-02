@@ -1,12 +1,18 @@
 <template>
   <div class="p-6 space-y-6">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div
+      class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+    >
       <div>
-        <h1 class="text-3xl font-bold dark:text-white">{{ t('favorites.title') }}</h1>
+        <h1 class="text-3xl font-bold dark:text-white">
+          {{ t('favorites.title') }}
+        </h1>
         <p class="text-gray-500 text-sm">{{ t('favorites.subtitle') }}</p>
       </div>
       <div class="flex items-center space-x-3">
-        <fwb-badge type="indigo">{{ t('favorites.badge', { n: favorites.size }) }}</fwb-badge>
+        <fwb-badge type="indigo">{{
+          t('favorites.badge', { n: favorites.size })
+        }}</fwb-badge>
         <router-link to="/properties">
           <fwb-button gradient="blue" size="sm">
             <div class="flex items-center">
@@ -30,7 +36,10 @@
       class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-4 text-red-700 dark:text-red-400"
     >
       {{ error }}
-      <button @click="loadFavoritesAndProperties" class="ml-2 underline hover:text-red-800">
+      <button
+        @click="loadFavoritesAndProperties"
+        class="ml-2 underline hover:text-red-800"
+      >
         {{ t('common.retry') }}
       </button>
     </div>
@@ -129,7 +138,9 @@
         <div class="p-5 flex-1 flex flex-col">
           <div class="flex gap-2 mb-2">
             <fwb-badge type="dark" size="xs">
-              {{ prop.type ? t('propertyTypes.' + prop.type) : t('common.type') }}
+              {{
+                prop.type ? t('propertyTypes.' + prop.type) : t('common.type')
+              }}
             </fwb-badge>
             <fwb-badge v-if="prop.m2" type="dark" size="xs">
               {{ prop.m2 }} {{ t('common.m2') }}
@@ -145,7 +156,9 @@
 
           <div class="flex justify-between items-end mt-auto">
             <div>
-              <p class="text-xs text-gray-400 uppercase font-bold tracking-tighter">
+              <p
+                class="text-xs text-gray-400 uppercase font-bold tracking-tighter"
+              >
                 {{ t('common.price') }}
               </p>
               <p class="text-2xl font-black text-blue-600">
@@ -165,10 +178,20 @@
           <div
             class="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
-            <fwb-button size="sm" gradient="blue" @click="requestVisit(prop)" class="w-full">
+            <fwb-button
+              size="sm"
+              gradient="blue"
+              @click="requestVisit(prop)"
+              class="w-full"
+            >
               {{ t('favorites.scheduleVisit') }}
             </fwb-button>
-            <fwb-button size="sm" color="alternative" @click="viewDetails(prop)" class="w-full">
+            <fwb-button
+              size="sm"
+              color="alternative"
+              @click="viewDetails(prop)"
+              class="w-full"
+            >
               {{ t('favorites.viewDetails') }}
             </fwb-button>
           </div>
@@ -186,7 +209,9 @@
 
     <fwb-modal v-if="showRemoveModal" @close="showRemoveModal = false">
       <template #header>
-        <span class="text-red-600 dark:text-red-400">{{ t('favorites.removeConfirmTitle') }}</span>
+        <span class="text-red-600 dark:text-red-400">{{
+          t('favorites.removeConfirmTitle')
+        }}</span>
       </template>
       <template #body>
         <p class="text-gray-700 dark:text-gray-300">
@@ -202,7 +227,9 @@
           <fwb-button color="alternative" @click="showRemoveModal = false">
             {{ t('common.cancel') }}
           </fwb-button>
-          <fwb-button color="red" @click="confirmRemove">{{ t('favorites.yesRemove') }}</fwb-button>
+          <fwb-button color="red" @click="confirmRemove">{{
+            t('favorites.yesRemove')
+          }}</fwb-button>
         </div>
       </template>
     </fwb-modal>
@@ -222,143 +249,146 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { FwbCard, FwbButton, FwbBadge, FwbModal, FwbAlert } from 'flowbite-vue';
-  import { favoriteService } from '@/services/favoriteService';
-  import { propertyService } from '@/modules/properties';
-  import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
-  import type { Property } from '@/types/property';
-  import IconLucideSearch from '~icons/lucide/search';
-  import IconLucideHeart from '~icons/lucide/heart';
-  import IconLucideTrash from '~icons/lucide/trash';
-  import IconLucideEye from '~icons/lucide/eye';
-  import IconLucideImage from '~icons/lucide/image';
-  import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { FwbCard, FwbButton, FwbBadge, FwbModal, FwbAlert } from 'flowbite-vue';
+import { favoriteService } from '@/services/favoriteService';
+import { propertyService } from '@/modules/properties';
+import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
+import type { Property } from '@/types/property';
+import IconLucideSearch from '~icons/lucide/search';
+import IconLucideHeart from '~icons/lucide/heart';
+import IconLucideTrash from '~icons/lucide/trash';
+import IconLucideEye from '~icons/lucide/eye';
+import IconLucideImage from '~icons/lucide/image';
+import { useI18n } from 'vue-i18n';
+import { getLocaleString } from '@/locales/i18n';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const loading = ref(false);
-  const error = ref('');
-  const favorites = ref<Set<string>>(new Set());
-  const favoriteProperties = ref<Property[]>([]);
-  const showDetailsModal = ref(false);
-  const selectedProperty = ref<Property | null>(null);
-  const showRemoveModal = ref(false);
-  const propertyToRemove = ref<Property | null>(null);
-  const successMessage = ref('');
-  const errorMessage = ref('');
+const loading = ref(false);
+const error = ref('');
+const favorites = ref<Set<string>>(new Set());
+const favoriteProperties = ref<Property[]>([]);
+const showDetailsModal = ref(false);
+const selectedProperty = ref<Property | null>(null);
+const showRemoveModal = ref(false);
+const propertyToRemove = ref<Property | null>(null);
+const successMessage = ref('');
+const errorMessage = ref('');
 
-  let successTimer: ReturnType<typeof setTimeout> | null = null;
-  let errorTimer: ReturnType<typeof setTimeout> | null = null;
+let successTimer: ReturnType<typeof setTimeout> | null = null;
+let errorTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const router = useRouter();
+const router = useRouter();
 
-  const requestVisit = (prop: Property) => {
-    router.push({
-      path: '/properties',
-      query: { openVisitPropertyId: prop.id },
-    });
-  };
-
-  const getOpTypeBadge = (type: string) => {
-    switch (type) {
-      case 'VENTA':
-        return 'indigo';
-      case 'ALQUILER':
-        return 'green';
-      case 'ANTICRETICO':
-        return 'yellow';
-      default:
-        return 'dark';
-    }
-  };
-
-  const handleImageError = (prop: Property) => {
-    prop.imageUrls = [];
-  };
-
-  const loadFavoritesAndProperties = async () => {
-    loading.value = true;
-    error.value = '';
-
-    try {
-      const favoriteIds = await favoriteService.getFavorites();
-      favorites.value = new Set(favoriteIds);
-
-      if (favoriteIds.length === 0) {
-        favoriteProperties.value = [];
-        loading.value = false;
-        return;
-      }
-
-      const allPropertiesResponse = await propertyService.getProperties();
-      const allProperties = allPropertiesResponse.data || [];
-
-      const filtered = allProperties.filter((p: Property) => favoriteIds.includes(p.id as string));
-
-      favoriteProperties.value = favoriteIds
-        .map((id) => filtered.find((p: Property) => p.id === id))
-        .filter((p): p is Property => Boolean(p));
-    } catch (err: unknown) {
-      console.error('Error loading favorites:', err);
-      error.value =
-        (err as { response?: { data?: { detail?: string } } }).response?.data?.detail ||
-        (err as { message?: string }).message ||
-        t('favorites.loadError');
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const removeFavorite = (propertyId: string) => {
-    const property = favoriteProperties.value.find((p) => p.id === propertyId);
-    propertyToRemove.value = property || null;
-    showRemoveModal.value = true;
-  };
-
-  const confirmRemove = async () => {
-    if (!propertyToRemove.value) return;
-
-    showRemoveModal.value = false;
-
-    try {
-      await favoriteService.removeFavorite(propertyToRemove.value.id);
-      favorites.value.delete(propertyToRemove.value.id);
-      favoriteProperties.value = favoriteProperties.value.filter(
-        (p) => p.id !== propertyToRemove.value!.id
-      );
-
-      successMessage.value = t('favorites.removedSuccess');
-      errorMessage.value = '';
-
-      if (successTimer) clearTimeout(successTimer);
-      successTimer = setTimeout(() => {
-        successMessage.value = '';
-      }, 1500);
-    } catch (err: unknown) {
-      console.error('Error removing favorite:', err);
-      errorMessage.value =
-        (err as { response?: { data?: { detail?: string } } }).response?.data?.detail ||
-        t('favorites.removeError');
-      successMessage.value = '';
-
-      if (errorTimer) clearTimeout(errorTimer);
-      errorTimer = setTimeout(() => {
-        errorMessage.value = '';
-      }, 1500);
-    }
-
-    propertyToRemove.value = null;
-  };
-
-  const viewDetails = (property: Property) => {
-    selectedProperty.value = property;
-    showDetailsModal.value = true;
-  };
-
-  onMounted(() => {
-    loadFavoritesAndProperties();
+const requestVisit = (prop: Property) => {
+  router.push({
+    path: '/properties',
+    query: { openVisitPropertyId: prop.id },
   });
+};
+
+const getOpTypeBadge = (type: string) => {
+  switch (type) {
+    case 'VENTA':
+      return 'indigo';
+    case 'ALQUILER':
+      return 'green';
+    case 'ANTICRETICO':
+      return 'yellow';
+    default:
+      return 'dark';
+  }
+};
+
+const handleImageError = (prop: Property) => {
+  prop.imageUrls = [];
+};
+
+const loadFavoritesAndProperties = async () => {
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const favoriteIds = await favoriteService.getFavorites();
+    favorites.value = new Set(favoriteIds);
+
+    if (favoriteIds.length === 0) {
+      favoriteProperties.value = [];
+      loading.value = false;
+      return;
+    }
+
+    const allPropertiesResponse = await propertyService.getProperties();
+    const allProperties = allPropertiesResponse.data || [];
+
+    const filtered = allProperties.filter((p: Property) =>
+      favoriteIds.includes(p.id as string)
+    );
+
+    favoriteProperties.value = favoriteIds
+      .map((id) => filtered.find((p: Property) => p.id === id))
+      .filter((p): p is Property => Boolean(p));
+  } catch (err: unknown) {
+    console.error('Error loading favorites:', err);
+    error.value =
+      (err as { response?: { data?: { detail?: string } } }).response?.data
+        ?.detail ||
+      (err as { message?: string }).message ||
+      t('favorites.loadError');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const removeFavorite = (propertyId: string) => {
+  const property = favoriteProperties.value.find((p) => p.id === propertyId);
+  propertyToRemove.value = property || null;
+  showRemoveModal.value = true;
+};
+
+const confirmRemove = async () => {
+  if (!propertyToRemove.value) return;
+
+  showRemoveModal.value = false;
+
+  try {
+    await favoriteService.removeFavorite(propertyToRemove.value.id);
+    favorites.value.delete(propertyToRemove.value.id);
+    favoriteProperties.value = favoriteProperties.value.filter(
+      (p) => p.id !== propertyToRemove.value!.id
+    );
+
+    successMessage.value = t('favorites.removedSuccess');
+    errorMessage.value = '';
+
+    if (successTimer) clearTimeout(successTimer);
+    successTimer = setTimeout(() => {
+      successMessage.value = '';
+    }, 1500);
+  } catch (err: unknown) {
+    console.error('Error removing favorite:', err);
+    errorMessage.value =
+      (err as { response?: { data?: { detail?: string } } }).response?.data
+        ?.detail || t('favorites.removeError');
+    successMessage.value = '';
+
+    if (errorTimer) clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => {
+      errorMessage.value = '';
+    }, 1500);
+  }
+
+  propertyToRemove.value = null;
+};
+
+const viewDetails = (property: Property) => {
+  selectedProperty.value = property;
+  showDetailsModal.value = true;
+};
+
+onMounted(() => {
+  loadFavoritesAndProperties();
+});
 </script>

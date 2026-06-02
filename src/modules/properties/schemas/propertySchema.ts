@@ -14,9 +14,11 @@ export const propertySchema = z.object({
   zone: z.string().min(1, i18n.global.t('validation.zoneRequired')),
   price: z.number().min(0.01, i18n.global.t('validation.priceMin')),
   type: z.string().min(1, i18n.global.t('validation.propertyTypeRequired')),
-  operationType: z.string().refine((val) => ['VENTA', 'ALQUILER', 'ANTICRETICO'].includes(val), {
-    message: i18n.global.t('validation.operationTypeRequired'),
-  }),
+  operationType: z
+    .string()
+    .refine((val) => ['VENTA', 'ALQUILER', 'ANTICRETICO'].includes(val), {
+      message: i18n.global.t('validation.operationTypeRequired'),
+    }),
   m2: z.number().min(1, i18n.global.t('validation.min1m2')),
   rooms: z
     .number()

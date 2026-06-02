@@ -102,11 +102,19 @@ const i18n = createI18n({
   },
   numberFormats: {
     es: {
-      currency: { style: 'currency', currency: 'USD', minimumFractionDigits: 0 },
+      currency: {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      },
       decimal: { style: 'decimal', minimumFractionDigits: 0 },
     },
     en: {
-      currency: { style: 'currency', currency: 'USD', minimumFractionDigits: 0 },
+      currency: {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+      },
       decimal: { style: 'decimal', minimumFractionDigits: 0 },
     },
   },

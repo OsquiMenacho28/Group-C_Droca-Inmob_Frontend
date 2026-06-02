@@ -24,8 +24,13 @@
         </FwbButton>
       </FwbAlert>
 
-      <div v-else-if="operations.length === 0" class="app-card p-12 text-center">
-        <IconLucideClipboardList class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" />
+      <div
+        v-else-if="operations.length === 0"
+        class="app-card p-12 text-center"
+      >
+        <IconLucideClipboardList
+          class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4"
+        />
         <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-1">
           {{ t('operations.emptyTitle') }}
         </h3>
@@ -96,52 +101,52 @@
 </template>
 
 <script setup lang="ts">
-  import { FwbSpinner, FwbAlert, FwbButton, FwbBadge } from 'flowbite-vue';
-  import IconLucideClipboardList from '~icons/lucide/clipboard-list';
-  import IconLucideChevronRight from '~icons/lucide/chevron-right';
-  import { ref, onMounted } from 'vue';
-  import { apiClient as api } from '@/api';
-  import { useI18n } from 'vue-i18n';
-  import { formatDate } from '@/utils/dateTime';
+import { FwbSpinner, FwbAlert, FwbButton, FwbBadge } from 'flowbite-vue';
+import IconLucideClipboardList from '~icons/lucide/clipboard-list';
+import IconLucideChevronRight from '~icons/lucide/chevron-right';
+import { ref, onMounted } from 'vue';
+import { apiClient as api } from '@/api';
+import { useI18n } from 'vue-i18n';
+import { formatDate } from '@/utils/dateTime';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  interface Operation {
-    id: string;
-    operationType?: string;
-    propertyName?: string;
-    clientName?: string;
-    agentName?: string;
-    createdAt?: string;
-    status?: string;
+interface Operation {
+  id: string;
+  operationType?: string;
+  propertyName?: string;
+  clientName?: string;
+  agentName?: string;
+  createdAt?: string;
+  status?: string;
+}
+
+const operations = ref<Operation[]>([]);
+const loading = ref(false);
+const error = ref('');
+
+const loadOperations = async () => {
+  loading.value = true;
+  error.value = '';
+  try {
+    const response = await api.get('/operations');
+    operations.value = response.data.data || [];
+  } catch {
+    error.value = t('operations.loadError');
+  } finally {
+    loading.value = false;
   }
+};
 
-  const operations = ref<Operation[]>([]);
-  const loading = ref(false);
-  const error = ref('');
-
-  const loadOperations = async () => {
-    loading.value = true;
-    error.value = '';
-    try {
-      const response = await api.get('/operations');
-      operations.value = response.data.data || [];
-    } catch {
-      error.value = t('operations.loadError');
-    } finally {
-      loading.value = false;
-    }
+const badgeType = (status?: string) => {
+  const map: Record<string, 'green' | 'dark' | 'red' | 'yellow'> = {
+    ACTIVE: 'green',
+    CLOSED: 'dark',
+    CANCELLED: 'red',
+    PENDING: 'yellow',
   };
+  return map[status || ''] || 'dark';
+};
 
-  const badgeType = (status?: string) => {
-    const map: Record<string, 'green' | 'dark' | 'red' | 'yellow'> = {
-      ACTIVE: 'green',
-      CLOSED: 'dark',
-      CANCELLED: 'red',
-      PENDING: 'yellow',
-    };
-    return map[status || ''] || 'dark';
-  };
-
-  onMounted(loadOperations);
+onMounted(loadOperations);
 </script>

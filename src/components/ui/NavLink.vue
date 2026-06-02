@@ -25,27 +25,27 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, type Component } from 'vue';
-  import { useRoute } from 'vue-router';
+import { computed, type Component } from 'vue';
+import { useRoute } from 'vue-router';
 
-  const props = defineProps<{
-    to: string;
-    label: string;
-    icon?: Component;
-    exact?: boolean;
-    matchPath?: string;
-  }>();
+const props = defineProps<{
+  to: string;
+  label: string;
+  icon?: Component;
+  exact?: boolean;
+  matchPath?: string;
+}>();
 
-  const route = useRoute();
+const route = useRoute();
 
-  const isActive = computed(() => {
-    if (props.matchPath) {
-      return route.path.includes(props.matchPath);
-    }
-    if (props.exact) {
-      return route.path === props.to;
-    }
-    // Default active check
-    return route.path.startsWith(props.to);
-  });
+const isActive = computed(() => {
+  if (props.matchPath) {
+    return route.path.includes(props.matchPath);
+  }
+  if (props.exact) {
+    return route.path === props.to;
+  }
+  // Default active check
+  return route.path.startsWith(props.to);
+});
 </script>

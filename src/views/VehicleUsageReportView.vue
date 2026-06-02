@@ -1,8 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-7xl mx-auto space-y-6">
       <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+      >
         <div>
           <h1 class="text-2xl font-bold text-primary">
             {{ t('vehicleAdmin.usageReport') }}
@@ -23,7 +27,9 @@
         <div class="p-6">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
             <div>
-              <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('reports.startDate') }}
               </label>
               <fwb-input
@@ -35,7 +41,9 @@
             </div>
 
             <div>
-              <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('reports.endDate') }}
               </label>
               <fwb-input
@@ -47,7 +55,9 @@
             </div>
 
             <div>
-              <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('vehicleAdmin.columnVehicle') }}
               </label>
               <select
@@ -66,7 +76,10 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex flex-col items-center justify-center py-20">
+      <div
+        v-if="loading"
+        class="flex flex-col items-center justify-center py-20"
+      >
         <fwb-spinner size="12" />
         <p class="mt-4 text-secondary">{{ t('common.loading') }}</p>
       </div>
@@ -103,12 +116,20 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs font-medium text-secondary uppercase tracking-wider">
+                <p
+                  class="text-xs font-medium text-secondary uppercase tracking-wider"
+                >
                   {{ t('vehicleAdmin.totalHours') }}
                 </p>
-                <p class="text-2xl font-bold text-primary mt-2">{{ totalHours.toFixed(1) }}h</p>
+                <p class="text-2xl font-bold text-primary mt-2">
+                  {{ totalHours.toFixed(1) }}h
+                </p>
               </div>
-              <div class="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3 text-2xl">⏱️</div>
+              <div
+                class="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3 text-2xl"
+              >
+                ⏱️
+              </div>
             </div>
           </div>
 
@@ -117,14 +138,20 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs font-medium text-secondary uppercase tracking-wider">
+                <p
+                  class="text-xs font-medium text-secondary uppercase tracking-wider"
+                >
                   {{ t('vehicleAdmin.visitCount') }}
                 </p>
                 <p class="text-2xl font-bold text-primary mt-2">
                   {{ totalVisits }}
                 </p>
               </div>
-              <div class="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 text-2xl">📅</div>
+              <div
+                class="bg-purple-100 dark:bg-purple-900/30 rounded-lg p-3 text-2xl"
+              >
+                📅
+              </div>
             </div>
           </div>
 
@@ -133,12 +160,20 @@
           >
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-xs font-medium text-secondary uppercase tracking-wider">
+                <p
+                  class="text-xs font-medium text-secondary uppercase tracking-wider"
+                >
                   {{ t('vehicleAdmin.totalMileage') }}
                 </p>
-                <p class="text-2xl font-bold text-primary mt-2">{{ totalMileage.toFixed(1) }} km</p>
+                <p class="text-2xl font-bold text-primary mt-2">
+                  {{ totalMileage.toFixed(1) }} km
+                </p>
               </div>
-              <div class="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-2xl">🛣️</div>
+              <div
+                class="bg-green-100 dark:bg-green-900/30 rounded-lg p-3 text-2xl"
+              >
+                🛣️
+              </div>
             </div>
           </div>
         </div>
@@ -153,19 +188,34 @@
                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
               >
                 <tr>
-                  <th class="px-6 py-3">{{ t('vehicleAdmin.columnVehicle') }}</th>
-                  <th class="px-6 py-3 text-center">{{ t('vehicleAdmin.columnTotalHours') }}</th>
-                  <th class="px-6 py-3 text-center">{{ t('vehicleAdmin.columnVisits') }}</th>
-                  <th class="px-6 py-3 text-center">{{ t('vehicleAdmin.columnMileage') }}</th>
+                  <th class="px-6 py-3">
+                    {{ t('vehicleAdmin.columnVehicle') }}
+                  </th>
+                  <th class="px-6 py-3 text-center">
+                    {{ t('vehicleAdmin.columnTotalHours') }}
+                  </th>
+                  <th class="px-6 py-3 text-center">
+                    {{ t('vehicleAdmin.columnVisits') }}
+                  </th>
+                  <th class="px-6 py-3 text-center">
+                    {{ t('vehicleAdmin.columnMileage') }}
+                  </th>
                   <th class="px-6 py-3 text-right"></th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                <template v-for="vehicle in reportData.vehicles" :key="vehicle.vehicleId">
-                  <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <template
+                  v-for="vehicle in reportData.vehicles"
+                  :key="vehicle.vehicleId"
+                >
+                  <tr
+                    class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                  >
                     <td class="px-6 py-4">
                       <div class="flex items-center gap-2">
-                        <div class="font-medium text-primary">{{ vehicle.licensePlate }}</div>
+                        <div class="font-medium text-primary">
+                          {{ vehicle.licensePlate }}
+                        </div>
                         <span
                           v-if="vehicle.visitCount === 0"
                           class="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded dark:bg-amber-900/30 dark:text-amber-400"
@@ -187,7 +237,9 @@
                     <td class="px-6 py-4 text-center">
                       {{ vehicle.visitCount }}
                     </td>
-                    <td class="px-6 py-4 text-center">{{ vehicle.totalMileage.toFixed(1) }} km</td>
+                    <td class="px-6 py-4 text-center">
+                      {{ vehicle.totalMileage.toFixed(1) }} km
+                    </td>
                     <td class="px-6 py-4 text-right">
                       <fwb-button
                         size="xs"
@@ -209,10 +261,14 @@
                   >
                     <td colspan="5" class="px-6 py-4">
                       <div class="space-y-3">
-                        <h4 class="text-xs font-semibold uppercase text-secondary tracking-wider">
+                        <h4
+                          class="text-xs font-semibold uppercase text-secondary tracking-wider"
+                        >
                           {{ t('vehicleAdmin.usageDetails') }}
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div
+                          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+                        >
                           <div
                             v-for="detail in vehicle.details"
                             :key="detail.visitId"
@@ -252,84 +308,91 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, ref, onMounted, computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useI18n } from 'vue-i18n';
-  import { FwbInput, FwbSpinner, FwbAlert, FwbButton } from 'flowbite-vue';
-  import vehicleService from '@/services/vehicleService';
-  import type { Vehicle, VehicleUsageReportResponse } from '@/types/visitCalendar';
+import { reactive, ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { FwbInput, FwbSpinner, FwbAlert, FwbButton } from 'flowbite-vue';
+import vehicleService from '@/services/vehicleService';
+import type {
+  Vehicle,
+  VehicleUsageReportResponse,
+} from '@/types/visitCalendar';
 
-  const { t } = useI18n();
-  const router = useRouter();
+const { t } = useI18n();
+const router = useRouter();
 
-  const loading = ref(false);
-  const error = ref('');
-  const reportData = ref<VehicleUsageReportResponse | null>(null);
-  const allVehicles = ref<Vehicle[]>([]);
-  const expandedVehicle = ref<string | null>(null);
+const loading = ref(false);
+const error = ref('');
+const reportData = ref<VehicleUsageReportResponse | null>(null);
+const allVehicles = ref<Vehicle[]>([]);
+const expandedVehicle = ref<string | null>(null);
 
-  // Default: current month
-  const today = new Date();
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+// Default: current month
+const today = new Date();
+const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const filters = reactive({
-    startDate: firstDayOfMonth.toISOString().split('T')[0],
-    endDate: today.toISOString().split('T')[0],
-    vehicleId: '',
+const filters = reactive({
+  startDate: firstDayOfMonth.toISOString().split('T')[0],
+  endDate: today.toISOString().split('T')[0],
+  vehicleId: '',
+});
+
+const fetchReport = async () => {
+  loading.value = true;
+  error.value = '';
+  try {
+    const from = new Date(filters.startDate).toISOString();
+    const to = new Date(filters.endDate + 'T23:59:59').toISOString();
+    reportData.value = await vehicleService.getVehicleUsageReport(
+      from,
+      to,
+      filters.vehicleId
+    );
+  } catch (err) {
+    error.value = t('vehicleAdmin.loadError');
+    console.error(err);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadVehicles = async () => {
+  try {
+    allVehicles.value = await vehicleService.getVehicles();
+  } catch (err) {
+    console.error('Error loading vehicles', err);
+  }
+};
+
+const totalHours = computed(() => {
+  if (!reportData.value) return 0;
+  return reportData.value.vehicles.reduce((sum, v) => sum + v.totalHours, 0);
+});
+
+const totalVisits = computed(() => {
+  if (!reportData.value) return 0;
+  return reportData.value.vehicles.reduce((sum, v) => sum + v.visitCount, 0);
+});
+
+const totalMileage = computed(() => {
+  if (!reportData.value) return 0;
+  return reportData.value.vehicles.reduce((sum, v) => sum + v.totalMileage, 0);
+});
+
+const toggleDetails = (id: string) => {
+  expandedVehicle.value = expandedVehicle.value === id ? null : id;
+};
+
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   });
+};
 
-  const fetchReport = async () => {
-    loading.value = true;
-    error.value = '';
-    try {
-      const from = new Date(filters.startDate).toISOString();
-      const to = new Date(filters.endDate + 'T23:59:59').toISOString();
-      reportData.value = await vehicleService.getVehicleUsageReport(from, to, filters.vehicleId);
-    } catch (err) {
-      error.value = t('vehicleAdmin.loadError');
-      console.error(err);
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  const loadVehicles = async () => {
-    try {
-      allVehicles.value = await vehicleService.getVehicles();
-    } catch (err) {
-      console.error('Error loading vehicles', err);
-    }
-  };
-
-  const totalHours = computed(() => {
-    if (!reportData.value) return 0;
-    return reportData.value.vehicles.reduce((sum, v) => sum + v.totalHours, 0);
-  });
-
-  const totalVisits = computed(() => {
-    if (!reportData.value) return 0;
-    return reportData.value.vehicles.reduce((sum, v) => sum + v.visitCount, 0);
-  });
-
-  const totalMileage = computed(() => {
-    if (!reportData.value) return 0;
-    return reportData.value.vehicles.reduce((sum, v) => sum + v.totalMileage, 0);
-  });
-
-  const toggleDetails = (id: string) => {
-    expandedVehicle.value = expandedVehicle.value === id ? null : id;
-  };
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString(undefined, {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
-
-  onMounted(() => {
-    loadVehicles();
-    fetchReport();
-  });
+onMounted(() => {
+  loadVehicles();
+  fetchReport();
+});
 </script>

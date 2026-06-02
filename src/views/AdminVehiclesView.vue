@@ -1,6 +1,8 @@
 <template>
   <div class="space-y-6">
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div
+      class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+    >
       <div>
         <h1 class="text-3xl font-bold text-primary">
           {{ t('vehicleAdmin.title') }}
@@ -10,7 +12,10 @@
         </p>
       </div>
       <div class="flex items-center gap-3">
-        <fwb-button color="alternative" @click="router.push({ name: 'VehicleUsageReport' })">
+        <fwb-button
+          color="alternative"
+          @click="router.push({ name: 'VehicleUsageReport' })"
+        >
           {{ t('vehicleAdmin.usageReport') }}
         </fwb-button>
         <fwb-badge type="indigo">{{ t('vehicleAdmin.adminMode') }}</fwb-badge>
@@ -49,7 +54,9 @@
 
         <form class="space-y-4" @submit.prevent="handleSubmit">
           <div>
-            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               {{ t('vehicleAdmin.plate') }}
             </label>
             <input
@@ -62,7 +69,9 @@
 
           <div class="grid gap-4 md:grid-cols-2">
             <div>
-              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('vehicleAdmin.brand') }}
               </label>
               <input
@@ -74,7 +83,9 @@
             </div>
 
             <div>
-              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('vehicleAdmin.model') }}
               </label>
               <input
@@ -88,7 +99,9 @@
 
           <div class="grid gap-4 md:grid-cols-2">
             <div>
-              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('vehicleAdmin.capacity') }}
               </label>
               <input
@@ -101,7 +114,9 @@
             </div>
 
             <div>
-              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('vehicleAdmin.status') }}
               </label>
               <select
@@ -109,9 +124,15 @@
                 class="block w-full rounded-xl border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">{{ t('vehicleAdmin.selectStatus') }}</option>
-                <option value="AVAILABLE">{{ t('vehicleAdmin.statusAvailable') }}</option>
-                <option value="IN_USE">{{ t('vehicleAdmin.statusInUse') }}</option>
-                <option value="MAINTENANCE">{{ t('vehicleAdmin.statusMaintenance') }}</option>
+                <option value="AVAILABLE">
+                  {{ t('vehicleAdmin.statusAvailable') }}
+                </option>
+                <option value="IN_USE">
+                  {{ t('vehicleAdmin.statusInUse') }}
+                </option>
+                <option value="MAINTENANCE">
+                  {{ t('vehicleAdmin.statusMaintenance') }}
+                </option>
               </select>
             </div>
           </div>
@@ -147,7 +168,10 @@
           </fwb-button>
         </div>
 
-        <div v-if="loadingVehicles" class="py-16 text-center text-sm text-secondary">
+        <div
+          v-if="loadingVehicles"
+          class="py-16 text-center text-sm text-secondary"
+        >
           {{ t('vehicleAdmin.loadingFleet') }}
         </div>
 
@@ -166,7 +190,9 @@
         </div>
 
         <div v-else class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <table
+            class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
+          >
             <thead>
               <tr>
                 <th
@@ -232,124 +258,140 @@
 </template>
 
 <script setup lang="ts">
-  import { reactive, ref, onMounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { FwbBadge, FwbButton } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
-  import vehicleService from '@/services/vehicleService';
-  import type { CreateVehicleRequest, Vehicle, VehicleStatus } from '@/types/visitCalendar';
+import { reactive, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { FwbBadge, FwbButton } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
+import vehicleService from '@/services/vehicleService';
+import type {
+  CreateVehicleRequest,
+  Vehicle,
+  VehicleStatus,
+} from '@/types/visitCalendar';
 
-  const { t } = useI18n();
-  const router = useRouter();
+const { t } = useI18n();
+const router = useRouter();
 
-  const vehicles = ref<Vehicle[]>([]);
-  const loadingVehicles = ref(false);
-  const submitting = ref(false);
-  const fleetError = ref('');
-  const feedback = ref<{ type: 'success' | 'error'; message: string }>({
-    type: 'success',
-    message: '',
-  });
+const vehicles = ref<Vehicle[]>([]);
+const loadingVehicles = ref(false);
+const submitting = ref(false);
+const fleetError = ref('');
+const feedback = ref<{ type: 'success' | 'error'; message: string }>({
+  type: 'success',
+  message: '',
+});
 
-  const initialForm = (): CreateVehicleRequest => ({
-    licensePlate: '',
-    brand: '',
-    model: '',
-    passengerCapacity: 1,
-    status: 'AVAILABLE',
-  });
+const initialForm = (): CreateVehicleRequest => ({
+  licensePlate: '',
+  brand: '',
+  model: '',
+  passengerCapacity: 1,
+  status: 'AVAILABLE',
+});
 
-  const form = reactive<CreateVehicleRequest>(initialForm());
+const form = reactive<CreateVehicleRequest>(initialForm());
 
-  const resetForm = () => {
-    Object.assign(form, initialForm());
-  };
+const resetForm = () => {
+  Object.assign(form, initialForm());
+};
 
-  const loadVehicles = async () => {
-    loadingVehicles.value = true;
-    fleetError.value = '';
-    try {
-      vehicles.value = await vehicleService.getVehicles();
-    } catch {
-      fleetError.value = t('vehicleAdmin.loadError');
-    } finally {
-      loadingVehicles.value = false;
-    }
-  };
+const loadVehicles = async () => {
+  loadingVehicles.value = true;
+  fleetError.value = '';
+  try {
+    vehicles.value = await vehicleService.getVehicles();
+  } catch {
+    fleetError.value = t('vehicleAdmin.loadError');
+  } finally {
+    loadingVehicles.value = false;
+  }
+};
 
-  const validateForm = () => {
-    if (!form.licensePlate || !form.brand || !form.model || !form.status) {
-      feedback.value = { type: 'error', message: t('vehicleAdmin.requiredFields') };
-      return false;
-    }
+const validateForm = () => {
+  if (!form.licensePlate || !form.brand || !form.model || !form.status) {
+    feedback.value = {
+      type: 'error',
+      message: t('vehicleAdmin.requiredFields'),
+    };
+    return false;
+  }
 
-    if (!Number.isFinite(form.passengerCapacity) || form.passengerCapacity <= 0) {
-      feedback.value = { type: 'error', message: t('vehicleAdmin.invalidCapacity') };
-      return false;
-    }
+  if (!Number.isFinite(form.passengerCapacity) || form.passengerCapacity <= 0) {
+    feedback.value = {
+      type: 'error',
+      message: t('vehicleAdmin.invalidCapacity'),
+    };
+    return false;
+  }
 
-    return true;
-  };
+  return true;
+};
 
-  const handleSubmit = async () => {
-    feedback.value.message = '';
+const handleSubmit = async () => {
+  feedback.value.message = '';
 
-    if (!validateForm()) {
-      return;
-    }
+  if (!validateForm()) {
+    return;
+  }
 
-    submitting.value = true;
-    try {
-      const created = await vehicleService.createVehicle({
-        ...form,
-        licensePlate: form.licensePlate.toUpperCase(),
-        brand: form.brand.trim(),
-        model: form.model.trim(),
-      });
-      vehicles.value = [created, ...vehicles.value.filter((vehicle) => vehicle.id !== created.id)];
-      resetForm();
-      feedback.value = { type: 'success', message: t('vehicleAdmin.successMessage') };
-    } catch (error: unknown) {
-      const message =
-        typeof error === 'object' && error !== null && 'message' in error
-          ? String((error as { message?: string }).message || '')
-          : '';
-      feedback.value = {
-        type: 'error',
-        message: message || t('vehicleAdmin.errorMessage'),
-      };
-    } finally {
-      submitting.value = false;
-    }
-  };
+  submitting.value = true;
+  try {
+    const created = await vehicleService.createVehicle({
+      ...form,
+      licensePlate: form.licensePlate.toUpperCase(),
+      brand: form.brand.trim(),
+      model: form.model.trim(),
+    });
+    vehicles.value = [
+      created,
+      ...vehicles.value.filter((vehicle) => vehicle.id !== created.id),
+    ];
+    resetForm();
+    feedback.value = {
+      type: 'success',
+      message: t('vehicleAdmin.successMessage'),
+    };
+  } catch (error: unknown) {
+    const message =
+      typeof error === 'object' && error !== null && 'message' in error
+        ? String((error as { message?: string }).message || '')
+        : '';
+    feedback.value = {
+      type: 'error',
+      message: message || t('vehicleAdmin.errorMessage'),
+    };
+  } finally {
+    submitting.value = false;
+  }
+};
 
-  const statusLabel = (status: VehicleStatus) => {
-    switch (status) {
-      case 'AVAILABLE':
-        return t('vehicleAdmin.statusAvailable');
-      case 'IN_USE':
-        return t('vehicleAdmin.statusInUse');
-      case 'MAINTENANCE':
-        return t('vehicleAdmin.statusMaintenance');
-      default:
-        return status;
-    }
-  };
+const statusLabel = (status: VehicleStatus) => {
+  switch (status) {
+    case 'AVAILABLE':
+      return t('vehicleAdmin.statusAvailable');
+    case 'IN_USE':
+      return t('vehicleAdmin.statusInUse');
+    case 'MAINTENANCE':
+      return t('vehicleAdmin.statusMaintenance');
+    default:
+      return status;
+  }
+};
 
-  const statusClasses = (status: VehicleStatus) => {
-    switch (status) {
-      case 'AVAILABLE':
-        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-200';
-      case 'IN_USE':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200';
-      case 'MAINTENANCE':
-        return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200';
-      default:
-        return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
-    }
-  };
+const statusClasses = (status: VehicleStatus) => {
+  switch (status) {
+    case 'AVAILABLE':
+      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-200';
+    case 'IN_USE':
+      return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200';
+    case 'MAINTENANCE':
+      return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-200';
+    default:
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200';
+  }
+};
 
-  onMounted(() => {
-    loadVehicles();
-  });
+onMounted(() => {
+  loadVehicles();
+});
 </script>

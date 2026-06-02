@@ -65,7 +65,10 @@ export const useAuthStore = defineStore('auth', () => {
         response?: { data?: { message?: string } };
         message?: string;
       };
-      error.value = errorObj.response?.data?.message || errorObj.message || 'Error occurred';
+      error.value =
+        errorObj.response?.data?.message ||
+        errorObj.message ||
+        'Error occurred';
       throw err;
     } finally {
       loading.value = false;
@@ -89,7 +92,10 @@ export const useAuthStore = defineStore('auth', () => {
         response?: { data?: { message?: string } };
         message?: string;
       };
-      error.value = errorObj.response?.data?.message || errorObj.message || 'Error occurred';
+      error.value =
+        errorObj.response?.data?.message ||
+        errorObj.message ||
+        'Error occurred';
       throw err;
     } finally {
       loading.value = false;

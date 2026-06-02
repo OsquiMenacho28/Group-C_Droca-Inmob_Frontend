@@ -1,6 +1,9 @@
 <template>
   <div class="relative" :class="containerClass">
-    <label v-if="label" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+    <label
+      v-if="label"
+      class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1"
+    >
       {{ label }}
     </label>
 
@@ -43,7 +46,9 @@
             <div
               class="inline-block animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"
             ></div>
-            <span class="ml-2 text-xs text-gray-500">{{ t('searchableSelect.loading') }}</span>
+            <span class="ml-2 text-xs text-gray-500">{{
+              t('searchableSelect.loading')
+            }}</span>
           </div>
 
           <ul v-else class="py-1">
@@ -88,98 +93,98 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
-  import { FwbInput, FwbButton } from 'flowbite-vue';
-  import IconLucideSearch from '~icons/lucide/search';
-  import IconLucideChevronDown from '~icons/lucide/chevron-down';
-  import IconLucideX from '~icons/lucide/x';
-  import { useI18n } from 'vue-i18n';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { FwbInput, FwbButton } from 'flowbite-vue';
+import IconLucideSearch from '~icons/lucide/search';
+import IconLucideChevronDown from '~icons/lucide/chevron-down';
+import IconLucideX from '~icons/lucide/x';
+import { useI18n } from 'vue-i18n';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  export interface SelectItem {
-    value: string;
-    label: string;
-    subtitle?: string;
-  }
+export interface SelectItem {
+  value: string;
+  label: string;
+  subtitle?: string;
+}
 
-  const props = defineProps<{
-    modelValue: string;
-    items: SelectItem[];
-    label?: string;
-    placeholder?: string;
-    loading?: boolean;
-    showClearButton?: boolean;
-    containerClass?: string;
-  }>();
+const props = defineProps<{
+  modelValue: string;
+  items: SelectItem[];
+  label?: string;
+  placeholder?: string;
+  loading?: boolean;
+  showClearButton?: boolean;
+  containerClass?: string;
+}>();
 
-  const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void;
-    (e: 'clear'): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+  (e: 'clear'): void;
+}>();
 
-  const searchTerm = ref('');
-  const showDropdown = ref(false);
+const searchTerm = ref('');
+const showDropdown = ref(false);
 
-  const filteredItems = computed(() => {
-    if (!searchTerm.value.trim()) return props.items;
-    const term = searchTerm.value.toLowerCase();
-    return props.items.filter(
-      (item) =>
-        item.label.toLowerCase().includes(term) ||
-        (item.subtitle && item.subtitle.toLowerCase().includes(term))
-    );
-  });
-
-  const selectItem = (item: SelectItem) => {
-    emit('update:modelValue', item.value);
-    searchTerm.value = item.label;
-    showDropdown.value = false;
-  };
-
-  const clear = () => {
-    emit('update:modelValue', '');
-    searchTerm.value = '';
-    emit('clear');
-  };
-
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('.relative')) {
-      showDropdown.value = false;
-    }
-  };
-
-  onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-  });
-
-  onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside);
-  });
-
-  watch(
-    () => props.modelValue,
-    (newVal) => {
-      if (newVal) {
-        const item = props.items.find((i) => i.value === newVal);
-        if (item) searchTerm.value = item.label;
-      } else if (!searchTerm.value) {
-        searchTerm.value = '';
-      }
-    },
-    { immediate: true }
+const filteredItems = computed(() => {
+  if (!searchTerm.value.trim()) return props.items;
+  const term = searchTerm.value.toLowerCase();
+  return props.items.filter(
+    (item) =>
+      item.label.toLowerCase().includes(term) ||
+      (item.subtitle && item.subtitle.toLowerCase().includes(term))
   );
+});
+
+const selectItem = (item: SelectItem) => {
+  emit('update:modelValue', item.value);
+  searchTerm.value = item.label;
+  showDropdown.value = false;
+};
+
+const clear = () => {
+  emit('update:modelValue', '');
+  searchTerm.value = '';
+  emit('clear');
+};
+
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.relative')) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal) {
+      const item = props.items.find((i) => i.value === newVal);
+      if (item) searchTerm.value = item.label;
+    } else if (!searchTerm.value) {
+      searchTerm.value = '';
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
-  .dropdown-enter-active,
-  .dropdown-leave-active {
-    transition: all 0.2s ease;
-  }
-  .dropdown-enter-from,
-  .dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.2s ease;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>

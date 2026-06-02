@@ -31,7 +31,8 @@ export function parseJwt(token: string): JwtClaims | null {
   }
 }
 
-const BASE_URL = import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080';
+const BASE_URL =
+  import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080';
 
 /**
  * Configures an Axios instance with standard interceptors
@@ -52,7 +53,11 @@ function configureClient(instance: AxiosInstance): AxiosInstance {
   instance.interceptors.response.use(
     (response) => {
       // Standardized API Response Contract handling
-      if (response.data && typeof response.data === 'object' && 'success' in response.data) {
+      if (
+        response.data &&
+        typeof response.data === 'object' &&
+        'success' in response.data
+      ) {
         const apiResponse = response.data as ApiResponse<unknown>;
 
         if (!apiResponse.success) {
@@ -100,16 +105,20 @@ function configureClient(instance: AxiosInstance): AxiosInstance {
           if (!refreshToken) throw new Error('No refresh token available');
 
           const axiosModule = await import('axios');
-          const res = await axiosModule.default.post(`${instance.defaults.baseURL}/auth/refresh`, {
-            refreshToken,
-          });
+          const res = await axiosModule.default.post(
+            `${instance.defaults.baseURL}/auth/refresh`,
+            {
+              refreshToken,
+            }
+          );
 
           // Handle standardized response for refresh token
           const authData = res.data.success ? res.data.data : res.data;
           const newAccessToken = authData.accessToken;
           const newRefreshToken = authData.refreshToken;
 
-          if (!newAccessToken) throw new Error('Refresh failed - no access token in response');
+          if (!newAccessToken)
+            throw new Error('Refresh failed - no access token in response');
 
           localStorage.setItem('access_token', newAccessToken);
           localStorage.setItem('refresh_token', newRefreshToken);

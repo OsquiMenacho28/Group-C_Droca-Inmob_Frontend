@@ -13,7 +13,12 @@ export type {
   ConfirmImageUploadRequest,
 } from './services/propertyService';
 
-export { propertySchema, propertyFiltersSchema, visitSchema, visitRequestSchema } from './schemas';
+export {
+  propertySchema,
+  propertyFiltersSchema,
+  visitSchema,
+  visitRequestSchema,
+} from './schemas';
 export type {
   PropertyFormValues,
   PropertyFiltersValues,

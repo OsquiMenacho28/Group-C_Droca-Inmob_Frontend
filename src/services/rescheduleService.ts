@@ -3,7 +3,11 @@
 // Uses the project's shared axios instance with the JWT auth interceptor.
 
 import { apiClient as api } from '@/api';
-import type { RescheduleRequest, RescheduleResponse, Visit } from '@/types/reschedule';
+import type {
+  RescheduleRequest,
+  RescheduleResponse,
+  Visit,
+} from '@/types/reschedule';
 
 const rescheduleService = {
   /**

@@ -13,10 +13,15 @@
 
         <!-- Motivo selector -->
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             {{ t('retirement.motivo') }}
           </label>
-          <div v-if="loadingReasons" class="flex items-center gap-2 text-sm text-gray-500">
+          <div
+            v-if="loadingReasons"
+            class="flex items-center gap-2 text-sm text-gray-500"
+          >
             <div
               class="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"
             ></div>
@@ -24,7 +29,9 @@
           </div>
           <div v-else-if="reasonsError" class="text-sm text-red-500">
             {{ reasonsError }}
-            <button @click="loadReasons" class="ml-2 underline">Reintentar</button>
+            <button @click="loadReasons" class="ml-2 underline">
+              Reintentar
+            </button>
           </div>
           <select
             v-else
@@ -38,14 +45,20 @@
               {{ getReasonLabel(reason) }}
             </option>
           </select>
-          <p v-if="errors.reason" class="text-xs text-red-500 mt-1">{{ errors.reason }}</p>
+          <p v-if="errors.reason" class="text-xs text-red-500 mt-1">
+            {{ errors.reason }}
+          </p>
         </div>
 
         <!-- Detalle adicional -->
         <div>
-          <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label
+            class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
             {{ t('retirement.detalle') }}
-            <span class="text-xs text-gray-400 ml-1">{{ t('common.optionalLabel') }}</span>
+            <span class="text-xs text-gray-400 ml-1">{{
+              t('common.optionalLabel')
+            }}</span>
           </label>
           <textarea
             v-model="detail"
@@ -55,7 +68,9 @@
             :class="{ 'border-red-400 dark:border-red-500': errors.detail }"
             @input="errors.detail = ''"
           />
-          <p v-if="errors.detail" class="text-xs text-red-500 mt-1">{{ errors.detail }}</p>
+          <p v-if="errors.detail" class="text-xs text-red-500 mt-1">
+            {{ errors.detail }}
+          </p>
         </div>
       </div>
     </template>
@@ -64,7 +79,11 @@
         <fwb-button color="alternative" @click="close">
           {{ t('retirement.cancel') }}
         </fwb-button>
-        <fwb-button gradient="red" @click="submit" :disabled="submitting || loadingReasons">
+        <fwb-button
+          gradient="red"
+          @click="submit"
+          :disabled="submitting || loadingReasons"
+        >
           {{ submitting ? t('common.processing') : t('retirement.confirm') }}
         </fwb-button>
       </div>
@@ -73,113 +92,113 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from 'vue';
-  import { FwbButton } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
-  import BaseModal from '@/components/ui/BaseModal.vue';
-  import { apiClient as api } from '@/api';
-  import { propertyService } from '@/modules/properties';
-  import { handleApiError } from '@/api/errorHandler';
+import { ref, watch, computed } from 'vue';
+import { FwbButton } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
+import BaseModal from '@/components/ui/BaseModal.vue';
+import { apiClient as api } from '@/api';
+import { propertyService } from '@/modules/properties';
+import { handleApiError } from '@/api/errorHandler';
 
-  const props = defineProps<{
-    show: boolean;
-    propertyId: string;
-    propertyTitle: string;
-  }>();
+const props = defineProps<{
+  show: boolean;
+  propertyId: string;
+  propertyTitle: string;
+}>();
 
-  const emit = defineEmits<{
-    (e: 'close'): void;
-    (e: 'success'): void;
-  }>();
+const emit = defineEmits<{
+  (e: 'close'): void;
+  (e: 'success'): void;
+}>();
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const reasons = ref<string[]>([]);
-  const loadingReasons = ref(false);
-  const reasonsError = ref<string | null>(null);
-  const selectedReason = ref('');
-  const detail = ref('');
-  const submitting = ref(false);
-  const errors = ref({ reason: '', detail: '' });
+const reasons = ref<string[]>([]);
+const loadingReasons = ref(false);
+const reasonsError = ref<string | null>(null);
+const selectedReason = ref('');
+const detail = ref('');
+const submitting = ref(false);
+const errors = ref({ reason: '', detail: '' });
 
-  const localShow = computed({
-    get: () => props.show,
-    set: (val) => {
-      if (!val) {
-        close();
-      }
-    },
-  });
-
-  function onModelValueUpdate(val: boolean) {
+const localShow = computed({
+  get: () => props.show,
+  set: (val) => {
     if (!val) {
       close();
     }
+  },
+});
+
+function onModelValueUpdate(val: boolean) {
+  if (!val) {
+    close();
+  }
+}
+
+function getReasonLabel(reason: string): string {
+  const key = `retirement.reason${reason.charAt(0).toUpperCase() + reason.slice(1).toLowerCase()}`;
+  const translation = t(key);
+  return translation !== key ? translation : reason;
+}
+
+async function loadReasons() {
+  loadingReasons.value = true;
+  reasonsError.value = null;
+  try {
+    const response = await api.get('/catalogos/motivos-retiro');
+    reasons.value = response.data.data || [];
+  } catch {
+    console.warn('API de catálogo no disponible, usando valores por defecto');
+    reasons.value = ['VENTA_EXTERNA', 'DECISION_PROPIETARIO', 'OTRO'];
+  } finally {
+    loadingReasons.value = false;
+  }
+}
+
+async function submit() {
+  errors.value = { reason: '', detail: '' };
+
+  if (!selectedReason.value) {
+    errors.value.reason = t('retirement.motivoRequired');
+    return;
   }
 
-  function getReasonLabel(reason: string): string {
-    const key = `retirement.reason${reason.charAt(0).toUpperCase() + reason.slice(1).toLowerCase()}`;
-    const translation = t(key);
-    return translation !== key ? translation : reason;
+  if (selectedReason.value === 'OTRO' && !detail.value.trim()) {
+    errors.value.detail = t('retirement.detalleRequired');
+    return;
   }
 
-  async function loadReasons() {
-    loadingReasons.value = true;
-    reasonsError.value = null;
-    try {
-      const response = await api.get('/catalogos/motivos-retiro');
-      reasons.value = response.data.data || [];
-    } catch {
-      console.warn('API de catálogo no disponible, usando valores por defecto');
-      reasons.value = ['VENTA_EXTERNA', 'DECISION_PROPIETARIO', 'OTRO'];
-    } finally {
-      loadingReasons.value = false;
+  submitting.value = true;
+  try {
+    await propertyService.withdrawProperty(props.propertyId, {
+      motivoRetiro: selectedReason.value,
+      detalleRetiro: detail.value.trim() || null,
+    });
+    emit('success');
+    close();
+  } catch (err) {
+    const errorMsg = handleApiError(err).message;
+    alert(errorMsg);
+  } finally {
+    submitting.value = false;
+  }
+}
+
+function close() {
+  emit('close');
+  selectedReason.value = '';
+  detail.value = '';
+  errors.value = { reason: '', detail: '' };
+}
+
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      loadReasons();
     }
-  }
-
-  async function submit() {
-    errors.value = { reason: '', detail: '' };
-
-    if (!selectedReason.value) {
-      errors.value.reason = t('retirement.motivoRequired');
-      return;
-    }
-
-    if (selectedReason.value === 'OTRO' && !detail.value.trim()) {
-      errors.value.detail = t('retirement.detalleRequired');
-      return;
-    }
-
-    submitting.value = true;
-    try {
-      await propertyService.withdrawProperty(props.propertyId, {
-        motivoRetiro: selectedReason.value,
-        detalleRetiro: detail.value.trim() || null,
-      });
-      emit('success');
-      close();
-    } catch (err) {
-      const errorMsg = handleApiError(err).message;
-      alert(errorMsg);
-    } finally {
-      submitting.value = false;
-    }
-  }
-
-  function close() {
-    emit('close');
-    selectedReason.value = '';
-    detail.value = '';
-    errors.value = { reason: '', detail: '' };
-  }
-
-  watch(
-    () => props.show,
-    (newVal) => {
-      if (newVal) {
-        loadReasons();
-      }
-    },
-    { immediate: true }
-  );
+  },
+  { immediate: true }
+);
 </script>

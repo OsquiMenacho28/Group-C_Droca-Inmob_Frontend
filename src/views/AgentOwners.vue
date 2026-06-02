@@ -1,13 +1,20 @@
 <template>
   <div class="p-6 space-y-6">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div
+      class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+    >
       <div>
-        <h1 class="text-3xl font-bold dark:text-white">{{ t('agentOwners.title') }}</h1>
-        <p class="text-gray-500 text-sm dark:text-gray-400">{{ t('agentOwners.subtitle') }}</p>
+        <h1 class="text-3xl font-bold dark:text-white">
+          {{ t('agentOwners.title') }}
+        </h1>
+        <p class="text-gray-500 text-sm dark:text-gray-400">
+          {{ t('agentOwners.subtitle') }}
+        </p>
       </div>
       <div class="flex items-center space-x-3">
         <fwb-badge type="indigo">
-          {{ t('common.agent') }} {{ authStore.user?.fullName || t('common.agent') }}
+          {{ t('common.agent') }}
+          {{ authStore.user?.fullName || t('common.agent') }}
         </fwb-badge>
         <fwb-button @click="openCreateModal" gradient="blue">
           <div class="flex items-center">
@@ -22,7 +29,9 @@
       class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4"
     >
       <div class="relative max-w-md">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div
+          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+        >
           <IconLucideSearch class="w-5 h-5 text-gray-400" />
         </div>
         <input
@@ -71,7 +80,9 @@
 
           <div class="flex justify-between items-end mt-auto">
             <div>
-              <p class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">
+              <p
+                class="text-[10px] text-gray-400 uppercase font-bold tracking-tighter"
+              >
                 {{ t('agentOwners.phone') }}
               </p>
               <p class="text-sm font-semibold dark:text-gray-200">
@@ -84,7 +95,9 @@
               </p>
               <p
                 class="text-sm font-semibold"
-                :class="o.status === 'ACTIVE' ? 'text-green-600' : 'text-gray-500'"
+                :class="
+                  o.status === 'ACTIVE' ? 'text-green-600' : 'text-gray-500'
+                "
               >
                 {{
                   o.status === 'ACTIVE'
@@ -100,10 +113,20 @@
           <div
             class="grid grid-cols-1 gap-2 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700"
           >
-            <fwb-button size="sm" color="alternative" @click="openDetailsModal(o)" class="w-full">
+            <fwb-button
+              size="sm"
+              color="alternative"
+              @click="openDetailsModal(o)"
+              class="w-full"
+            >
               {{ t('agentOwners.details') }}
             </fwb-button>
-            <fwb-button size="sm" color="alternative" @click="openEditModal(o)" class="w-full">
+            <fwb-button
+              size="sm"
+              color="alternative"
+              @click="openEditModal(o)"
+              class="w-full"
+            >
               {{ t('agentOwners.editProfile') }}
             </fwb-button>
           </div>
@@ -130,7 +153,11 @@
     <fwb-modal v-if="showModal" @close="closeModal">
       <template #header>
         <div class="text-lg font-bold dark:text-white">
-          {{ isEditing ? t('agentOwners.editTitle') : t('agentOwners.createTitle') }}
+          {{
+            isEditing
+              ? t('agentOwners.editTitle')
+              : t('agentOwners.createTitle')
+          }}
         </div>
       </template>
       <template #body>
@@ -165,173 +192,179 @@
 </template>
 
 <script setup lang="ts">
-  import IconLucidePlus from '~icons/lucide/plus';
-  import IconLucideSearch from '~icons/lucide/search';
-  import { ref, computed, onMounted, watch } from 'vue';
-  import { FwbButton, FwbBadge, FwbModal, FwbCard } from 'flowbite-vue';
-  import { userService } from '@/services/userService';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import { personService } from '@/services/personService';
-  import UserForm from '@/components/users/UserForm.vue';
-  import OwnerDetailsModal from '@/components/users/OwnerDetailsModal.vue';
-  import Pagination from '@/components/ui/Pagination.vue';
-  import { useI18n } from 'vue-i18n';
-  import { handleApiError } from '@/api/errorHandler';
-  import type { User } from '@/types/user';
+import IconLucidePlus from '~icons/lucide/plus';
+import IconLucideSearch from '~icons/lucide/search';
+import { ref, computed, onMounted, watch } from 'vue';
+import { FwbButton, FwbBadge, FwbModal, FwbCard } from 'flowbite-vue';
+import { userService } from '@/services/userService';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import { personService } from '@/services/personService';
+import UserForm from '@/components/users/UserForm.vue';
+import OwnerDetailsModal from '@/components/users/OwnerDetailsModal.vue';
+import Pagination from '@/components/ui/Pagination.vue';
+import { useI18n } from 'vue-i18n';
+import { handleApiError } from '@/api/errorHandler';
+import type { User } from '@/types/user';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const authStore = useAuthStore();
-  const owners = ref<User[]>([]);
-  const loading = ref(false);
-  const showModal = ref(false);
-  const showDetailsModal = ref(false);
-  const isEditing = ref(false);
-  const editingOwner = ref<Record<string, unknown> | null>(null);
-  const selectedOwner = ref<Record<string, unknown> | null>(null);
-  const formKey = ref(0);
-  const searchName = ref('');
+const authStore = useAuthStore();
+const owners = ref<User[]>([]);
+const loading = ref(false);
+const showModal = ref(false);
+const showDetailsModal = ref(false);
+const isEditing = ref(false);
+const editingOwner = ref<Record<string, unknown> | null>(null);
+const selectedOwner = ref<Record<string, unknown> | null>(null);
+const formKey = ref(0);
+const searchName = ref('');
 
-  const currentPage = ref(0);
-  const pageSize = ref(10);
-  const totalPages = ref(0);
-  const totalOwners = ref(0);
+const currentPage = ref(0);
+const pageSize = ref(10);
+const totalPages = ref(0);
+const totalOwners = ref(0);
 
-  const toast = ref({
-    visible: false,
-    message: '',
-    type: 'success' as 'success' | 'error',
+const toast = ref({
+  visible: false,
+  message: '',
+  type: 'success' as 'success' | 'error',
+});
+
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  toast.value = { visible: true, message, type };
+  setTimeout(() => {
+    toast.value.visible = false;
+  }, 5000);
+};
+
+const filteredOwners = computed(() => {
+  const term = searchName.value.trim().toLowerCase();
+  if (!term) return owners.value;
+  return owners.value.filter((o) => {
+    const name = (
+      o.fullName || `${o.firstName || ''} ${o.lastName || ''}`
+    ).toLowerCase();
+    const taxId = (o.taxId || '').toString().toLowerCase();
+    return name.includes(term) || taxId.includes(term);
   });
+});
 
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    toast.value = { visible: true, message, type };
-    setTimeout(() => {
-      toast.value.visible = false;
-    }, 5000);
-  };
+const loadOwners = async () => {
+  loading.value = true;
+  try {
+    const res = await userService.getUsers(currentPage.value, pageSize.value);
+    const baseUsers = res.data || [];
+    const u = authStore.user as UserClaims | null;
+    const agentId = u?.sub || u?.userId;
 
-  const filteredOwners = computed(() => {
-    const term = searchName.value.trim().toLowerCase();
-    if (!term) return owners.value;
-    return owners.value.filter((o) => {
-      const name = (o.fullName || `${o.firstName || ''} ${o.lastName || ''}`).toLowerCase();
-      const taxId = (o.taxId || '').toString().toLowerCase();
-      return name.includes(term) || taxId.includes(term);
+    const filteredBase = baseUsers.filter((u: User) => {
+      return (
+        u.userType === 'OWNER' && (!agentId || u.assignedAgentId === agentId)
+      );
     });
-  });
 
-  const loadOwners = async () => {
-    loading.value = true;
-    try {
-      const res = await userService.getUsers(currentPage.value, pageSize.value);
-      const baseUsers = res.data || [];
+    owners.value = await Promise.all(
+      filteredBase.map(async (u: User) => {
+        try {
+          const profile = await personService.getPersonByAuthUserId(u.id);
+          return {
+            ...u,
+            ...profile,
+            id: u.id,
+            authUserId: u.id,
+            personId: profile.id as string,
+          };
+        } catch {
+          return { ...u, authUserId: u.id, personId: undefined };
+        }
+      })
+    );
+
+    totalOwners.value = res.meta?.total || 0;
+    totalPages.value = Math.ceil(totalOwners.value / pageSize.value);
+  } catch (e) {
+    console.error('Error loading owners:', e);
+    showToast(handleApiError(e).message, 'error');
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(pageSize, () => {
+  currentPage.value = 0;
+  loadOwners();
+});
+
+const openCreateModal = () => {
+  editingOwner.value = {
+    userType: 'OWNER',
+  };
+  isEditing.value = false;
+  formKey.value++;
+  showModal.value = true;
+};
+
+const openEditModal = (owner: User) => {
+  editingOwner.value = { ...owner } as Record<string, unknown>;
+  isEditing.value = true;
+  formKey.value++;
+  showModal.value = true;
+};
+
+const openDetailsModal = (owner: User) => {
+  selectedOwner.value = owner as unknown as Record<string, unknown>;
+  showDetailsModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const hasDuplicateTaxId = (taxId: string, currentId?: string) => {
+  const normalized = (taxId || '').toString().trim().toLowerCase();
+  if (!normalized) return false;
+
+  return owners.value.some(
+    (o) =>
+      (o.taxId || '').toString().trim().toLowerCase() === normalized &&
+      o.id !== currentId
+  );
+};
+
+const handleSubmit = async (formData: Record<string, unknown>) => {
+  const taxId = (formData.taxId || '').toString().trim();
+  if (hasDuplicateTaxId(taxId, editingOwner.value?.id as string | undefined)) {
+    showToast(t('agentOwners.duplicateTaxId'), 'error');
+    return;
+  }
+
+  try {
+    const payload = {
+      ...formData,
+      taxId: formData.taxId?.toString().trim(),
+      userType: 'OWNER',
+      roleIds: ['rol_owner'],
+    };
+
+    if (isEditing.value && editingOwner.value) {
+      await userService.updateUser(editingOwner.value.id as string, payload);
+      showToast(t('agentOwners.updated'));
+    } else {
       const u = authStore.user as UserClaims | null;
       const agentId = u?.sub || u?.userId;
-
-      const filteredBase = baseUsers.filter((u: User) => {
-        return u.userType === 'OWNER' && (!agentId || u.assignedAgentId === agentId);
+      await userService.createUser({
+        ...payload,
+        assignedAgentId: agentId,
       });
-
-      owners.value = await Promise.all(
-        filteredBase.map(async (u: User) => {
-          try {
-            const profile = await personService.getPersonByAuthUserId(u.id);
-            return {
-              ...u,
-              ...profile,
-              id: u.id,
-              authUserId: u.id,
-              personId: profile.id as string,
-            };
-          } catch {
-            return { ...u, authUserId: u.id, personId: undefined };
-          }
-        })
-      );
-
-      totalOwners.value = res.meta?.total || 0;
-      totalPages.value = Math.ceil(totalOwners.value / pageSize.value);
-    } catch (e) {
-      console.error('Error loading owners:', e);
-      showToast(handleApiError(e).message, 'error');
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  watch(pageSize, () => {
-    currentPage.value = 0;
-    loadOwners();
-  });
-
-  const openCreateModal = () => {
-    editingOwner.value = {
-      userType: 'OWNER',
-    };
-    isEditing.value = false;
-    formKey.value++;
-    showModal.value = true;
-  };
-
-  const openEditModal = (owner: User) => {
-    editingOwner.value = { ...owner } as Record<string, unknown>;
-    isEditing.value = true;
-    formKey.value++;
-    showModal.value = true;
-  };
-
-  const openDetailsModal = (owner: User) => {
-    selectedOwner.value = owner as unknown as Record<string, unknown>;
-    showDetailsModal.value = true;
-  };
-
-  const closeModal = () => {
-    showModal.value = false;
-  };
-
-  const hasDuplicateTaxId = (taxId: string, currentId?: string) => {
-    const normalized = (taxId || '').toString().trim().toLowerCase();
-    if (!normalized) return false;
-
-    return owners.value.some(
-      (o) => (o.taxId || '').toString().trim().toLowerCase() === normalized && o.id !== currentId
-    );
-  };
-
-  const handleSubmit = async (formData: Record<string, unknown>) => {
-    const taxId = (formData.taxId || '').toString().trim();
-    if (hasDuplicateTaxId(taxId, editingOwner.value?.id as string | undefined)) {
-      showToast(t('agentOwners.duplicateTaxId'), 'error');
-      return;
+      showToast(t('agentOwners.created'));
     }
 
-    try {
-      const payload = {
-        ...formData,
-        taxId: formData.taxId?.toString().trim(),
-        userType: 'OWNER',
-        roleIds: ['rol_owner'],
-      };
+    await loadOwners();
+    closeModal();
+  } catch (e) {
+    showToast(handleApiError(e).message, 'error');
+  }
+};
 
-      if (isEditing.value && editingOwner.value) {
-        await userService.updateUser(editingOwner.value.id as string, payload);
-        showToast(t('agentOwners.updated'));
-      } else {
-        const u = authStore.user as UserClaims | null;
-        const agentId = u?.sub || u?.userId;
-        await userService.createUser({
-          ...payload,
-          assignedAgentId: agentId,
-        });
-        showToast(t('agentOwners.created'));
-      }
-
-      await loadOwners();
-      closeModal();
-    } catch (e) {
-      showToast(handleApiError(e).message, 'error');
-    }
-  };
-
-  onMounted(loadOwners);
+onMounted(loadOwners);
 </script>

@@ -5,7 +5,9 @@
     >
       <template #logo>
         <div class="flex items-center gap-2">
-          <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+          <span
+            class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
+          >
             {{ t('nav.brand') }}
           </span>
         </div>
@@ -88,7 +90,11 @@
 
           <!-- Owner Links -->
           <template v-if="isOwner">
-            <NavLink to="/dashboard/owner" :label="t('nav.myProperties')" :icon="IconLucideHome" />
+            <NavLink
+              to="/dashboard/owner"
+              :label="t('nav.myProperties')"
+              :icon="IconLucideHome"
+            />
           </template>
 
           <!-- Client Links -->
@@ -112,7 +118,9 @@
             :label="t('nav.calendar')"
             :icon="IconLucideCalendar"
           >
-            <template #suffix><VisitRequestNotificationBadge v-if="isAgent" /></template>
+            <template #suffix
+              ><VisitRequestNotificationBadge v-if="isAgent"
+            /></template>
           </NavLink>
 
           <NavLink
@@ -146,10 +154,14 @@
                 <span class="block text-sm text-primary font-medium">
                   {{ getUserDisplayName() }}
                 </span>
-                <span class="block text-sm text-gray-500 truncate dark:text-gray-400">
+                <span
+                  class="block text-sm text-gray-500 truncate dark:text-gray-400"
+                >
                   {{ getUserEmail() }}
                 </span>
-                <span class="block text-xs text-gray-400 dark:text-gray-500 mt-1">
+                <span
+                  class="block text-xs text-gray-400 dark:text-gray-500 mt-1"
+                >
                   {{ getUserTypeLabel() }}
                 </span>
               </div>
@@ -173,85 +185,94 @@
 </template>
 
 <script setup lang="ts">
-  import { FwbNavbar, FwbNavbarCollapse, FwbDropdown, FwbListGroup } from 'flowbite-vue';
-  import NotificationBadge from '@/components/visits/reassignment/NotificationBadge.vue';
-  import VisitRequestNotificationBadge from '@/components/visits/requests/VisitRequestNotificationBadge.vue';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import { useI18n } from 'vue-i18n';
-  import ThemeToggle from '@/components/ThemeToggle.vue';
-  import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
-  import NavLink from '@/components/ui/NavLink.vue';
-  import { computed } from 'vue';
-  import IconLucideFileText from '~icons/lucide/file-text';
-  import IconLucideTrophy from '~icons/lucide/trophy';
-  import IconLucideBarChart2 from '~icons/lucide/bar-chart-2';
-  import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
-  import IconLucideClipboardList from '~icons/lucide/clipboard-list';
-  import IconLucideUsers from '~icons/lucide/users';
-  import IconLucideBuilding2 from '~icons/lucide/building-2';
-  import IconLucideShieldCheck from '~icons/lucide/shield-check';
-  import IconLucideLayoutDashboard from '~icons/lucide/layout-dashboard';
-  import IconLucideUserCircle from '~icons/lucide/user-circle';
-  import IconLucideHome from '~icons/lucide/home';
-  import IconLucideBuilding from '~icons/lucide/building';
-  import IconLucideHeart from '~icons/lucide/heart';
-  import IconLucideCalendar from '~icons/lucide/calendar';
-  import IconLucideCar from '~icons/lucide/car';
-  import IconLucideBarChart from '~icons/lucide/bar-chart';
-  import NotificationBell from '@/components/notifications/NotificationBell.vue';
+import {
+  FwbNavbar,
+  FwbNavbarCollapse,
+  FwbDropdown,
+  FwbListGroup,
+} from 'flowbite-vue';
+import NotificationBadge from '@/components/visits/reassignment/NotificationBadge.vue';
+import VisitRequestNotificationBadge from '@/components/visits/requests/VisitRequestNotificationBadge.vue';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import { useI18n } from 'vue-i18n';
+import ThemeToggle from '@/components/ThemeToggle.vue';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
+import NavLink from '@/components/ui/NavLink.vue';
+import { computed } from 'vue';
+import IconLucideFileText from '~icons/lucide/file-text';
+import IconLucideTrophy from '~icons/lucide/trophy';
+import IconLucideBarChart2 from '~icons/lucide/bar-chart-2';
+import IconLucideArrowLeftRight from '~icons/lucide/arrow-left-right';
+import IconLucideClipboardList from '~icons/lucide/clipboard-list';
+import IconLucideUsers from '~icons/lucide/users';
+import IconLucideBuilding2 from '~icons/lucide/building-2';
+import IconLucideShieldCheck from '~icons/lucide/shield-check';
+import IconLucideLayoutDashboard from '~icons/lucide/layout-dashboard';
+import IconLucideUserCircle from '~icons/lucide/user-circle';
+import IconLucideHome from '~icons/lucide/home';
+import IconLucideBuilding from '~icons/lucide/building';
+import IconLucideHeart from '~icons/lucide/heart';
+import IconLucideCalendar from '~icons/lucide/calendar';
+import IconLucideCar from '~icons/lucide/car';
+import IconLucideBarChart from '~icons/lucide/bar-chart';
+import NotificationBell from '@/components/notifications/NotificationBell.vue';
 
-  const { t } = useI18n();
-  const authStore = useAuthStore();
-  const user = computed(() => authStore.user as UserClaims | null);
+const { t } = useI18n();
+const authStore = useAuthStore();
+const user = computed(() => authStore.user as UserClaims | null);
 
-  // Funciones auxiliares
-  const getUserEmail = () => user.value?.email || user.value?.sub || t('common.noEmail');
-  const getUserDisplayName = () => {
-    if (user.value?.name) return user.value.name;
-    if (user.value?.fullName) return user.value.fullName;
-    const email = getUserEmail();
-    return email !== user.value?.sub ? email.split('@')[0] : t('common.user');
-  };
-  const getUserInitial = () => getUserDisplayName().charAt(0).toUpperCase();
-  const getUserTypeLabel = () => {
-    const userType = user.value?.userType;
-    switch (userType) {
-      case 'ADMIN':
-        return t('roleTypes.admin');
-      case 'EMPLOYEE':
-        return t('roleTypes.agent');
-      case 'OWNER':
-        return t('roleTypes.owner');
-      case 'INTERESTED_CLIENT':
-        return t('roleTypes.client');
-      default:
-        return userType || t('roleTypes.user');
-    }
-  };
-  const isAdmin = computed(() => {
-    const roles = (user.value?.roles || []) as string[];
-    return roles.includes('ADMIN') || user.value?.userType === 'ADMIN';
-  });
-  const isAgent = computed(() => {
-    const roles = (user.value?.roles || []) as string[];
-    return roles.includes('AGENT') || user.value?.userType === 'EMPLOYEE';
-  });
-  const isOwner = computed(() => {
-    const roles = (user.value?.roles || []) as string[];
-    return roles.includes('OWNER') || user.value?.userType === 'OWNER';
-  });
-  const isClient = computed(() => {
-    const roles = (user.value?.roles || []) as string[];
-    return roles.includes('INTERESTED_CLIENT') || user.value?.userType === 'INTERESTED_CLIENT';
-  });
+// Funciones auxiliares
+const getUserEmail = () =>
+  user.value?.email || user.value?.sub || t('common.noEmail');
+const getUserDisplayName = () => {
+  if (user.value?.name) return user.value.name;
+  if (user.value?.fullName) return user.value.fullName;
+  const email = getUserEmail();
+  return email !== user.value?.sub ? email.split('@')[0] : t('common.user');
+};
+const getUserInitial = () => getUserDisplayName().charAt(0).toUpperCase();
+const getUserTypeLabel = () => {
+  const userType = user.value?.userType;
+  switch (userType) {
+    case 'ADMIN':
+      return t('roleTypes.admin');
+    case 'EMPLOYEE':
+      return t('roleTypes.agent');
+    case 'OWNER':
+      return t('roleTypes.owner');
+    case 'INTERESTED_CLIENT':
+      return t('roleTypes.client');
+    default:
+      return userType || t('roleTypes.user');
+  }
+};
+const isAdmin = computed(() => {
+  const roles = (user.value?.roles || []) as string[];
+  return roles.includes('ADMIN') || user.value?.userType === 'ADMIN';
+});
+const isAgent = computed(() => {
+  const roles = (user.value?.roles || []) as string[];
+  return roles.includes('AGENT') || user.value?.userType === 'EMPLOYEE';
+});
+const isOwner = computed(() => {
+  const roles = (user.value?.roles || []) as string[];
+  return roles.includes('OWNER') || user.value?.userType === 'OWNER';
+});
+const isClient = computed(() => {
+  const roles = (user.value?.roles || []) as string[];
+  return (
+    roles.includes('INTERESTED_CLIENT') ||
+    user.value?.userType === 'INTERESTED_CLIENT'
+  );
+});
 
-  const handleLogout = async () => {
-    try {
-      await authStore.logout();
-    } catch (e) {
-      console.error('Logout error:', e);
-    } finally {
-      window.location.href = '/login';
-    }
-  };
+const handleLogout = async () => {
+  try {
+    await authStore.logout();
+  } catch (e) {
+    console.error('Logout error:', e);
+  } finally {
+    window.location.href = '/login';
+  }
+};
 </script>

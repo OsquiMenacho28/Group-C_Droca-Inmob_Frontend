@@ -2,7 +2,9 @@
   <div class="app-page p-6 space-y-6">
     <div class="flex justify-between items-center mb-4">
       <div>
-        <h1 class="text-3xl font-bold dark:text-white">{{ t('audit.title') }}</h1>
+        <h1 class="text-3xl font-bold dark:text-white">
+          {{ t('audit.title') }}
+        </h1>
         <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">
           {{ t('audit.subtitle') }}
         </p>
@@ -27,13 +29,13 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import { FwbTabs, FwbTab, FwbBadge } from 'flowbite-vue';
-  import IdentityAuditTab from '@/components/audit/IdentityAuditTab.vue';
-  import PropertyAuditTab from '@/components/audit/PropertyAuditTab.vue';
-  import ProfileAuditTab from '@/components/audit/ProfileAuditTab.vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { FwbTabs, FwbTab, FwbBadge } from 'flowbite-vue';
+import IdentityAuditTab from '@/components/audit/IdentityAuditTab.vue';
+import PropertyAuditTab from '@/components/audit/PropertyAuditTab.vue';
+import ProfileAuditTab from '@/components/audit/ProfileAuditTab.vue';
 
-  const { t } = useI18n();
-  const activeTab = ref('identity');
+const { t } = useI18n();
+const activeTab = ref('identity');
 </script>
