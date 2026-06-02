@@ -40,7 +40,9 @@
           </button>
         </div>
 
-        <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+        <div
+          class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700"
+        >
           <div
             v-for="notif in recentNotifications"
             :key="notif.id"
@@ -53,14 +55,20 @@
                 <div
                   class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center"
                 >
-                  <IconLucideBellRing class="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <IconLucideBellRing
+                    class="w-4 h-4 text-blue-600 dark:text-blue-400"
+                  />
                 </div>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p
+                  class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                >
                   {{ notif.subject }}
                 </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                <p
+                  class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1"
+                >
                   {{ notif.content }}
                 </p>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">
@@ -74,7 +82,9 @@
           </div>
         </div>
 
-        <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-center">
+        <div
+          class="px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-center"
+        >
           <router-link
             to="/dashboard/notifications"
             class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
@@ -89,70 +99,76 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { useNotifications } from '@/composables/useNotifications';
-  import type { InAppNotification } from '@/types/notification';
-  import IconLucideBell from '~icons/lucide/bell';
-  import IconLucideBellRing from '~icons/lucide/bell-ring';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useNotifications } from '@/composables/useNotifications';
+import type { InAppNotification } from '@/types/notification';
+import IconLucideBell from '~icons/lucide/bell';
+import IconLucideBellRing from '~icons/lucide/bell-ring';
 
-  const isOpen = ref(false);
-  const { unreadCount, loadUnreadCount, fetchNotifications, list, markAsRead, markAllAsRead } =
-    useNotifications();
+const isOpen = ref(false);
+const {
+  unreadCount,
+  loadUnreadCount,
+  fetchNotifications,
+  list,
+  markAsRead,
+  markAllAsRead,
+} = useNotifications();
 
-  const recentNotifications = computed(() => list.value.slice(0, 5));
+const recentNotifications = computed(() => list.value.slice(0, 5));
 
-  const toggleDropdown = async () => {
-    if (!isOpen.value) {
-      await fetchNotifications(); // carga las 10 primeras
-    }
-    isOpen.value = !isOpen.value;
-  };
+const toggleDropdown = async () => {
+  if (!isOpen.value) {
+    await fetchNotifications(); // carga las 10 primeras
+  }
+  isOpen.value = !isOpen.value;
+};
 
-  const handleNotificationClick = async (notif: InAppNotification) => {
-    if (!notif.readStatus) {
-      await markAsRead(notif.id);
-      await loadUnreadCount();
-    }
-    // Opcional: redirigir según el tipo de notificación
-    // Ejemplo: if (notif.interactionType === 'VISITA') router.push(`/visits/${notif.details?.visitId}`)
-    isOpen.value = false;
-  };
-
-  const handleMarkAllRead = async () => {
-    await markAllAsRead();
+const handleNotificationClick = async (notif: InAppNotification) => {
+  if (!notif.readStatus) {
+    await markAsRead(notif.id);
     await loadUnreadCount();
-  };
+  }
+  // Opcional: redirigir según el tipo de notificación
+  // Ejemplo: if (notif.interactionType === 'VISITA') router.push(`/visits/${notif.details?.visitId}`)
+  isOpen.value = false;
+};
 
-  const formatRelativeTime = (iso: string) => {
-    if (!iso) return '';
-    const date = new Date(iso);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+const handleMarkAllRead = async () => {
+  await markAllAsRead();
+  await loadUnreadCount();
+};
 
-    if (minutes < 1) return 'Ahora mismo';
-    if (minutes < 60) return `Hace ${minutes} min`;
-    if (hours < 24) return `Hace ${hours} h`;
-    if (days === 1) return 'Ayer';
-    if (days < 7) return `Hace ${days} días`;
-    return date.toLocaleDateString();
-  };
+const formatRelativeTime = (iso: string) => {
+  if (!iso) return '';
+  const date = new Date(iso);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
-  const handleClickOutside = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('.relative')) {
-      isOpen.value = false;
-    }
-  };
+  if (minutes < 1) return 'Ahora mismo';
+  if (minutes < 60) return `Hace ${minutes} min`;
+  if (hours < 24) return `Hace ${hours} h`;
+  if (days === 1) return 'Ayer';
+  if (days < 7) return `Hace ${days} días`;
+  return date.toLocaleDateString();
+};
 
-  onMounted(() => {
-    loadUnreadCount();
-    document.addEventListener('click', handleClickOutside);
-  });
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.relative')) {
+    isOpen.value = false;
+  }
+};
 
-  onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside);
-  });
+onMounted(() => {
+  loadUnreadCount();
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 </script>

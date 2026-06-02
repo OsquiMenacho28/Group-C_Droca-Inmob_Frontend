@@ -26,12 +26,16 @@ export const userService = {
       email: payload.email,
       userType: payload.userType,
       roleIds: payload.roleIds || [
-        getRoleIdByUserType(payload.userType as import('@/types/user').UserType),
+        getRoleIdByUserType(
+          payload.userType as import('@/types/user').UserType
+        ),
       ],
       birthDate: payload.birthDate,
       phone: payload.phone,
       sendTemporaryCredentials:
-        payload.sendTemporaryCredentials !== undefined ? payload.sendTemporaryCredentials : true,
+        payload.sendTemporaryCredentials !== undefined
+          ? payload.sendTemporaryCredentials
+          : true,
       department: payload.department,
       position: payload.position,
       hireDate: payload.hireDate,
@@ -52,8 +56,14 @@ export const userService = {
     return response.data.data;
   },
 
-  async updateUser(userId: string, payload: Record<string, unknown>): Promise<User> {
-    const response = await api.put<ApiResponse<User>>(`/users/${userId}`, payload);
+  async updateUser(
+    userId: string,
+    payload: Record<string, unknown>
+  ): Promise<User> {
+    const response = await api.put<ApiResponse<User>>(
+      `/users/${userId}`,
+      payload
+    );
     return response.data.data;
   },
   async getUserById(id: string): Promise<ApiResponse<User>> {
@@ -93,12 +103,17 @@ export const userService = {
   },
 
   async getRoles(page = 0, pageSize = 50): Promise<ApiResponse<Role[]>> {
-    const response = await api.get<ApiResponse<Role[]>>('/roles', { params: { page, pageSize } });
+    const response = await api.get<ApiResponse<Role[]>>('/roles', {
+      params: { page, pageSize },
+    });
     return response.data;
   },
 
   async resendTemporaryPassword(email: string): Promise<unknown> {
-    const res = await api.post<ApiResponse<unknown>>('/auth/resend-temp-password', { email });
+    const res = await api.post<ApiResponse<unknown>>(
+      '/auth/resend-temp-password',
+      { email }
+    );
     return res.data.data;
   },
 
@@ -106,7 +121,8 @@ export const userService = {
    * Example method using API v2
    */
   async getV2Data(): Promise<unknown> {
-    const response = await apiClientV2.get<ApiResponse<unknown>>('/example-resource');
+    const response =
+      await apiClientV2.get<ApiResponse<unknown>>('/example-resource');
     return response.data.data;
   },
 

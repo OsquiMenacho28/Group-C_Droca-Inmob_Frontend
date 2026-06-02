@@ -2,7 +2,8 @@
   <div
     class="relative app-card h-full flex flex-col overflow-hidden"
     :class="{
-      'bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600': isMinimalInfo,
+      'bg-gray-50 dark:bg-gray-900/50 border-gray-300 dark:border-gray-600':
+        isMinimalInfo,
     }"
   >
     <!-- Card Status Tag (Prominent for terminal states) -->
@@ -27,7 +28,11 @@
 
     <!-- Quick Action Buttons (Top Right) -->
     <div class="absolute top-3 right-3 z-40 flex gap-2">
-      <slot name="actions-top" :property="property" :status-helpers="statusHelpers"></slot>
+      <slot
+        name="actions-top"
+        :property="property"
+        :status-helpers="statusHelpers"
+      ></slot>
     </div>
 
     <!-- Details/History Button (Top Left) -->
@@ -111,11 +116,16 @@
     </div>
 
     <!-- Card Content -->
-    <div class="flex-1 flex flex-col p-5 sm:p-6" :class="{ 'grayscale-[0.5]': isMinimalInfo }">
+    <div
+      class="flex-1 flex flex-col p-5 sm:p-6"
+      :class="{ 'grayscale-[0.5]': isMinimalInfo }"
+    >
       <div class="flex-1 flex flex-col gap-3">
         <!-- Title with proper typography scale -->
         <div class="space-y-1">
-          <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+          <p
+            class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400"
+          >
             {{ t('adminProperties.owner') }}:
             <span class="text-gray-600 dark:text-gray-300 ml-1">
               {{ ownerName || t('adminProperties.notAssigned') }}
@@ -142,7 +152,9 @@
           class="grid grid-cols-2 gap-3 py-3 border-y border-gray-100 dark:border-gray-700"
         >
           <div class="space-y-0.5">
-            <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+            <p
+              class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400"
+            >
               {{ t('common.price') }}
             </p>
             <p class="text-xl font-bold text-blue-600 dark:text-blue-400">
@@ -150,10 +162,14 @@
             </p>
           </div>
           <div class="text-right space-y-0.5">
-            <p class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400">
+            <p
+              class="text-[0.625rem] font-semibold uppercase tracking-wide text-gray-400"
+            >
               {{ t('adminProperties.advisor') }}
             </p>
-            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate">
+            <p
+              class="text-sm font-semibold text-gray-700 dark:text-gray-300 truncate"
+            >
               {{ agentName || t('common.unassigned') }}
             </p>
           </div>
@@ -164,7 +180,9 @@
           v-else
           class="flex justify-between items-center py-2 text-xs border-t border-gray-200 dark:border-gray-700 mt-auto"
         >
-          <span class="text-gray-400 uppercase font-bold">{{ t('adminProperties.price') }}</span>
+          <span class="text-gray-400 uppercase font-bold">{{
+            t('adminProperties.price')
+          }}</span>
           <span class="font-black text-gray-600 dark:text-gray-400">
             ${{ (property.price || 0).toLocaleString() }}
           </span>
@@ -172,11 +190,19 @@
 
         <div class="mt-auto space-y-3">
           <!-- Document Upload (Hidden for terminal states) -->
-          <slot v-if="!isMinimalInfo" name="documents" :property="property"></slot>
+          <slot
+            v-if="!isMinimalInfo"
+            name="documents"
+            :property="property"
+          ></slot>
 
           <!-- Action Buttons Section with proper spacing -->
           <div class="flex flex-wrap gap-2 pt-2">
-            <slot name="actions-bottom" :property="property" :status-helpers="statusHelpers"></slot>
+            <slot
+              name="actions-bottom"
+              :property="property"
+              :status-helpers="statusHelpers"
+            ></slot>
           </div>
         </div>
       </div>
@@ -185,62 +211,69 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import { FwbBadge } from 'flowbite-vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { FwbBadge } from 'flowbite-vue';
 
-  import { usePropertyStatus } from '@/composables/usePropertyStatus';
-  import type { Property } from '@/types/property';
+import { usePropertyStatus } from '@/composables/usePropertyStatus';
+import type { Property } from '@/types/property';
 
-  // Icons
-  import IconLucideImage from '~icons/lucide/image';
-  import IconLucideClipboardList from '~icons/lucide/clipboard-list';
-  import IconLucideMapPin from '~icons/lucide/map-pin';
-  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
-  import IconLucideChevronRight from '~icons/lucide/chevron-right';
+// Icons
+import IconLucideImage from '~icons/lucide/image';
+import IconLucideClipboardList from '~icons/lucide/clipboard-list';
+import IconLucideMapPin from '~icons/lucide/map-pin';
+import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+import IconLucideChevronRight from '~icons/lucide/chevron-right';
 
-  const props = defineProps<{
-    property: Property;
-    ownerName?: string;
-    agentName?: string;
-    showHistoryButton?: boolean;
-  }>();
+const props = defineProps<{
+  property: Property;
+  ownerName?: string;
+  agentName?: string;
+  showHistoryButton?: boolean;
+}>();
 
-  defineEmits(['view-details', 'open-zoom']);
+defineEmits(['view-details', 'open-zoom']);
 
-  const { t } = useI18n();
-  const statusHelpers = usePropertyStatus(props.property.status);
-  const { statusLabel, statusBadgeClass, isMinimalInfo, isSold, isDeleted, isWithdrawn } =
-    statusHelpers;
+const { t } = useI18n();
+const statusHelpers = usePropertyStatus(props.property.status);
+const {
+  statusLabel,
+  statusBadgeClass,
+  isMinimalInfo,
+  isSold,
+  isDeleted,
+  isWithdrawn,
+} = statusHelpers;
 
-  const activeImageIndex = ref(0);
+const activeImageIndex = ref(0);
 
-  const nextImage = () => {
-    if (!props.property.imageUrls) return;
-    activeImageIndex.value = (activeImageIndex.value + 1) % props.property.imageUrls.length;
-  };
+const nextImage = () => {
+  if (!props.property.imageUrls) return;
+  activeImageIndex.value =
+    (activeImageIndex.value + 1) % props.property.imageUrls.length;
+};
 
-  const prevImage = () => {
-    if (!props.property.imageUrls) return;
-    activeImageIndex.value =
-      (activeImageIndex.value - 1 + props.property.imageUrls.length) %
-      props.property.imageUrls.length;
-  };
+const prevImage = () => {
+  if (!props.property.imageUrls) return;
+  activeImageIndex.value =
+    (activeImageIndex.value - 1 + props.property.imageUrls.length) %
+    props.property.imageUrls.length;
+};
 
-  const handleImageError = (event: Event) => {
-    (event.target as HTMLImageElement).style.display = 'none';
-  };
+const handleImageError = (event: Event) => {
+  (event.target as HTMLImageElement).style.display = 'none';
+};
 
-  const getOpTypeBadge = (type?: string) => {
-    switch (type) {
-      case 'VENTA':
-        return 'indigo';
-      case 'ALQUILER':
-        return 'green';
-      case 'ANTICRETICO':
-        return 'yellow';
-      default:
-        return 'dark';
-    }
-  };
+const getOpTypeBadge = (type?: string) => {
+  switch (type) {
+    case 'VENTA':
+      return 'indigo';
+    case 'ALQUILER':
+      return 'green';
+    case 'ANTICRETICO':
+      return 'yellow';
+    default:
+      return 'dark';
+  }
+};
 </script>

@@ -14,20 +14,28 @@ export const contractVersionService = {
     userName: string
   ): Promise<ContractVersionResponse> {
     const res = await api.post(`/contracts/${operationId}/versions`, data, {
-      headers: { 'X-User-Id': userId, 'X-User-Role': userRole, 'X-User-Name': userName },
+      headers: {
+        'X-User-Id': userId,
+        'X-User-Role': userRole,
+        'X-User-Name': userName,
+      },
     });
     return res.data;
   },
 
   // Obtener todas las versiones de un contrato por operationId
-  async getContractVersions(operationId: string): Promise<ContractVersionResponse[]> {
+  async getContractVersions(
+    operationId: string
+  ): Promise<ContractVersionResponse[]> {
     const res = await api.get(`/contracts/${operationId}/versions`);
     console.log(res.data);
     return res.data;
   },
 
   // Obtener el detalle completo de una versión específica
-  async getContractVersionById(versionId: string): Promise<ContractVersionResponse> {
+  async getContractVersionById(
+    versionId: string
+  ): Promise<ContractVersionResponse> {
     const res = await api.get(`/contracts/versions/${versionId}`);
     return res.data;
   },

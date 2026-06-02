@@ -44,9 +44,12 @@ export const auditService = {
     page?: number;
     pageSize?: number;
   }): Promise<ApiResponse<IdentityAuditLog[]>> {
-    const response = await api.get<ApiResponse<IdentityAuditLog[]>>('/users/audit', {
-      params: filters,
-    });
+    const response = await api.get<ApiResponse<IdentityAuditLog[]>>(
+      '/users/audit',
+      {
+        params: filters,
+      }
+    );
     return response.data;
   },
 
@@ -62,9 +65,12 @@ export const auditService = {
     page?: number;
     pageSize?: number;
   }): Promise<ApiResponse<PropertyAuditLog[]>> {
-    const response = await api.get<ApiResponse<PropertyAuditLog[]>>('/properties/audit', {
-      params: filters,
-    });
+    const response = await api.get<ApiResponse<PropertyAuditLog[]>>(
+      '/properties/audit',
+      {
+        params: filters,
+      }
+    );
     return response.data;
   },
 
@@ -80,9 +86,12 @@ export const auditService = {
     page?: number;
     pageSize?: number;
   }): Promise<ApiResponse<ProfileAuditLog[]>> {
-    const response = await api.get<ApiResponse<ProfileAuditLog[]>>('/persons/audit', {
-      params: filters,
-    });
+    const response = await api.get<ApiResponse<ProfileAuditLog[]>>(
+      '/persons/audit',
+      {
+        params: filters,
+      }
+    );
     return response.data;
   },
 };

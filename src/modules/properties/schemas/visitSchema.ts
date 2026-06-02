@@ -7,8 +7,12 @@ const { t } = i18n.global;
  * Visit creation form validation schema
  */
 export const visitSchema = z.object({
-  propertyId: z.string().min(1, { message: t('scheduleVisit.propertyRequired') }),
-  startTime: z.string().min(1, { message: t('scheduleVisit.startTimeRequired') }),
+  propertyId: z
+    .string()
+    .min(1, { message: t('scheduleVisit.propertyRequired') }),
+  startTime: z
+    .string()
+    .min(1, { message: t('scheduleVisit.startTimeRequired') }),
   endTime: z.string().min(1, { message: t('scheduleVisit.endTimeRequired') }),
   notes: z.string().optional(),
 });
@@ -19,8 +23,12 @@ export type VisitFormValues = z.infer<typeof visitSchema>;
  * Client visit request form validation schema
  */
 export const visitRequestSchema = z.object({
-  propertyId: z.string().min(1, { message: t('scheduleVisit.propertyRequired') }),
-  preferredDateTime: z.string().min(1, { message: t('scheduleVisit.preferredDateTimeRequired') }),
+  propertyId: z
+    .string()
+    .min(1, { message: t('scheduleVisit.propertyRequired') }),
+  preferredDateTime: z
+    .string()
+    .min(1, { message: t('scheduleVisit.preferredDateTimeRequired') }),
   alternativeDateTime: z.string().optional(),
   message: z
     .string()

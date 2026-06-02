@@ -50,11 +50,14 @@ export function useReschedule() {
       if (status === 409) {
         error.value = t('rescheduleVisit.status409');
       } else if (status === 422) {
-        error.value = axiosError?.response?.data?.error ?? t('rescheduleVisit.status422');
+        error.value =
+          axiosError?.response?.data?.error ?? t('rescheduleVisit.status422');
       } else if (status === 404) {
         error.value = t('rescheduleVisit.status404');
       } else {
-        error.value = axiosError?.response?.data?.error ?? t('rescheduleVisit.errorMessage');
+        error.value =
+          axiosError?.response?.data?.error ??
+          t('rescheduleVisit.errorMessage');
       }
       return null;
     } finally {
@@ -68,7 +71,8 @@ export function useReschedule() {
    */
   async function loadRescheduledVisits(visitId: string): Promise<void> {
     try {
-      rescheduledVisits.value = await rescheduleService.getRescheduledVisits(visitId);
+      rescheduledVisits.value =
+        await rescheduleService.getRescheduledVisits(visitId);
     } catch {
       rescheduledVisits.value = [];
     }

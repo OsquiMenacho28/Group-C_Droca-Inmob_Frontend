@@ -43,7 +43,10 @@ export function useEmailValidation() {
       return true;
     }
 
-    if (skipIfSameAsOriginal && skipIfSameAsOriginal.toLowerCase() === trimmedEmail) {
+    if (
+      skipIfSameAsOriginal &&
+      skipIfSameAsOriginal.toLowerCase() === trimmedEmail
+    ) {
       emailDuplicateError.value = '';
       return true;
     }

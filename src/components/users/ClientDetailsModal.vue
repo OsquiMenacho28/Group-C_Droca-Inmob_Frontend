@@ -5,7 +5,9 @@
         <h3 class="text-2xl font-bold dark:text-white">
           {{ client.fullName }}
         </h3>
-        <fwb-badge type="indigo">{{ t('clientDetails.profileBadge') }}</fwb-badge>
+        <fwb-badge type="indigo">{{
+          t('clientDetails.profileBadge')
+        }}</fwb-badge>
       </div>
     </template>
 
@@ -15,31 +17,49 @@
           <div
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
           >
-            <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3">
+            <h4
+              class="text-xs font-black text-blue-600 uppercase tracking-widest mb-3"
+            >
               {{ t('clientDetails.searchPreferences') }}
             </h4>
             <div class="space-y-3 text-sm">
               <div>
-                <p class="text-gray-500 mb-1">{{ t('clientDetails.preferredZone') }}</p>
+                <p class="text-gray-500 mb-1">
+                  {{ t('clientDetails.preferredZone') }}
+                </p>
                 <div class="flex flex-wrap gap-1">
-                  <fwb-badge v-for="z in client.preferredZones" :key="z" type="default" size="xs">
+                  <fwb-badge
+                    v-for="z in client.preferredZones"
+                    :key="z"
+                    type="default"
+                    size="xs"
+                  >
                     {{ z }}
                   </fwb-badge>
-                  <span v-if="!client.preferredZones?.length" class="dark:text-white">
+                  <span
+                    v-if="!client.preferredZones?.length"
+                    class="dark:text-white"
+                  >
                     {{ t('clientDetails.any') }}
                   </span>
                 </div>
               </div>
 
-              <div class="flex justify-between border-t pt-2 dark:border-gray-700">
+              <div
+                class="flex justify-between border-t pt-2 dark:border-gray-700"
+              >
                 <span class="text-gray-500">{{ t('users.view.rooms') }}</span>
                 <span class="dark:text-white font-bold">
                   {{ client.minRooms || 0 }} - {{ client.maxRooms || '∞' }}
                 </span>
               </div>
 
-              <div class="flex justify-between border-t pt-2 dark:border-gray-700">
-                <span class="text-gray-500">{{ t('clientDetails.budget') }} (Máx)</span>
+              <div
+                class="flex justify-between border-t pt-2 dark:border-gray-700"
+              >
+                <span class="text-gray-500"
+                  >{{ t('clientDetails.budget') }} (Máx)</span
+                >
                 <span class="text-green-600 font-bold">
                   ${{ Number(client.maxPrice || 0).toLocaleString() }}
                 </span>
@@ -67,7 +87,9 @@
           <div
             class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
           >
-            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
+            <h4
+              class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3"
+            >
               {{ t('clientDetails.directContact') }}
             </h4>
             <p class="text-sm dark:text-white flex items-center gap-2">
@@ -97,7 +119,9 @@
               v-if="suggestions.length === 0"
               class="bg-yellow-50 border border-yellow-200 p-8 rounded-2xl text-center dark:bg-yellow-900/20 dark:border-yellow-800"
             >
-              <IconLucideAlertTriangle class="w-12 h-12 text-yellow-500 mx-auto mb-3" />
+              <IconLucideAlertTriangle
+                class="w-12 h-12 text-yellow-500 mx-auto mb-3"
+              />
               <p class="text-yellow-800 dark:text-yellow-200 font-bold">
                 {{ t('clientDetails.noSuggestions') }}
               </p>
@@ -120,7 +144,10 @@
                     :src="prop.imageUrls[0]"
                     class="w-full h-full object-cover group-hover:scale-110 transition-transform"
                   />
-                  <div v-else class="w-full h-full flex items-center justify-center text-gray-300">
+                  <div
+                    v-else
+                    class="w-full h-full flex items-center justify-center text-gray-300"
+                  >
                     <IconLucideImage class="w-8 h-8" />
                   </div>
                 </div>
@@ -135,7 +162,9 @@
                     >
                       {{ prop.rooms }} cuartos
                     </span>
-                    <p class="text-blue-600 dark:text-blue-400 font-black text-sm">
+                    <p
+                      class="text-blue-600 dark:text-blue-400 font-black text-sm"
+                    >
                       ${{ prop.price.toLocaleString() }}
                     </p>
                   </div>
@@ -148,7 +177,9 @@
             <div
               class="absolute -left-2.25 top-0 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-900"
             ></div>
-            <h4 class="text-sm font-bold dark:text-white uppercase tracking-tight mb-4">
+            <h4
+              class="text-sm font-bold dark:text-white uppercase tracking-tight mb-4"
+            >
               {{ t('clientDetails.changeHistory') }}
             </h4>
             <div
@@ -160,100 +191,124 @@
                 :key="i"
                 class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm text-xs"
               >
-                <div class="flex justify-between text-[10px] text-gray-400 mb-2">
+                <div
+                  class="flex justify-between text-[10px] text-gray-400 mb-2"
+                >
                   <span class="font-bold uppercase">{{ entry.changedBy }}</span>
-                  <span>{{ new Date(entry.changedAt).toLocaleDateString() }}</span>
+                  <span>{{
+                    new Date(entry.changedAt).toLocaleDateString()
+                  }}</span>
                 </div>
-                <div v-for="(ch, j) in entry.changes" :key="j" class="flex items-center gap-1 mt-1">
-                  <span class="font-semibold text-gray-500">{{ ch.field }}:</span>
-                  <span class="text-red-400 line-through">{{ ch.oldValue || 'vacio' }}</span>
+                <div
+                  v-for="(ch, j) in entry.changes"
+                  :key="j"
+                  class="flex items-center gap-1 mt-1"
+                >
+                  <span class="font-semibold text-gray-500"
+                    >{{ ch.field }}:</span
+                  >
+                  <span class="text-red-400 line-through">{{
+                    ch.oldValue || 'vacio'
+                  }}</span>
                   <IconLucideArrowRight class="w-2 h-2" />
-                  <span class="text-green-500 font-bold">{{ ch.newValue }}</span>
+                  <span class="text-green-500 font-bold">{{
+                    ch.newValue
+                  }}</span>
                 </div>
               </div>
             </div>
-            <p v-else class="text-sm text-gray-400 italic">{{ t('clientDetails.noChanges') }}</p>
+            <p v-else class="text-sm text-gray-400 italic">
+              {{ t('clientDetails.noChanges') }}
+            </p>
           </div>
         </div>
       </div>
     </template>
     <template #footer>
       <div class="flex justify-end gap-3">
-        <fwb-button v-if="hasSearched" color="alternative" @click="hasSearched = false">
+        <fwb-button
+          v-if="hasSearched"
+          color="alternative"
+          @click="hasSearched = false"
+        >
           Ver Historial
         </fwb-button>
-        <fwb-button color="alternative" @click="$emit('close')">{{ t('common.close') }}</fwb-button>
+        <fwb-button color="alternative" @click="$emit('close')">{{
+          t('common.close')
+        }}</fwb-button>
       </div>
     </template>
   </fwb-modal>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
-  import { apiClient as api } from '@/api';
-  import IconLucideSearch from '~icons/lucide/search';
-  import IconLucideBuilding from '~icons/lucide/building';
-  import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
-  import IconLucideMail from '~icons/lucide/mail';
-  import IconLucidePhone from '~icons/lucide/phone';
-  import IconLucideImage from '~icons/lucide/image';
-  import IconLucideArrowRight from '~icons/lucide/arrow-right';
-  import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
+import { ref } from 'vue';
+import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
+import { apiClient as api } from '@/api';
+import IconLucideSearch from '~icons/lucide/search';
+import IconLucideBuilding from '~icons/lucide/building';
+import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
+import IconLucideMail from '~icons/lucide/mail';
+import IconLucidePhone from '~icons/lucide/phone';
+import IconLucideImage from '~icons/lucide/image';
+import IconLucideArrowRight from '~icons/lucide/arrow-right';
+import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
-  interface SuggestedProperty {
-    id: string;
-    title: string;
-    zone: string;
-    rooms: number;
-    price: number;
-    imageUrls?: string[];
+interface SuggestedProperty {
+  id: string;
+  title: string;
+  zone: string;
+  rooms: number;
+  price: number;
+  imageUrls?: string[];
+}
+
+interface AuditEntry {
+  changedBy: string;
+  changedAt: string;
+  changes: { field: string; oldValue: string; newValue: string }[];
+}
+
+interface ClientData {
+  [key: string]: unknown;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  id?: string;
+  authUserId?: string;
+  personId?: string;
+  preferredZones?: string[];
+  minRooms?: number;
+  maxRooms?: number;
+  maxPrice?: number;
+  preferredPropertyType?: string;
+  budget?: number;
+  auditLog?: AuditEntry[];
+}
+
+const { t } = useI18n();
+const props = defineProps<{ show: boolean; client: ClientData }>();
+defineEmits(['close']);
+
+const suggestions = ref<SuggestedProperty[]>([]);
+const loadingSuggestions = ref(false);
+const hasSearched = ref(false);
+
+const fetchSuggestions = async () => {
+  loadingSuggestions.value = true;
+  try {
+    // Usamos el personId (ID de MongoDB) para obtener sugerencias basadas en preferencias
+    const searchId = props.client.personId || props.client.id;
+    const response = await api.get(
+      `/properties/filtrar?buscador_id=${searchId}`
+    );
+    suggestions.value = response.data.data || [];
+    hasSearched.value = true;
+  } catch {
+    console.error('Error al obtener sugerencias:');
+  } finally {
+    loadingSuggestions.value = false;
   }
-
-  interface AuditEntry {
-    changedBy: string;
-    changedAt: string;
-    changes: { field: string; oldValue: string; newValue: string }[];
-  }
-
-  interface ClientData {
-    [key: string]: unknown;
-    fullName?: string;
-    email?: string;
-    phone?: string;
-    id?: string;
-    authUserId?: string;
-    personId?: string;
-    preferredZones?: string[];
-    minRooms?: number;
-    maxRooms?: number;
-    maxPrice?: number;
-    preferredPropertyType?: string;
-    budget?: number;
-    auditLog?: AuditEntry[];
-  }
-
-  const { t } = useI18n();
-  const props = defineProps<{ show: boolean; client: ClientData }>();
-  defineEmits(['close']);
-
-  const suggestions = ref<SuggestedProperty[]>([]);
-  const loadingSuggestions = ref(false);
-  const hasSearched = ref(false);
-
-  const fetchSuggestions = async () => {
-    loadingSuggestions.value = true;
-    try {
-      // Usamos el personId (ID de MongoDB) para obtener sugerencias basadas en preferencias
-      const searchId = props.client.personId || props.client.id;
-      const response = await api.get(`/properties/filtrar?buscador_id=${searchId}`);
-      suggestions.value = response.data.data || [];
-      hasSearched.value = true;
-    } catch {
-      console.error('Error al obtener sugerencias:');
-    } finally {
-      loadingSuggestions.value = false;
-    }
-  };
+};
 </script>

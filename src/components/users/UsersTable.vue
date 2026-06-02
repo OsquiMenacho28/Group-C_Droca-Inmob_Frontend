@@ -123,80 +123,80 @@
 </template>
 
 <script setup lang="ts">
-  import {
-    FwbButton,
-    FwbTable,
-    FwbTableHead,
-    FwbTableHeadCell,
-    FwbTableBody,
-    FwbTableRow,
-    FwbTableCell,
-  } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
+import {
+  FwbButton,
+  FwbTable,
+  FwbTableHead,
+  FwbTableHeadCell,
+  FwbTableBody,
+  FwbTableRow,
+  FwbTableCell,
+} from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
 
-  import IconLucidePlus from '~icons/lucide/plus';
-  import IconLucideEye from '~icons/lucide/eye';
-  import IconLucideMail from '~icons/lucide/mail';
-  import IconLucidePencil from '~icons/lucide/pencil';
-  import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
-  import IconLucideBan from '~icons/lucide/ban';
+import IconLucidePlus from '~icons/lucide/plus';
+import IconLucideEye from '~icons/lucide/eye';
+import IconLucideMail from '~icons/lucide/mail';
+import IconLucidePencil from '~icons/lucide/pencil';
+import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
+import IconLucideBan from '~icons/lucide/ban';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  interface UserRecord {
-    id: string;
-    fullName?: string;
-    name?: string;
-    email: string;
-    phone?: string;
-    taxId?: string;
-    userType?: string;
-    primaryRoleIds?: string[];
-    status: string;
+interface UserRecord {
+  id: string;
+  fullName?: string;
+  name?: string;
+  email: string;
+  phone?: string;
+  taxId?: string;
+  userType?: string;
+  primaryRoleIds?: string[];
+  status: string;
+}
+
+interface RoleRecord {
+  id: string;
+  _id?: string;
+  name: string;
+}
+
+const props = defineProps<{
+  users: UserRecord[];
+  roles: RoleRecord[];
+  totalUsers?: number;
+}>();
+
+const resolveRoleName = (roleIds: string[] | undefined) => {
+  if (!roleIds || roleIds.length === 0) return t('users.roles.user');
+  const roleId = roleIds[0];
+  const role = props.roles.find((r) => r.id === roleId || r._id === roleId);
+  return role ? role.name : t('users.roles.user');
+};
+
+const statusLabel = (status: string) => {
+  switch (status) {
+    case 'ACTIVE':
+      return t('users.status.active');
+    case 'INACTIVE':
+      return t('users.status.inactive');
+    case 'DELETED':
+      return t('users.status.deactivated');
+    case 'LOCKED':
+      return t('users.status.blocked');
+    case 'TERMINATED':
+      return t('users.status.terminated');
+    default:
+      return status || '—';
   }
+};
 
-  interface RoleRecord {
-    id: string;
-    _id?: string;
-    name: string;
-  }
-
-  const props = defineProps<{
-    users: UserRecord[];
-    roles: RoleRecord[];
-    totalUsers?: number;
-  }>();
-
-  const resolveRoleName = (roleIds: string[] | undefined) => {
-    if (!roleIds || roleIds.length === 0) return t('users.roles.user');
-    const roleId = roleIds[0];
-    const role = props.roles.find((r) => r.id === roleId || r._id === roleId);
-    return role ? role.name : t('users.roles.user');
-  };
-
-  const statusLabel = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return t('users.status.active');
-      case 'INACTIVE':
-        return t('users.status.inactive');
-      case 'DELETED':
-        return t('users.status.deactivated');
-      case 'LOCKED':
-        return t('users.status.blocked');
-      case 'TERMINATED':
-        return t('users.status.terminated');
-      default:
-        return status || '—';
-    }
-  };
-
-  defineEmits<{
-    create: [];
-    edit: [user: UserRecord];
-    delete: [user: UserRecord];
-    resend: [user: UserRecord];
-    reactivate: [user: UserRecord];
-    viewDetails: [user: UserRecord];
-  }>();
+defineEmits<{
+  create: [];
+  edit: [user: UserRecord];
+  delete: [user: UserRecord];
+  resend: [user: UserRecord];
+  reactivate: [user: UserRecord];
+  viewDetails: [user: UserRecord];
+}>();
 </script>

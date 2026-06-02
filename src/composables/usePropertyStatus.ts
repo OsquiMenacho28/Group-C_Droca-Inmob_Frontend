@@ -12,16 +12,22 @@ export type PropertyStatus =
 export function usePropertyStatus(status?: string) {
   const { t } = useI18n();
 
-  const currentStatus = computed(() => (status?.toUpperCase() as PropertyStatus) || 'DISPONIBLE');
+  const currentStatus = computed(
+    () => (status?.toUpperCase() as PropertyStatus) || 'DISPONIBLE'
+  );
 
   const isSold = computed(() => currentStatus.value === 'VENDIDO');
   const isDeleted = computed(() => currentStatus.value === 'ELIMINADO');
   const isWithdrawn = computed(() => currentStatus.value === 'RETIRADO');
   const isReserved = computed(() => currentStatus.value === 'RESERVADO');
-  const isNegotiating = computed(() => currentStatus.value === 'EN_NEGOCIACION');
+  const isNegotiating = computed(
+    () => currentStatus.value === 'EN_NEGOCIACION'
+  );
   const isAvailable = computed(() => currentStatus.value === 'DISPONIBLE');
 
-  const isMinimalInfo = computed(() => isSold.value || isDeleted.value || isWithdrawn.value);
+  const isMinimalInfo = computed(
+    () => isSold.value || isDeleted.value || isWithdrawn.value
+  );
 
   const statusLabel = computed(() => t(`status.${currentStatus.value}`));
 

@@ -51,7 +51,9 @@
     <!-- Thumbnails & Reorder Controls -->
     <div v-if="images.length > 0">
       <div class="flex justify-between items-end mb-2">
-        <h5 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <h5
+          class="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+        >
           {{ t('propertyForm.images') }} ({{ images.length }})
         </h5>
 
@@ -215,161 +217,164 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted } from 'vue';
-  import { useI18n } from 'vue-i18n';
-  import IconLucideImage from '~icons/lucide/image';
-  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
-  import IconLucideChevronRight from '~icons/lucide/chevron-right';
-  import IconLucideArrowUpDown from '~icons/lucide/arrow-up-down';
-  import IconLucideMove from '~icons/lucide/move';
-  import IconLucideX from '~icons/lucide/x';
-  import IconLucideRefreshCcw from '~icons/lucide/refresh-ccw';
-  import IconLucideMouse from '~icons/lucide/mouse';
-  import { usePropertyStore } from '@/modules/properties/stores/propertyStore';
-  import type { ImageResponse } from '@/modules/properties/services/propertyService';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+import IconLucideImage from '~icons/lucide/image';
+import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+import IconLucideChevronRight from '~icons/lucide/chevron-right';
+import IconLucideArrowUpDown from '~icons/lucide/arrow-up-down';
+import IconLucideMove from '~icons/lucide/move';
+import IconLucideX from '~icons/lucide/x';
+import IconLucideRefreshCcw from '~icons/lucide/refresh-ccw';
+import IconLucideMouse from '~icons/lucide/mouse';
+import { usePropertyStore } from '@/modules/properties/stores/propertyStore';
+import type { ImageResponse } from '@/modules/properties/services/propertyService';
 
-  const props = defineProps<{
-    propertyId?: string;
-    canManage?: boolean;
-  }>();
+const props = defineProps<{
+  propertyId?: string;
+  canManage?: boolean;
+}>();
 
-  const { t } = useI18n();
-  const propertyStore = usePropertyStore();
+const { t } = useI18n();
+const propertyStore = usePropertyStore();
 
-  // State
-  const currentIndex = ref(0);
-  const reorderMode = ref(false);
-  const reorderList = ref<ImageResponse[]>([]);
-  let dragStartIndex = -1;
+// State
+const currentIndex = ref(0);
+const reorderMode = ref(false);
+const reorderList = ref<ImageResponse[]>([]);
+let dragStartIndex = -1;
 
-  // Load images on mount
-  onMounted(() => {
-    if (props.propertyId) {
-      propertyStore.fetchPropertyImages(props.propertyId);
-    }
-  });
+// Load images on mount
+onMounted(() => {
+  if (props.propertyId) {
+    propertyStore.fetchPropertyImages(props.propertyId);
+  }
+});
 
-  watch(
-    () => props.propertyId,
-    (newId) => {
-      if (newId) propertyStore.fetchPropertyImages(newId);
-    }
-  );
+watch(
+  () => props.propertyId,
+  (newId) => {
+    if (newId) propertyStore.fetchPropertyImages(newId);
+  }
+);
 
-  const images = computed(() => propertyStore.images);
-  const displayList = computed(() => (reorderMode.value ? reorderList.value : images.value));
+const images = computed(() => propertyStore.images);
+const displayList = computed(() =>
+  reorderMode.value ? reorderList.value : images.value
+);
 
-  const currentImageUrl = computed(() => {
-    if (displayList.value.length === 0) return '';
-    const img = displayList.value[currentIndex.value];
-    return img?.temporaryDownloadUrl || img?.publicUrl || '';
-  });
+const currentImageUrl = computed(() => {
+  if (displayList.value.length === 0) return '';
+  const img = displayList.value[currentIndex.value];
+  return img?.temporaryDownloadUrl || img?.publicUrl || '';
+});
 
-  // Carousel navigation
-  const nextImage = () => {
-    currentIndex.value = (currentIndex.value + 1) % displayList.value.length;
-  };
+// Carousel navigation
+const nextImage = () => {
+  currentIndex.value = (currentIndex.value + 1) % displayList.value.length;
+};
 
-  const prevImage = () => {
-    currentIndex.value =
-      (currentIndex.value - 1 + displayList.value.length) % displayList.value.length;
-  };
+const prevImage = () => {
+  currentIndex.value =
+    (currentIndex.value - 1 + displayList.value.length) %
+    displayList.value.length;
+};
 
-  const selectImage = (index: number) => {
+const selectImage = (index: number) => {
+  currentIndex.value = index;
+};
+
+// Reorder functionality
+const toggleReorderMode = () => {
+  reorderList.value = [...images.value];
+  reorderMode.value = true;
+};
+
+const cancelReorder = () => {
+  reorderMode.value = false;
+  reorderList.value = [];
+};
+
+const handleDragStart = (e: DragEvent, index: number) => {
+  dragStartIndex = index;
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = 'move';
+  }
+};
+
+const handleDrop = (_e: DragEvent, index: number) => {
+  if (dragStartIndex === -1 || dragStartIndex === index) return;
+  const draggedItem = reorderList.value[dragStartIndex];
+  reorderList.value.splice(dragStartIndex, 1);
+  reorderList.value.splice(index, 0, draggedItem);
+  dragStartIndex = -1;
+  // If we moved the currently viewed image, update currentIndex
+  if (dragStartIndex === currentIndex.value) {
     currentIndex.value = index;
-  };
+  }
+};
 
-  // Reorder functionality
-  const toggleReorderMode = () => {
-    reorderList.value = [...images.value];
-    reorderMode.value = true;
-  };
-
-  const cancelReorder = () => {
+const saveReorder = async () => {
+  try {
+    const orderedIds = reorderList.value.map((img) => img.id);
+    await propertyStore.reorderImages(props.propertyId!, orderedIds);
     reorderMode.value = false;
-    reorderList.value = [];
-  };
+  } catch (error) {
+    console.error('Failed to save order:', error);
+  }
+};
 
-  const handleDragStart = (e: DragEvent, index: number) => {
-    dragStartIndex = index;
-    if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-    }
-  };
+// Zoom / Pan Functionality
+const isZoomed = ref(false);
+const zoomScale = ref(1);
+const panX = ref(0);
+const panY = ref(0);
+const isPanning = ref(false);
+let startMouseX = 0;
+let startMouseY = 0;
+let initialPanX = 0;
+let initialPanY = 0;
 
-  const handleDrop = (_e: DragEvent, index: number) => {
-    if (dragStartIndex === -1 || dragStartIndex === index) return;
-    const draggedItem = reorderList.value[dragStartIndex];
-    reorderList.value.splice(dragStartIndex, 1);
-    reorderList.value.splice(index, 0, draggedItem);
-    dragStartIndex = -1;
-    // If we moved the currently viewed image, update currentIndex
-    if (dragStartIndex === currentIndex.value) {
-      currentIndex.value = index;
-    }
-  };
+const openZoom = () => {
+  isZoomed.value = true;
+  document.body.style.overflow = 'hidden';
+  resetZoom();
+};
 
-  const saveReorder = async () => {
-    try {
-      const orderedIds = reorderList.value.map((img) => img.id);
-      await propertyStore.reorderImages(props.propertyId!, orderedIds);
-      reorderMode.value = false;
-    } catch (error) {
-      console.error('Failed to save order:', error);
-    }
-  };
+const closeZoom = () => {
+  isZoomed.value = false;
+  document.body.style.overflow = '';
+};
 
-  // Zoom / Pan Functionality
-  const isZoomed = ref(false);
-  const zoomScale = ref(1);
-  const panX = ref(0);
-  const panY = ref(0);
-  const isPanning = ref(false);
-  let startMouseX = 0;
-  let startMouseY = 0;
-  let initialPanX = 0;
-  let initialPanY = 0;
+const resetZoom = () => {
+  zoomScale.value = 1;
+  panX.value = 0;
+  panY.value = 0;
+};
 
-  const openZoom = () => {
-    isZoomed.value = true;
-    document.body.style.overflow = 'hidden';
-    resetZoom();
-  };
+const handleZoomWheel = (e: WheelEvent) => {
+  const delta = e.deltaY * -0.002;
+  const newScale = Math.min(Math.max(0.5, zoomScale.value + delta), 5); // Limit 0.5x to 5x
+  zoomScale.value = newScale;
+};
 
-  const closeZoom = () => {
-    isZoomed.value = false;
-    document.body.style.overflow = '';
-  };
+const startPan = (e: MouseEvent) => {
+  isPanning.value = true;
+  startMouseX = e.clientX;
+  startMouseY = e.clientY;
+  initialPanX = panX.value;
+  initialPanY = panY.value;
+};
 
-  const resetZoom = () => {
-    zoomScale.value = 1;
-    panX.value = 0;
-    panY.value = 0;
-  };
+const pan = (e: MouseEvent) => {
+  if (!isPanning.value) return;
+  const dx = e.clientX - startMouseX;
+  const dy = e.clientY - startMouseY;
+  panX.value = initialPanX + dx;
+  panY.value = initialPanY + dy;
+};
 
-  const handleZoomWheel = (e: WheelEvent) => {
-    const delta = e.deltaY * -0.002;
-    const newScale = Math.min(Math.max(0.5, zoomScale.value + delta), 5); // Limit 0.5x to 5x
-    zoomScale.value = newScale;
-  };
-
-  const startPan = (e: MouseEvent) => {
-    isPanning.value = true;
-    startMouseX = e.clientX;
-    startMouseY = e.clientY;
-    initialPanX = panX.value;
-    initialPanY = panY.value;
-  };
-
-  const pan = (e: MouseEvent) => {
-    if (!isPanning.value) return;
-    const dx = e.clientX - startMouseX;
-    const dy = e.clientY - startMouseY;
-    panX.value = initialPanX + dx;
-    panY.value = initialPanY + dy;
-  };
-
-  const endPan = () => {
-    isPanning.value = false;
-  };
+const endPan = () => {
+  isPanning.value = false;
+};
 </script>

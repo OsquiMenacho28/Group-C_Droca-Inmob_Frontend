@@ -1,7 +1,11 @@
 <template>
   <BaseModal
     :model-value="modelValue"
-    :title="isEditing ? t('adminProperties.editProperty') : t('adminProperties.registerProperty')"
+    :title="
+      isEditing
+        ? t('adminProperties.editProperty')
+        : t('adminProperties.registerProperty')
+    "
     size="2xl"
     :show-close-button="true"
     @update:model-value="$emit('update:modelValue', $event)"
@@ -26,28 +30,28 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n';
-  import BaseModal from '@/components/ui/BaseModal.vue';
-  import PropertyForm from '@/components/properties/PropertyForm.vue';
-  import type { Property, PropertyFormPayload } from '@/types/property';
+import { useI18n } from 'vue-i18n';
+import BaseModal from '@/components/ui/BaseModal.vue';
+import PropertyForm from '@/components/properties/PropertyForm.vue';
+import type { Property, PropertyFormPayload } from '@/types/property';
 
-  defineProps<{
-    modelValue: boolean;
-    isEditing: boolean;
-    initialData?: Record<string, unknown>;
-    propertyId?: string;
-    formKey?: number;
-  }>();
+defineProps<{
+  modelValue: boolean;
+  isEditing: boolean;
+  initialData?: Record<string, unknown>;
+  propertyId?: string;
+  formKey?: number;
+}>();
 
-  const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
-    submit: [data: PropertyFormPayload];
-    'location-updated': [property: Property];
-  }>();
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean];
+  submit: [data: PropertyFormPayload];
+  'location-updated': [property: Property];
+}>();
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const handleSubmit = (data: PropertyFormPayload) => {
-    emit('submit', data);
-  };
+const handleSubmit = (data: PropertyFormPayload) => {
+  emit('submit', data);
+};
 </script>

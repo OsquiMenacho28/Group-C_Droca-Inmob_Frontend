@@ -25,7 +25,9 @@ const vehicleService = {
     if (vehicleId) {
       params.append('vehicleId', vehicleId);
     }
-    const { data } = await api.get(`/vehicles/usage-report?${params.toString()}`);
+    const { data } = await api.get(
+      `/vehicles/usage-report?${params.toString()}`
+    );
     return data.data;
   },
 };

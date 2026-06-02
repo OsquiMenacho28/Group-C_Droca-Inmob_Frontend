@@ -10,9 +10,13 @@
         aria-modal="true"
         @click.self="closeOnBackdrop ? $emit('update:modelValue', false) : null"
       >
-        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-6">
+        <div
+          class="flex min-h-screen items-center justify-center p-4 text-center sm:p-6"
+        >
           <!-- Backdrop -->
-          <div class="fixed inset-0 bg-gray-900/50 dark:bg-gray-950/80 transition-opacity" />
+          <div
+            class="fixed inset-0 bg-gray-900/50 dark:bg-gray-950/80 transition-opacity"
+          />
 
           <!-- Modal Panel - Flowbite standard sizing -->
           <div
@@ -50,7 +54,9 @@
               v-if="$slots.footer"
               class="border-t border-gray-100 dark:border-gray-700 px-4 py-3 sm:px-6 sm:py-4"
             >
-              <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+              <div
+                class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3"
+              >
                 <slot name="footer"></slot>
               </div>
             </div>
@@ -62,36 +68,36 @@
 </template>
 
 <script setup lang="ts">
-  import IconLucideX from '~icons/lucide/x';
+import IconLucideX from '~icons/lucide/x';
 
-  withDefaults(
-    defineProps<{
-      modelValue: boolean;
-      title?: string;
-      message?: string;
-      size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
-      showCloseButton?: boolean;
-      closeOnBackdrop?: boolean;
-    }>(),
-    {
-      size: 'md',
-      title: '',
-      message: '',
-      showCloseButton: true,
-      closeOnBackdrop: true,
-    }
-  );
+withDefaults(
+  defineProps<{
+    modelValue: boolean;
+    title?: string;
+    message?: string;
+    size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+    showCloseButton?: boolean;
+    closeOnBackdrop?: boolean;
+  }>(),
+  {
+    size: 'md',
+    title: '',
+    message: '',
+    showCloseButton: true,
+    closeOnBackdrop: true,
+  }
+);
 
-  defineEmits<{
-    (e: 'update:modelValue', value: boolean): void;
-  }>();
+defineEmits<{
+  (e: 'update:modelValue', value: boolean): void;
+}>();
 
-  const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-3xl',
-    '2xl': 'max-w-4xl',
-    full: 'max-w-[90vw]',
-  };
+const sizeClasses = {
+  sm: 'max-w-md',
+  md: 'max-w-lg',
+  lg: 'max-w-2xl',
+  xl: 'max-w-3xl',
+  '2xl': 'max-w-4xl',
+  full: 'max-w-[90vw]',
+};
 </script>

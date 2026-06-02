@@ -43,7 +43,11 @@
               <template #prefix>
                 <IconLucideBan class="w-3 h-3" />
               </template>
-              {{ cancelling ? t('common.processing') : t('operations.cancelOperation') }}
+              {{
+                cancelling
+                  ? t('common.processing')
+                  : t('operations.cancelOperation')
+              }}
             </FwbButton>
 
             <FwbButton
@@ -56,7 +60,11 @@
               <template #prefix>
                 <IconLucidePlusCircle class="w-3 h-3" />
               </template>
-              {{ cancelling ? t('common.processing') : t('operations.cancelAndRecreate') }}
+              {{
+                cancelling
+                  ? t('common.processing')
+                  : t('operations.cancelAndRecreate')
+              }}
             </FwbButton>
           </template>
         </div>
@@ -68,7 +76,12 @@
       </div>
 
       <!-- Error -->
-      <FwbAlert v-else-if="operationError" type="danger" dismissible class="mb-4 text-sm">
+      <FwbAlert
+        v-else-if="operationError"
+        type="danger"
+        dismissible
+        class="mb-4 text-sm"
+      >
         {{ operationError }}
       </FwbAlert>
 
@@ -77,10 +90,14 @@
         <!-- Header card -->
         <div class="app-card p-4 mb-4">
           <div class="flex flex-wrap items-center gap-2 mb-2">
-            <FwbBadge type="default" size="xs">{{ t('operations.operationBadge') }}</FwbBadge>
+            <FwbBadge type="default" size="xs">{{
+              t('operations.operationBadge')
+            }}</FwbBadge>
             <FwbBadge :type="statusBadgeType" size="xs">
               <div class="flex items-center gap-1">
-                <div :class="['w-1.5 h-1.5 rounded-full', statusDotClass]"></div>
+                <div
+                  :class="['w-1.5 h-1.5 rounded-full', statusDotClass]"
+                ></div>
                 {{ t('status.' + operation.status) }}
               </div>
             </FwbBadge>
@@ -89,7 +106,9 @@
             <h1 class="text-lg font-bold text-primary">
               {{ operation.propertyName }}
             </h1>
-            <div class="text-xs text-gray-500 font-mono">ID: {{ operationId }}</div>
+            <div class="text-xs text-gray-500 font-mono">
+              ID: {{ operationId }}
+            </div>
           </div>
         </div>
 
@@ -104,17 +123,23 @@
               {{ t('common.details') }}
             </h3>
             <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <span class="text-secondary font-medium">{{ t('adminProperties.owner') }}:</span>
+              <span class="text-secondary font-medium"
+                >{{ t('adminProperties.owner') }}:</span
+              >
               <span class="text-primary font-semibold">
                 {{ operation.ownerName || '-' }}
               </span>
 
-              <span class="text-secondary font-medium">{{ t('operations.client') }}:</span>
+              <span class="text-secondary font-medium"
+                >{{ t('operations.client') }}:</span
+              >
               <span class="text-primary font-semibold">
                 {{ operation.clientName || '-' }}
               </span>
 
-              <span class="text-secondary font-medium">{{ t('adminProperties.advisor') }}:</span>
+              <span class="text-secondary font-medium"
+                >{{ t('adminProperties.advisor') }}:</span
+              >
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="font-semibold text-primary">
                   {{ operation.agentName || '-' }}
@@ -161,7 +186,11 @@
                 {{ t('adminProperties.propertyType') }}:
               </span>
               <span class="text-primary font-semibold">
-                {{ operation.propertyType ? t('propertyTypes.' + operation.propertyType) : '-' }}
+                {{
+                  operation.propertyType
+                    ? t('propertyTypes.' + operation.propertyType)
+                    : '-'
+                }}
               </span>
 
               <span class="text-secondary font-medium">
@@ -169,7 +198,9 @@
               </span>
               <span class="text-primary font-semibold">
                 {{
-                  operation.operationType ? t('propertyOperations.' + operation.operationType) : '-'
+                  operation.operationType
+                    ? t('propertyOperations.' + operation.operationType)
+                    : '-'
                 }}
               </span>
             </div>
@@ -203,7 +234,10 @@
               >
                 <div class="flex items-center gap-2 overflow-hidden">
                   <IconLucideFileText class="w-4 h-4 text-blue-500" />
-                  <span class="truncate dark:text-gray-200" :title="doc.originalFileName">
+                  <span
+                    class="truncate dark:text-gray-200"
+                    :title="doc.originalFileName"
+                  >
                     {{ doc.originalFileName }}
                   </span>
                 </div>
@@ -223,7 +257,10 @@
             <div class="mt-4 flex justify-end">
               <FwbButton
                 @click="
-                  $router.push({ name: 'contract-versions', params: { operationId: operation.id } })
+                  $router.push({
+                    name: 'contract-versions',
+                    params: { operationId: operation.id },
+                  })
                 "
                 color="green"
                 class="text-xs font-medium uppercase cursor-pointer"
@@ -242,7 +279,9 @@
           <div class="flex gap-2">
             <IconLucideFileText class="w-4 h-4 text-gray-400 mt-0.5" />
             <div>
-              <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+              <h3
+                class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1"
+              >
                 {{ t('adminProperties.notes') }}
               </h3>
               <p class="text-sm text-gray-700 dark:text-gray-300">
@@ -253,11 +292,18 @@
         </div>
 
         <!-- Receipts -->
-        <OperationReceiptsSection :operation-id="operationId" :can-delete="canManage" />
+        <OperationReceiptsSection
+          :operation-id="operationId"
+          :can-delete="canManage"
+        />
       </template>
     </div>
 
-    <FwbModal v-if="showStatusHistory" size="2xl" @close="showStatusHistory = false">
+    <FwbModal
+      v-if="showStatusHistory"
+      size="2xl"
+      @close="showStatusHistory = false"
+    >
       <template #header>
         <div class="flex items-center gap-2">
           <IconLucideHistory class="w-5 h-5 text-blue-600" />
@@ -282,7 +328,9 @@
                 {{ history.oldStatus }}
               </FwbBadge>
               <span v-else class="text-gray-400 font-medium">-</span>
-              <IconLucideArrowLeft class="w-3 h-3 text-gray-300 rotate-180 shrink-0" />
+              <IconLucideArrowLeft
+                class="w-3 h-3 text-gray-300 rotate-180 shrink-0"
+              />
               <FwbBadge :type="statusBadgeTypeFor(history.newStatus)" size="xs">
                 {{ history.newStatus }}
               </FwbBadge>
@@ -301,7 +349,11 @@
       </template>
       <template #footer>
         <div class="flex justify-end w-full">
-          <FwbButton color="alternative" size="sm" @click="showStatusHistory = false">
+          <FwbButton
+            color="alternative"
+            size="sm"
+            @click="showStatusHistory = false"
+          >
             {{ t('common.close') }}
           </FwbButton>
         </div>
@@ -345,7 +397,11 @@
       </template>
       <template #footer>
         <div class="flex justify-end gap-2 w-full">
-          <FwbButton color="alternative" size="sm" @click="showStatusModal = false">
+          <FwbButton
+            color="alternative"
+            size="sm"
+            @click="showStatusModal = false"
+          >
             {{ t('common.cancel') }}
           </FwbButton>
           <FwbButton
@@ -386,220 +442,232 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n';
-  import IconLucideArrowLeft from '~icons/lucide/arrow-left';
-  import IconLucideInfo from '~icons/lucide/info';
-  import IconLucideBuilding from '~icons/lucide/building';
-  import IconLucideFileText from '~icons/lucide/file-text';
-  import IconLucideBan from '~icons/lucide/ban';
-  import IconLucidePlusCircle from '~icons/lucide/plus-circle';
-  import IconLucideHistory from '~icons/lucide/history';
-  import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
-  import { ref, computed, onMounted, reactive } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import { FwbBadge, FwbAlert, FwbButton, FwbSpinner, FwbModal } from 'flowbite-vue';
-  import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
-  import { apiClient as api } from '@/api';
-  import { handleApiError } from '@/api/errorHandler';
-  import { getLocaleString } from '@/locales/i18n';
-  import { propertyService } from '@/modules/properties';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import type { Property } from '@/types/property';
-  import type { DocumentResponse } from '@/modules/properties';
-  import type { OperationData } from '@/types/operation';
-  import ConfirmModal from '@/components/ui/ConfirmModal.vue';
-  import AppToast from '@/components/ui/AppToast.vue';
-  import ImageGallery from '@/components/properties/ImageGallery.vue';
-  import { formatDateLong, formatDateTime } from '@/utils/dateTime';
+import { useI18n } from 'vue-i18n';
+import IconLucideArrowLeft from '~icons/lucide/arrow-left';
+import IconLucideInfo from '~icons/lucide/info';
+import IconLucideBuilding from '~icons/lucide/building';
+import IconLucideFileText from '~icons/lucide/file-text';
+import IconLucideBan from '~icons/lucide/ban';
+import IconLucidePlusCircle from '~icons/lucide/plus-circle';
+import IconLucideHistory from '~icons/lucide/history';
+import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
+import { ref, computed, onMounted, reactive } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import {
+  FwbBadge,
+  FwbAlert,
+  FwbButton,
+  FwbSpinner,
+  FwbModal,
+} from 'flowbite-vue';
+import OperationReceiptsSection from '@/components/operations/receipts/OperationReceiptsSection.vue';
+import { apiClient as api } from '@/api';
+import { handleApiError } from '@/api/errorHandler';
+import { getLocaleString } from '@/locales/i18n';
+import { propertyService } from '@/modules/properties';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import type { Property } from '@/types/property';
+import type { DocumentResponse } from '@/modules/properties';
+import type { OperationData } from '@/types/operation';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
+import AppToast from '@/components/ui/AppToast.vue';
+import ImageGallery from '@/components/properties/ImageGallery.vue';
+import { formatDateLong, formatDateTime } from '@/utils/dateTime';
 
-  const { t } = useI18n();
-  const route = useRoute();
-  const router = useRouter();
-  const authStore = useAuthStore();
-  const operationId = route.params.id as string;
+const { t } = useI18n();
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+const operationId = route.params.id as string;
 
-  const operation = ref<OperationData | null>(null);
-  const propertyData = ref<Property | null>(null);
-  const propertyDocuments = ref<DocumentResponse[]>([]);
-  const loadingOperation = ref(false);
-  const loadingProperty = ref(false);
-  const operationError = ref<string | null>(null);
-  const cancelling = ref(false);
-  const updatingStatus = ref(false);
+const operation = ref<OperationData | null>(null);
+const propertyData = ref<Property | null>(null);
+const propertyDocuments = ref<DocumentResponse[]>([]);
+const loadingOperation = ref(false);
+const loadingProperty = ref(false);
+const operationError = ref<string | null>(null);
+const cancelling = ref(false);
+const updatingStatus = ref(false);
 
-  // UI States
-  const showConfirmCancel = ref(false);
-  const showStatusHistory = ref(false);
-  const showStatusModal = ref(false);
-  const selectedStatus = ref<string | null>(null);
-  const cancelMode = ref<'ONLY' | 'RECREATE'>('ONLY');
-  const toast = reactive({
-    show: false,
-    message: '',
-    type: 'success' as 'success' | 'error' | 'info',
-  });
+// UI States
+const showConfirmCancel = ref(false);
+const showStatusHistory = ref(false);
+const showStatusModal = ref(false);
+const selectedStatus = ref<string | null>(null);
+const cancelMode = ref<'ONLY' | 'RECREATE'>('ONLY');
+const toast = reactive({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error' | 'info',
+});
 
-  const currentUser = computed(() => authStore.user as UserClaims | null);
+const currentUser = computed(() => authStore.user as UserClaims | null);
 
-  const isAdmin = computed(() => {
-    return currentUser.value?.roles?.includes('ADMIN') || currentUser.value?.userType === 'ADMIN';
-  });
+const isAdmin = computed(() => {
+  return (
+    currentUser.value?.roles?.includes('ADMIN') ||
+    currentUser.value?.userType === 'ADMIN'
+  );
+});
 
-  const isAssignedAgent = computed(() => {
-    return operation.value?.agentId === currentUser.value?.id;
-  });
+const isAssignedAgent = computed(() => {
+  return operation.value?.agentId === currentUser.value?.id;
+});
 
-  const canManage = computed(() => {
-    return isAdmin.value || isAssignedAgent.value;
-  });
+const canManage = computed(() => {
+  return isAdmin.value || isAssignedAgent.value;
+});
 
-  const loadOperation = async () => {
-    loadingOperation.value = true;
-    try {
-      const response = await api.get(`/operations/${route.params.id}`);
-      operation.value = response.data.data;
+const loadOperation = async () => {
+  loadingOperation.value = true;
+  try {
+    const response = await api.get(`/operations/${route.params.id}`);
+    operation.value = response.data.data;
 
-      if (operation.value?.propertyId) {
-        loadPropertyData(operation.value.propertyId);
-      }
-    } catch {
-      operationError.value = t('reports.rankingLoadError');
-    } finally {
-      loadingOperation.value = false;
+    if (operation.value?.propertyId) {
+      loadPropertyData(operation.value.propertyId);
     }
-  };
-
-  const loadPropertyData = async (propId: string) => {
-    loadingProperty.value = true;
-    try {
-      propertyData.value = await propertyService.getPropertyById(propId);
-      propertyDocuments.value = await propertyService.getPropertyDocuments(propId);
-    } catch (err) {
-      console.error('Error loading property assets for operation:', err);
-    } finally {
-      loadingProperty.value = false;
-    }
-  };
-
-  onMounted(loadOperation);
-
-  const triggerCancel = (mode: 'ONLY' | 'RECREATE') => {
-    cancelMode.value = mode;
-    showConfirmCancel.value = true;
-  };
-
-  const ALL_STATUSES = ['ACTIVE', 'PENDING', 'CLOSED'] as const;
-
-  const availableStatuses = computed(() => {
-    const current = operation.value?.status?.toUpperCase() || '';
-    const dotMap: Record<string, string> = {
-      ACTIVE: 'bg-green-500',
-      PENDING: 'bg-yellow-500',
-      CLOSED: 'bg-gray-500',
-    };
-    return ALL_STATUSES.filter((s) => s !== current).map((s) => ({
-      value: s,
-      dot: dotMap[s],
-    }));
-  });
-
-  // const openStatusModal = () => {
-  //   selectedStatus.value = null;
-  //   showStatusModal.value = true;
-  // };
-
-  const executeStatusUpdate = async () => {
-    if (!selectedStatus.value) return;
-    updatingStatus.value = true;
-    try {
-      await api.patch(`/operations/${operationId}/status`, {
-        status: selectedStatus.value,
-      });
-      showStatusModal.value = false;
-      toast.message = t('operations.operationStatusUpdated');
-      toast.type = 'success';
-      toast.show = true;
-      await loadOperation();
-    } catch (err: unknown) {
-      toast.message = handleApiError(err).message;
-      toast.type = 'error';
-      toast.show = true;
-    } finally {
-      updatingStatus.value = false;
-    }
-  };
-
-  const handleCancelExecution = async () => {
-    cancelling.value = true;
-    try {
-      await api.patch(`/operations/${operationId}/status`, {
-        status: 'CANCELLED',
-      });
-
-      showConfirmCancel.value = false;
-
-      toast.message = t('operations.cancelledText');
-      toast.type = 'success';
-      toast.show = true;
-
-      if (cancelMode.value === 'RECREATE') {
-        const dashboardRoute = isAdmin.value ? 'AdminProperties' : 'AgentDashboard';
-
-        // Ensure we pass a plain object to state
-        const cloneData = propertyData.value
-          ? JSON.parse(JSON.stringify(propertyData.value))
-          : null;
-
-        setTimeout(() => {
-          router.push({
-            name: dashboardRoute,
-            state: { cloneProperty: cloneData },
-          });
-        }, 1000);
-      } else {
-        await loadOperation();
-      }
-    } catch (err: unknown) {
-      toast.message = handleApiError(err).message;
-      toast.type = 'error';
-      toast.show = true;
-      showConfirmCancel.value = false;
-    } finally {
-      cancelling.value = false;
-    }
-  };
-
-  const statusBadgeType = computed(() => {
-    const status = operation.value?.status?.toUpperCase() || '';
-    return statusBadgeTypeFor(status);
-  });
-
-  const statusBadgeTypeFor = (status?: string) => {
-    const map: Record<string, 'green' | 'dark' | 'yellow' | 'red'> = {
-      ACTIVE: 'green',
-      CLOSED: 'dark',
-      CANCELLED: 'red',
-      PENDING: 'yellow',
-    };
-    return map[status?.toUpperCase() || ''] || 'dark';
-  };
-
-  const statusDotClass = computed(() => {
-    const type = statusBadgeType.value;
-    const map: Record<string, string> = {
-      green: 'bg-green-500',
-      dark: 'bg-gray-500',
-      yellow: 'bg-yellow-500',
-      red: 'bg-red-500',
-    };
-    return map[type] || 'bg-gray-500';
-  });
-
-  function formatCurrency(amount: number, currency: string) {
-    return new Intl.NumberFormat(getLocaleString(), {
-      style: 'currency',
-      currency: currency || 'USD',
-      minimumFractionDigits: 2,
-    }).format(amount);
+  } catch {
+    operationError.value = t('reports.rankingLoadError');
+  } finally {
+    loadingOperation.value = false;
   }
+};
+
+const loadPropertyData = async (propId: string) => {
+  loadingProperty.value = true;
+  try {
+    propertyData.value = await propertyService.getPropertyById(propId);
+    propertyDocuments.value =
+      await propertyService.getPropertyDocuments(propId);
+  } catch (err) {
+    console.error('Error loading property assets for operation:', err);
+  } finally {
+    loadingProperty.value = false;
+  }
+};
+
+onMounted(loadOperation);
+
+const triggerCancel = (mode: 'ONLY' | 'RECREATE') => {
+  cancelMode.value = mode;
+  showConfirmCancel.value = true;
+};
+
+const ALL_STATUSES = ['ACTIVE', 'PENDING', 'CLOSED'] as const;
+
+const availableStatuses = computed(() => {
+  const current = operation.value?.status?.toUpperCase() || '';
+  const dotMap: Record<string, string> = {
+    ACTIVE: 'bg-green-500',
+    PENDING: 'bg-yellow-500',
+    CLOSED: 'bg-gray-500',
+  };
+  return ALL_STATUSES.filter((s) => s !== current).map((s) => ({
+    value: s,
+    dot: dotMap[s],
+  }));
+});
+
+// const openStatusModal = () => {
+//   selectedStatus.value = null;
+//   showStatusModal.value = true;
+// };
+
+const executeStatusUpdate = async () => {
+  if (!selectedStatus.value) return;
+  updatingStatus.value = true;
+  try {
+    await api.patch(`/operations/${operationId}/status`, {
+      status: selectedStatus.value,
+    });
+    showStatusModal.value = false;
+    toast.message = t('operations.operationStatusUpdated');
+    toast.type = 'success';
+    toast.show = true;
+    await loadOperation();
+  } catch (err: unknown) {
+    toast.message = handleApiError(err).message;
+    toast.type = 'error';
+    toast.show = true;
+  } finally {
+    updatingStatus.value = false;
+  }
+};
+
+const handleCancelExecution = async () => {
+  cancelling.value = true;
+  try {
+    await api.patch(`/operations/${operationId}/status`, {
+      status: 'CANCELLED',
+    });
+
+    showConfirmCancel.value = false;
+
+    toast.message = t('operations.cancelledText');
+    toast.type = 'success';
+    toast.show = true;
+
+    if (cancelMode.value === 'RECREATE') {
+      const dashboardRoute = isAdmin.value
+        ? 'AdminProperties'
+        : 'AgentDashboard';
+
+      // Ensure we pass a plain object to state
+      const cloneData = propertyData.value
+        ? JSON.parse(JSON.stringify(propertyData.value))
+        : null;
+
+      setTimeout(() => {
+        router.push({
+          name: dashboardRoute,
+          state: { cloneProperty: cloneData },
+        });
+      }, 1000);
+    } else {
+      await loadOperation();
+    }
+  } catch (err: unknown) {
+    toast.message = handleApiError(err).message;
+    toast.type = 'error';
+    toast.show = true;
+    showConfirmCancel.value = false;
+  } finally {
+    cancelling.value = false;
+  }
+};
+
+const statusBadgeType = computed(() => {
+  const status = operation.value?.status?.toUpperCase() || '';
+  return statusBadgeTypeFor(status);
+});
+
+const statusBadgeTypeFor = (status?: string) => {
+  const map: Record<string, 'green' | 'dark' | 'yellow' | 'red'> = {
+    ACTIVE: 'green',
+    CLOSED: 'dark',
+    CANCELLED: 'red',
+    PENDING: 'yellow',
+  };
+  return map[status?.toUpperCase() || ''] || 'dark';
+};
+
+const statusDotClass = computed(() => {
+  const type = statusBadgeType.value;
+  const map: Record<string, string> = {
+    green: 'bg-green-500',
+    dark: 'bg-gray-500',
+    yellow: 'bg-yellow-500',
+    red: 'bg-red-500',
+  };
+  return map[type] || 'bg-gray-500';
+});
+
+function formatCurrency(amount: number, currency: string) {
+  return new Intl.NumberFormat(getLocaleString(), {
+    style: 'currency',
+    currency: currency || 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
+}
 </script>

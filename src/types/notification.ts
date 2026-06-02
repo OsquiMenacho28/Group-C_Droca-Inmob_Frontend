@@ -1,4 +1,9 @@
-export type InteractionType = 'AGENT_AGENT' | 'ADMIN_OP' | 'INTERES' | 'PROPIEDAD_MOD' | 'VISITA';
+export type InteractionType =
+  | 'AGENT_AGENT'
+  | 'ADMIN_OP'
+  | 'INTERES'
+  | 'PROPIEDAD_MOD'
+  | 'VISITA';
 
 export interface InAppNotification {
   id: string;

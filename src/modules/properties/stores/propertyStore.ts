@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { propertyService, type ImageResponse } from '../services/propertyService';
+import {
+  propertyService,
+  type ImageResponse,
+} from '../services/propertyService';
 import type { Property } from '@/types/property';
 
 export const usePropertyStore = defineStore('property', () => {
@@ -48,7 +51,10 @@ export const usePropertyStore = defineStore('property', () => {
 
   const reorderImages = async (propertyId: string, orderedIds: string[]) => {
     try {
-      images.value = await propertyService.reorderImages(propertyId, orderedIds);
+      images.value = await propertyService.reorderImages(
+        propertyId,
+        orderedIds
+      );
     } catch (err: unknown) {
       console.error('Error reordering images:', err);
       throw err;

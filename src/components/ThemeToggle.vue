@@ -12,12 +12,12 @@
 </template>
 
 <script setup lang="ts">
-  import { FwbButton } from 'flowbite-vue';
-  import { useTheme } from '@/composables/useTheme';
-  import { useI18n } from 'vue-i18n';
-  import IconLucideSun from '~icons/lucide/sun';
-  import IconLucideMoon from '~icons/lucide/moon';
+import { FwbButton } from 'flowbite-vue';
+import { useTheme } from '@/composables/useTheme';
+import { useI18n } from 'vue-i18n';
+import IconLucideSun from '~icons/lucide/sun';
+import IconLucideMoon from '~icons/lucide/moon';
 
-  const { isDark, toggleTheme } = useTheme();
-  const { t } = useI18n();
+const { isDark, toggleTheme } = useTheme();
+const { t } = useI18n();
 </script>

@@ -17,7 +17,9 @@
     >
       <!-- Header -->
       <div class="flex items-center gap-2">
-        <IconLucideArrowRight class="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+        <IconLucideArrowRight
+          class="w-4 h-4 text-indigo-500 dark:text-indigo-400"
+        />
         <p class="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
           {{ t('rescheduleVisit.visitWasRescheduled') }}
         </p>
@@ -37,7 +39,8 @@
           ></span>
           <div>
             <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
-              {{ formatDate(visit.startTime) }} - {{ formatDate(visit.endTime) }}
+              {{ formatDate(visit.startTime) }} -
+              {{ formatDate(visit.endTime) }}
             </p>
             <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">
               {{ statusLabel(visit.status) }}
@@ -59,62 +62,62 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted } from 'vue';
-  import { useReschedule } from '@/composables/useReschedule';
-  import type { EventStatus } from '@/types/reschedule';
-  import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
-  import IconLucideArrowRight from '~icons/lucide/arrow-right';
-  import IconLucideChevronRight from '~icons/lucide/chevron-right';
+import { computed, onMounted } from 'vue';
+import { useReschedule } from '@/composables/useReschedule';
+import type { EventStatus } from '@/types/reschedule';
+import { useI18n } from 'vue-i18n';
+import { getLocaleString } from '@/locales/i18n';
+import IconLucideArrowRight from '~icons/lucide/arrow-right';
+import IconLucideChevronRight from '~icons/lucide/chevron-right';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  // ── Props ─────────────────────────────────────────────────────────────────
-  const props = defineProps<{
-    visitId: string; // ID of the original cancelled visit
-  }>();
+// ── Props ─────────────────────────────────────────────────────────────────
+const props = defineProps<{
+  visitId: string; // ID of the original cancelled visit
+}>();
 
-  // ── Composable ────────────────────────────────────────────────────────────
-  const { rescheduledVisits, loadRescheduledVisits } = useReschedule();
+// ── Composable ────────────────────────────────────────────────────────────
+const { rescheduledVisits, loadRescheduledVisits } = useReschedule();
 
-  // ── Computed ──────────────────────────────────────────────────────────────
-  const hasRescheduled = computed(() => rescheduledVisits.value.length > 0);
+// ── Computed ──────────────────────────────────────────────────────────────
+const hasRescheduled = computed(() => rescheduledVisits.value.length > 0);
 
-  // ── Lifecycle ─────────────────────────────────────────────────────────────
-  onMounted(() => loadRescheduledVisits(props.visitId));
+// ── Lifecycle ─────────────────────────────────────────────────────────────
+onMounted(() => loadRescheduledVisits(props.visitId));
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  function formatDate(iso: string): string {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleString(getLocaleString(), {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
+// ── Helpers ───────────────────────────────────────────────────────────────
+function formatDate(iso: string): string {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString(getLocaleString(), {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
-  function statusLabel(status: EventStatus): string {
-    const map: Partial<Record<EventStatus, string>> = {
-      SCHEDULED: t('rescheduleVisit.scheduledVisit'),
-      CANCELLED: t('rescheduleVisit.cancelledVisit'),
-      CONFIRMED: t('rescheduleVisit.confirmedVisit'),
-      COMPLETED: t('rescheduleVisit.completedVisit'),
-      REALIZADA: t('rescheduleVisit.completedVisit'),
-    };
-    return map[status] ?? status;
-  }
+function statusLabel(status: EventStatus): string {
+  const map: Partial<Record<EventStatus, string>> = {
+    SCHEDULED: t('rescheduleVisit.scheduledVisit'),
+    CANCELLED: t('rescheduleVisit.cancelledVisit'),
+    CONFIRMED: t('rescheduleVisit.confirmedVisit'),
+    COMPLETED: t('rescheduleVisit.completedVisit'),
+    REALIZADA: t('rescheduleVisit.completedVisit'),
+  };
+  return map[status] ?? status;
+}
 
-  function statusDotClass(status: EventStatus): string {
-    const map: Partial<Record<EventStatus, string>> = {
-      SCHEDULED: 'bg-green-500',
-      CANCELLED: 'bg-red-400',
-      CONFIRMED: 'bg-blue-500',
-      COMPLETED: 'bg-gray-400',
-      REALIZADA: 'bg-gray-400',
-    };
-    return map[status] ?? 'bg-gray-300';
-  }
+function statusDotClass(status: EventStatus): string {
+  const map: Partial<Record<EventStatus, string>> = {
+    SCHEDULED: 'bg-green-500',
+    CANCELLED: 'bg-red-400',
+    CONFIRMED: 'bg-blue-500',
+    COMPLETED: 'bg-gray-400',
+    REALIZADA: 'bg-gray-400',
+  };
+  return map[status] ?? 'bg-gray-300';
+}
 </script>

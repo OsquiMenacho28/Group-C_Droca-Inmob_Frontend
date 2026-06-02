@@ -3,9 +3,14 @@
     <template #header>
       <div class="flex items-center space-x-4">
         <h3 class="text-2xl font-bold dark:text-white">
-          {{ owner.fullName || `${owner.firstName || ''} ${owner.lastName || ''}`.trim() }}
+          {{
+            owner.fullName ||
+            `${owner.firstName || ''} ${owner.lastName || ''}`.trim()
+          }}
         </h3>
-        <fwb-badge type="yellow">{{ t('ownerDetails.profileBadge') }}</fwb-badge>
+        <fwb-badge type="yellow">{{
+          t('ownerDetails.profileBadge')
+        }}</fwb-badge>
       </div>
     </template>
 
@@ -15,7 +20,9 @@
           <div
             class="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
           >
-            <h4 class="text-xs font-black text-amber-600 uppercase tracking-widest mb-3">
+            <h4
+              class="text-xs font-black text-amber-600 uppercase tracking-widest mb-3"
+            >
               {{ t('ownerDetails.ownerInfo') }}
             </h4>
             <div class="space-y-3 text-sm">
@@ -38,7 +45,9 @@
                 </span>
               </div>
               <div class="flex items-center justify-between gap-3">
-                <span class="text-gray-500">{{ t('ownerDetails.status') }}</span>
+                <span class="text-gray-500">{{
+                  t('ownerDetails.status')
+                }}</span>
                 <span
                   class="text-right font-semibold"
                   :class="
@@ -62,7 +71,9 @@
           <div
             class="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
           >
-            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">
+            <h4
+              class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3"
+            >
               {{ t('ownerDetails.summary') }}
             </h4>
             <p class="text-sm text-gray-600 dark:text-gray-300 leading-6">
@@ -71,38 +82,43 @@
           </div>
         </div>
 
-        <IdentityDocumentsSection :person-id="owner.personId" :auth-user-id="owner.authUserId" />
+        <IdentityDocumentsSection
+          :person-id="owner.personId"
+          :auth-user-id="owner.authUserId"
+        />
       </div>
     </template>
 
     <template #footer>
       <div class="flex justify-end">
-        <fwb-button color="alternative" @click="$emit('close')">{{ t('common.close') }}</fwb-button>
+        <fwb-button color="alternative" @click="$emit('close')">{{
+          t('common.close')
+        }}</fwb-button>
       </div>
     </template>
   </fwb-modal>
 </template>
 
 <script setup lang="ts">
-  import { FwbBadge, FwbButton, FwbModal } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
-  import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
+import { FwbBadge, FwbButton, FwbModal } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
+import IdentityDocumentsSection from '@/components/users/IdentityDocumentsSection.vue';
 
-  interface OwnerRecord {
-    fullName?: string;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    taxId?: string;
-    status?: string;
-    personId?: string;
-    authUserId?: string;
-    [key: string]: unknown;
-  }
+interface OwnerRecord {
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  taxId?: string;
+  status?: string;
+  personId?: string;
+  authUserId?: string;
+  [key: string]: unknown;
+}
 
-  defineProps<{ show: boolean; owner: OwnerRecord }>();
-  defineEmits(['close']);
+defineProps<{ show: boolean; owner: OwnerRecord }>();
+defineEmits(['close']);
 
-  const { t } = useI18n();
+const { t } = useI18n();
 </script>

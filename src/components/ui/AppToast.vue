@@ -29,49 +29,50 @@
 </template>
 
 <script setup lang="ts">
-  import IconLucideCheck from '~icons/lucide/check';
-  import IconLucideInfo from '~icons/lucide/info';
-  import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
-  import IconLucideX from '~icons/lucide/x';
-  import { onMounted } from 'vue';
+import IconLucideCheck from '~icons/lucide/check';
+import IconLucideInfo from '~icons/lucide/info';
+import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
+import IconLucideX from '~icons/lucide/x';
+import { onMounted } from 'vue';
 
-  const props = defineProps({
-    show: Boolean,
-    message: {
-      type: String,
-      default: '',
-    },
-    type: {
-      type: String as () => 'success' | 'info' | 'warning' | 'error',
-      default: 'success',
-    },
-    duration: {
-      type: Number,
-      default: 3000,
-    },
-  });
+const props = defineProps({
+  show: Boolean,
+  message: {
+    type: String,
+    default: '',
+  },
+  type: {
+    type: String as () => 'success' | 'info' | 'warning' | 'error',
+    default: 'success',
+  },
+  duration: {
+    type: Number,
+    default: 3000,
+  },
+});
 
-  const emit = defineEmits(['close']);
+const emit = defineEmits(['close']);
 
-  const typeClasses = {
-    success: 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200',
-    info: 'text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200',
-    warning: 'text-orange-500 bg-orange-100 dark:bg-orange-800 dark:text-orange-200',
-    error: 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200',
-  };
+const typeClasses = {
+  success: 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200',
+  info: 'text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200',
+  warning:
+    'text-orange-500 bg-orange-100 dark:bg-orange-800 dark:text-orange-200',
+  error: 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200',
+};
 
-  const typeIcons = {
-    success: IconLucideCheck,
-    info: IconLucideInfo,
-    warning: IconLucideAlertTriangle,
-    error: IconLucideX,
-  };
+const typeIcons = {
+  success: IconLucideCheck,
+  info: IconLucideInfo,
+  warning: IconLucideAlertTriangle,
+  error: IconLucideX,
+};
 
-  onMounted(() => {
-    if (props.show && props.duration > 0) {
-      setTimeout(() => {
-        emit('close');
-      }, props.duration);
-    }
-  });
+onMounted(() => {
+  if (props.show && props.duration > 0) {
+    setTimeout(() => {
+      emit('close');
+    }, props.duration);
+  }
+});
 </script>

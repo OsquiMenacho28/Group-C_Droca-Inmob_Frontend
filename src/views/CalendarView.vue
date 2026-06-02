@@ -33,12 +33,20 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
-      <FwbAlert v-if="pendingRequests.length > 0" type="warning" class="rounded-xl shadow-sm">
+      <FwbAlert
+        v-if="pendingRequests.length > 0"
+        type="warning"
+        class="rounded-xl shadow-sm"
+      >
         <div class="flex items-center justify-between gap-3 mb-2">
           <div>
-            <span class="text-sm font-bold">{{ t('calendar.pendingRequestsTitle') }}</span>
+            <span class="text-sm font-bold">{{
+              t('calendar.pendingRequestsTitle')
+            }}</span>
             <p class="text-xs mt-1">
-              {{ t('calendar.pendingRequestsText', { n: pendingRequests.length }) }}
+              {{
+                t('calendar.pendingRequestsText', { n: pendingRequests.length })
+              }}
             </p>
           </div>
           <FwbButton
@@ -68,11 +76,18 @@
                 <p class="text-xs text-secondary">
                   {{ formatPendingDate(request.preferredDateTime) }}
                 </p>
-                <p v-if="request.message" class="text-xs text-secondary mt-1 line-clamp-2">
+                <p
+                  v-if="request.message"
+                  class="text-xs text-secondary mt-1 line-clamp-2"
+                >
                   {{ request.message }}
                 </p>
               </div>
-              <FwbBadge type="yellow" size="sm" class="shrink-0 text-[10px] font-bold">
+              <FwbBadge
+                type="yellow"
+                size="sm"
+                class="shrink-0 text-[10px] font-bold"
+              >
                 {{ t('status.pending') }}
               </FwbBadge>
             </div>
@@ -129,7 +144,10 @@
                 <IconLucideSearch class="w-4 h-4 text-gray-400" />
               </template>
               <template #suffix>
-                <button type="button" @click="showPropertyDropdown = !showPropertyDropdown">
+                <button
+                  type="button"
+                  @click="showPropertyDropdown = !showPropertyDropdown"
+                >
                   <IconLucideChevronDown
                     class="h-4 w-4 text-gray-400 transition-transform"
                     :class="{ 'rotate-180': showPropertyDropdown }"
@@ -177,7 +195,10 @@
                 <IconLucideUser class="w-4 h-4 text-gray-400" />
               </template>
               <template #suffix>
-                <button type="button" @click="showAgentDropdown = !showAgentDropdown">
+                <button
+                  type="button"
+                  @click="showAgentDropdown = !showAgentDropdown"
+                >
                   <IconLucideChevronDown
                     class="h-4 w-4 text-gray-400 transition-transform"
                     :class="{ 'rotate-180': showAgentDropdown }"
@@ -245,7 +266,9 @@
             <p class="text-2xl font-bold text-blue-700 dark:text-blue-400">
               {{ calendarData?.myEvents ?? 0 }}
             </p>
-            <p class="text-[10px] text-blue-600 dark:text-blue-300 uppercase font-black">
+            <p
+              class="text-[10px] text-blue-600 dark:text-blue-300 uppercase font-black"
+            >
               {{ t('calendar.myVisits') }}
             </p>
           </div>
@@ -273,14 +296,18 @@
       </div>
 
       <div v-if="!loading" class="app-card overflow-hidden">
-        <div class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
+        <div
+          class="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700"
+        >
           <div
             v-for="(day, idx) in weekDays"
             :key="idx"
             class="py-3 px-2 text-center border-r border-gray-100 dark:border-gray-700 last:border-r-0"
             :class="{ 'bg-blue-50/50 dark:bg-blue-900/10': isToday(day) }"
           >
-            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase">
+            <p
+              class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase"
+            >
               {{ dayName(day) }}
             </p>
             <p
@@ -332,7 +359,9 @@
       <template #header>
         <div class="flex justify-between items-start w-full">
           <div>
-            <span class="text-xl font-bold">{{ selectedEvent?.propertyName }}</span>
+            <span class="text-xl font-bold">{{
+              selectedEvent?.propertyName
+            }}</span>
             <p class="text-sm text-gray-500 mt-1">
               {{ selectedEvent?.propertyAddress }}
             </p>
@@ -343,7 +372,9 @@
         <div class="space-y-3 text-sm">
           <div class="flex justify-between">
             <span class="text-gray-500">{{ t('calendar.agent') }}</span>
-            <span class="font-bold dark:text-white">{{ selectedEvent?.agentName }}</span>
+            <span class="font-bold dark:text-white">{{
+              selectedEvent?.agentName
+            }}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-gray-500">{{ t('calendar.schedule') }}</span>
@@ -363,12 +394,15 @@
             </FwbBadge>
           </div>
           <div class="flex justify-between gap-4">
-            <span class="text-gray-500">{{ t('calendar.assignedVehicle') }}</span>
+            <span class="text-gray-500">{{
+              t('calendar.assignedVehicle')
+            }}</span>
             <template v-if="selectedEvent?.vehicleId && selectedEventVehicle">
               <div class="text-right font-bold dark:text-white">
                 <p>{{ selectedEventVehicle.licensePlate }}</p>
                 <p class="text-xs font-medium text-secondary">
-                  {{ selectedEventVehicle.brand }} {{ selectedEventVehicle.model }}
+                  {{ selectedEventVehicle.brand }}
+                  {{ selectedEventVehicle.model }}
                 </p>
                 <p class="text-xs font-medium text-secondary">
                   {{
@@ -387,366 +421,409 @@
       </template>
       <template #footer>
         <div class="flex gap-3 w-full">
-          <FwbButton @click="goToVisitDetail(selectedEvent!.id)" color="blue" class="flex-1">
+          <FwbButton
+            @click="goToVisitDetail(selectedEvent!.id)"
+            color="blue"
+            class="flex-1"
+          >
             {{ t('common.details') }}
           </FwbButton>
-          <FwbButton @click="closeEventModal" color="alternative" class="flex-1">
+          <FwbButton
+            @click="closeEventModal"
+            color="alternative"
+            class="flex-1"
+          >
             {{ t('common.close') }}
           </FwbButton>
         </div>
       </template>
     </FwbModal>
 
-    <FwbAlert v-if="alertMessage" :type="alertType" class="fixed bottom-4 right-4 z-70 max-w-sm">
+    <FwbAlert
+      v-if="alertMessage"
+      :type="alertType"
+      class="fixed bottom-4 right-4 z-70 max-w-sm"
+    >
       {{ alertMessage }}
     </FwbAlert>
   </div>
 </template>
 
 <script setup lang="ts">
-  import IconLucideArrowLeft from '~icons/lucide/arrow-left';
-  import IconLucidePlus from '~icons/lucide/plus';
-  import IconLucideChevronLeft from '~icons/lucide/chevron-left';
-  import IconLucideChevronRight from '~icons/lucide/chevron-right';
-  import IconLucideSearch from '~icons/lucide/search';
-  import IconLucideChevronDown from '~icons/lucide/chevron-down';
-  import IconLucideUser from '~icons/lucide/user';
-  import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { FwbCard, FwbButton, FwbModal, FwbInput, FwbAlert, FwbBadge } from 'flowbite-vue';
-  import { getCalendar } from '@/services/calendarService';
-  import vehicleService from '@/services/vehicleService';
-  import { propertyService } from '@/modules/properties';
-  import { userService } from '@/services/userService';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import type {
-    CalendarResponse,
-    CalendarEventResponse,
-    VisitRequestResponse,
-    Vehicle,
-  } from '@/types/visitCalendar';
-  import {
-    getPendingRequestsForAgent,
-    acceptVisitRequest,
-    rejectVisitRequest,
-  } from '@/services/visitRequestService';
-  import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
-  import { handleApiError } from '@/api/errorHandler';
-  import {
-    getWeekRangeUtc,
-    isSameLocalDay,
-    formatShortTime,
-    formatDisplayDateTime,
-  } from '@/utils/dateTime';
+import IconLucideArrowLeft from '~icons/lucide/arrow-left';
+import IconLucidePlus from '~icons/lucide/plus';
+import IconLucideChevronLeft from '~icons/lucide/chevron-left';
+import IconLucideChevronRight from '~icons/lucide/chevron-right';
+import IconLucideSearch from '~icons/lucide/search';
+import IconLucideChevronDown from '~icons/lucide/chevron-down';
+import IconLucideUser from '~icons/lucide/user';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+import {
+  FwbCard,
+  FwbButton,
+  FwbModal,
+  FwbInput,
+  FwbAlert,
+  FwbBadge,
+} from 'flowbite-vue';
+import { getCalendar } from '@/services/calendarService';
+import vehicleService from '@/services/vehicleService';
+import { propertyService } from '@/modules/properties';
+import { userService } from '@/services/userService';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import type {
+  CalendarResponse,
+  CalendarEventResponse,
+  VisitRequestResponse,
+  Vehicle,
+} from '@/types/visitCalendar';
+import {
+  getPendingRequestsForAgent,
+  acceptVisitRequest,
+  rejectVisitRequest,
+} from '@/services/visitRequestService';
+import { useI18n } from 'vue-i18n';
+import { getLocaleString } from '@/locales/i18n';
+import { handleApiError } from '@/api/errorHandler';
+import {
+  getWeekRangeUtc,
+  isSameLocalDay,
+  formatShortTime,
+  formatDisplayDateTime,
+} from '@/utils/dateTime';
 
-  const { t } = useI18n();
-  const router = useRouter();
-  const authStore = useAuthStore();
-  const myAgentId = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    return (u?.sub || u?.userId || '') as string;
+const { t } = useI18n();
+const router = useRouter();
+const authStore = useAuthStore();
+const myAgentId = computed(() => {
+  const u = authStore.user as UserClaims | null;
+  return (u?.sub || u?.userId || '') as string;
+});
+
+const loading = ref(false);
+const error = ref('');
+const calendarData = ref<CalendarResponse | null>(null);
+const selectedEvent = ref<CalendarEventResponse | null>(null);
+const selectedEventVehicle = ref<Vehicle | null>(null);
+const showEventModal = ref(false);
+const currentWeekStart = ref(new Date());
+const pendingRequests = ref<VisitRequestResponse[]>([]);
+const requestActionLoadingId = ref('');
+const alertMessage = ref('');
+const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
+let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null;
+
+const allProperties = ref<
+  { id: string; title: string; address: string; [key: string]: unknown }[]
+>([]);
+const allAgents = ref<
+  {
+    id: string;
+    fullName: string;
+    email: string;
+    userType: string;
+    [key: string]: unknown;
+  }[]
+>([]);
+const searchTermProperty = ref('');
+const showPropertyDropdown = ref(false);
+const filterPropertyId = ref('');
+const searchTermAgent = ref('');
+const showAgentDropdown = ref(false);
+const filterAgentId = ref('');
+const fleet = ref<Vehicle[] | null>(null);
+
+const weekRange = computed(() => getWeekRangeUtc(currentWeekStart.value));
+
+const weekDays = computed(() => {
+  const start = new Date(weekRange.value.from);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return d;
   });
+});
 
-  const loading = ref(false);
-  const error = ref('');
-  const calendarData = ref<CalendarResponse | null>(null);
-  const selectedEvent = ref<CalendarEventResponse | null>(null);
-  const selectedEventVehicle = ref<Vehicle | null>(null);
-  const showEventModal = ref(false);
-  const currentWeekStart = ref(new Date());
-  const pendingRequests = ref<VisitRequestResponse[]>([]);
-  const requestActionLoadingId = ref('');
-  const alertMessage = ref('');
-  const alertType = ref<'success' | 'danger' | 'warning' | 'info'>('danger');
-  let pendingRequestsIntervalId: ReturnType<typeof setInterval> | null = null;
+const weekLabel = computed(() => {
+  const from = weekDays.value[0];
+  const to = weekDays.value[6];
+  const locale = getLocaleString();
+  return `${from.getDate()} ${from.toLocaleString(locale, { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(locale, { month: 'short', year: 'numeric' })}`;
+});
 
-  const allProperties = ref<
-    { id: string; title: string; address: string; [key: string]: unknown }[]
-  >([]);
-  const allAgents = ref<
-    {
+const loadFilterData = async () => {
+  try {
+    const [p, uRes] = await Promise.all([
+      propertyService.getProperties(),
+      userService.getUsers(0, 1000),
+    ]);
+    const u = uRes.data || [];
+    allProperties.value = (p || []) as {
       id: string;
-      fullName: string;
-      email: string;
-      userType: string;
+      title: string;
+      address: string;
       [key: string]: unknown;
-    }[]
-  >([]);
-  const searchTermProperty = ref('');
-  const showPropertyDropdown = ref(false);
-  const filterPropertyId = ref('');
-  const searchTermAgent = ref('');
-  const showAgentDropdown = ref(false);
-  const filterAgentId = ref('');
-  const fleet = ref<Vehicle[] | null>(null);
-
-  const weekRange = computed(() => getWeekRangeUtc(currentWeekStart.value));
-
-  const weekDays = computed(() => {
-    const start = new Date(weekRange.value.from);
-    return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      return d;
-    });
-  });
-
-  const weekLabel = computed(() => {
-    const from = weekDays.value[0];
-    const to = weekDays.value[6];
-    const locale = getLocaleString();
-    return `${from.getDate()} ${from.toLocaleString(locale, { month: 'short' })} — ${to.getDate()} ${to.toLocaleString(locale, { month: 'short', year: 'numeric' })}`;
-  });
-
-  const loadFilterData = async () => {
-    try {
-      const [p, uRes] = await Promise.all([
-        propertyService.getProperties(),
-        userService.getUsers(0, 1000),
-      ]);
-      const u = uRes.data || [];
-      allProperties.value = (p || []) as {
+    }[];
+    allAgents.value = (
+      u as {
         id: string;
-        title: string;
-        address: string;
+        fullName: string;
+        email: string;
+        userType: string;
         [key: string]: unknown;
-      }[];
-      allAgents.value = (
-        u as {
-          id: string;
-          fullName: string;
-          email: string;
-          userType: string;
-          [key: string]: unknown;
-        }[]
-      ).filter((x) => x.userType === 'EMPLOYEE' || x.userType === 'ADMIN');
-    } catch {
-      error.value = t('calendar.loadError');
-      setTimeout(() => {
-        error.value = '';
-      }, 5000);
-    }
-  };
-
-  function showAlert(msg: string, type: 'success' | 'danger' | 'warning' | 'info' = 'danger') {
-    alertMessage.value = msg;
-    alertType.value = type;
+      }[]
+    ).filter((x) => x.userType === 'EMPLOYEE' || x.userType === 'ADMIN');
+  } catch {
+    error.value = t('calendar.loadError');
     setTimeout(() => {
-      alertMessage.value = '';
-    }, 4000);
+      error.value = '';
+    }, 5000);
+  }
+};
+
+function showAlert(
+  msg: string,
+  type: 'success' | 'danger' | 'warning' | 'info' = 'danger'
+) {
+  alertMessage.value = msg;
+  alertType.value = type;
+  setTimeout(() => {
+    alertMessage.value = '';
+  }, 4000);
+}
+
+async function loadCalendar() {
+  loading.value = true;
+  error.value = '';
+  try {
+    const { from, to } = weekRange.value;
+    calendarData.value = await getCalendar(
+      from,
+      to,
+      myAgentId.value,
+      filterAgentId.value || undefined,
+      filterPropertyId.value || undefined
+    );
+  } catch (e) {
+    error.value = handleApiError(e).message;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function loadPendingRequests() {
+  if (!myAgentId.value) {
+    pendingRequests.value = [];
+    return;
   }
 
-  async function loadCalendar() {
-    loading.value = true;
-    error.value = '';
-    try {
-      const { from, to } = weekRange.value;
-      calendarData.value = await getCalendar(
-        from,
-        to,
-        myAgentId.value,
-        filterAgentId.value || undefined,
-        filterPropertyId.value || undefined
-      );
-    } catch (e) {
-      error.value = handleApiError(e).message;
-    } finally {
-      loading.value = false;
-    }
+  try {
+    const requests = await getPendingRequestsForAgent(myAgentId.value);
+    pendingRequests.value = requests.filter(
+      (request) => request.status === 'PENDING'
+    );
+  } catch (e) {
+    console.error(handleApiError(e).message);
+  }
+}
+
+const filteredProperties = computed(() => {
+  const s = searchTermProperty.value.toLowerCase();
+  if (!s) return allProperties.value.slice(0, 10);
+  return allProperties.value
+    .filter(
+      (p) =>
+        String(p.title).toLowerCase().includes(s) ||
+        String(p.address).toLowerCase().includes(s)
+    )
+    .slice(0, 10);
+});
+
+const filteredAgents = computed(() => {
+  const s = searchTermAgent.value.toLowerCase();
+  if (!s) return allAgents.value.slice(0, 10);
+  return allAgents.value
+    .filter((a) => String(a.fullName).toLowerCase().includes(s))
+    .slice(0, 10);
+});
+
+const selectProperty = (p: {
+  id: string;
+  title: string;
+  [key: string]: unknown;
+}) => {
+  filterPropertyId.value = p.id;
+  searchTermProperty.value = p.title;
+  showPropertyDropdown.value = false;
+  loadCalendar();
+};
+const selectAgent = (a: {
+  id: string;
+  fullName: string;
+  [key: string]: unknown;
+}) => {
+  filterAgentId.value = a.id;
+  searchTermAgent.value = a.fullName;
+  showAgentDropdown.value = false;
+  loadCalendar();
+};
+function clearFilters() {
+  filterPropertyId.value = '';
+  searchTermProperty.value = '';
+  filterAgentId.value = '';
+  searchTermAgent.value = '';
+  loadCalendar();
+}
+
+const eventsForDay = (day: Date) =>
+  calendarData.value?.events.filter((ev) =>
+    isSameLocalDay(ev.startTime, day)
+  ) || [];
+const isToday = (d: Date) => d.toDateString() === new Date().toDateString();
+const dayName = (d: Date) =>
+  d.toLocaleString(getLocaleString(), { weekday: 'short' });
+const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
+const teamEvents = computed(
+  () =>
+    (calendarData.value?.totalEvents ?? 0) - (calendarData.value?.myEvents ?? 0)
+);
+const uniqueProperties = computed(
+  () => new Set(calendarData.value?.events.map((e) => e.propertyId)).size
+);
+
+const formatPendingDate = (iso: string) =>
+  formatDisplayDateTime(iso, getLocaleString());
+
+function eventCardClass(ev: CalendarEventResponse) {
+  if (ev.status === 'CANCELLED')
+    return 'bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-300 line-through';
+  return ev.ownEvent
+    ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-blue-500'
+    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200';
+}
+
+function statusType(s: string): 'yellow' | 'green' | 'red' | 'default' {
+  const map: Record<string, 'yellow' | 'green' | 'red' | 'default'> = {
+    SCHEDULED: 'yellow',
+    CONFIRMED: 'green',
+    CANCELLED: 'red',
+  };
+  return map[s] || 'default';
+}
+
+const statusLabel = (s: string) =>
+  ({
+    SCHEDULED: t('status.scheduled'),
+    CONFIRMED: t('status.confirmed'),
+    CANCELLED: t('status.cancelled'),
+  })[s] || s;
+
+function prevWeek() {
+  currentWeekStart.value = new Date(
+    currentWeekStart.value.setDate(currentWeekStart.value.getDate() - 7)
+  );
+  loadCalendar();
+}
+function nextWeek() {
+  currentWeekStart.value = new Date(
+    currentWeekStart.value.setDate(currentWeekStart.value.getDate() + 7)
+  );
+  loadCalendar();
+}
+function goToday() {
+  currentWeekStart.value = new Date();
+  loadCalendar();
+}
+
+const selectEvent = async (ev: CalendarEventResponse) => {
+  selectedEvent.value = ev;
+  selectedEventVehicle.value = null;
+  showEventModal.value = true;
+  await loadSelectedEventVehicle(ev.vehicleId);
+};
+
+const closeEventModal = () => {
+  showEventModal.value = false;
+  selectedEvent.value = null;
+  selectedEventVehicle.value = null;
+};
+
+const ensureFleetLoaded = async () => {
+  if (fleet.value) {
+    return fleet.value;
   }
 
-  async function loadPendingRequests() {
-    if (!myAgentId.value) {
-      pendingRequests.value = [];
-      return;
-    }
+  const vehicles = await vehicleService.getVehicles();
+  fleet.value = vehicles;
+  return vehicles;
+};
 
-    try {
-      const requests = await getPendingRequestsForAgent(myAgentId.value);
-      pendingRequests.value = requests.filter((request) => request.status === 'PENDING');
-    } catch (e) {
-      console.error(handleApiError(e).message);
-    }
+const loadSelectedEventVehicle = async (vehicleId?: string) => {
+  if (!vehicleId) {
+    selectedEventVehicle.value = null;
+    return;
   }
 
-  const filteredProperties = computed(() => {
-    const s = searchTermProperty.value.toLowerCase();
-    if (!s) return allProperties.value.slice(0, 10);
-    return allProperties.value
-      .filter(
-        (p) =>
-          String(p.title).toLowerCase().includes(s) || String(p.address).toLowerCase().includes(s)
-      )
-      .slice(0, 10);
-  });
+  try {
+    const vehicles = await ensureFleetLoaded();
+    selectedEventVehicle.value =
+      vehicles.find((vehicle) => vehicle.id === vehicleId) ?? null;
+  } catch {
+    selectedEventVehicle.value = null;
+  }
+};
 
-  const filteredAgents = computed(() => {
-    const s = searchTermAgent.value.toLowerCase();
-    if (!s) return allAgents.value.slice(0, 10);
-    return allAgents.value.filter((a) => String(a.fullName).toLowerCase().includes(s)).slice(0, 10);
-  });
+function goToVisitDetail(visitId: string) {
+  closeEventModal();
+  router.push(`/visits/${visitId}`);
+}
 
-  const selectProperty = (p: { id: string; title: string; [key: string]: unknown }) => {
-    filterPropertyId.value = p.id;
-    searchTermProperty.value = p.title;
+async function handleAcceptRequest(requestId: string) {
+  if (!myAgentId.value) return;
+
+  requestActionLoadingId.value = requestId;
+  try {
+    await acceptVisitRequest(requestId, myAgentId.value);
+    await Promise.all([loadPendingRequests(), loadCalendar()]);
+  } catch {
+    showAlert(t('calendar.loadError'));
+  } finally {
+    requestActionLoadingId.value = '';
+  }
+}
+
+async function handleRejectRequest(requestId: string) {
+  if (!myAgentId.value) return;
+
+  requestActionLoadingId.value = requestId;
+  try {
+    await rejectVisitRequest(requestId, myAgentId.value);
+    await loadPendingRequests();
+  } catch {
+    showAlert(t('calendar.loadError'));
+  } finally {
+    requestActionLoadingId.value = '';
+  }
+}
+
+const closeClickOutside = (e: MouseEvent) => {
+  if (!e.target || !(e.target instanceof HTMLElement)) return;
+  if (!e.target.closest('#prop-filter-container'))
     showPropertyDropdown.value = false;
-    loadCalendar();
-  };
-  const selectAgent = (a: { id: string; fullName: string; [key: string]: unknown }) => {
-    filterAgentId.value = a.id;
-    searchTermAgent.value = a.fullName;
+  if (!e.target.closest('#agent-filter-container'))
     showAgentDropdown.value = false;
-    loadCalendar();
-  };
-  function clearFilters() {
-    filterPropertyId.value = '';
-    searchTermProperty.value = '';
-    filterAgentId.value = '';
-    searchTermAgent.value = '';
-    loadCalendar();
-  }
+};
 
-  const eventsForDay = (day: Date) =>
-    calendarData.value?.events.filter((ev) => isSameLocalDay(ev.startTime, day)) || [];
-  const isToday = (d: Date) => d.toDateString() === new Date().toDateString();
-  const dayName = (d: Date) => d.toLocaleString(getLocaleString(), { weekday: 'short' });
-  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
-  const teamEvents = computed(
-    () => (calendarData.value?.totalEvents ?? 0) - (calendarData.value?.myEvents ?? 0)
-  );
-  const uniqueProperties = computed(
-    () => new Set(calendarData.value?.events.map((e) => e.propertyId)).size
-  );
-
-  const formatPendingDate = (iso: string) => formatDisplayDateTime(iso, getLocaleString());
-
-  function eventCardClass(ev: CalendarEventResponse) {
-    if (ev.status === 'CANCELLED')
-      return 'bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-300 line-through';
-    return ev.ownEvent
-      ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-100 border-blue-500'
-      : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200';
-  }
-
-  function statusType(s: string): 'yellow' | 'green' | 'red' | 'default' {
-    const map: Record<string, 'yellow' | 'green' | 'red' | 'default'> = {
-      SCHEDULED: 'yellow',
-      CONFIRMED: 'green',
-      CANCELLED: 'red',
-    };
-    return map[s] || 'default';
-  }
-
-  const statusLabel = (s: string) =>
-    ({
-      SCHEDULED: t('status.scheduled'),
-      CONFIRMED: t('status.confirmed'),
-      CANCELLED: t('status.cancelled'),
-    })[s] || s;
-
-  function prevWeek() {
-    currentWeekStart.value = new Date(
-      currentWeekStart.value.setDate(currentWeekStart.value.getDate() - 7)
-    );
-    loadCalendar();
-  }
-  function nextWeek() {
-    currentWeekStart.value = new Date(
-      currentWeekStart.value.setDate(currentWeekStart.value.getDate() + 7)
-    );
-    loadCalendar();
-  }
-  function goToday() {
-    currentWeekStart.value = new Date();
-    loadCalendar();
-  }
-
-  const selectEvent = async (ev: CalendarEventResponse) => {
-    selectedEvent.value = ev;
-    selectedEventVehicle.value = null;
-    showEventModal.value = true;
-    await loadSelectedEventVehicle(ev.vehicleId);
-  };
-
-  const closeEventModal = () => {
-    showEventModal.value = false;
-    selectedEvent.value = null;
-    selectedEventVehicle.value = null;
-  };
-
-  const ensureFleetLoaded = async () => {
-    if (fleet.value) {
-      return fleet.value;
-    }
-
-    const vehicles = await vehicleService.getVehicles();
-    fleet.value = vehicles;
-    return vehicles;
-  };
-
-  const loadSelectedEventVehicle = async (vehicleId?: string) => {
-    if (!vehicleId) {
-      selectedEventVehicle.value = null;
-      return;
-    }
-
-    try {
-      const vehicles = await ensureFleetLoaded();
-      selectedEventVehicle.value = vehicles.find((vehicle) => vehicle.id === vehicleId) ?? null;
-    } catch {
-      selectedEventVehicle.value = null;
-    }
-  };
-
-  function goToVisitDetail(visitId: string) {
-    closeEventModal();
-    router.push(`/visits/${visitId}`);
-  }
-
-  async function handleAcceptRequest(requestId: string) {
-    if (!myAgentId.value) return;
-
-    requestActionLoadingId.value = requestId;
-    try {
-      await acceptVisitRequest(requestId, myAgentId.value);
-      await Promise.all([loadPendingRequests(), loadCalendar()]);
-    } catch {
-      showAlert(t('calendar.loadError'));
-    } finally {
-      requestActionLoadingId.value = '';
-    }
-  }
-
-  async function handleRejectRequest(requestId: string) {
-    if (!myAgentId.value) return;
-
-    requestActionLoadingId.value = requestId;
-    try {
-      await rejectVisitRequest(requestId, myAgentId.value);
-      await loadPendingRequests();
-    } catch {
-      showAlert(t('calendar.loadError'));
-    } finally {
-      requestActionLoadingId.value = '';
-    }
-  }
-
-  const closeClickOutside = (e: MouseEvent) => {
-    if (!e.target || !(e.target instanceof HTMLElement)) return;
-    if (!e.target.closest('#prop-filter-container')) showPropertyDropdown.value = false;
-    if (!e.target.closest('#agent-filter-container')) showAgentDropdown.value = false;
-  };
-
-  onMounted(() => {
-    loadFilterData();
-    loadCalendar();
-    loadPendingRequests();
-    window.addEventListener('click', closeClickOutside);
-    pendingRequestsIntervalId = setInterval(loadPendingRequests, 30_000);
-  });
-  onUnmounted(() => {
-    window.removeEventListener('click', closeClickOutside);
-    if (pendingRequestsIntervalId) clearInterval(pendingRequestsIntervalId);
-  });
+onMounted(() => {
+  loadFilterData();
+  loadCalendar();
+  loadPendingRequests();
+  window.addEventListener('click', closeClickOutside);
+  pendingRequestsIntervalId = setInterval(loadPendingRequests, 30_000);
+});
+onUnmounted(() => {
+  window.removeEventListener('click', closeClickOutside);
+  if (pendingRequestsIntervalId) clearInterval(pendingRequestsIntervalId);
+});
 </script>

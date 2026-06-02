@@ -2,7 +2,9 @@
   <div class="app-page p-6 space-y-6">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-3xl font-bold dark:text-white">{{ t('ownerDashboard.title') }}</h1>
+        <h1 class="text-3xl font-bold dark:text-white">
+          {{ t('ownerDashboard.title') }}
+        </h1>
         <p class="text-gray-500">{{ t('ownerDashboard.subtitle') }}</p>
       </div>
     </div>
@@ -28,7 +30,9 @@
         class="bg-yellow-50 border border-yellow-200 rounded-lg p-8 text-center"
       >
         <p class="text-yellow-800">{{ t('ownerDashboard.emptyTitle') }}</p>
-        <p class="text-yellow-600 text-sm mt-2">{{ t('ownerDashboard.emptySubtext') }}</p>
+        <p class="text-yellow-600 text-sm mt-2">
+          {{ t('ownerDashboard.emptySubtext') }}
+        </p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -38,7 +42,9 @@
           @click="openDetails(prop)"
           class="cursor-pointer"
         >
-          <fwb-card class="overflow-hidden hover:shadow-lg transition-shadow relative h-full">
+          <fwb-card
+            class="overflow-hidden hover:shadow-lg transition-shadow relative h-full"
+          >
             <div class="absolute top-4 right-4 z-10">
               <div
                 class="bg-blue-600 text-white rounded-full px-3 py-1 text-sm font-bold flex items-center gap-1 shadow-lg"
@@ -81,13 +87,17 @@
                   <p class="text-xs text-gray-400 uppercase tracking-wider">
                     {{ t('common.price') }}
                   </p>
-                  <p class="text-2xl font-bold text-blue-600">${{ prop.price.toLocaleString() }}</p>
+                  <p class="text-2xl font-bold text-blue-600">
+                    ${{ prop.price.toLocaleString() }}
+                  </p>
                 </div>
                 <div>
                   <p class="text-xs text-gray-400 uppercase tracking-wider">
                     {{ t('common.type') }}
                   </p>
-                  <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <p
+                    class="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  >
                     {{ prop.type }}
                   </p>
                 </div>
@@ -106,7 +116,11 @@
                 <div class="flex items-center gap-1 col-span-2">
                   <span>👤</span>
                   {{ t('common.agent') }}
-                  {{ prop.assignedAgentName || prop.assignedAgentId || t('common.unassigned') }}
+                  {{
+                    prop.assignedAgentName ||
+                    prop.assignedAgentId ||
+                    t('common.unassigned')
+                  }}
                 </div>
               </div>
             </div>
@@ -127,63 +141,65 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
-  import { FwbCard } from 'flowbite-vue';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import { propertyService } from '@/modules/properties';
-  import { getVisitCountForProperty } from '@/services/visitRequestService';
-  import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
-  import type { Property } from '@/types/property';
-  import { useI18n } from 'vue-i18n';
-  import IconLucideEye from '~icons/lucide/eye';
-  import IconLucideImage from '~icons/lucide/image';
-  import { statusBadgeClass } from '@/utils/styling';
+import { ref, onMounted, computed } from 'vue';
+import { FwbCard } from 'flowbite-vue';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import { propertyService } from '@/modules/properties';
+import { getVisitCountForProperty } from '@/services/visitRequestService';
+import PropertyDetailsModal from '@/components/properties/PropertyDetailsModal.vue';
+import type { Property } from '@/types/property';
+import { useI18n } from 'vue-i18n';
+import IconLucideEye from '~icons/lucide/eye';
+import IconLucideImage from '~icons/lucide/image';
+import { statusBadgeClass } from '@/utils/styling';
 
-  const { t } = useI18n();
-  const authStore = useAuthStore();
-  const user = computed(() => authStore.user as UserClaims | null);
-  const ownerId = computed(() => (user.value?.userId || user.value?.sub || '') as string);
+const { t } = useI18n();
+const authStore = useAuthStore();
+const user = computed(() => authStore.user as UserClaims | null);
+const ownerId = computed(
+  () => (user.value?.userId || user.value?.sub || '') as string
+);
 
-  const properties = ref<PropertyWithVisits[]>([]);
-  const loadingProps = ref(false);
-  const errorProps = ref('');
-  const selectedProperty = ref<Property | null>(null);
+const properties = ref<PropertyWithVisits[]>([]);
+const loadingProps = ref(false);
+const errorProps = ref('');
+const selectedProperty = ref<Property | null>(null);
 
-  interface PropertyWithVisits extends Property {
-    visitCount: number;
-    assignedAgentName?: string;
+interface PropertyWithVisits extends Property {
+  visitCount: number;
+  assignedAgentName?: string;
+}
+
+const loadProperties = async () => {
+  loadingProps.value = true;
+  errorProps.value = '';
+  try {
+    const props = (await propertyService.getPropertiesByOwner(
+      ownerId.value
+    )) as PropertyWithVisits[];
+    const propsWithVisits = await Promise.all(
+      props.map(async (prop) => {
+        try {
+          const visitCount = await getVisitCountForProperty(prop.id);
+          return { ...prop, visitCount };
+        } catch {
+          return { ...prop, visitCount: 0 };
+        }
+      })
+    );
+    properties.value = propsWithVisits;
+  } catch (err: unknown) {
+    errorProps.value = (err as Error).message || t('ownerDashboard.loadError');
+  } finally {
+    loadingProps.value = false;
   }
+};
 
-  const loadProperties = async () => {
-    loadingProps.value = true;
-    errorProps.value = '';
-    try {
-      const props = (await propertyService.getPropertiesByOwner(
-        ownerId.value
-      )) as PropertyWithVisits[];
-      const propsWithVisits = await Promise.all(
-        props.map(async (prop) => {
-          try {
-            const visitCount = await getVisitCountForProperty(prop.id);
-            return { ...prop, visitCount };
-          } catch {
-            return { ...prop, visitCount: 0 };
-          }
-        })
-      );
-      properties.value = propsWithVisits;
-    } catch (err: unknown) {
-      errorProps.value = (err as Error).message || t('ownerDashboard.loadError');
-    } finally {
-      loadingProps.value = false;
-    }
-  };
+const openDetails = (prop: PropertyWithVisits) => {
+  selectedProperty.value = prop as Property;
+};
 
-  const openDetails = (prop: PropertyWithVisits) => {
-    selectedProperty.value = prop as Property;
-  };
-
-  onMounted(() => {
-    loadProperties();
-  });
+onMounted(() => {
+  loadProperties();
+});
 </script>

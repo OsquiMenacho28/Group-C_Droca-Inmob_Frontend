@@ -1,6 +1,8 @@
 <template>
   <div class="app-page">
-    <div class="app-card border-t-0 border-x-0 border-b px-6 py-4 transition-colors">
+    <div
+      class="app-card border-t-0 border-x-0 border-b px-6 py-4 transition-colors"
+    >
       <div class="max-w-2xl mx-auto flex items-center gap-4">
         <router-link
           to="/calendar"
@@ -23,14 +25,21 @@
       <div class="app-card p-6 transition-colors">
         <form @submit.prevent="handleSubmit" novalidate class="space-y-5">
           <div class="relative" id="property-select-container">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               {{ t('scheduleVisit.property') }}
               <span class="text-red-500">*</span>
             </label>
 
             <div class="relative">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <IconLucideLoader v-if="loadingList" class="animate-spin h-4 w-4 text-blue-500" />
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              >
+                <IconLucideLoader
+                  v-if="loadingList"
+                  class="animate-spin h-4 w-4 text-blue-500"
+                />
                 <IconLucideSearch v-else class="w-4 h-4 text-secondary" />
               </div>
               <input
@@ -90,7 +99,11 @@
                       {{ t('propertyTypes.' + p.type) }}
                     </span>
                     <span
-                      :class="p.status === 'DISPONIBLE' ? 'text-green-500' : 'text-red-400'"
+                      :class="
+                        p.status === 'DISPONIBLE'
+                          ? 'text-green-500'
+                          : 'text-red-400'
+                      "
                       class="text-[9px] font-bold uppercase tracking-wider"
                     >
                       {{ t('status.' + p.status.toLowerCase()) }}
@@ -119,11 +132,15 @@
                   {{ t('status.' + propertyInfo.status.toLowerCase()) }}
                 </span>
               </div>
-              <p class="text-xs text-blue-700 dark:text-blue-300 flex items-center gap-1">
+              <p
+                class="text-xs text-blue-700 dark:text-blue-300 flex items-center gap-1"
+              >
                 <IconLucideMapPin class="w-3 h-3" />
                 {{ propertyInfo.address }}
               </p>
-              <div class="flex gap-4 pt-1 border-t border-blue-100 dark:border-blue-800/30 mt-2">
+              <div
+                class="flex gap-4 pt-1 border-t border-blue-100 dark:border-blue-800/30 mt-2"
+              >
                 <div
                   class="text-[10px] text-blue-600 dark:text-blue-400 uppercase tracking-tighter"
                 >
@@ -140,7 +157,9 @@
                   class="text-[10px] text-blue-600 dark:text-blue-400 uppercase tracking-tighter"
                 >
                   {{ t('scheduleVisit.priceLabel') }}
-                  <span class="font-bold">${{ propertyInfo.price.toLocaleString() }}</span>
+                  <span class="font-bold"
+                    >${{ propertyInfo.price.toLocaleString() }}</span
+                  >
                 </div>
               </div>
             </div>
@@ -148,7 +167,9 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-1">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('scheduleVisit.startTime') }}
                 <span class="text-red-500">*</span>
               </label>
@@ -167,7 +188,9 @@
               </p>
             </div>
             <div class="space-y-1">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 {{ t('scheduleVisit.endTime') }}
                 <span class="text-red-500">*</span>
               </label>
@@ -188,7 +211,9 @@
           </div>
 
           <div v-if="canAssignVehicle" class="space-y-1">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               {{ t('scheduleVisit.assignedVehicle') }}
             </label>
             <select
@@ -197,8 +222,13 @@
               class="app-input disabled:opacity-60 dark:scheme-dark"
             >
               <option value="">{{ vehiclePlaceholder }}</option>
-              <option v-for="vehicle in availableVehicles" :key="vehicle.id" :value="vehicle.id">
-                {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
+              <option
+                v-for="vehicle in availableVehicles"
+                :key="vehicle.id"
+                :value="vehicle.id"
+              >
+                {{ vehicle.brand }} {{ vehicle.model }} -
+                {{ vehicle.licensePlate }}
               </option>
             </select>
             <p class="text-xs text-secondary">
@@ -232,7 +262,9 @@
                     >
                       {{ t('scheduleVisit.vehiclePlateLabel') }}
                     </p>
-                    <p class="font-medium">{{ selectedVehicle.licensePlate }}</p>
+                    <p class="font-medium">
+                      {{ selectedVehicle.licensePlate }}
+                    </p>
                   </div>
                   <div>
                     <p
@@ -248,7 +280,9 @@
                     >
                       {{ t('scheduleVisit.vehicleCapacityLabel') }}
                     </p>
-                    <p class="font-medium">{{ selectedVehicle.passengerCapacity }}</p>
+                    <p class="font-medium">
+                      {{ selectedVehicle.passengerCapacity }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -262,7 +296,10 @@
             @use-suggestion="applySuggestion"
           />
 
-          <div v-if="checkingConflict" class="flex items-center gap-2 text-sm text-gray-500">
+          <div
+            v-if="checkingConflict"
+            class="flex items-center gap-2 text-sm text-gray-500"
+          >
             <div
               class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
             ></div>
@@ -278,7 +315,9 @@
           </div>
 
           <div class="space-y-1">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               {{ t('scheduleVisit.notes') }}
             </label>
             <textarea
@@ -298,7 +337,11 @@
             </router-link>
             <button
               type="submit"
-              :disabled="submitting || (conflictResult?.hasConflict ?? false) || !propertyId"
+              :disabled="
+                submitting ||
+                (conflictResult?.hasConflict ?? false) ||
+                !propertyId
+              "
               class="flex-1 py-2.5 text-sm font-bold text-white bg-blue-600 dark:bg-blue-500 rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:shadow-none"
             >
               {{ submitting ? t('common.saving') : t('scheduleVisit.submit') }}
@@ -328,15 +371,23 @@
               <p class="text-xs font-bold text-primary">
                 {{ shortTime(ev.startTime) }}
               </p>
-              <p class="text-[9px] text-gray-400 uppercase">{{ t('scheduleVisit.start') }}</p>
+              <p class="text-[9px] text-gray-400 uppercase">
+                {{ t('scheduleVisit.start') }}
+              </p>
             </div>
             <div class="h-8 w-px bg-gray-200 dark:bg-gray-700"></div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">
+              <p
+                class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate"
+              >
                 {{ ev.propertyName }}
               </p>
               <p class="text-[10px] text-gray-500 truncate">
-                {{ ev.ownEvent ? t('scheduleVisit.youAreResponsible') : ev.agentName }}
+                {{
+                  ev.ownEvent
+                    ? t('scheduleVisit.youAreResponsible')
+                    : ev.agentName
+                }}
               </p>
             </div>
           </div>
@@ -358,7 +409,9 @@
       </template>
       <template #footer>
         <div class="flex justify-end w-full">
-          <FwbButton @click="showSuccessModal = false">{{ t('common.accept') }}</FwbButton>
+          <FwbButton @click="showSuccessModal = false">{{
+            t('common.accept')
+          }}</FwbButton>
         </div>
       </template>
     </FwbModal>
@@ -387,390 +440,408 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-  import { useForm } from 'vee-validate';
-  import { toTypedSchema } from '@vee-validate/zod';
-  import { visitSchema } from '@/modules/properties/schemas/visitSchema';
-  import { useAuthStore, type UserClaims } from '@/modules/auth';
-  import { propertyService } from '@/modules/properties';
-  import {
-    assignVehicleToVisit,
-    checkConflict,
-    createVisit,
-    getAvailableVehicles,
-    getDayAgenda,
-  } from '@/services/calendarService';
-  import ConflictAlert from '@/components/visits/ConflictAlert.vue';
-  import type {
-    ConflictResponse,
-    CalendarEventResponse,
-    Property as VisitProperty,
-    Vehicle,
-  } from '@/types/visitCalendar';
-  import type { Property } from '@/types/property';
-  import type { VisitFormValues } from '@/modules/properties/schemas/visitSchema';
-  import { FwbAlert, FwbModal, FwbButton } from 'flowbite-vue';
-  import { useI18n } from 'vue-i18n';
-  import { getLocaleString } from '@/locales/i18n';
-  import IconLucideArrowLeft from '~icons/lucide/arrow-left';
-  import IconLucideSearch from '~icons/lucide/search';
-  import IconLucideChevronDown from '~icons/lucide/chevron-down';
-  import IconLucideMapPin from '~icons/lucide/map-pin';
-  import IconLucideCarFront from '~icons/lucide/car-front';
-  import IconLucideCircleCheck from '~icons/lucide/circle-check';
-  import IconLucideCalendar from '~icons/lucide/calendar';
-  import IconLucideLoader from '~icons/lucide/loader';
-  import IconLucideAlertCircle from '~icons/lucide/alert-circle';
-  import {
-    localInputToUtcIso,
-    utcIsoToLocalInput,
-    minDatetimeLocal,
-    formatShortTime,
-  } from '@/utils/dateTime';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { visitSchema } from '@/modules/properties/schemas/visitSchema';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
+import { propertyService } from '@/modules/properties';
+import {
+  assignVehicleToVisit,
+  checkConflict,
+  createVisit,
+  getAvailableVehicles,
+  getDayAgenda,
+} from '@/services/calendarService';
+import ConflictAlert from '@/components/visits/ConflictAlert.vue';
+import type {
+  ConflictResponse,
+  CalendarEventResponse,
+  Property as VisitProperty,
+  Vehicle,
+} from '@/types/visitCalendar';
+import type { Property } from '@/types/property';
+import type { VisitFormValues } from '@/modules/properties/schemas/visitSchema';
+import { FwbAlert, FwbModal, FwbButton } from 'flowbite-vue';
+import { useI18n } from 'vue-i18n';
+import { getLocaleString } from '@/locales/i18n';
+import IconLucideArrowLeft from '~icons/lucide/arrow-left';
+import IconLucideSearch from '~icons/lucide/search';
+import IconLucideChevronDown from '~icons/lucide/chevron-down';
+import IconLucideMapPin from '~icons/lucide/map-pin';
+import IconLucideCarFront from '~icons/lucide/car-front';
+import IconLucideCircleCheck from '~icons/lucide/circle-check';
+import IconLucideCalendar from '~icons/lucide/calendar';
+import IconLucideLoader from '~icons/lucide/loader';
+import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+import {
+  localInputToUtcIso,
+  utcIsoToLocalInput,
+  minDatetimeLocal,
+  formatShortTime,
+} from '@/utils/dateTime';
 
-  const { t } = useI18n();
+const { t } = useI18n();
 
-  const showSuccessModal = ref(false);
-  const showErrorModal = ref(false);
-  const successMessage = ref('');
-  const errorMessage = ref('');
+const showSuccessModal = ref(false);
+const showErrorModal = ref(false);
+const successMessage = ref('');
+const errorMessage = ref('');
 
-  let successTimer: ReturnType<typeof setTimeout> | null = null;
+let successTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const authStore = useAuthStore();
-  const currentUser = computed(() => authStore.user as UserClaims | null);
+const authStore = useAuthStore();
+const currentUser = computed(() => authStore.user as UserClaims | null);
 
-  const canAssignVehicle = computed(() => {
-    const roles = currentUser.value?.roles || [];
-    const type = currentUser.value?.userType || '';
-    return (
-      roles.includes('ADMIN') || roles.includes('AGENT') || type === 'ADMIN' || type === 'AGENT'
-    );
-  });
+const canAssignVehicle = computed(() => {
+  const roles = currentUser.value?.roles || [];
+  const type = currentUser.value?.userType || '';
+  return (
+    roles.includes('ADMIN') ||
+    roles.includes('AGENT') ||
+    type === 'ADMIN' ||
+    type === 'AGENT'
+  );
+});
 
-  const myAgentId = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    return (u?.sub || u?.userId || '') as string;
-  });
-  const myAgentName = computed(() => {
-    const u = authStore.user as UserClaims | null;
-    if (u?.fullName) return u.fullName;
-    if (u?.name) return u.name;
-    return (u?.email as string)?.split('@')[0] || t('scheduleVisit.agentFallback');
-  });
+const myAgentId = computed(() => {
+  const u = authStore.user as UserClaims | null;
+  return (u?.sub || u?.userId || '') as string;
+});
+const myAgentName = computed(() => {
+  const u = authStore.user as UserClaims | null;
+  if (u?.fullName) return u.fullName;
+  if (u?.name) return u.name;
+  return (
+    (u?.email as string)?.split('@')[0] || t('scheduleVisit.agentFallback')
+  );
+});
 
-  const {
-    defineField,
-    handleSubmit: onSubmit,
-    errors: fieldErrors,
-    setValues,
-  } = useForm({
-    validationSchema: toTypedSchema(visitSchema),
-  });
+const {
+  defineField,
+  handleSubmit: onSubmit,
+  errors: fieldErrors,
+  setValues,
+} = useForm({
+  validationSchema: toTypedSchema(visitSchema),
+});
 
-  const [propertyId] = defineField('propertyId');
-  const [startTime] = defineField('startTime');
-  const [endTime] = defineField('endTime');
-  const [notes] = defineField('notes');
+const [propertyId] = defineField('propertyId');
+const [startTime] = defineField('startTime');
+const [endTime] = defineField('endTime');
+const [notes] = defineField('notes');
 
-  const loadingList = ref(false);
-  const allProperties = ref<VisitProperty[]>([]);
-  const searchTerm = ref('');
-  const showDropdown = ref(false);
-  const propertyInfo = ref<Property | null>(null);
+const loadingList = ref(false);
+const allProperties = ref<VisitProperty[]>([]);
+const searchTerm = ref('');
+const showDropdown = ref(false);
+const propertyInfo = ref<Property | null>(null);
 
-  const conflictResult = ref<ConflictResponse | null>(null);
-  const checkingConflict = ref(false);
-  const submitting = ref(false);
-  const dayAgenda = ref<CalendarEventResponse[]>([]);
-  const availableVehicles = ref<Vehicle[]>([]);
-  const loadingVehicles = ref(false);
-  const selectedVehicleId = ref('');
+const conflictResult = ref<ConflictResponse | null>(null);
+const checkingConflict = ref(false);
+const submitting = ref(false);
+const dayAgenda = ref<CalendarEventResponse[]>([]);
+const availableVehicles = ref<Vehicle[]>([]);
+const loadingVehicles = ref(false);
+const selectedVehicleId = ref('');
 
-  const startTimeLocal = ref('');
-  const endTimeLocal = ref('');
+const startTimeLocal = ref('');
+const endTimeLocal = ref('');
 
-  const minDatetime = computed(() => minDatetimeLocal());
+const minDatetime = computed(() => minDatetimeLocal());
 
-  watch(startTimeLocal, (val) => {
-    if (val) {
-      startTime.value = localInputToUtcIso(val);
-    } else {
-      startTime.value = '';
-    }
-  });
+watch(startTimeLocal, (val) => {
+  if (val) {
+    startTime.value = localInputToUtcIso(val);
+  } else {
+    startTime.value = '';
+  }
+});
 
-  watch(endTimeLocal, (val) => {
-    if (val) {
-      endTime.value = localInputToUtcIso(val);
-    } else {
-      endTime.value = '';
-    }
-  });
+watch(endTimeLocal, (val) => {
+  if (val) {
+    endTime.value = localInputToUtcIso(val);
+  } else {
+    endTime.value = '';
+  }
+});
 
-  const loadInitialData = async () => {
-    loadingList.value = true;
-    try {
-      const response = await propertyService.getProperties({
-        status: 'DISPONIBLE',
-        pageSize: 100,
-      });
-      const data = response.data || [];
-      allProperties.value = data.filter(
-        (p: VisitProperty) => p.status === 'DISPONIBLE'
-      ) as VisitProperty[];
-    } catch {
-      console.error(t('scheduleVisit.propertyLoadError'));
-    } finally {
-      loadingList.value = false;
-    }
-  };
+const loadInitialData = async () => {
+  loadingList.value = true;
+  try {
+    const response = await propertyService.getProperties({
+      status: 'DISPONIBLE',
+      pageSize: 100,
+    });
+    const data = response.data || [];
+    allProperties.value = data.filter(
+      (p: VisitProperty) => p.status === 'DISPONIBLE'
+    ) as VisitProperty[];
+  } catch {
+    console.error(t('scheduleVisit.propertyLoadError'));
+  } finally {
+    loadingList.value = false;
+  }
+};
 
-  const filteredProperties = computed(() => {
-    if (!searchTerm.value) return allProperties.value;
-    const s = searchTerm.value.toLowerCase();
-    return allProperties.value
-      .filter(
-        (p) =>
-          String(p.title).toLowerCase().includes(s) || String(p.address).toLowerCase().includes(s)
-      )
-      .slice(0, 20);
-  });
+const filteredProperties = computed(() => {
+  if (!searchTerm.value) return allProperties.value;
+  const s = searchTerm.value.toLowerCase();
+  return allProperties.value
+    .filter(
+      (p) =>
+        String(p.title).toLowerCase().includes(s) ||
+        String(p.address).toLowerCase().includes(s)
+    )
+    .slice(0, 20);
+});
 
-  const vehiclePlaceholder = computed(() => {
-    if (!startTimeLocal.value || !endTimeLocal.value) {
-      return t('scheduleVisit.selectVehicleAfterTime');
-    }
-    if (loadingVehicles.value) {
-      return t('scheduleVisit.loadingVehicles');
-    }
-    if (availableVehicles.value.length === 0) {
-      return t('scheduleVisit.noVehiclesAvailable');
-    }
-    return t('scheduleVisit.selectVehiclePlaceholder');
-  });
+const vehiclePlaceholder = computed(() => {
+  if (!startTimeLocal.value || !endTimeLocal.value) {
+    return t('scheduleVisit.selectVehicleAfterTime');
+  }
+  if (loadingVehicles.value) {
+    return t('scheduleVisit.loadingVehicles');
+  }
+  if (availableVehicles.value.length === 0) {
+    return t('scheduleVisit.noVehiclesAvailable');
+  }
+  return t('scheduleVisit.selectVehiclePlaceholder');
+});
 
-  const vehicleHelperText = computed(() => {
-    if (!startTimeLocal.value || !endTimeLocal.value) {
-      return t('scheduleVisit.vehicleDependsOnSchedule');
-    }
-    if (loadingVehicles.value) {
-      return t('scheduleVisit.loadingVehiclesHelp');
-    }
-    if (availableVehicles.value.length === 0) {
-      return t('scheduleVisit.noVehiclesHelp');
-    }
-    return t('scheduleVisit.vehicleOptionalHelp');
-  });
+const vehicleHelperText = computed(() => {
+  if (!startTimeLocal.value || !endTimeLocal.value) {
+    return t('scheduleVisit.vehicleDependsOnSchedule');
+  }
+  if (loadingVehicles.value) {
+    return t('scheduleVisit.loadingVehiclesHelp');
+  }
+  if (availableVehicles.value.length === 0) {
+    return t('scheduleVisit.noVehiclesHelp');
+  }
+  return t('scheduleVisit.vehicleOptionalHelp');
+});
 
-  const selectedVehicle = computed(() => {
-    if (!selectedVehicleId.value) {
-      return null;
-    }
+const selectedVehicle = computed(() => {
+  if (!selectedVehicleId.value) {
+    return null;
+  }
 
-    return (
-      availableVehicles.value.find((vehicle) => vehicle.id === selectedVehicleId.value) ?? null
-    );
-  });
+  return (
+    availableVehicles.value.find(
+      (vehicle) => vehicle.id === selectedVehicleId.value
+    ) ?? null
+  );
+});
 
-  const handleSelect = async (id: string) => {
-    showDropdown.value = false;
-    searchTerm.value = t('scheduleVisit.loadingDetail');
+const handleSelect = async (id: string) => {
+  showDropdown.value = false;
+  searchTerm.value = t('scheduleVisit.loadingDetail');
 
-    try {
-      const detail = await propertyService.getPropertyById(id);
+  try {
+    const detail = await propertyService.getPropertyById(id);
 
-      propertyId.value = detail.id;
-      propertyInfo.value = detail;
-      searchTerm.value = detail.title;
+    propertyId.value = detail.id;
+    propertyInfo.value = detail;
+    searchTerm.value = detail.title;
 
-      if (startTimeLocal.value) onTimeChange();
-    } catch {
-      alert(t('scheduleVisit.propertyDetailError'));
-      searchTerm.value = '';
-    }
-  };
+    if (startTimeLocal.value) onTimeChange();
+  } catch {
+    alert(t('scheduleVisit.propertyDetailError'));
+    searchTerm.value = '';
+  }
+};
 
-  let conflictTimer: ReturnType<typeof setTimeout> | null = null;
-  let vehicleTimer: ReturnType<typeof setTimeout> | null = null;
+let conflictTimer: ReturnType<typeof setTimeout> | null = null;
+let vehicleTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const loadAvailableVehiclesForSchedule = async () => {
-    if (!canAssignVehicle.value) {
-      availableVehicles.value = [];
-      selectedVehicleId.value = '';
-      return;
-    }
+const loadAvailableVehiclesForSchedule = async () => {
+  if (!canAssignVehicle.value) {
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+    return;
+  }
 
-    const start = startTimeLocal.value;
-    const end = endTimeLocal.value;
+  const start = startTimeLocal.value;
+  const end = endTimeLocal.value;
 
-    if (!start || !end) {
-      availableVehicles.value = [];
-      selectedVehicleId.value = '';
-      return;
-    }
+  if (!start || !end) {
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+    return;
+  }
 
-    loadingVehicles.value = true;
-    try {
-      const vehicles = await getAvailableVehicles(localInputToUtcIso(start));
-      availableVehicles.value = vehicles;
+  loadingVehicles.value = true;
+  try {
+    const vehicles = await getAvailableVehicles(localInputToUtcIso(start));
+    availableVehicles.value = vehicles;
 
-      if (
-        selectedVehicleId.value &&
-        !vehicles.some((vehicle) => vehicle.id === selectedVehicleId.value)
-      ) {
-        selectedVehicleId.value = '';
-      }
-    } catch {
-      availableVehicles.value = [];
-      selectedVehicleId.value = '';
-    } finally {
-      loadingVehicles.value = false;
-    }
-  };
-
-  const onTimeChange = () => {
-    conflictResult.value = null;
-    const pid = propertyId.value;
-    const start = startTimeLocal.value;
-    const end = endTimeLocal.value;
-
-    if (!canAssignVehicle.value) {
-      availableVehicles.value = [];
+    if (
+      selectedVehicleId.value &&
+      !vehicles.some((vehicle) => vehicle.id === selectedVehicleId.value)
+    ) {
       selectedVehicleId.value = '';
     }
+  } catch {
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+  } finally {
+    loadingVehicles.value = false;
+  }
+};
 
-    if (!start || !end) {
-      availableVehicles.value = [];
-      selectedVehicleId.value = '';
-      return;
-    }
+const onTimeChange = () => {
+  conflictResult.value = null;
+  const pid = propertyId.value;
+  const start = startTimeLocal.value;
+  const end = endTimeLocal.value;
 
-    if (canAssignVehicle.value) {
-      if (vehicleTimer) clearTimeout(vehicleTimer);
-      vehicleTimer = setTimeout(loadAvailableVehiclesForSchedule, 250);
-    }
+  if (!canAssignVehicle.value) {
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+  }
 
-    if (!pid) return;
+  if (!start || !end) {
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+    return;
+  }
 
-    if (conflictTimer) clearTimeout(conflictTimer);
-    conflictTimer = setTimeout(async () => {
-      checkingConflict.value = true;
-      try {
-        conflictResult.value = await checkConflict(
-          pid,
-          localInputToUtcIso(start),
-          localInputToUtcIso(end)
-        );
-      } finally {
-        checkingConflict.value = false;
-      }
-    }, 500);
-  };
-
-  const handleSubmit = onSubmit(async (values: VisitFormValues) => {
-    if (!myAgentId.value) {
-      errorMessage.value = t('scheduleVisit.agentIdError');
-      showErrorModal.value = true;
-      return;
-    }
-
-    submitting.value = true;
-    try {
-      const createdVisit = await createVisit(
-        {
-          propertyId: values.propertyId,
-          propertyName: propertyInfo.value?.title || '',
-          propertyAddress: propertyInfo.value?.address || '',
-          agentId: myAgentId.value as string,
-          agentName: myAgentName.value as string,
-          startTime: values.startTime,
-          endTime: values.endTime,
-          notes: values.notes,
-        },
-        myAgentId.value as string
-      );
-
-      let assignmentWarning = '';
-
-      if (canAssignVehicle.value && selectedVehicleId.value) {
-        try {
-          await assignVehicleToVisit(createdVisit.id, {
-            vehicleId: selectedVehicleId.value,
-            travelTimeGo: 0,
-            travelTimeBack: 0,
-          });
-        } catch (assignmentError: unknown) {
-          const err = assignmentError as { response?: { data?: { message?: string } } };
-          assignmentWarning =
-            err.response?.data?.message || t('scheduleVisit.vehicleAssignWarning');
-        }
-      }
-
-      dayAgenda.value = await getDayAgenda(myAgentId.value as string, values.startTime);
-
-      setValues({
-        propertyId: '',
-        startTime: '',
-        endTime: '',
-        notes: '',
-      });
-      startTimeLocal.value = '';
-      endTimeLocal.value = '';
-      propertyInfo.value = null;
-      searchTerm.value = '';
-      conflictResult.value = null;
-      availableVehicles.value = [];
-      selectedVehicleId.value = '';
-
-      if (assignmentWarning) {
-        errorMessage.value = `${t('scheduleVisit.successMessage')} ${assignmentWarning}`;
-        showErrorModal.value = true;
-      } else {
-        successMessage.value = t('scheduleVisit.successMessage');
-        showSuccessModal.value = true;
-
-        if (successTimer) clearTimeout(successTimer);
-        successTimer = setTimeout(() => {
-          showSuccessModal.value = false;
-        }, 3000);
-      }
-    } catch (e: unknown) {
-      const err = e as { response?: { data?: { message?: string } } };
-      errorMessage.value = err.response?.data?.message || t('scheduleVisit.errorMessage');
-      showErrorModal.value = true;
-    } finally {
-      submitting.value = false;
-    }
-  });
-
-  const applySuggestion = (start?: string, end?: string) => {
-    if (start) {
-      startTimeLocal.value = utcIsoToLocalInput(start);
-      startTime.value = start;
-    }
-    if (end) {
-      endTimeLocal.value = utcIsoToLocalInput(end);
-      endTime.value = end;
-    }
-    onTimeChange();
-  };
-
-  const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
-
-  const closeClickOutside = (e: Event) => {
-    if (!(e.target instanceof HTMLElement) || !e.target.closest('#property-select-container'))
-      showDropdown.value = false;
-  };
-
-  onMounted(() => {
-    loadInitialData();
-    window.addEventListener('click', closeClickOutside);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('click', closeClickOutside);
+  if (canAssignVehicle.value) {
     if (vehicleTimer) clearTimeout(vehicleTimer);
-    if (conflictTimer) clearTimeout(conflictTimer);
-  });
+    vehicleTimer = setTimeout(loadAvailableVehiclesForSchedule, 250);
+  }
+
+  if (!pid) return;
+
+  if (conflictTimer) clearTimeout(conflictTimer);
+  conflictTimer = setTimeout(async () => {
+    checkingConflict.value = true;
+    try {
+      conflictResult.value = await checkConflict(
+        pid,
+        localInputToUtcIso(start),
+        localInputToUtcIso(end)
+      );
+    } finally {
+      checkingConflict.value = false;
+    }
+  }, 500);
+};
+
+const handleSubmit = onSubmit(async (values: VisitFormValues) => {
+  if (!myAgentId.value) {
+    errorMessage.value = t('scheduleVisit.agentIdError');
+    showErrorModal.value = true;
+    return;
+  }
+
+  submitting.value = true;
+  try {
+    const createdVisit = await createVisit(
+      {
+        propertyId: values.propertyId,
+        propertyName: propertyInfo.value?.title || '',
+        propertyAddress: propertyInfo.value?.address || '',
+        agentId: myAgentId.value as string,
+        agentName: myAgentName.value as string,
+        startTime: values.startTime,
+        endTime: values.endTime,
+        notes: values.notes,
+      },
+      myAgentId.value as string
+    );
+
+    let assignmentWarning = '';
+
+    if (canAssignVehicle.value && selectedVehicleId.value) {
+      try {
+        await assignVehicleToVisit(createdVisit.id, {
+          vehicleId: selectedVehicleId.value,
+          travelTimeGo: 0,
+          travelTimeBack: 0,
+        });
+      } catch (assignmentError: unknown) {
+        const err = assignmentError as {
+          response?: { data?: { message?: string } };
+        };
+        assignmentWarning =
+          err.response?.data?.message ||
+          t('scheduleVisit.vehicleAssignWarning');
+      }
+    }
+
+    dayAgenda.value = await getDayAgenda(
+      myAgentId.value as string,
+      values.startTime
+    );
+
+    setValues({
+      propertyId: '',
+      startTime: '',
+      endTime: '',
+      notes: '',
+    });
+    startTimeLocal.value = '';
+    endTimeLocal.value = '';
+    propertyInfo.value = null;
+    searchTerm.value = '';
+    conflictResult.value = null;
+    availableVehicles.value = [];
+    selectedVehicleId.value = '';
+
+    if (assignmentWarning) {
+      errorMessage.value = `${t('scheduleVisit.successMessage')} ${assignmentWarning}`;
+      showErrorModal.value = true;
+    } else {
+      successMessage.value = t('scheduleVisit.successMessage');
+      showSuccessModal.value = true;
+
+      if (successTimer) clearTimeout(successTimer);
+      successTimer = setTimeout(() => {
+        showSuccessModal.value = false;
+      }, 3000);
+    }
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } } };
+    errorMessage.value =
+      err.response?.data?.message || t('scheduleVisit.errorMessage');
+    showErrorModal.value = true;
+  } finally {
+    submitting.value = false;
+  }
+});
+
+const applySuggestion = (start?: string, end?: string) => {
+  if (start) {
+    startTimeLocal.value = utcIsoToLocalInput(start);
+    startTime.value = start;
+  }
+  if (end) {
+    endTimeLocal.value = utcIsoToLocalInput(end);
+    endTime.value = end;
+  }
+  onTimeChange();
+};
+
+const shortTime = (iso: string) => formatShortTime(iso, getLocaleString());
+
+const closeClickOutside = (e: Event) => {
+  if (
+    !(e.target instanceof HTMLElement) ||
+    !e.target.closest('#property-select-container')
+  )
+    showDropdown.value = false;
+};
+
+onMounted(() => {
+  loadInitialData();
+  window.addEventListener('click', closeClickOutside);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeClickOutside);
+  if (vehicleTimer) clearTimeout(vehicleTimer);
+  if (conflictTimer) clearTimeout(conflictTimer);
+});
 </script>
