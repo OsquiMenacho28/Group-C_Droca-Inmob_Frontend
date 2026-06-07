@@ -198,7 +198,7 @@ export const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore();
   if (!authStore.isAuthenticated && to.name !== 'Login') {
-    next({ name: 'Login' });
+    next({ name: 'Login', query: { redirect: to.fullPath } });
   } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next({ name: 'Dashboard' });
   } else if (to.meta.role || to.meta.roles) {

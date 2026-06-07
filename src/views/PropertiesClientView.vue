@@ -815,8 +815,11 @@ const loadProperties = async (): Promise<void> => {
 
     await loadAgentNames(properties.value);
 
-    // Update URL query params without triggering navigation
+    // Update URL query params without triggering navigation, preserving selectedId if present
     const query: Record<string, string> = {};
+    if (route.query.selectedId) {
+      query.selectedId = route.query.selectedId as string;
+    }
     if (filters.value.status) query.status = filters.value.status;
     if (filters.value.title) query.title = filters.value.title;
     if (filters.value.type) query.type = filters.value.type;
@@ -1008,10 +1011,54 @@ watch(
   }
 );
 
+const handleSelectedIdQuery = async (id: string | null) => {
+  if (id) {
+    const property = properties.value.find(p => p.id === id);
+    if (property) {
+      selectedProperty.value = property;
+    } else {
+      try {
+        const prop = await propertyService.getPropertyById(id);
+        if (prop) {
+          selectedProperty.value = prop;
+        }
+      } catch (err) {
+        console.error('Error loading property from query param:', err);
+      }
+    }
+  } else {
+    selectedProperty.value = null;
+  }
+};
+
+// Watch for changes in the query parameter (e.g. scanning QR codes while already on the page)
+watch(
+  () => route.query.selectedId,
+  (newId) => {
+    handleSelectedIdQuery(newId as string | null);
+  }
+);
+
+// Clear the query parameter when the modal is closed
+watch(selectedProperty, (newVal) => {
+  if (!newVal) {
+    if (route.query.selectedId) {
+      const query = { ...route.query };
+      delete query.selectedId;
+      router.replace({ query });
+    }
+  }
+});
+
 // Lifecycle
-onMounted(() => {
-  loadProperties();
+onMounted(async () => {
+  await loadProperties();
   loadFavorites();
+
+  const selectedId = route.query.selectedId as string;
+  if (selectedId) {
+    handleSelectedIdQuery(selectedId);
+  }
 });
 
 onUnmounted(() => {
