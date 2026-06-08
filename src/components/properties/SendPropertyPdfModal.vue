@@ -13,10 +13,22 @@
     </template>
 
     <template #body>
-      <div class="space-y-5">
+      <form
+        id="send-property-pdf-form"
+        class="space-y-5"
+        @submit.prevent="submit"
+      >
         <p class="text-sm text-secondary">
           {{ t('propertyPdf.sendModalSubtitle', { title: propertyTitle }) }}
         </p>
+
+        <div
+          v-if="formError"
+          class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300"
+          role="alert"
+        >
+          {{ formError }}
+        </div>
 
         <!-- Recipient Section Container -->
         <div class="border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40 p-4 rounded-xl space-y-4">
@@ -136,12 +148,17 @@
               <input
                 v-model="destinationEmail"
                 type="email"
+                name="destinationEmail"
+                autocomplete="email"
                 :placeholder="t('propertyPdf.destinationEmailPlaceholder')"
                 class="app-input w-full text-sm"
                 :class="{ 'border-red-400 dark:border-red-500': errors.email }"
-                @input="errors.email = ''"
+                @input="clearEmailErrors"
               />
-              <p v-if="errors.email && (isManualMode || manualEmailInput)" class="text-xs text-red-500 mt-1">
+              <p
+                v-if="errors.email && (isManualMode || manualEmailInput)"
+                class="text-xs text-red-500 mt-1"
+              >
                 {{ errors.email }}
               </p>
             </div>
@@ -165,7 +182,7 @@
             class="app-input w-full resize-none text-sm"
           />
         </div>
-      </div>
+      </form>
     </template>
 
     <template #footer>
@@ -180,7 +197,7 @@
         </button>
         <button
           type="button"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="sending"
           @click="submit"
         >
@@ -218,6 +235,7 @@ const { t } = useI18n();
 const destinationEmail = ref('');
 const message = ref('');
 const sending = ref(false);
+const formError = ref('');
 const errors = ref({ email: '' });
 
 const clients = ref<any[]>([]);
@@ -273,6 +291,22 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function clearEmailErrors() {
+  errors.value.email = '';
+  formError.value = '';
+}
+
+function resolveRecipientEmail(): string {
+  const typedEmail = destinationEmail.value.trim();
+  if (typedEmail) return typedEmail;
+
+  if (!isManualMode.value && !manualEmailInput.value) {
+    return String(selectedClientInfo.value?.email || '').trim();
+  }
+
+  return '';
+}
+
 async function loadClients() {
   loadingClients.value = true;
   try {
@@ -287,12 +321,12 @@ async function loadClients() {
 
 function onClientSelect() {
   const selected = clients.value.find((c) => c.id === selectedClientId.value);
-  if (selected && selected.email) {
+  if (selected?.email) {
     destinationEmail.value = selected.email;
-    errors.value.email = '';
   } else {
     destinationEmail.value = '';
   }
+  clearEmailErrors();
   manualEmailInput.value = false;
 }
 
@@ -300,26 +334,34 @@ function setMode(manual: boolean) {
   isManualMode.value = manual;
   selectedClientId.value = '';
   destinationEmail.value = '';
-  errors.value.email = '';
   manualEmailInput.value = false;
+  clearEmailErrors();
 }
 
 async function submit() {
-  errors.value.email = '';
+  if (sending.value) return;
+
+  clearEmailErrors();
 
   if (!isManualMode.value && !selectedClientId.value) {
+    formError.value = t('propertyPdf.clientRequired');
     errors.value.email = t('propertyPdf.clientRequired');
     return;
   }
 
-  const email = destinationEmail.value.trim();
+  const email = resolveRecipientEmail();
 
   if (!email) {
-    errors.value.email = t('propertyPdf.emailRequired');
+    const requiredMsg = t('propertyPdf.emailRequired');
+    formError.value = requiredMsg;
+    errors.value.email = requiredMsg;
     return;
   }
+
   if (!isValidEmail(email)) {
-    errors.value.email = t('propertyPdf.emailInvalid');
+    const invalidMsg = t('propertyPdf.emailInvalid');
+    formError.value = invalidMsg;
+    errors.value.email = invalidMsg;
     return;
   }
 
@@ -333,9 +375,9 @@ async function submit() {
       }
     );
     emit('success', apiMessage);
-    close();
   } catch (err) {
     const errorMessage = handleApiError(err).message;
+    formError.value = errorMessage;
     emit('error', errorMessage);
   } finally {
     sending.value = false;
@@ -347,6 +389,7 @@ function close() {
   destinationEmail.value = '';
   message.value = '';
   errors.value.email = '';
+  formError.value = '';
   selectedClientId.value = '';
   manualEmailInput.value = false;
   isManualMode.value = false;
@@ -361,6 +404,7 @@ watch(
       destinationEmail.value = '';
       message.value = '';
       errors.value.email = '';
+      formError.value = '';
       selectedClientId.value = '';
       manualEmailInput.value = false;
       isManualMode.value = false;

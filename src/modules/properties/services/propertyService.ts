@@ -475,9 +475,18 @@ export const propertyService = {
   ): Promise<string> {
     const response = await api.post(
       `/properties/${propertyId}/send-pdf`,
-      payload
+      {
+        destinationEmail: payload.destinationEmail.trim(),
+        message: payload.message?.trim() ?? '',
+      },
+      { timeout: 120_000 }
     );
-    return response.data.message as string;
+    const body = response.data as {
+      success?: boolean;
+      message?: string;
+    };
+    if (body?.message) return body.message;
+    return 'Property sheet email sent successfully';
   },
 };
 

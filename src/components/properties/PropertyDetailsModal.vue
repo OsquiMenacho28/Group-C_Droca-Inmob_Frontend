@@ -497,7 +497,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, reactive, computed } from 'vue';
+import { ref, watch, reactive, computed, nextTick } from 'vue';
 import { FwbBadge, FwbButton, FwbTabs, FwbTab } from 'flowbite-vue';
 import { propertyService } from '@/modules/properties';
 import { personService } from '@/services/personService';
@@ -725,17 +725,24 @@ const openSendPdfModal = () => {
   showSendPdfModal.value = true;
 };
 
-const handleSendPdfSuccess = (message: string) => {
-  showSendPdfModal.value = false;
-  toast.message = message || t('propertyPdf.sendSuccess');
-  toast.type = 'success';
+const showToast = async (
+  message: string,
+  type: 'success' | 'error' | 'info'
+) => {
+  toast.show = false;
+  await nextTick();
+  toast.message = message;
+  toast.type = type;
   toast.show = true;
 };
 
-const handleSendPdfError = (message: string) => {
-  toast.message = message || t('propertyPdf.sendError');
-  toast.type = 'error';
-  toast.show = true;
+const handleSendPdfSuccess = async (message: string) => {
+  showSendPdfModal.value = false;
+  await showToast(message || t('propertyPdf.sendSuccess'), 'success');
+};
+
+const handleSendPdfError = async (message: string) => {
+  await showToast(message || t('propertyPdf.sendError'), 'error');
 };
 
 const handleReincorporate = async () => {
