@@ -73,6 +73,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'admin/alert-settings',
+        name: 'AlertSettings',
+        component: () => import('@/views/AlertSettingsView.vue'),
+        meta: { role: 'ADMIN' }
+      },
+      {
         path: 'agent',
         name: 'AgentDashboard',
         component: AgentDashboard,
