@@ -167,7 +167,15 @@
     "sendModalTitle": "Send property sheet by email",
     "sendModalSubtitle": "The PDF technical sheet for \"{title}\" will be sent to the email below.",
     "destinationEmail": "Destination email",
-    "destinationEmailPlaceholder": "client@example.com",
+    "destinationEmailPlaceholder": "client{'@'}example.com",
+    "selectClientLabel": "Search and Select",
+    "selectClientPlaceholder": "-- Select a registered user --",
+    "groupAgents": "Agents",
+    "groupClientsOwners": "Clients & Owners",
+    "recipientSection": "Recipient Information",
+    "modeRegistered": "System User",
+    "modeManual": "Custom Email",
+    "clientRequired": "You must select a registered user",
     "message": "Message",
     "messagePlaceholder": "Hello! Here is the PDF property sheet we discussed.",
     "send": "Send",
@@ -179,7 +187,8 @@
     "sendSuccess": "Property sheet sent by email successfully",
     "sendError": "Could not send the property sheet by email",
     "emailRequired": "Destination email is required",
-    "emailInvalid": "Enter a valid email address"
+    "emailInvalid": "Enter a valid email address",
+    "editEmailManually": "Enter email manually"
   },
   "receipts": {
     "loadError": "Failed to load receipts.",

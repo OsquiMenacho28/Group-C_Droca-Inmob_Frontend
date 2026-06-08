@@ -408,15 +408,15 @@
       </template>
     </main>
 
-    <!-- Property Details Modal -->
-    <property-details-modal
-      v-if="selectedProperty"
-      :show="!!selectedProperty"
-      :property="selectedProperty"
-      :is-client-view="true"
-      @close="selectedProperty = null"
-      @schedule-visit="handleScheduleVisit"
-    />
+     <!-- Property Details Modal -->
+     <property-details-modal
+       v-if="selectedProperty"
+       :show="!!selectedProperty"
+       :property="selectedProperty"
+       :is-client-view="true"
+       @close="closePropertyModal"
+       @schedule-visit="handleScheduleVisit"
+     />
 
     <!-- Visit Request Modal -->
     <fwb-modal v-if="showRequestModal" @close="closeRequestModal" size="xl">
@@ -831,6 +831,9 @@ const loadProperties = async (): Promise<void> => {
     query.sortOrder = filters.value.sortOrder;
     query.page = String(filters.value.page);
     query.pageSize = String(filters.value.pageSize);
+    if (route.query.selectedId) {
+      query.selectedId = route.query.selectedId as string;
+    }
 
     router.replace({ query });
   } catch (err: unknown) {
@@ -916,6 +919,14 @@ const toggleFavorite = async (propertyId: string): Promise<void> => {
 
 const openPropertyModal = (property: Property): void => {
   selectedProperty.value = property;
+  router.replace({ query: { ...route.query, selectedId: property.id } });
+};
+
+const closePropertyModal = (): void => {
+  selectedProperty.value = null;
+  const query = { ...route.query };
+  delete query.selectedId;
+  router.replace({ query });
 };
 
 const handleScheduleVisit = (): void => {
@@ -1006,6 +1017,26 @@ watch(
     filters.value.page = 0;
     loadProperties();
   }
+);
+
+watch(
+  () => route.query.selectedId,
+  async (newId) => {
+    if (newId) {
+      if (selectedProperty.value?.id === newId) return;
+      try {
+        const prop = await propertyService.getPropertyById(newId as string);
+        if (prop) {
+          selectedProperty.value = prop;
+        }
+      } catch (err) {
+        console.error('Error loading property for selectedId:', err);
+      }
+    } else {
+      selectedProperty.value = null;
+    }
+  },
+  { immediate: true }
 );
 
 // Lifecycle

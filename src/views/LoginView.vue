@@ -131,7 +131,12 @@ const handleLogin = async (payload: { email: string; password: string }) => {
         confirmPassword: '',
       });
     } else {
-      router.push({ name: 'Dashboard' });
+      const redirectPath = (route.query.redirect as string) || '/dashboard';
+      if (redirectPath.startsWith('/')) {
+        router.push(redirectPath);
+      } else {
+        router.push('/dashboard');
+      }
     }
   } catch (error: unknown) {
     console.error('Login error:', error);
@@ -178,7 +183,12 @@ const onPasswordSubmit = onChangePasswordSubmit(async (values) => {
     }
 
     showChangePassword.value = false;
-    router.push({ name: 'Dashboard' });
+    const redirectPath = (route.query.redirect as string) || '/dashboard';
+    if (redirectPath.startsWith('/')) {
+      router.push(redirectPath);
+    } else {
+      router.push('/dashboard');
+    }
   } catch (error: unknown) {
     console.error('Password change error:', error);
     const err = error as { response?: { data?: { detail?: string } } };

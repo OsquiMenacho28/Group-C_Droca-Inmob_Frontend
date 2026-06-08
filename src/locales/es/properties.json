@@ -167,7 +167,15 @@
     "sendModalTitle": "Enviar ficha por correo",
     "sendModalSubtitle": "Se enviará la ficha técnica en PDF de \"{title}\" al correo indicado.",
     "destinationEmail": "Correo destino",
-    "destinationEmailPlaceholder": "cliente@ejemplo.com",
+    "destinationEmailPlaceholder": "cliente{'@'}ejemplo.com",
+    "selectClientLabel": "Buscar y Seleccionar",
+    "selectClientPlaceholder": "— Seleccionar un usuario registrado —",
+    "groupAgents": "Agentes",
+    "groupClientsOwners": "Clientes y Propietarios",
+    "recipientSection": "Información del Destinatario",
+    "modeRegistered": "Usuario del Sistema",
+    "modeManual": "Correo Manual",
+    "clientRequired": "Debes seleccionar un usuario registrado",
     "message": "Mensaje",
     "messagePlaceholder": "¡Hola! Aquí está la ficha en PDF de la propiedad que comentamos.",
     "send": "Enviar",
@@ -179,7 +187,8 @@
     "sendSuccess": "Ficha enviada por correo correctamente",
     "sendError": "No se pudo enviar el correo con la ficha PDF",
     "emailRequired": "El correo destino es obligatorio",
-    "emailInvalid": "Ingresa un correo electrónico válido"
+    "emailInvalid": "Ingresa un correo electrónico válido",
+    "editEmailManually": "Ingresar correo manualmente"
   },
   "receipts": {
     "loadError": "Error al cargar los comprobantes.",
