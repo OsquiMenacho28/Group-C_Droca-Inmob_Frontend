@@ -92,11 +92,16 @@ export async function getPendingRequestsForAgent(
 
 export async function acceptVisitRequest(
   requestId: string,
-  agentId: string
+  agentId: string,
+  customTime?: {
+    customStartTime?: string;
+    customEndTime?: string;
+    vehicleId?: string;
+  }
 ): Promise<VisitRequestResponse> {
   const response = await api.patch(
     `/visit-requests/${requestId}/accept`,
-    {},
+    customTime || {},
     { headers: { 'X-Agent-Id': agentId } }
   );
   return response.data.data;
