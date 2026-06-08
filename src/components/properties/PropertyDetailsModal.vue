@@ -398,7 +398,34 @@
       </fwb-tabs>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-3">
+      <div class="flex flex-wrap justify-end gap-3">
+        <template v-if="isAdmin && property?.id">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="generatingPdf"
+            @click.stop="handleGeneratePdf"
+          >
+            <IconLucideFileDown
+              class="w-4 h-4"
+              :class="{ 'animate-pulse': generatingPdf }"
+            />
+            {{
+              generatingPdf
+                ? t('propertyPdf.generating')
+                : t('propertyPdf.generate')
+            }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors"
+            @click.stop="openSendPdfModal"
+          >
+            <IconLucideMail class="w-4 h-4" />
+            {{ t('propertyPdf.sendEmail') }}
+          </button>
+        </template>
+
         <fwb-button
           v-if="
             isAdmin &&
@@ -448,6 +475,18 @@
     />
   </Teleport>
 
+  <Teleport to="body">
+    <SendPropertyPdfModal
+      v-if="showSendPdfModal && property?.id"
+      :show="showSendPdfModal"
+      :property-id="property.id"
+      :property-title="property.title || ''"
+      @close="showSendPdfModal = false"
+      @success="handleSendPdfSuccess"
+      @error="handleSendPdfError"
+    />
+  </Teleport>
+
   <!-- Global Toast -->
   <AppToast
     :show="toast.show"
@@ -475,6 +514,8 @@ import IconLucideHome from '~icons/lucide/home';
 import { useI18n } from 'vue-i18n';
 import { formatDate } from '@/utils/dateTime';
 import PropertyVisitsHistoryTab from '@/components/properties/PropertyVisitsHistoryTab.vue';
+import SendPropertyPdfModal from '@/components/properties/SendPropertyPdfModal.vue';
+import IconLucideFileDown from '~icons/lucide/file-down';
 import AppToast from '@/components/ui/AppToast.vue';
 import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
 import { useAuthStore, type UserClaims } from '@/modules/auth';
@@ -509,6 +550,8 @@ const authStore = useAuthStore();
 const currentUser = computed(() => authStore.user as UserClaims | null);
 const showReincorporateConfirm = ref(false);
 const showRetirementModal = ref(false);
+const showSendPdfModal = ref(false);
+const generatingPdf = ref(false);
 const activeTab = ref('details');
 
 const localStatus = ref(props.property?.status || '');
@@ -576,8 +619,15 @@ const loadVisits = async () => {
 
 const isAdmin = computed(() => {
   const u = authStore.user as UserClaims | null;
-  const roles = (u?.roles as string[]) || [];
-  return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+  if (!u) return false;
+  const roles = Array.isArray(u.roles) ? u.roles.map(String) : [];
+  const normalizedRoles = roles.map((role) => role.toUpperCase());
+  return (
+    normalizedRoles.includes('ADMIN') ||
+    normalizedRoles.includes('ROLE_ADMIN') ||
+    String(u.role || '').toUpperCase() === 'ADMIN' ||
+    u.userType === 'ADMIN'
+  );
 });
 
 const isAssignedAgent = computed(() => {
@@ -651,6 +701,41 @@ const getMotivoLabel = (motivo?: string) => {
   const key = `retirement.reason${motivo.charAt(0).toUpperCase() + motivo.slice(1).toLowerCase()}`;
   const translation = t(key);
   return translation !== key ? translation : motivo;
+};
+
+const handleGeneratePdf = async () => {
+  if (!props.property?.id) return;
+
+  generatingPdf.value = true;
+  try {
+    await propertyService.downloadPropertyPdf(props.property.id);
+    toast.message = t('propertyPdf.downloadSuccess');
+    toast.type = 'success';
+    toast.show = true;
+  } catch (err: unknown) {
+    toast.message = handleApiError(err).message || t('propertyPdf.downloadError');
+    toast.type = 'error';
+    toast.show = true;
+  } finally {
+    generatingPdf.value = false;
+  }
+};
+
+const openSendPdfModal = () => {
+  showSendPdfModal.value = true;
+};
+
+const handleSendPdfSuccess = (message: string) => {
+  showSendPdfModal.value = false;
+  toast.message = message || t('propertyPdf.sendSuccess');
+  toast.type = 'success';
+  toast.show = true;
+};
+
+const handleSendPdfError = (message: string) => {
+  toast.message = message || t('propertyPdf.sendError');
+  toast.type = 'error';
+  toast.show = true;
 };
 
 const handleReincorporate = async () => {
@@ -866,6 +951,7 @@ watch(
   (show) => {
     if (!show) {
       activeTab.value = 'details';
+      showSendPdfModal.value = false;
     }
   }
 );

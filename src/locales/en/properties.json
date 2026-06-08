@@ -161,6 +161,26 @@
     "noResult": "No outcome",
     "operation": "Operation:"
   },
+  "propertyPdf": {
+    "generate": "Generate PDF",
+    "sendEmail": "Send by email",
+    "sendModalTitle": "Send property sheet by email",
+    "sendModalSubtitle": "The PDF technical sheet for \"{title}\" will be sent to the email below.",
+    "destinationEmail": "Destination email",
+    "destinationEmailPlaceholder": "client@example.com",
+    "message": "Message",
+    "messagePlaceholder": "Hello! Here is the PDF property sheet we discussed.",
+    "send": "Send",
+    "cancel": "Cancel",
+    "generating": "Generating PDF...",
+    "sending": "Sending...",
+    "downloadSuccess": "PDF downloaded successfully",
+    "downloadError": "Could not generate the PDF",
+    "sendSuccess": "Property sheet sent by email successfully",
+    "sendError": "Could not send the property sheet by email",
+    "emailRequired": "Destination email is required",
+    "emailInvalid": "Enter a valid email address"
+  },
   "receipts": {
     "loadError": "Failed to load receipts.",
     "uploadError": "Failed to upload the receipt. Please try again.",

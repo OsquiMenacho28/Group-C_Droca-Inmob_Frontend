@@ -32,7 +32,8 @@ export function parseJwt(token: string): JwtClaims | null {
 }
 
 const BASE_URL =
-  import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:8080';
+  import.meta.env.VITE_API_GATEWAY_URL ||
+  (import.meta.env.DEV ? '' : 'http://localhost:8080');
 
 /**
  * Configures an Axios instance with standard interceptors
@@ -52,8 +53,13 @@ function configureClient(instance: AxiosInstance): AxiosInstance {
 
   instance.interceptors.response.use(
     (response) => {
+      const isBinaryResponse =
+        response.config.responseType === 'blob' ||
+        response.config.responseType === 'arraybuffer';
+
       // Standardized API Response Contract handling
       if (
+        !isBinaryResponse &&
         response.data &&
         typeof response.data === 'object' &&
         'success' in response.data
@@ -75,6 +81,17 @@ function configureClient(instance: AxiosInstance): AxiosInstance {
       return response;
     },
     async (error) => {
+      // Parse JSON error bodies returned as blob (e.g. PDF endpoints on 4xx/5xx)
+      if (error.response?.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const json = JSON.parse(text);
+          error.response.data = json;
+        } catch {
+          // keep original blob if not JSON
+        }
+      }
+
       // Connection / Network Error
       if (!error.response && error.request) {
         console.error('Network Error - Connection refused or lost');

@@ -75,6 +75,11 @@ export interface ConfirmImageUploadRequest {
   isPrimary?: boolean;
 }
 
+export interface SendPropertyPdfEmailPayload {
+  destinationEmail: string;
+  message?: string;
+}
+
 export const propertyService = {
   async getProperties(filters?: {
     title?: string;
@@ -406,6 +411,73 @@ export const propertyService = {
       params: { status, operationType },
     });
     return response.data.data;
+  },
+
+  async downloadPropertyPdf(propertyId: string): Promise<void> {
+    const response = await api.post(
+      `/properties/${propertyId}/generate-pdf`,
+      {},
+      { responseType: 'blob' }
+    );
+
+    const blob = response.data as Blob;
+    const contentType = String(
+      response.headers['content-type'] || blob.type || ''
+    );
+
+    if (
+      contentType.includes('application/json') ||
+      contentType.includes('text/json') ||
+      blob.type.includes('json')
+    ) {
+      const text = await blob.text();
+      try {
+        const json = JSON.parse(text) as { message?: string };
+        throw {
+          isApiError: true,
+          message: json.message || 'PDF generation failed',
+          response,
+        };
+      } catch (parseError) {
+        if (
+          parseError &&
+          typeof parseError === 'object' &&
+          'isApiError' in parseError
+        ) {
+          throw parseError;
+        }
+        throw new Error(text || 'PDF generation failed');
+      }
+    }
+
+    if (!contentType.includes('pdf') && !blob.type.includes('pdf')) {
+      throw new Error('Unexpected response format when generating PDF');
+    }
+
+    if (blob.size === 0) {
+      throw new Error('Received an empty PDF file');
+    }
+
+    const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(pdfBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ficha_propiedad_${propertyId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  },
+
+  async sendPropertyPdfEmail(
+    propertyId: string,
+    payload: SendPropertyPdfEmailPayload
+  ): Promise<string> {
+    const response = await api.post(
+      `/properties/${propertyId}/send-pdf`,
+      payload
+    );
+    return response.data.message as string;
   },
 };
 

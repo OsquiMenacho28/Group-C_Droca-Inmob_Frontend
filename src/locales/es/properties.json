@@ -161,6 +161,26 @@
     "noResult": "Sin resultado",
     "operation": "Operación:"
   },
+  "propertyPdf": {
+    "generate": "Generar PDF",
+    "sendEmail": "Enviar por email",
+    "sendModalTitle": "Enviar ficha por correo",
+    "sendModalSubtitle": "Se enviará la ficha técnica en PDF de \"{title}\" al correo indicado.",
+    "destinationEmail": "Correo destino",
+    "destinationEmailPlaceholder": "cliente@ejemplo.com",
+    "message": "Mensaje",
+    "messagePlaceholder": "¡Hola! Aquí está la ficha en PDF de la propiedad que comentamos.",
+    "send": "Enviar",
+    "cancel": "Cancelar",
+    "generating": "Generando PDF...",
+    "sending": "Enviando...",
+    "downloadSuccess": "PDF descargado correctamente",
+    "downloadError": "No se pudo generar el PDF",
+    "sendSuccess": "Ficha enviada por correo correctamente",
+    "sendError": "No se pudo enviar el correo con la ficha PDF",
+    "emailRequired": "El correo destino es obligatorio",
+    "emailInvalid": "Ingresa un correo electrónico válido"
+  },
   "receipts": {
     "loadError": "Error al cargar los comprobantes.",
     "uploadError": "Error al subir el comprobante. Por favor intenta de nuevo.",
