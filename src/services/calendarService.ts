@@ -16,6 +16,8 @@ import type {
   CreateVisitRequest,
   Vehicle,
   VehicleAssignmentRequest,
+  AgentAvailability,
+  AvailabilityTemplate,
 } from '@/types/visitCalendar';
 
 export async function getCalendar(
@@ -38,9 +40,11 @@ export async function getCalendar(
 export async function checkConflict(
   propertyId: string,
   startTime: string,
-  endTime: string
+  endTime: string,
+  agentId?: string
 ): Promise<ConflictResponse> {
   const params = new URLSearchParams({ propertyId, startTime, endTime });
+  if (agentId) params.append('agentId', agentId);
   const response = await api.get(`/visits/conflict-check?${params}`);
   return response.data.data;
 }
@@ -108,3 +112,46 @@ export function formatEventTime(iso: string): string {
 export { utcIsoToLocalInput as isoToDatetimeLocal };
 
 export { localInputToUtcIso as datetimeLocalToIso };
+
+export async function getAgentAvailability(agentId: string): Promise<AgentAvailability[]> {
+  const response = await api.get(`/agents/${agentId}/availability`);
+  return response.data.data;
+}
+
+export async function saveAgentAvailability(agentId: string, availability: Partial<AgentAvailability>): Promise<AgentAvailability> {
+  const response = await api.post(`/agents/${agentId}/availability`, availability);
+  return response.data.data;
+}
+
+export async function updateAgentAvailability(agentId: string, slotId: string, availability: Partial<AgentAvailability>): Promise<AgentAvailability> {
+  const response = await api.put(`/agents/${agentId}/availability/${slotId}`, availability);
+  return response.data.data;
+}
+
+export async function deleteAgentAvailability(agentId: string, slotId: string): Promise<void> {
+  await api.delete(`/agents/${agentId}/availability/${slotId}`);
+}
+
+export async function getAvailabilityTemplates(): Promise<AvailabilityTemplate[]> {
+  const response = await api.get('/availability-templates');
+  return response.data.data;
+}
+
+export async function createAvailabilityTemplate(template: Partial<AvailabilityTemplate>): Promise<AvailabilityTemplate> {
+  const response = await api.post('/availability-templates', template);
+  return response.data.data;
+}
+
+export async function updateAvailabilityTemplate(templateId: string, template: Partial<AvailabilityTemplate>): Promise<AvailabilityTemplate> {
+  const response = await api.put(`/availability-templates/${templateId}`, template);
+  return response.data.data;
+}
+
+export async function deleteAvailabilityTemplate(templateId: string): Promise<void> {
+  await api.delete(`/availability-templates/${templateId}`);
+}
+
+export async function applyAvailabilityTemplate(templateId: string, agentIds: string[], overwrite: boolean): Promise<void> {
+  await api.post(`/availability-templates/${templateId}/apply`, { agentIds, overwrite });
+}
+

@@ -112,6 +112,7 @@ export interface VisitRequestResponse {
   calendarEventId?: string;
   createdAt: string;
   notificationSent: boolean;
+  acceptedDateTime?: string;
 }
 
 export interface Property {
@@ -180,3 +181,35 @@ export interface VehicleUsageReportResponse {
   to: string;
   vehicles: VehicleUsageSummaryDTO[];
 }
+
+export type SlotType = 'RECURRING' | 'EXCEPTION';
+
+export interface AgentAvailability {
+  id?: string;
+  agentId: string;
+  type: SlotType;
+  dayOfWeek?: string;
+  specificDate?: string;
+  startTime: string;
+  endTime: string;
+  isAvailable: boolean;
+  notes?: string;
+}
+
+export interface TemplateSlot {
+  type: SlotType;
+  dayOfWeek?: string;
+  specificDate?: string;
+  startTime: string;
+  endTime: string;
+  isAvailable: boolean;
+}
+
+export interface AvailabilityTemplate {
+  id?: string;
+  name: string;
+  description?: string;
+  isStandard: boolean;
+  slots: TemplateSlot[];
+}
+

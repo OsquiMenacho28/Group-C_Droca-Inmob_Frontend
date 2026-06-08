@@ -49,6 +49,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'admin/availability',
+        name: 'AgentAvailability',
+        component: () => import('@/views/AgentAvailabilityView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: 'admin/properties',
         name: 'AdminProperties',
         component: AdminProperties,
