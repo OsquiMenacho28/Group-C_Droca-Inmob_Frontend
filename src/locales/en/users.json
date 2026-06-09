@@ -116,6 +116,22 @@
     "noSuggestions": "There are no properties matching these preferences.",
     "adjustFilters": "Try adjusting the room ranges or zones."
   },
+  "clientInteractions": {
+    "title": "Interaction history",
+    "loading": "Loading interaction history...",
+    "empty": "This client has no registered interactions yet.",
+    "emptyHint": "Scheduled visits and properties marked as favorites will appear here.",
+    "accessDenied": "You can only view the history of clients assigned to your portfolio.",
+    "filterType": "Interaction type",
+    "filterAll": "All",
+    "typeVisit": "Scheduled visit",
+    "typeFavorite": "Favorite property",
+    "favoriteAdded": "Marked as favorite",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "agent": "Agent",
+    "backToHistory": "Back to history"
+  },
   "ownerDetails": {
     "profileBadge": "Owner Profile",
     "ownerInfo": "Owner Information",

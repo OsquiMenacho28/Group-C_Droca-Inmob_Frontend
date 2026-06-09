@@ -1,9 +1,9 @@
 import { apiClient as api } from '@/api';
 
-interface PropertyHistory {
+export interface FavoriteHistoryEntry {
   propertyId: string;
-  viewedAt: string;
-  [key: string]: unknown;
+  action: 'ADDED' | 'REMOVED' | string;
+  timestamp: string;
 }
 
 export const favoriteService = {
@@ -17,11 +17,21 @@ export const favoriteService = {
   async removeFavorite(propertyId: string) {
     await api.delete(`/favoritos/${propertyId}`);
   },
-  async getHistory(limit = 20): Promise<PropertyHistory[]> {
+  async getHistory(limit = 20): Promise<FavoriteHistoryEntry[]> {
     const res = await api.get('/favoritos/history', { params: { limit } });
     return res.data.data;
   },
-  async getPropertyHistory(propertyId: string): Promise<PropertyHistory[]> {
+  async getHistoryForClient(
+    authUserId: string,
+    limit = 100
+  ): Promise<FavoriteHistoryEntry[]> {
+    const res = await api.get('/favoritos/history', {
+      params: { limit },
+      headers: { 'X-Auth-User-Id': authUserId },
+    });
+    return res.data.data;
+  },
+  async getPropertyHistory(propertyId: string): Promise<FavoriteHistoryEntry[]> {
     const res = await api.get(`/favoritos/history/${propertyId}`);
     return res.data.data;
   },

@@ -59,7 +59,7 @@
         <button
           @click="openDetails(c)"
           class="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-800/90 p-2 rounded-full shadow-lg hover:text-blue-600 transition-all hover:scale-110"
-          :title="t('clientDetails.changeHistory')"
+          :title="t('clientInteractions.title')"
         >
           <IconLucideClock class="w-5 h-5" />
         </button>
@@ -250,38 +250,30 @@ const filteredClients = computed(() => {
 const loadClients = async () => {
   loading.value = true;
   try {
-    const res = await userService.getUsers(currentPage.value, pageSize.value);
-    const baseUsers = res.data || [];
+    const assignedClients = await personService.getClientsForAgent();
     const u = authStore.user as UserClaims | null;
     const agentId = u?.sub || u?.userId;
 
-    // Filter for clients assigned to this agent
-    const filteredBase = baseUsers.filter((u: User) => {
-      return (
-        u.userType === 'INTERESTED_CLIENT' &&
-        (!agentId || u.assignedAgentId === agentId)
-      );
-    });
+    clients.value = (assignedClients || []).map((profile: Record<string, unknown>) => ({
+      id: profile.authUserId || profile.id,
+      authUserId: profile.authUserId,
+      personId: profile.id,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      fullName: profile.fullName,
+      email: profile.email,
+      phone: profile.phone,
+      userType: 'INTERESTED_CLIENT',
+      assignedAgentId: agentId,
+      preferredZones: profile.preferredZones,
+      preferredPropertyType: profile.preferredPropertyType,
+      minRooms: profile.minRooms,
+      maxRooms: profile.maxRooms,
+      budget: profile.budget || profile.maxPrice,
+    })) as User[];
 
-    // Lazy load profile details
-    clients.value = await Promise.all(
-      filteredBase.map(async (u: User) => {
-        try {
-          const profile = await personService.getPersonByAuthUserId(u.id);
-          return {
-            ...u,
-            ...profile,
-            authUserId: u.id,
-            personId: profile.id as string,
-          };
-        } catch {
-          return { ...u, authUserId: u.id, personId: undefined };
-        }
-      })
-    );
-
-    totalClients.value = res.meta?.total || 0;
-    totalPages.value = Math.ceil(totalClients.value / pageSize.value);
+    totalClients.value = clients.value.length;
+    totalPages.value = 1;
   } catch (e) {
     console.error('Error loading clients:', e);
   } finally {

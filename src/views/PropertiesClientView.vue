@@ -1046,11 +1046,6 @@ watch(
 onMounted(async () => {
   await loadProperties();
   loadFavorites();
-
-  const selectedId = route.query.selectedId as string;
-  if (selectedId) {
-    handleSelectedIdQuery(selectedId);
-  }
 });
 
 onUnmounted(() => {
