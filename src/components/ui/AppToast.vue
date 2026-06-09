@@ -2,7 +2,8 @@
   <Transition name="fade-slide">
     <div
       v-if="show"
-      class="fixed bottom-5 right-5 z-100 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-xl dark:text-gray-400 dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
+      class="fixed bottom-5 right-5 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-xl dark:text-gray-400 dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
+      style="z-index: 9999"
       role="alert"
     >
       <div
@@ -33,7 +34,7 @@ import IconLucideCheck from '~icons/lucide/check';
 import IconLucideInfo from '~icons/lucide/info';
 import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
 import IconLucideX from '~icons/lucide/x';
-import { onMounted } from 'vue';
+import { watch, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   show: Boolean,
@@ -68,11 +69,25 @@ const typeIcons = {
   error: IconLucideX,
 };
 
-onMounted(() => {
-  if (props.show && props.duration > 0) {
-    setTimeout(() => {
-      emit('close');
-    }, props.duration);
-  }
+let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+watch(
+  () => props.show,
+  (visible) => {
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    if (visible && props.duration > 0) {
+      hideTimer = setTimeout(() => {
+        emit('close');
+      }, props.duration);
+    }
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  if (hideTimer) clearTimeout(hideTimer);
 });
 </script>

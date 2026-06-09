@@ -21,6 +21,8 @@
     </template>
 
     <template #body>
+      <fwb-tabs v-model="activeTab" variant="underline" class="mb-4">
+        <fwb-tab name="details" :title="t('propertyDetails.tabGeneral')">
       <div
         class="grid grid-cols-1 gap-8"
         :class="{ 'lg:grid-cols-2': showSidebar }"
@@ -187,59 +189,6 @@
             </div>
           </div>
 
-          <!-- ── Listado de visitas con resultados (para el propietario) ── -->
-          <div v-if="visits.length > 0" class="mt-6">
-            <h4
-              class="text-sm font-bold mb-3 flex items-center gap-2 text-gray-700 dark:text-gray-300"
-            >
-              <IconLucideCalendar class="w-4 h-4" />
-              {{ t('propertyDetails.visitsHistory') }}
-            </h4>
-            <div class="space-y-3 max-h-64 overflow-y-auto pr-2">
-              <div
-                v-for="v in visits"
-                :key="v.id"
-                class="app-card p-3 rounded-lg"
-              >
-                <div class="flex justify-between items-start">
-                  <div class="flex-1">
-                    <p class="text-xs text-secondary">
-                      {{ formatDateTime(v.startTime) }}
-                    </p>
-                    <p class="text-sm font-semibold dark:text-white">
-                      {{ v.clientName || t('common.notSpecified') }}
-                    </p>
-                  </div>
-                  <span
-                    v-if="v.resultado"
-                    :class="resultadoBadgeClass(v.resultado)"
-                    class="text-[10px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap ml-2"
-                  >
-                    {{ getResultadoLabel(v.resultado) }}
-                  </span>
-                  <span
-                    v-else
-                    class="text-[10px] text-gray-400 italic whitespace-nowrap ml-2"
-                  >
-                    {{ t('propertyDetails.noResult') }}
-                  </span>
-                </div>
-                <p
-                  v-if="v.observaciones"
-                  class="text-xs text-gray-600 dark:text-gray-400 mt-2"
-                >
-                  {{ v.observaciones }}
-                </p>
-                <p
-                  v-if="v.fechaRegistroResultado"
-                  class="text-[10px] text-gray-400 mt-1"
-                >
-                  {{ t('visitResult.registeredOn') }}
-                  {{ formatDateTime(v.fechaRegistroResultado) }}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div v-if="showSidebar" class="space-y-6">
@@ -438,9 +387,45 @@
           </div>
         </div>
       </div>
+        </fwb-tab>
+
+        <fwb-tab name="visits" :title="t('propertyDetails.visitsHistory')">
+          <PropertyVisitsHistoryTab
+            :visits="visits"
+            :loading="loadingVisits"
+          />
+        </fwb-tab>
+      </fwb-tabs>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-3">
+      <div class="flex flex-wrap justify-end gap-3">
+        <template v-if="isAdmin && property?.id">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            :disabled="generatingPdf"
+            @click.stop="handleGeneratePdf"
+          >
+            <IconLucideFileDown
+              class="w-4 h-4"
+              :class="{ 'animate-pulse': generatingPdf }"
+            />
+            {{
+              generatingPdf
+                ? t('propertyPdf.generating')
+                : t('propertyPdf.generate')
+            }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors"
+            @click.stop="openSendPdfModal"
+          >
+            <IconLucideMail class="w-4 h-4" />
+            {{ t('propertyPdf.sendEmail') }}
+          </button>
+        </template>
+
         <fwb-button
           v-if="
             isAdmin &&
@@ -490,6 +475,18 @@
     />
   </Teleport>
 
+  <Teleport to="body">
+    <SendPropertyPdfModal
+      v-if="showSendPdfModal && property?.id"
+      :show="showSendPdfModal"
+      :property-id="property.id"
+      :property-title="property.title || ''"
+      @close="showSendPdfModal = false"
+      @success="handleSendPdfSuccess"
+      @error="handleSendPdfError"
+    />
+  </Teleport>
+
   <!-- Global Toast -->
   <AppToast
     :show="toast.show"
@@ -500,8 +497,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, reactive, computed } from 'vue';
-import { FwbBadge, FwbButton } from 'flowbite-vue';
+import { ref, watch, reactive, computed, nextTick } from 'vue';
+import { FwbBadge, FwbButton, FwbTabs, FwbTab } from 'flowbite-vue';
 import { propertyService } from '@/modules/properties';
 import { personService } from '@/services/personService';
 import { getVisitsForProperty } from '@/services/visitRequestService';
@@ -513,10 +510,12 @@ import IconLucidePhone from '~icons/lucide/phone';
 import IconLucideMessageSquare from '~icons/lucide/message-square';
 import IconLucideUser from '~icons/lucide/user';
 import IconLucideArrowRight from '~icons/lucide/arrow-right';
-import IconLucideCalendar from '~icons/lucide/calendar';
 import IconLucideHome from '~icons/lucide/home';
 import { useI18n } from 'vue-i18n';
-import { formatDate, formatDateTime } from '@/utils/dateTime';
+import { formatDate } from '@/utils/dateTime';
+import PropertyVisitsHistoryTab from '@/components/properties/PropertyVisitsHistoryTab.vue';
+import SendPropertyPdfModal from '@/components/properties/SendPropertyPdfModal.vue';
+import IconLucideFileDown from '~icons/lucide/file-down';
 import AppToast from '@/components/ui/AppToast.vue';
 import IconLucideRefreshCw from '~icons/lucide/refresh-cw';
 import { useAuthStore, type UserClaims } from '@/modules/auth';
@@ -551,6 +550,9 @@ const authStore = useAuthStore();
 const currentUser = computed(() => authStore.user as UserClaims | null);
 const showReincorporateConfirm = ref(false);
 const showRetirementModal = ref(false);
+const showSendPdfModal = ref(false);
+const generatingPdf = ref(false);
+const activeTab = ref('details');
 
 const localStatus = ref(props.property?.status || '');
 const updatingStatus = ref(false);
@@ -617,8 +619,15 @@ const loadVisits = async () => {
 
 const isAdmin = computed(() => {
   const u = authStore.user as UserClaims | null;
-  const roles = (u?.roles as string[]) || [];
-  return roles.includes('ADMIN') || u?.userType === 'ADMIN';
+  if (!u) return false;
+  const roles = Array.isArray(u.roles) ? u.roles.map(String) : [];
+  const normalizedRoles = roles.map((role) => role.toUpperCase());
+  return (
+    normalizedRoles.includes('ADMIN') ||
+    normalizedRoles.includes('ROLE_ADMIN') ||
+    String(u.role || '').toUpperCase() === 'ADMIN' ||
+    u.userType === 'ADMIN'
+  );
 });
 
 const isAssignedAgent = computed(() => {
@@ -694,26 +703,46 @@ const getMotivoLabel = (motivo?: string) => {
   return translation !== key ? translation : motivo;
 };
 
-// Helper functions for resultado
-const getResultadoLabel = (resultado: string): string => {
-  const map: Record<string, string> = {
-    INTERESADO: t('visitResult.interesado'),
-    NO_INTERESADO: t('visitResult.noInteresado'),
-    PENDIENTE: t('visitResult.pendiente'),
-  };
-  return map[resultado] || resultado;
+const handleGeneratePdf = async () => {
+  if (!props.property?.id) return;
+
+  generatingPdf.value = true;
+  try {
+    await propertyService.downloadPropertyPdf(props.property.id);
+    toast.message = t('propertyPdf.downloadSuccess');
+    toast.type = 'success';
+    toast.show = true;
+  } catch (err: unknown) {
+    toast.message = handleApiError(err).message || t('propertyPdf.downloadError');
+    toast.type = 'error';
+    toast.show = true;
+  } finally {
+    generatingPdf.value = false;
+  }
 };
 
-const resultadoBadgeClass = (resultado: string): string => {
-  const map: Record<string, string> = {
-    INTERESADO:
-      'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    NO_INTERESADO:
-      'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    PENDIENTE:
-      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  };
-  return map[resultado] || 'bg-gray-100 text-gray-800';
+const openSendPdfModal = () => {
+  showSendPdfModal.value = true;
+};
+
+const showToast = async (
+  message: string,
+  type: 'success' | 'error' | 'info'
+) => {
+  toast.show = false;
+  await nextTick();
+  toast.message = message;
+  toast.type = type;
+  toast.show = true;
+};
+
+const handleSendPdfSuccess = async (message: string) => {
+  showSendPdfModal.value = false;
+  await showToast(message || t('propertyPdf.sendSuccess'), 'success');
+};
+
+const handleSendPdfError = async (message: string) => {
+  await showToast(message || t('propertyPdf.sendError'), 'error');
 };
 
 const handleReincorporate = async () => {
@@ -920,6 +949,16 @@ watch(
   (newStatus) => {
     if (newStatus) {
       localStatus.value = newStatus;
+    }
+  }
+);
+
+watch(
+  () => props.show,
+  (show) => {
+    if (!show) {
+      activeTab.value = 'details';
+      showSendPdfModal.value = false;
     }
   }
 );

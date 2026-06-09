@@ -4,7 +4,8 @@
     <Transition name="modal">
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 overflow-y-auto"
+        class="fixed inset-0 overflow-y-auto"
+        :style="{ zIndex }"
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
@@ -78,6 +79,7 @@ withDefaults(
     size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
     showCloseButton?: boolean;
     closeOnBackdrop?: boolean;
+    zIndex?: number;
   }>(),
   {
     size: 'md',
@@ -85,6 +87,7 @@ withDefaults(
     message: '',
     showCloseButton: true,
     closeOnBackdrop: true,
+    zIndex: 50,
   }
 );
 

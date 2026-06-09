@@ -131,11 +131,11 @@ const handleLogin = async (payload: { email: string; password: string }) => {
         confirmPassword: '',
       });
     } else {
-      const redirectPath = route.query.redirect as string;
-      if (redirectPath) {
+      const redirectPath = (route.query.redirect as string) || '/dashboard';
+      if (redirectPath.startsWith('/')) {
         router.push(redirectPath);
       } else {
-        router.push({ name: 'Dashboard' });
+        router.push('/dashboard');
       }
     }
   } catch (error: unknown) {
@@ -183,11 +183,11 @@ const onPasswordSubmit = onChangePasswordSubmit(async (values) => {
     }
 
     showChangePassword.value = false;
-    const redirectPath = route.query.redirect as string;
-    if (redirectPath) {
+    const redirectPath = (route.query.redirect as string) || '/dashboard';
+    if (redirectPath.startsWith('/')) {
       router.push(redirectPath);
     } else {
-      router.push({ name: 'Dashboard' });
+      router.push('/dashboard');
     }
   } catch (error: unknown) {
     console.error('Password change error:', error);

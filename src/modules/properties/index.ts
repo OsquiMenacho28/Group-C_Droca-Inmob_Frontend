@@ -11,6 +11,7 @@ export type {
   ImageResponse,
   GenerateImageUploadUrlRequest,
   ConfirmImageUploadRequest,
+  SendPropertyPdfEmailPayload,
 } from './services/propertyService';
 
 export {
