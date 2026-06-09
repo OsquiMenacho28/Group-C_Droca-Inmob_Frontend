@@ -721,8 +721,15 @@ const onTimeChange = () => {
       conflictResult.value = await checkConflict(
         pid,
         localInputToUtcIso(start),
-        localInputToUtcIso(end)
+        localInputToUtcIso(end),
+        myAgentId.value
       );
+    } catch (err: any) {
+      conflictResult.value = {
+        hasConflict: true,
+        message: err.message || t('scheduleVisit.conflictError', 'Conflicto detectado en el horario.'),
+        conflictingEvents: []
+      };
     } finally {
       checkingConflict.value = false;
     }

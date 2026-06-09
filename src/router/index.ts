@@ -49,6 +49,12 @@ const routes = [
         meta: { role: 'ADMIN' },
       },
       {
+        path: 'admin/availability',
+        name: 'AgentAvailability',
+        component: () => import('@/views/AgentAvailabilityView.vue'),
+        meta: { role: 'ADMIN' },
+      },
+      {
         path: 'admin/properties',
         name: 'AdminProperties',
         component: AdminProperties,
@@ -71,6 +77,12 @@ const routes = [
         name: 'VehicleUsageReport',
         component: () => import('@/views/VehicleUsageReportView.vue'),
         meta: { role: 'ADMIN' },
+      },
+      {
+        path: 'admin/alert-settings',
+        name: 'AlertSettings',
+        component: () => import('@/views/AlertSettingsView.vue'),
+        meta: { role: 'ADMIN' }
       },
       {
         path: 'agent',

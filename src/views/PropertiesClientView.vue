@@ -815,8 +815,11 @@ const loadProperties = async (): Promise<void> => {
 
     await loadAgentNames(properties.value);
 
-    // Update URL query params without triggering navigation
+    // Update URL query params without triggering navigation, preserving selectedId if present
     const query: Record<string, string> = {};
+    if (route.query.selectedId) {
+      query.selectedId = route.query.selectedId as string;
+    }
     if (filters.value.status) query.status = filters.value.status;
     if (filters.value.title) query.title = filters.value.title;
     if (filters.value.type) query.type = filters.value.type;
@@ -1040,9 +1043,14 @@ watch(
 );
 
 // Lifecycle
-onMounted(() => {
-  loadProperties();
+onMounted(async () => {
+  await loadProperties();
   loadFavorites();
+
+  const selectedId = route.query.selectedId as string;
+  if (selectedId) {
+    handleSelectedIdQuery(selectedId);
+  }
 });
 
 onUnmounted(() => {

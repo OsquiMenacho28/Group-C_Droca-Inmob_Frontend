@@ -23,6 +23,11 @@
               exact
             />
             <NavLink
+              to="/dashboard/admin/availability"
+              :label="t('nav.agentAvailability', 'Disponibilidad')"
+              :icon="IconLucideCalendar"
+            />
+            <NavLink
               to="/dashboard/admin/properties"
               :label="t('nav.inventoryManagement')"
               :icon="IconLucideBuilding2"

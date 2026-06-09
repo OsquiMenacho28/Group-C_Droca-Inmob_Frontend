@@ -25,11 +25,9 @@
     >
       <div
         v-if="isOpen"
-        class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+        class="absolute right-0 mt-2 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
       >
-        <div
-          class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center"
-        >
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
           <h3 class="font-semibold text-primary">Notificaciones</h3>
           <button
             v-if="unreadCount > 0"
@@ -92,6 +90,15 @@
           >
             Mostrar todas las notificaciones
           </router-link>
+          <!-- Enlace a configuración de alertas (solo admin) -->
+          <router-link
+            v-if="isAdmin"
+            to="/dashboard/admin/alert-settings"
+            class="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-center"
+            @click="isOpen = false"
+          >
+            ⚙️ Configurar alertas
+          </router-link>
         </div>
       </div>
     </Transition>
@@ -104,6 +111,8 @@ import { useNotifications } from '@/composables/useNotifications';
 import type { InAppNotification } from '@/types/notification';
 import IconLucideBell from '~icons/lucide/bell';
 import IconLucideBellRing from '~icons/lucide/bell-ring';
+import router from '@/router';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
 
 const isOpen = ref(false);
 const {
@@ -129,8 +138,11 @@ const handleNotificationClick = async (notif: InAppNotification) => {
     await markAsRead(notif.id);
     await loadUnreadCount();
   }
-  // Opcional: redirigir según el tipo de notificación
-  // Ejemplo: if (notif.interactionType === 'VISITA') router.push(`/visits/${notif.details?.visitId}`)
+  if (notif.type === 'DAILY_VISIT_SUMMARY') {
+    router.push('/calendar');
+    isOpen.value = false;
+    return;
+  }
   isOpen.value = false;
 };
 
@@ -162,6 +174,13 @@ const handleClickOutside = (e: MouseEvent) => {
     isOpen.value = false;
   }
 };
+
+const authStore = useAuthStore();
+const isAdmin = computed(() => {
+  const user = authStore.user as UserClaims | null;
+  const roles = (user?.roles || []) as string[];
+  return roles.includes('ADMIN') || user?.userType === 'ADMIN';
+});
 
 onMounted(() => {
   loadUnreadCount();

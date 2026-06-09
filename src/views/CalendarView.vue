@@ -74,7 +74,10 @@
                   {{ t('calendar.client') }} {{ request.clientName }}
                 </p>
                 <p class="text-xs text-secondary">
-                  {{ formatPendingDate(request.preferredDateTime) }}
+                  <strong>{{ t('calendar.preferredTime', 'Horario Principal:') }}</strong> {{ formatPendingDate(request.preferredDateTime) }}
+                </p>
+                <p v-if="request.alternativeDateTime" class="text-xs text-secondary mt-0.5">
+                  <strong>{{ t('calendar.alternativeTime', 'Horario Alternativo:') }}</strong> {{ formatPendingDate(request.alternativeDateTime) }}
                 </p>
                 <p
                   v-if="request.message"
@@ -320,6 +323,12 @@
             >
               {{ day.getDate() }}
             </p>
+            <p
+              v-if="getAvailabilityTextForDay(day)"
+              class="text-[9px] text-gray-450 dark:text-gray-500 mt-1 uppercase font-black tracking-tighter leading-none"
+            >
+              {{ getAvailabilityTextForDay(day) }}
+            </p>
           </div>
         </div>
 
@@ -328,7 +337,10 @@
             v-for="(day, idx) in weekDays"
             :key="idx"
             class="border-r border-gray-100 dark:border-gray-700 last:border-r-0 p-2 space-y-2"
-            :class="{ 'bg-blue-50/20 dark:bg-blue-900/5': isToday(day) }"
+            :class="{
+              'bg-blue-50/20 dark:bg-blue-900/5': isToday(day),
+              'bg-gray-100/40 dark:bg-gray-800/20 opacity-60 pointer-events-none': isDayUnavailable(day)
+            }"
           >
             <div
               v-for="ev in eventsForDay(day)"
@@ -439,6 +451,100 @@
       </template>
     </FwbModal>
 
+    <!-- Custom Date/Time scheduling for conflicted visit requests -->
+    <FwbModal v-if="showCustomScheduleModal" @close="showCustomScheduleModal = false" size="md">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <IconLucideCalendar class="w-5 h-5 text-blue-600" />
+          <span>{{ t('calendar.proposeNewDateTime', 'Proponer Nueva Fecha de Visita') }}</span>
+        </div>
+      </template>
+      <template #body>
+        <div class="space-y-4 text-xs sm:text-sm">
+          <p class="text-secondary mb-2">
+            {{ t('calendar.conflictNotice', 'El cliente solicitó horarios que tienen conflictos. Por favor, asigne una nueva fecha y hora de visita.') }}
+          </p>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              {{ t('scheduleVisit.property', 'Propiedad') }}
+            </label>
+            <input type="text" :value="customScheduleForm.propertyName" readonly class="w-full bg-gray-100 dark:bg-gray-700 border rounded-lg p-2 dark:text-white pointer-events-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              {{ t('calendar.client', 'Cliente') }}
+            </label>
+            <input type="text" :value="customScheduleForm.clientName" readonly class="w-full bg-gray-100 dark:bg-gray-700 border rounded-lg p-2 dark:text-white pointer-events-none" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-2 text-xs">
+            <div>
+              <span class="font-semibold block text-yellow-800 dark:text-yellow-200">{{ t('calendar.clientPreferred', 'Solicitado Principal:') }}</span>
+              <span>{{ customScheduleForm.preferredDateTime ? formatPendingDate(customScheduleForm.preferredDateTime) : '' }}</span>
+            </div>
+            <div v-if="customScheduleForm.alternativeDateTime">
+              <span class="font-semibold block text-yellow-800 dark:text-yellow-200">{{ t('calendar.clientAlternative', 'Solicitado Alternativo:') }}</span>
+              <span>{{ formatPendingDate(customScheduleForm.alternativeDateTime) }}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {{ t('scheduleVisit.startTime', 'Hora Inicio') }} <span class="text-red-500">*</span>
+              </label>
+              <input type="datetime-local" v-model="customScheduleForm.startTimeLocal" @change="onCustomTimeChange" class="w-full border rounded-lg p-2 dark:bg-gray-700 dark:text-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                {{ t('scheduleVisit.endTime', 'Hora Fin') }} <span class="text-red-500">*</span>
+              </label>
+              <input type="datetime-local" v-model="customScheduleForm.endTimeLocal" @change="onCustomTimeChange" class="w-full border rounded-lg p-2 dark:bg-gray-700 dark:text-white" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              {{ t('scheduleVisit.assignedVehicle', 'Vehículo Asignado') }}
+            </label>
+            <select v-model="customScheduleForm.vehicleId" :disabled="loadingCustomVehicles || !customScheduleForm.startTimeLocal || !customScheduleForm.endTimeLocal" class="w-full border rounded-lg p-2 dark:bg-gray-700 dark:text-white disabled:opacity-50">
+              <option value="">-- {{ t('scheduleVisit.selectVehiclePlaceholder', 'Opcional: Seleccione vehículo') }} --</option>
+              <option v-for="vehicle in customAvailableVehicles" :key="vehicle.id" :value="vehicle.id">
+                {{ vehicle.brand }} {{ vehicle.model }} - {{ vehicle.licensePlate }}
+              </option>
+            </select>
+          </div>
+
+          <div v-if="checkingCustomConflict" class="flex items-center gap-2 text-xs text-gray-500">
+            <div class="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+            {{ t('scheduleVisit.checkingAvailability', 'Comprobando disponibilidad...') }}
+          </div>
+
+          <div v-if="customConflictResult && customConflictResult.hasConflict" class="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800 p-3 text-xs text-red-900 dark:text-red-100 flex items-center gap-2">
+            <IconLucideAlertCircle class="h-4 w-4 text-red-600" />
+            <span>{{ customConflictResult.message }}</span>
+          </div>
+
+          <div v-if="customConflictResult && !customConflictResult.hasConflict" class="rounded-xl border border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800 p-3 text-xs text-green-900 dark:text-green-100 flex items-center gap-2">
+            <IconLucideCircleCheck class="h-4 w-4 text-green-600" />
+            <span>{{ t('scheduleVisit.available', 'Disponible') }}</span>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex gap-2 justify-end w-full">
+          <FwbButton @click="showCustomScheduleModal = false" color="alternative" size="sm">
+            {{ t('common.cancel', 'Cancelar') }}
+          </FwbButton>
+          <FwbButton @click="submitCustomScheduleAccept" :disabled="customScheduleSubmitting || !customScheduleForm.startTimeLocal || !customScheduleForm.endTimeLocal || (customConflictResult && customConflictResult.hasConflict)" color="blue" size="sm">
+            {{ customScheduleSubmitting ? t('common.processing', 'Procesando...') : t('common.save', 'Guardar') }}
+          </FwbButton>
+        </div>
+      </template>
+    </FwbModal>
+
     <FwbAlert
       v-if="alertMessage"
       :type="alertType"
@@ -457,6 +563,9 @@ import IconLucideChevronRight from '~icons/lucide/chevron-right';
 import IconLucideSearch from '~icons/lucide/search';
 import IconLucideChevronDown from '~icons/lucide/chevron-down';
 import IconLucideUser from '~icons/lucide/user';
+import IconLucideCalendar from '~icons/lucide/calendar';
+import IconLucideAlertCircle from '~icons/lucide/alert-circle';
+import IconLucideCircleCheck from '~icons/lucide/circle-check';
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import {
@@ -467,7 +576,7 @@ import {
   FwbAlert,
   FwbBadge,
 } from 'flowbite-vue';
-import { getCalendar } from '@/services/calendarService';
+import { getCalendar, getAgentAvailability, getAvailableVehicles, checkConflict } from '@/services/calendarService';
 import vehicleService from '@/services/vehicleService';
 import { propertyService } from '@/modules/properties';
 import { userService } from '@/services/userService';
@@ -477,6 +586,7 @@ import type {
   CalendarEventResponse,
   VisitRequestResponse,
   Vehicle,
+  AgentAvailability,
 } from '@/types/visitCalendar';
 import {
   getPendingRequestsForAgent,
@@ -491,6 +601,7 @@ import {
   isSameLocalDay,
   formatShortTime,
   formatDisplayDateTime,
+  localInputToUtcIso,
 } from '@/utils/dateTime';
 
 const { t } = useI18n();
@@ -593,6 +704,8 @@ function showAlert(
   }, 4000);
 }
 
+const activeAgentAvailability = ref<AgentAvailability[]>([]);
+
 async function loadCalendar() {
   loading.value = true;
   error.value = '';
@@ -605,6 +718,18 @@ async function loadCalendar() {
       filterAgentId.value || undefined,
       filterPropertyId.value || undefined
     );
+
+    const agentToQuery = filterAgentId.value || myAgentId.value;
+    if (agentToQuery) {
+      try {
+        activeAgentAvailability.value = await getAgentAvailability(agentToQuery);
+      } catch (e) {
+        console.error('Error fetching agent availability:', e);
+        activeAgentAvailability.value = [];
+      }
+    } else {
+      activeAgentAvailability.value = [];
+    }
   } catch (e) {
     error.value = handleApiError(e).message;
   } finally {
@@ -749,6 +874,45 @@ const closeEventModal = () => {
   selectedEventVehicle.value = null;
 };
 
+const getAvailabilityTextForDay = (day: Date) => {
+  if (activeAgentAvailability.value.length === 0) return '';
+  const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const dayNameStr = days[day.getDay()];
+
+  // Formato YYYY-MM-DD local ajustado para comparar en la misma zona
+  const dateStr = day.toLocaleDateString('en-CA'); // en-CA retorna YYYY-MM-DD
+  
+  const exceptions = activeAgentAvailability.value.filter(
+    (a) => a.type === 'EXCEPTION' && a.specificDate === dateStr
+  );
+  
+  if (exceptions.length > 0) {
+    const unavailable = exceptions.find((a) => !a.isAvailable);
+    if (unavailable) return t('availability.holidayShort', 'Feriado/No lab');
+    return exceptions
+      .filter((a) => a.isAvailable)
+      .map((a) => `${a.startTime.substring(0, 5)}-${a.endTime.substring(0, 5)}`)
+      .join(', ');
+  }
+
+  const recurring = activeAgentAvailability.value.filter(
+    (a) => a.type === 'RECURRING' && a.dayOfWeek === dayNameStr
+  );
+
+  if (recurring.length === 0) return t('availability.offShort', 'No laborable');
+
+  return recurring
+    .filter((a) => a.isAvailable)
+    .map((a) => `${a.startTime.substring(0, 5)}-${a.endTime.substring(0, 5)}`)
+    .join(', ');
+};
+
+const isDayUnavailable = (day: Date) => {
+  if (activeAgentAvailability.value.length === 0) return false;
+  const text = getAvailabilityTextForDay(day);
+  return text === t('availability.holidayShort', 'Feriado/No lab') || text === t('availability.offShort', 'No laborable');
+};
+
 const ensureFleetLoaded = async () => {
   if (fleet.value) {
     return fleet.value;
@@ -779,15 +943,137 @@ function goToVisitDetail(visitId: string) {
   router.push(`/visits/${visitId}`);
 }
 
+const showCustomScheduleModal = ref(false);
+const customScheduleForm = ref({
+  requestId: '',
+  propertyId: '',
+  propertyName: '',
+  clientId: '',
+  clientName: '',
+  preferredDateTime: '',
+  alternativeDateTime: '',
+  startTimeLocal: '',
+  endTimeLocal: '',
+  vehicleId: '',
+});
+const customScheduleSubmitting = ref(false);
+const customAvailableVehicles = ref<Vehicle[]>([]);
+const loadingCustomVehicles = ref(false);
+const customConflictResult = ref<any>(null);
+const checkingCustomConflict = ref(false);
+
+const onCustomTimeChange = async () => {
+  customConflictResult.value = null;
+  const start = customScheduleForm.value.startTimeLocal;
+  const end = customScheduleForm.value.endTimeLocal;
+
+  if (!start || !end) {
+    customAvailableVehicles.value = [];
+    customScheduleForm.value.vehicleId = '';
+    return;
+  }
+
+  checkingCustomConflict.value = true;
+  try {
+    customConflictResult.value = await checkConflict(
+      customScheduleForm.value.propertyId,
+      localInputToUtcIso(start),
+      localInputToUtcIso(end),
+      myAgentId.value
+    );
+  } catch (err: any) {
+    customConflictResult.value = {
+      hasConflict: true,
+      message: err.message || t('scheduleVisit.conflictError', 'Conflicto detectado en el horario.')
+    };
+  } finally {
+    checkingCustomConflict.value = false;
+  }
+
+  loadingCustomVehicles.value = true;
+  try {
+    const vehicles = await getAvailableVehicles(localInputToUtcIso(start));
+    customAvailableVehicles.value = vehicles;
+    if (
+      customScheduleForm.value.vehicleId &&
+      !vehicles.some((vehicle) => vehicle.id === customScheduleForm.value.vehicleId)
+    ) {
+      customScheduleForm.value.vehicleId = '';
+    }
+  } catch {
+    customAvailableVehicles.value = [];
+    customScheduleForm.value.vehicleId = '';
+  } finally {
+    loadingCustomVehicles.value = false;
+  }
+};
+
+const submitCustomScheduleAccept = async () => {
+  const form = customScheduleForm.value;
+  if (!form.requestId || !form.startTimeLocal || !form.endTimeLocal) return;
+
+  customScheduleSubmitting.value = true;
+  try {
+    const response = await acceptVisitRequest(form.requestId, myAgentId.value, {
+      customStartTime: localInputToUtcIso(form.startTimeLocal),
+      customEndTime: localInputToUtcIso(form.endTimeLocal),
+      vehicleId: form.vehicleId || undefined,
+    });
+    showCustomScheduleModal.value = false;
+    const formattedDate = response && response.acceptedDateTime
+      ? formatPendingDate(response.acceptedDateTime)
+      : formatPendingDate(localInputToUtcIso(form.startTimeLocal));
+    showAlert(`${t('calendar.requestAcceptedCustom', 'Solicitud aceptada con el nuevo horario:')} ${formattedDate}`, 'success');
+    await Promise.all([loadPendingRequests(), loadCalendar()]);
+  } catch (err: any) {
+    showAlert(err.message || t('calendar.acceptError', 'Error al aceptar la solicitud.'), 'danger');
+  } finally {
+    customScheduleSubmitting.value = false;
+  }
+};
+
 async function handleAcceptRequest(requestId: string) {
   if (!myAgentId.value) return;
 
   requestActionLoadingId.value = requestId;
   try {
-    await acceptVisitRequest(requestId, myAgentId.value);
+    const response = await acceptVisitRequest(requestId, myAgentId.value);
+    const req = pendingRequests.value.find((r) => r.id === requestId);
+    let successMsg = t('calendar.requestAccepted', 'Solicitud de visita aceptada con éxito.');
+    if (response && response.acceptedDateTime && req) {
+      if (response.acceptedDateTime === req.preferredDateTime) {
+        successMsg = `${t('calendar.requestAcceptedPreferred', 'Solicitud aceptada en el horario principal:')} ${formatPendingDate(req.preferredDateTime)}`;
+      } else if (req.alternativeDateTime && response.acceptedDateTime === req.alternativeDateTime) {
+        successMsg = `${t('calendar.requestAcceptedAlternative', 'Solicitud aceptada en el horario auxiliar:')} ${formatPendingDate(req.alternativeDateTime)}`;
+      }
+    }
+    showAlert(successMsg, 'success');
     await Promise.all([loadPendingRequests(), loadCalendar()]);
-  } catch {
-    showAlert(t('calendar.loadError'));
+  } catch (error: any) {
+    if (error.status === 409 || error.message?.includes('conflict') || error.message?.includes('horario')) {
+      const req = pendingRequests.value.find((r) => r.id === requestId);
+      if (req) {
+        customScheduleForm.value = {
+          requestId: req.id,
+          propertyId: req.propertyId,
+          propertyName: req.propertyName,
+          clientId: req.clientId,
+          clientName: req.clientName,
+          preferredDateTime: req.preferredDateTime,
+          alternativeDateTime: req.alternativeDateTime || '',
+          startTimeLocal: '',
+          endTimeLocal: '',
+          vehicleId: '',
+        };
+        customAvailableVehicles.value = [];
+        customConflictResult.value = null;
+        showCustomScheduleModal.value = true;
+      } else {
+        showAlert(t('calendar.loadError'), 'danger');
+      }
+    } else {
+      showAlert(error.message || t('calendar.loadError'), 'danger');
+    }
   } finally {
     requestActionLoadingId.value = '';
   }
