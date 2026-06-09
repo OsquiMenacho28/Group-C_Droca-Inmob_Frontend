@@ -44,7 +44,10 @@ function configureClient(instance: AxiosInstance): AxiosInstance {
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
       const decoded = parseJwt(token);
-      if (decoded?.sub || decoded?.userId) {
+      if (
+        (decoded?.sub || decoded?.userId) &&
+        !config.headers['X-Auth-User-Id']
+      ) {
         config.headers['X-Auth-User-Id'] = decoded.sub || decoded.userId;
       }
     }

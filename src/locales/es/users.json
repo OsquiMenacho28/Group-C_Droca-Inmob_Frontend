@@ -116,6 +116,22 @@
     "noSuggestions": "No existen inmuebles que coincidan con estas preferencias.",
     "adjustFilters": "Intente ajustar los rangos de habitaciones o zonas."
   },
+  "clientInteractions": {
+    "title": "Historial de interacciones",
+    "loading": "Cargando historial de interacciones...",
+    "empty": "Este cliente aún no tiene interacciones registradas.",
+    "emptyHint": "Las visitas programadas y propiedades marcadas como favoritas aparecerán aquí.",
+    "accessDenied": "Solo puedes ver el historial de clientes asignados a tu cartera.",
+    "filterType": "Tipo de interacción",
+    "filterAll": "Todas",
+    "typeVisit": "Visita programada",
+    "typeFavorite": "Propiedad favorita",
+    "favoriteAdded": "Marcada como favorita",
+    "dateFrom": "Desde",
+    "dateTo": "Hasta",
+    "agent": "Agente",
+    "backToHistory": "Volver al historial"
+  },
   "ownerDetails": {
     "profileBadge": "Perfil de Propietario",
     "ownerInfo": "Información del Propietario",

@@ -109,6 +109,36 @@
         </div>
 
         <div class="lg:col-span-2 space-y-6">
+          <div
+            v-if="!hasSearched"
+            class="flex flex-wrap gap-2 border-b border-gray-100 dark:border-gray-700 pb-3"
+          >
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
+              :class="
+                activePanel === 'interactions'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+              "
+              @click="activePanel = 'interactions'"
+            >
+              {{ t('clientInteractions.title') }}
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors"
+              :class="
+                activePanel === 'audit'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+              "
+              @click="activePanel = 'audit'"
+            >
+              {{ t('clientDetails.changeHistory') }}
+            </button>
+          </div>
+
           <div v-if="hasSearched">
             <h4 class="font-bold dark:text-white mb-4 flex items-center gap-2">
               <IconLucideBuilding class="w-5 h-5 text-blue-500" />
@@ -173,6 +203,13 @@
             </div>
           </div>
 
+          <div v-else-if="activePanel === 'interactions'">
+            <ClientInteractionsTimeline
+              :client-auth-user-id="clientAuthUserId"
+              :enabled="show"
+            />
+          </div>
+
           <div v-else class="relative pl-6 border-l-2 border-blue-500">
             <div
               class="absolute -left-2.25 top-0 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-gray-900"
@@ -231,7 +268,7 @@
           color="alternative"
           @click="hasSearched = false"
         >
-          Ver Historial
+          {{ t('clientInteractions.backToHistory') }}
         </fwb-button>
         <fwb-button color="alternative" @click="$emit('close')">{{
           t('common.close')
@@ -242,10 +279,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { FwbModal, FwbBadge, FwbButton } from 'flowbite-vue';
 import { useI18n } from 'vue-i18n';
 import { apiClient as api } from '@/api';
+import ClientInteractionsTimeline from '@/components/users/ClientInteractionsTimeline.vue';
 import IconLucideSearch from '~icons/lucide/search';
 import IconLucideBuilding from '~icons/lucide/building';
 import IconLucideAlertTriangle from '~icons/lucide/alert-triangle';
@@ -285,6 +323,7 @@ interface ClientData {
   preferredPropertyType?: string;
   budget?: number;
   auditLog?: AuditEntry[];
+  assignedAgentId?: string;
 }
 
 const { t } = useI18n();
@@ -294,6 +333,11 @@ defineEmits(['close']);
 const suggestions = ref<SuggestedProperty[]>([]);
 const loadingSuggestions = ref(false);
 const hasSearched = ref(false);
+const activePanel = ref<'interactions' | 'audit'>('interactions');
+
+const clientAuthUserId = computed(
+  () => String(props.client.authUserId || props.client.id || '')
+);
 
 const fetchSuggestions = async () => {
   loadingSuggestions.value = true;
