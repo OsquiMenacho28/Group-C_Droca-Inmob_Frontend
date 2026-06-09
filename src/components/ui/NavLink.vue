@@ -2,22 +2,27 @@
   <li>
     <router-link
       :to="to"
-      class="block py-2 pr-4 pl-3 rounded transition-colors duration-200 md:p-0 text-gray-700 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-      :class="{
-        'text-blue-700 dark:text-white font-bold': isActive,
-      }"
+      class="flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 group"
+      :class="[
+        isActive
+          ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300 font-semibold shadow-sm'
+          : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800/50'
+      ]"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3 min-w-0">
         <component
           :is="icon"
           v-if="icon"
-          class="w-4 h-4 transition-colors"
-          :class="{
-            'text-blue-700 dark:text-white': isActive,
-            'text-secondary': !isActive,
-          }"
+          class="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-105"
+          :class="[
+            isActive
+              ? 'text-blue-600 dark:text-blue-400'
+              : 'text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300'
+          ]"
         />
-        <span class="whitespace-nowrap">{{ label }}</span>
+        <span class="truncate text-sm font-medium">{{ label }}</span>
+      </div>
+      <div v-if="$slots.suffix" class="flex-shrink-0 ml-2">
         <slot name="suffix"></slot>
       </div>
     </router-link>

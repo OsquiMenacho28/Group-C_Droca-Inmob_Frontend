@@ -1,19 +1,45 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <fwb-navbar
-      class="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex text-gray-900 dark:text-gray-100">
+    <!-- Mobile Sidebar Overlay -->
+    <Transition
+      enter-active-class="transition-opacity ease-linear duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity ease-linear duration-300"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
-      <template #logo>
-        <div class="flex items-center gap-2">
-          <span
-            class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
-          >
-            {{ t('nav.brand') }}
-          </span>
-        </div>
-      </template>
-      <template #default>
-        <fwb-navbar-collapse>
+      <div
+        v-if="isSidebarOpen"
+        @click="closeSidebar"
+        class="fixed inset-0 bg-gray-950/40 z-40 md:hidden"
+      ></div>
+    </Transition>
+
+    <!-- Sidebar Component (Desktop & Mobile) -->
+    <aside
+      class="fixed inset-y-0 left-0 flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700/80 z-50 transform transition-transform duration-300 ease-in-out md:translate-x-0"
+      :class="[isSidebarOpen ? 'translate-x-0' : '-translate-x-full']"
+    >
+      <!-- Brand Header -->
+      <div class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-700/80">
+        <router-link to="/dashboard" class="flex items-center gap-2.5 font-bold text-lg text-blue-600 dark:text-blue-400">
+          <IconLucideBuilding class="w-6 h-6 animate-pulse" />
+          <span class="tracking-tight">{{ t('nav.brand') }}</span>
+        </router-link>
+        
+        <button
+          @click="closeSidebar"
+          class="p-1.5 rounded-xl text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 md:hidden transition-colors"
+          aria-label="Cerrar menú"
+        >
+          <IconLucideX class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700">
+        <ul class="space-y-1.5">
           <!-- Admin Links -->
           <template v-if="isAdmin">
             <NavLink
@@ -116,6 +142,9 @@
             />
           </template>
 
+          <!-- Divider -->
+          <li class="h-px bg-gray-100 dark:bg-gray-700/60 my-4 mx-2"></li>
+
           <!-- Shared/Common Links -->
           <NavLink
             v-if="isAdmin || isAgent"
@@ -123,9 +152,9 @@
             :label="t('nav.calendar')"
             :icon="IconLucideCalendar"
           >
-            <template #suffix
-              ><VisitRequestNotificationBadge v-if="isAgent"
-            /></template>
+            <template #suffix>
+              <VisitRequestNotificationBadge v-if="isAgent" />
+            </template>
           </NavLink>
 
           <NavLink
@@ -133,77 +162,85 @@
             :label="t('nav.operations')"
             :icon="IconLucideFileText"
           />
-        </fwb-navbar-collapse>
-      </template>
-      <template #right-side>
-        <div class="flex items-center md:order-2 space-x-3">
+        </ul>
+      </nav>
+
+      <!-- User Profile Footer Section -->
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700/80 flex items-center justify-between gap-3 bg-gray-50/50 dark:bg-gray-800/40">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 dark:bg-blue-700 flex-shrink-0 flex items-center justify-center text-white font-bold uppercase shadow-sm">
+            {{ getUserInitial() }}
+          </div>
+          <div class="min-w-0 flex-1">
+            <h4 class="text-xs font-semibold text-gray-900 dark:text-white truncate">
+              {{ getUserDisplayName() }}
+            </h4>
+            <p class="text-[10px] text-gray-500 truncate dark:text-gray-400">
+              {{ getUserEmail() }}
+            </p>
+            <span class="inline-block mt-0.5 text-[9px] px-1.5 py-0.5 font-medium rounded bg-blue-100/60 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+              {{ getUserTypeLabel() }}
+            </span>
+          </div>
+        </div>
+        <button
+          @click="handleLogout"
+          class="p-2 rounded-xl text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200 flex-shrink-0 cursor-pointer"
+          :title="t('nav.logout')"
+        >
+          <IconLucideLogOut class="w-4.5 h-4.5" />
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Container -->
+    <div class="flex-1 flex flex-col min-w-0 md:pl-64">
+      <!-- Top header -->
+      <header class="h-16 sticky top-0 z-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur border-b border-gray-200 dark:border-gray-700/80 flex items-center justify-between px-4 md:px-8">
+        <!-- Left Side: Mobile Hamburger & Section Label -->
+        <div class="flex items-center gap-4">
+          <button
+            @click="toggleSidebar"
+            class="p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-800 md:hidden transition-colors"
+            aria-label="Abrir menú"
+          >
+            <IconLucideMenu class="w-5 h-5" />
+          </button>
+          
+          <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 hidden md:block">
+            Panel de Control
+          </h2>
+        </div>
+
+        <!-- Right Side: Utilities -->
+        <div class="flex items-center gap-3">
           <NotificationBell />
           <LanguageSwitcher />
-          <theme-toggle />
-          <fwb-dropdown align-to-end>
-            <template #trigger>
-              <button
-                type="button"
-                class="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-              >
-                <span class="sr-only">{{ t('nav.openUserMenu') }}</span>
-                <div
-                  class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold uppercase"
-                >
-                  {{ getUserInitial() }}
-                </div>
-              </button>
-            </template>
-            <fwb-list-group>
-              <div class="px-4 py-3">
-                <span class="block text-sm text-primary font-medium">
-                  {{ getUserDisplayName() }}
-                </span>
-                <span
-                  class="block text-sm text-gray-500 truncate dark:text-gray-400"
-                >
-                  {{ getUserEmail() }}
-                </span>
-                <span
-                  class="block text-xs text-gray-400 dark:text-gray-500 mt-1"
-                >
-                  {{ getUserTypeLabel() }}
-                </span>
-              </div>
-              <a
-                href="#"
-                @click.prevent="handleLogout"
-                class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-600 dark:text-red-500 dark:hover:text-white cursor-pointer border-t border-gray-100 dark:border-gray-700"
-              >
-                {{ t('nav.logout') }}
-              </a>
-            </fwb-list-group>
-          </fwb-dropdown>
+          <ThemeToggle />
         </div>
-      </template>
-    </fwb-navbar>
+      </header>
 
-    <main class="p-4 md:p-8 max-w-7xl mx-auto">
-      <router-view />
-    </main>
+      <!-- Page Content -->
+      <main class="p-4 md:p-8 flex-1 w-full max-w-7xl mx-auto">
+        <router-view />
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  FwbNavbar,
-  FwbNavbarCollapse,
-  FwbDropdown,
-  FwbListGroup,
-} from 'flowbite-vue';
-import NotificationBadge from '@/components/visits/reassignment/NotificationBadge.vue';
-import VisitRequestNotificationBadge from '@/components/visits/requests/VisitRequestNotificationBadge.vue';
-import { useAuthStore, type UserClaims } from '@/modules/auth';
+import { ref, computed, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore, type UserClaims } from '@/modules/auth';
 import ThemeToggle from '@/components/ThemeToggle.vue';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue';
 import NavLink from '@/components/ui/NavLink.vue';
-import { computed } from 'vue';
+import NotificationBell from '@/components/notifications/NotificationBell.vue';
+import NotificationBadge from '@/components/visits/reassignment/NotificationBadge.vue';
+import VisitRequestNotificationBadge from '@/components/visits/requests/VisitRequestNotificationBadge.vue';
+
+// Lucide Icons
 import IconLucideFileText from '~icons/lucide/file-text';
 import IconLucideTrophy from '~icons/lucide/trophy';
 import IconLucideBarChart2 from '~icons/lucide/bar-chart-2';
@@ -220,11 +257,29 @@ import IconLucideHeart from '~icons/lucide/heart';
 import IconLucideCalendar from '~icons/lucide/calendar';
 import IconLucideCar from '~icons/lucide/car';
 import IconLucideBarChart from '~icons/lucide/bar-chart';
-import NotificationBell from '@/components/notifications/NotificationBell.vue';
+import IconLucideMenu from '~icons/lucide/menu';
+import IconLucideX from '~icons/lucide/x';
+import IconLucideLogOut from '~icons/lucide/log-out';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
 const user = computed(() => authStore.user as UserClaims | null);
+
+const isSidebarOpen = ref(false);
+const route = useRoute();
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const closeSidebar = () => {
+  isSidebarOpen.value = false;
+};
+
+// Cierra el sidebar al navegar (útil en móviles)
+watch(() => route.path, () => {
+  closeSidebar();
+});
 
 // Funciones auxiliares
 const getUserEmail = () =>
